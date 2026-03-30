@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Madman's Codex — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root {
+  --gold: #FFD700; --gold-bright: #e8b84b; --gold-dim: #7a5a18;
+  --coal: #0c0a07; --shaft: #110e09; --cream: #f0e6cc;
+  --muted: #8a7654; --faint: #4a3c28;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: var(--font-sans);
+  background: var(--coal); color: var(--cream);
+  min-height: 100vh;
+  background-image: linear-gradient(45deg, #0c0a07 25%, #110e0a 25%, #110e0a 50%, #0c0a07 50%, #0c0a07 75%, #110e0a 75%, #110e0a 100%);
+  background-size: 4px 4px;
+}
+header {
+  padding: 1rem 2rem;
+  border-bottom: 1px solid rgba(255,215,0,0.15);
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(12,10,7,0.95); position: sticky; top: 0; z-index: 10;
+}
+.logo { font-family: var(--font-serif); font-style: italic; color: var(--gold); font-size: 1rem; text-decoration: none; }
+.back { font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
+.back:hover { color: var(--gold); }
+
+main { max-width: 650px; margin: 0 auto; padding: 3rem 2rem 4rem; }
+
+/* INTRO */
+.intro { text-align: center; }
+.intro-eyebrow { font-size: 0.55rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 1rem; }
+.intro-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 6vw, 4rem); color: var(--cream); line-height: 1; margin-bottom: 0.75rem; }
+.intro-title em { color: var(--gold); font-style: italic; }
+.intro-sub { font-size: 0.8rem; color: var(--muted); line-height: 2; margin-bottom: 1rem; letter-spacing: 0.03em; }
+.intro-lore { font-family: var(--font-serif); font-style: italic; font-size: 1rem; color: var(--gold-dim); line-height: 1.7; padding: 1.5rem; border: 1px solid rgba(255,215,0,0.15); background: rgba(255,215,0,0.03); margin-bottom: 2rem; }
+.oro-figure { font-size: 3rem; margin-bottom: 1rem; animation: breathe 4s ease-in-out infinite; }
+@keyframes breathe { 0%,100%{opacity:0.7;transform:scale(1)} 50%{opacity:1;transform:scale(1.05)} }
+
+/* PROGRESS */
+.progress-row { display: flex; gap: 4px; margin-bottom: 2.5rem; }
+.prog-dot { flex: 1; height: 3px; background: rgba(255,215,0,0.15); transition: background 0.4s; }
+.prog-dot.done { background: var(--gold); }
+.prog-dot.current { background: var(--gold-bright); }
+
+/* QUESTION */
+.question-section { display: none; }
+.question-section.active { display: block; }
+.q-num { font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 1rem; }
+.q-speaker { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+.q-avatar { font-size: 2rem; flex-shrink: 0; }
+.q-label { font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-dim); }
+.q-text { font-family: var(--font-serif); font-size: 1.3rem; color: var(--cream); line-height: 1.5; font-style: italic; }
+.q-choices { display: flex; flex-direction: column; gap: 0.75rem; }
+.choice {
+  padding: 1.2rem 1.5rem; border: 1px solid rgba(255,215,0,0.12);
+  background: rgba(255,255,255,0.02); cursor: pointer;
+  transition: all 0.25s; font-family: var(--font-serif);
+  font-size: 1rem; color: var(--muted); line-height: 1.5;
+  text-align: left; width: 100%;
+}
+.choice:hover { border-color: rgba(255,215,0,0.4); color: var(--cream); background: rgba(255,215,0,0.06); padding-left: 2rem; }
+.choice.selected { border-color: var(--gold); color: var(--gold); background: rgba(255,215,0,0.1); }
+
+/* RESULT */
+.result-section { display: none; text-align: center; }
+.result-section.active { display: block; }
+.result-title { font-family: var(--font-serif); font-size: clamp(2rem, 5vw, 3.5rem); color: var(--gold); margin-bottom: 0.5rem; line-height: 1; }
+.result-title em { font-style: italic; }
+.result-type { font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 2rem; }
+.result-icon { font-size: 4rem; margin-bottom: 1.5rem; animation: breathe 3s ease-in-out infinite; }
+.result-desc { font-family: var(--font-serif); font-size: 1.05rem; color: var(--cream); line-height: 1.8; margin-bottom: 1.5rem; font-style: italic; padding: 1.5rem; border: 1px solid rgba(255,215,0,0.15); background: rgba(255,215,0,0.03); text-align: left; }
+.result-lore { font-size: 0.75rem; color: var(--muted); line-height: 1.9; margin-bottom: 2rem; text-align: left; }
+.lore-fragment { font-family: var(--font-serif); font-style: italic; font-size: 1rem; color: var(--gold); padding: 1rem; border-left: 2px solid var(--gold-dim); margin: 1.5rem 0; }
+.share-section { margin-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+
+.btn { padding: 0.75rem 2rem; font-family: var(--font-sans); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; border: none; transition: all 0.3s; display: inline-block; text-decoration: none; }
+.btn-gold { background: var(--gold); color: var(--coal); }
+.btn-gold:hover { background: var(--gold-bright); }
+.btn-outline { background: transparent; color: var(--gold); border: 1px solid rgba(255,215,0,0.4); }
+.btn-outline:hover { background: rgba(255,215,0,0.08); }
+.btn-twitter { background: #1da1f2; color: white; }
+.btn-twitter:hover { background: #0d8ecf; }
+
+/* COMMITTEE CREDIT */
+.committee { font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--faint); text-align: center; margin-top: 3rem; }
+
+/* LORE TOAST — non-disruptive, corner notification */
+.lore-toast{position:fixed;bottom:50px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(12,10,7,.92);border:1px solid rgba(255,215,0,.3);border-left:3px solid var(--gold,#c9962a);padding:.6rem 1rem;max-width:280px;width:90%;z-index:500;opacity:0;transition:opacity .4s,transform .4s;pointer-events:none;font-family:var(--font-sans)}
+.lore-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.lore-toast-label{font-size:.38rem;letter-spacing:.2em;text-transform:uppercase;color:#7a5a18;margin-bottom:.25rem}
+.lore-toast-text{font-size:.58rem;color:#f0e6cc;line-height:1.5;font-style:italic}
+</style>
+
+<style id="depth-gauge-style">
+.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:36px;background:rgba(12,10,7,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:2rem;z-index:999;padding:0 1rem;flex-wrap:wrap}
+.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28}
+.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
+.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s}
+.dg-link:hover{color:#FFD700}
+.dg-sep{color:#2a1808;font-size:.6rem}
+</style>
+
+<style id="nmn-cursor">
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
+</style>
+<style id="gemini-viewport">
+.mining-frame{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-height:85vh;margin:0 auto;overflow:hidden}
+canvas{max-width:95%;height:auto!important}
+.active-glow{animation:pulseGold 2s infinite;color:#fff!important;text-shadow:0 0 10px #c9962a}
+@keyframes pulseGold{0%{opacity:.7}50%{opacity:1}100%{opacity:.7}}
+</style>
+<style id="floating-gauge">
+.depth-gauge{
+  position:fixed!important;bottom:12px!important;left:50%!important;
+  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
+  height:42px!important;background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
+  padding:0 18px!important;pointer-events:none!important;
+  z-index:9999!important;backdrop-filter:blur(4px)!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:1.2rem!important;flex-wrap:nowrap!important;
+  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
+body{padding-bottom:65px!important}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+<script>(function(s){s.dataset.zone='10763810',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+<header>
+  <a href="index.html" class="logo">NMN — Lord Oro</a>
+  <a href="games.html" class="back">← Recreation Hall</a>
+</header>
+
+<main>
+  <!-- INTRO -->
+  <div id="introSection" class="intro">
+    <div class="intro-eyebrow">The Excavation Committee Presents</div>
+    <div class="oro-figure">👁️</div>
+    <h1 class="intro-title">The Madman's <em>Codex</em></h1>
+    <p class="intro-sub">Lord Oro has been watching you. He has seven questions. Your answers will reveal what kind of miner lives inside you — and generate a lore fragment written specifically for your soul.</p>
+    <div class="intro-lore">
+      "Every person carries a mine within them. Most never dig. This is for the ones who do."
+      <br><br>— Lord Oro, <em>Recounts from a Madman</em>
+    </div>
+    <button class="btn btn-gold" onclick="startCodex()">Answer the Codex</button>
+    <br><br>
+    <a href="games.html" class="btn btn-outline">Return to Hall</a>
+    <div class="committee" style="margin-top:2rem">Designed by Lord Oro × Claude × Gemini — The Excavation Committee</div>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-row" id="progressRow" style="display:none">
+    <div class="prog-dot" id="dot0"></div>
+    <div class="prog-dot" id="dot1"></div>
+    <div class="prog-dot" id="dot2"></div>
+    <div class="prog-dot" id="dot3"></div>
+    <div class="prog-dot" id="dot4"></div>
+    <div class="prog-dot" id="dot5"></div>
+    <div class="prog-dot" id="dot6"></div>
+  </div>
+
+  <!-- QUESTIONS -->
+  <div id="questionsContainer"></div>
+
+  <!-- RESULT -->
+  <div id="resultSection" class="result-section">
+    <div class="result-icon" id="resultIcon"></div>
+    <div class="result-title" id="resultTitle"></div>
+    <div class="result-type" id="resultType"></div>
+    <div class="result-desc" id="resultDesc"></div>
+    <div class="lore-fragment" id="resultLore"></div>
+    <div class="result-lore" id="resultExtra"></div>
+    <div class="share-section">
+      <a class="btn btn-twitter" id="shareBtn" href="#" target="_blank">🐦 Share Your Miner Type</a>
+      <button class="btn btn-outline" onclick="resetCodex()">Take It Again</button>
+      <a href="games.html" class="btn btn-outline">Return to Hall</a>
+    </div>
+    <div class="committee">The Madman's Codex — Designed by The Excavation Committee</div>
+  </div>
+</main>
+
+
+<script id="nmn-bridge">
+(function(){
+  try{
+    if(!localStorage.getItem('nmn_collector_v2'))
+      localStorage.setItem('nmn_collector_v2',JSON.stringify({G:{team:[],grimoire:{},starter:null,activeIdx:0,gold:0,clearedZones:['surface'],battles:0}}));
+    if(!localStorage.getItem('nmn_total_gold'))
+      localStorage.setItem('nmn_total_gold','0');
+  }catch(e){}
+})();
+</script>
+<script>
+// QUESTIONS — designed by the committee
+const questions = [
+  {
+    num: 1,
+    speaker: '👁️ Lord Oro',
+    text: 'You find a sealed door deep in the mine. You can hear something on the other side. What do you do?',
+    choices: [
+      { text: 'Break it down immediately. Whatever is behind it is yours.', type: 'Breaker' },
+      { text: 'Listen first. Knowledge before action.', type: 'Seeker' },
+      { text: 'Find another way around. The door is someone else\'s.', type: 'Wanderer' },
+      { text: 'Mark it on your map and come back with better tools.', type: 'Builder' },
+    ]
+  },
+  {
+    num: 2,
+    speaker: '👁️ Lord Oro',
+    text: 'Your lantern starts to dim. You have enough fuel to reach the gold OR to find your way back. You choose—',
+    choices: [
+      { text: 'The gold. Always the gold. Darkness is just darkness.', type: 'Breaker' },
+      { text: 'Back. Live to mine another day. The gold will still be there.', type: 'Builder' },
+      { text: 'Deeper. I want to see what\'s at the very bottom.', type: 'Wanderer' },
+      { text: 'I split the fuel. Half for gold, half for home.', type: 'Seeker' },
+    ]
+  },
+  {
+    num: 3,
+    speaker: '👁️ Lord Oro',
+    text: 'A shadow follows you through the mine. You can\'t see its face. You—',
+    choices: [
+      { text: 'Turn and face it. I\'ve never run from anything.', type: 'Breaker' },
+      { text: 'Speak to it. Shadows have stories too.', type: 'Seeker' },
+      { text: 'Walk faster. Don\'t look. Don\'t acknowledge it.', type: 'Wanderer' },
+      { text: 'Leave a trail so I can find my way back if things go wrong.', type: 'Builder' },
+    ]
+  },
+  {
+    num: 4,
+    speaker: '👁️ Lord Oro',
+    text: 'What does the gold mean to you?',
+    choices: [
+      { text: 'Power. With enough of it, nothing can stop me.', type: 'Breaker' },
+      { text: 'Freedom. The ability to choose what happens next.', type: 'Wanderer' },
+      { text: 'Proof. That I was here. That I mattered.', type: 'Seeker' },
+      { text: 'Foundation. Something to build a world on.', type: 'Builder' },
+    ]
+  },
+  {
+    num: 5,
+    speaker: '👁️ Lord Oro',
+    text: 'You find another miner, lost and afraid in the dark. You—',
+    choices: [
+      { text: 'Give them half your lantern fuel and keep moving.', type: 'Builder' },
+      { text: 'Lead them out first. Your gold can wait.', type: 'Seeker' },
+      { text: 'Tell them which direction is out and keep going yourself.', type: 'Wanderer' },
+      { text: 'Recruit them. Two miners find more than one.', type: 'Breaker' },
+    ]
+  },
+  {
+    num: 6,
+    speaker: '👁️ Lord Oro',
+    text: 'You\'ve been mining for years and found nothing. What does that mean?',
+    choices: [
+      { text: 'I\'m digging in the wrong place. Start over.', type: 'Wanderer' },
+      { text: 'The gold was never the point. The digging was.', type: 'Seeker' },
+      { text: 'Try harder. Dig deeper. The gold is always there.', type: 'Breaker' },
+      { text: 'Reassess. Build better tools. The approach was wrong.', type: 'Builder' },
+    ]
+  },
+  {
+    num: 7,
+    speaker: '👁️ Lord Oro',
+    text: 'Final question. If the mine is your life — what are you really digging for?',
+    choices: [
+      { text: 'Something to prove. To myself, mostly.', type: 'Breaker' },
+      { text: 'Something to understand. The truth of what I am.', type: 'Seeker' },
+      { text: 'Something I haven\'t found yet. I\'ll know when I see it.', type: 'Wanderer' },
+      { text: 'Something to leave behind. A legacy.', type: 'Builder' },
+    ]
+  },
+];
+
+// MINER TYPES
+const minerTypes = {
+  Breaker: {
+    icon: '⛏️',
+    title: 'The Ore Breaker',
+    sub: 'Metal Type — Force Through',
+    desc: 'You don\'t ask permission from the rock. You don\'t wait for the right moment. You hit, and you hit again, and you keep hitting until something gives way. Your power is your refusal to be stopped. Your weakness is that you sometimes break things that didn\'t need breaking. The goldmine respects you. But it also fears you.',
+    lore: '"There are miners who dig carefully, methodically, afraid to disturb the mountain. And then there are those who remind the mountain who it\'s dealing with. You are the second kind."',
+    extra: 'Kin creature: Nayla the Lioness. She doesn\'t stalk. She decides, and then she moves. Like you.',
+  },
+  Seeker: {
+    icon: '🔮',
+    title: 'The Lore Seeker',
+    sub: 'Dual Type — Knowledge and Patience',
+    desc: 'You mine because you want to understand something. The gold is proof of a process — and the process is what interests you. You ask questions before you swing. You listen to the rock. You remember what the mine tells you. People underestimate you because you\'re quiet. But you know things. The kind of things that change everything when the right moment comes.',
+    lore: '"Not everyone who enters the mine is looking for gold. Some of them are looking for the mine itself — its patterns, its language, its memory. These are the dangerous ones."',
+    extra: 'Kin creature: Felik — the man with two souls. Always listening to both. Always holding more than he shows.',
+  },
+  Wanderer: {
+    icon: '🗺️',
+    title: 'The Deep Wanderer',
+    sub: 'Shadow Type — Unbound',
+    desc: 'You didn\'t come here for the gold. You came because the shaft went down and you wanted to know where it ended. You follow tunnels that others mark as dead ends. You find chambers no one else has seen. You are impossible to predict — which makes you impossible to contain. The mine can\'t trap a person who enjoys being lost.',
+    lore: '"Some people find the mine. Others let the mine find them. The Wanderer is neither — they move through the mine the way water moves through cracks. Impossible to stop. Impossible to follow."',
+    extra: 'Kin creature: Juni the Immortal. She has seen every tunnel. And she keeps going.',
+  },
+  Builder: {
+    icon: '🪵',
+    title: 'The Mine Builder',
+    sub: 'Earth Type — Foundation First',
+    desc: 'You think before you dig. You shore up the walls before you go deeper. You leave maps for the people who come after you. The gold matters — but the infrastructure matters more. Without builders, every mine collapses. You understand something the others don\'t: the most powerful thing in the mine isn\'t the gold. It\'s the structure that lets you reach it.',
+    lore: '"Lord Oro is many things. But his first love was always the architecture of the thing — not the treasure at the end, but the system that made reaching it possible. In that, you are his most faithful miner."',
+    extra: 'Kin creature: Pip — the robot companion. Built to last. Built to support. Built to outlive everything else.',
+  },
+};
+
+let answers = [];
+let currentQ = 0;
+
+function startCodex() {
+  document.getElementById('introSection').style.display = 'none';
+  document.getElementById('progressRow').style.display = 'flex';
+  renderQuestion(0);
+  updateProgress(0);
+}
+
+function renderQuestion(idx) {
+  const container = document.getElementById('questionsContainer');
+  const q = questions[idx];
+
+  container.innerHTML = `
+    <div class="question-section active">
+      <div class="q-num">Question ${q.num} of ${questions.length}</div>
+      <div class="q-speaker">
+        <div class="q-avatar">${q.speaker.split(' ')[0]}</div>
+        <div>
+          <div class="q-label">${q.speaker.split(' ').slice(1).join(' ')} asks—</div>
+          <div class="q-text">${q.text}</div>
+        </div>
+      </div>
+      <div class="q-choices">
+        ${q.choices.map((c, i) => `
+          <button class="choice" onclick="answer('${c.type}', ${i})">${c.text}</button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function answer(type, choiceIdx) {
+  // Highlight selected
+  document.querySelectorAll('.choice').forEach((c, i) => c.classList.toggle('selected', i === choiceIdx));
+  answers.push(type);
+
+  setTimeout(() => {
+    currentQ++;
+    if (currentQ >= questions.length) {
+      showResult();
+    } else {
+      renderQuestion(currentQ);
+      updateProgress(currentQ);
+    }
+  }, 400);
+}
+
+function updateProgress(current) {
+  for (let i = 0; i < questions.length; i++) {
+    const dot = document.getElementById(`dot${i}`);
+    dot.className = 'prog-dot' + (i < current ? ' done' : i === current ? ' current' : '');
+  }
+}
+
+
+function shareScore(score, game, extra) {
+  const text = extra || `I just scored ${score} in ${game} on Lord Oro's mine! 🏔️ nonsensemedianetwork.com`;
+  const url = 'https://nonsensemedianetwork.com';
+  
+  // Native share sheet on mobile (iOS/Android)
+  if(navigator.share) {
+    navigator.share({ title: game + ' — NMN', text: text, url: url })
+      .catch(()=>{});
+    return;
+  }
+  
+  // Desktop fallback — show share panel
+  const panel = document.getElementById('sharePanel');
+  if(panel) { panel.style.display='flex'; return; }
+  
+  const p = document.createElement('div');
+  p.id = 'sharePanel';
+  p.style.cssText = 'position:fixed;inset:0;background:rgba(3,2,1,.92);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem';
+  p.innerHTML = `
+    <div style="background:#1a1208;border:1px solid rgba(255,215,0,.3);padding:2rem;max-width:400px;width:100%;text-align:center">
+      <div style="font-family:Cormorant Garamond,serif;font-style:italic;font-size:1.3rem;color:#e8b84b;margin-bottom:.5rem">${game}</div>
+      <div style="font-size:.65rem;color:#8a7654;margin-bottom:1.5rem;line-height:1.8">${text}</div>
+      <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem">
+        <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}" target="_blank"
+           style="padding:.65rem;background:#1da1f2;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
+          𝕏 Share on X / Twitter
+        </a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}" target="_blank"
+           style="padding:.65rem;background:#1877f2;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
+          Share on Facebook
+        </a>
+        <a href="https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}" target="_blank"
+           style="padding:.65rem;background:#ff4500;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
+          Post to Reddit
+        </a>
+        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(text+' '+url)}" target="_blank"
+           style="padding:.65rem;background:#25d366;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
+          Send on WhatsApp
+        </a>
+        <button onclick="navigator.clipboard.writeText('${text.replace(/'/g,"\'")} ${url}').then(()=>this.textContent='✓ Copied!')"
+           style="padding:.65rem;background:transparent;border:1px solid rgba(255,215,0,.3);color:#FFD700;font-family:Josefin Sans,sans-serif;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer">
+          Copy Link
+        </button>
+      </div>
+      <button onclick="document.getElementById('sharePanel').style.display='none'"
+        style="font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:#4a3c28;background:transparent;border:none;cursor:pointer;padding:.5rem">
+        Close
+      </button>
+    </div>`;
+  document.body.appendChild(p);
+}
+
+
+function resetCodex() {
+  answers = []; currentQ = 0;
+  document.getElementById('resultSection').classList.remove('active');
+  document.getElementById('resultSection').style.display = 'none';
+  document.getElementById('introSection').style.display = 'block';
+  document.getElementById('progressRow').style.display = 'none';
+  document.getElementById('questionsContainer').innerHTML = '';
+}
+</script>
+
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> Lore Fragments</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span> Creatures</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
+  <a href="ledger.html" class="dg-link">📖 Ledger</a>
+</div>
+<script>
+(function(){
+  try{
+    var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+    var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
+    var gold=parseInt(localStorage.getItem('nmn_total_gold')||'0');
+    var el=document.getElementById('dgGold');if(el)el.textContent=gold;
+    var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
+    var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
+  }catch(e){}
+})();
+</script>
+
+<div class="lore-toast" id="loreToast">
+  <div class="lore-toast-label">⬡ Lore Fragment</div>
+  <div class="lore-toast-text" id="loreToastText"></div>
+</div>
+<script id="nmn-glow">
+(function(){
+  var r=document.createElement('div');
+  r.id='pickaxe-glow';
+  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
+  document.body.appendChild(r);
+  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
+  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
+  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
+})();
+</script>
+<script id="gemini-init">
+window.addEventListener('load',function(){
+  if(!localStorage.getItem('nmn_total_gold')) localStorage.setItem('nmn_total_gold','0');
+  document.querySelectorAll('canvas').forEach(function(g){
+    if(g.parentElement&&!g.parentElement.classList.contains('mining-frame'))
+      g.parentElement.classList.add('mining-frame');
+  });
+});
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js', {scope:'/'})
+    .then(function(reg){ console.log('NMN SW registered'); })
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>

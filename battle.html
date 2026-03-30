@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Archives — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);background:var(--coal);color:var(--cream);min-height:100vh;background-image:linear-gradient(45deg,#0c0a07 25%,#110e0a 25%,#110e0a 50%,#0c0a07 50%,#0c0a07 75%,#110e0a 75%,#110e0a 100%);background-size:4px 4px}
+header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(12,10,7,.95);position:sticky;top:0;z-index:10}
+.logo{font-family:var(--font-serif);font-style:italic;color:var(--gold);font-size:.95rem;text-decoration:none}
+.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.back:hover{color:var(--gold)}
+main{max-width:800px;margin:0 auto;padding:3rem 2rem 6rem}
+.arch-hero{text-align:center;margin-bottom:3rem}
+.arch-eyebrow{font-size:.55rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gd);margin-bottom:1rem}
+.arch-title{font-family:var(--font-display);font-size:clamp(1.8rem,5vw,3.5rem);color:var(--cream);margin-bottom:.5rem}
+.arch-title em{color:var(--gold);font-style:italic}
+.arch-sub{font-size:.75rem;color:var(--muted);line-height:2;max-width:520px;margin:0 auto}
+.section-tag{font-size:.55rem;letter-spacing:.35em;text-transform:uppercase;color:var(--gd);display:flex;align-items:center;gap:.75rem;margin:2.5rem 0 1.25rem}
+.section-tag::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(255,215,0,.2),transparent)}
+/* BOOK GRID */
+.book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
+.book-card{border:1px solid rgba(255,215,0,.12);background:rgba(255,255,255,.02);padding:1.5rem;transition:all .3s;position:relative}
+.book-card:hover{border-color:rgba(255,215,0,.35);background:rgba(255,215,0,.04);transform:translateY(-2px)}
+.book-card.published{border-left:3px solid var(--gold)}
+.book-card.progress{border-left:3px solid var(--gd)}
+.book-card.soon{border-left:3px solid var(--faint);opacity:.7}
+.book-icon{font-size:2rem;display:block;margin-bottom:.75rem}
+.book-status{font-size:.45rem;letter-spacing:.25em;text-transform:uppercase;margin-bottom:.5rem}
+.book-status.pub{color:var(--gold)}
+.book-status.wip{color:var(--gd)}
+.book-status.cs{color:var(--faint)}
+.book-title{font-family:var(--font-serif);font-size:1.2rem;color:var(--cream);margin-bottom:.4rem;line-height:1.2}
+.book-title em{color:var(--gold);font-style:italic}
+.book-desc{font-size:.68rem;color:var(--muted);line-height:1.8;margin-bottom:.75rem}
+.book-excerpt{font-family:var(--font-serif);font-style:italic;font-size:.85rem;color:var(--gd);line-height:1.7;padding:.75rem;border:1px solid rgba(255,215,0,.1);background:rgba(255,215,0,.03);margin-bottom:.75rem}
+.book-link{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);text-decoration:none;transition:color .3s}
+.book-link:hover{color:var(--gb)}
+/* DAILY QUOTE */
+.daily-quote-box{border:1px solid rgba(255,215,0,.2);background:rgba(255,215,0,.04);padding:1.5rem;margin-bottom:2rem;text-align:center}
+.dq-label{font-size:.48rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gd);margin-bottom:.75rem}
+.dq-text{font-family:var(--font-serif);font-style:italic;font-size:1.1rem;color:var(--cream);line-height:1.8;margin-bottom:.5rem}
+.dq-sig{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd)}
+/* PROGRESS BAR */
+.progress-bar{background:rgba(255,215,0,.1);height:4px;margin-top:.5rem}
+.progress-fill{height:100%;background:var(--gold);transition:width .5s}
+.progress-label{font-size:.48rem;color:var(--faint);margin-top:.3rem}
+
+.stories-list{display:flex;flex-direction:column;gap:.3rem;margin-top:.5rem}
+.story-item{font-size:.65rem;color:var(--muted);line-height:1.7;padding:.25rem 0;border-bottom:1px solid rgba(255,215,0,.05)}
+.story-item em{color:var(--gold);font-style:italic}
+.story-item:last-child{border-bottom:none}
+</style>
+
+<style id="depth-gauge-style">
+.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:36px;background:rgba(12,10,7,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:2rem;z-index:999;padding:0 1rem;flex-wrap:wrap}
+.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28}
+.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
+.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s}
+.dg-link:hover{color:#FFD700}
+.dg-sep{color:#2a1808;font-size:.6rem}
+</style>
+
+<style id="nmn-cursor">
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
+</style>
+<style id="floating-gauge">
+.depth-gauge{
+  position:fixed!important;bottom:12px!important;left:50%!important;
+  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
+  height:42px!important;background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
+  padding:0 18px!important;pointer-events:none!important;
+  z-index:9999!important;backdrop-filter:blur(4px)!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:1.2rem!important;flex-wrap:nowrap!important;
+  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
+body{padding-bottom:65px!important}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+<script>(function(s){s.dataset.zone='10763810',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+<header>
+  <a href="index.html" class="logo">NMN — Lord Oro</a>
+  <a href="index.html" class="back">← Return to the Mine</a>
+</header>
+<!-- Projection Room linked from archives -->
+<main>
+  <div class="arch-hero">
+    <div class="arch-eyebrow">Nonsense Media Network</div>
+    <h1 class="arch-title">The <em>Archives</em></h1>
+    <p class="arch-sub">Every story Lord Oro has written, is writing, and will write. Published works, works in progress, and the coming catalog. The goldmine is not just under the earth — it is in the pages.</p>
+  </div>
+
+  <!-- DAILY QUOTE -->
+  <div class="daily-quote-box">
+    <div class="dq-label">⬡ Lord Oro — Today's Fragment</div>
+    <div class="dq-text" id="dailyQuote"></div>
+    <div class="dq-sig">— Lord Oro, Nonsense Media Network</div>
+  </div>
+
+  <div class="section-tag">Published — Available Now</div>
+  <div class="book-grid">
+    <div class="book-card published">
+      <span class="book-icon">🐱</span>
+      <div class="book-status pub">★ Published on Amazon KDP</div>
+      <div class="book-title">All Tabbies Have a <em>Place Too</em></div>
+      <div class="book-desc">A story about belonging, identity, and the quiet power of knowing where you fit. For every tabby who ever wondered.</div>
+      <a href="https://www.amazon.com?tag=lordoro0c25-20" class="book-link" target="_blank">Read on Amazon →</a>
+    </div>
+    <div class="book-card published">
+      <span class="book-icon">🔥</span>
+      <div class="book-status pub">★ Published on Amazon KDP</div>
+      <div class="book-title">Pyro and Helios: <em>A Journey Home</em></div>
+      <div class="book-desc">Fire and light. Two elementals searching for the one thing neither of them can create on their own. A story about what home actually means.</div>
+      <div class="book-excerpt">"Pyro didn't know what home meant until he had one to protect."</div>
+      <a href="https://www.amazon.com/dp/B0DX6N7QKM?tag=lordoro0c25-20" class="book-link" target="_blank">Read on Amazon →</a>
+    </div>
+  </div>
+
+  <div class="section-tag">In Progress — The Ongoing Catalog</div>
+  <div class="book-grid">
+    <div class="book-card progress">
+      <span class="book-icon">💀</span>
+      <div class="book-status wip">⛏ Completing — 25,000+ Words</div>
+      <div class="book-title">Outbreak From <em>the Stars</em></div>
+      <div class="book-desc">They didn't come to destroy. They came to replace. A sci-fi horror novella set in a world where the invasion isn't loud — it's quiet, and slow, and everywhere.</div>
+      <div class="book-excerpt">"The first sign wasn't fire. It was silence where sound had been."</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div>
+      <div class="progress-label">85% — Formatting for KDP</div>
+    </div>
+    <div class="book-card progress">
+      <span class="book-icon">♾️</span>
+      <div class="book-status wip">⛏ Near Complete — 21,000+ Words</div>
+      <div class="book-title">Juni the <em>Immortal</em></div>
+      <div class="book-desc">She has lived long enough to forget what dying felt like. That was the problem. A character study across centuries about the weight of existing forever.</div>
+      <div class="book-excerpt">"Every century she tried to remember the first person who loved her. Every century the face got slightly less clear."</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:78%"></div></div>
+      <div class="progress-label">78% — Final chapters in progress</div>
+    </div>
+    <div class="book-card progress">
+      <span class="book-icon">🦁</span>
+      <div class="book-status wip">⛏ Restarting — Core Lore Established</div>
+      <div class="book-title">Nayla the Lioness and Felik: <em>The Man with Two Souls</em></div>
+      <div class="book-desc">The original story. A girl enters a fantasy world where imaginary friends become real. Pan's Labyrinth meets The Lovely Bones. Lord Oro's oldest tale.</div>
+      <div class="book-excerpt">"She stepped through and the world didn't change — she did."</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:25%"></div></div>
+      <div class="progress-label">25% — Rewriting from the bones</div>
+    </div>
+    <div class="book-card progress">
+      <span class="book-icon">📚</span>
+      <div class="book-status wip">⛏ Assembling — 25 Stories</div>
+      <div class="book-title">25 Short Stories <em>Vol. 1</em></div>
+      <div class="book-desc">The first collection. Twenty-five stories from the NMN universe. Not all of them have names yet. Not all of them are finished. All of them are real.</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
+      <div class="progress-label">60% — Stories being assembled</div>
+    </div>
+  </div>
+
+  <div class="section-tag">Coming — The Extended Universe</div>
+  <div class="book-grid">
+    <div class="book-card soon">
+      <span class="book-icon">🚀</span>
+      <div class="book-status cs">Coming — Ice</div>
+      <div class="book-title"><em>Ice</em></div>
+      <div class="book-desc">A space story. Lord Oro's take on the cosmos — personal, mythological, and stranger than most sci-fi dares to be.</div>
+    </div>
+    <div class="book-card soon">
+      <span class="book-icon">📖</span>
+      <div class="book-status cs">Coming — Memoir</div>
+      <div class="book-title">Recounts from <em>a Madman</em></div>
+      <div class="book-desc">The backstory of Lord Oro as a persona. Connected to Tales from a Madman. The autobiography that isn't quite an autobiography.</div>
+    </div>
+    <div class="book-card soon">
+      <span class="book-icon">🌊</span>
+      <div class="book-status cs">Coming — Serial</div>
+      <div class="book-title">Royal Road <em>Serial</em></div>
+      <div class="book-desc">Chapter 1 is live. The story continues when the mine is ready. Follow Lord Oro on Royal Road for updates.</div>
+      <a href="https://royalroad.com" class="book-link" target="_blank">Read on Royal Road →</a>
+    </div>
+  </div>
+  <div style="margin-top:2rem;border:1px solid rgba(255,215,0,.15);padding:1.5rem;text-align:center;background:rgba(255,215,0,.03)">
+    <div style="font-size:.48rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gd);margin-bottom:.5rem">New in the Archives</div>
+    <a href="shorts.html" style="font-family:var(--font-serif);font-style:italic;font-size:1.2rem;color:var(--gold);text-decoration:none;display:block;margin-bottom:.4rem">The Projection Room →</a>
+    <div style="font-size:.65rem;color:var(--muted);font-family:var(--font-serif);font-style:italic">Superstar Saga-style cinematic shorts. Lord Oro. Pip. Nayla. Ivy. Screen-record for YouTube Shorts. The mine is the signal.</div>
+  </div>
+
+  <div style="margin-top:1rem;border:1px solid rgba(255,215,0,.12);padding:1rem;background:rgba(255,215,0,.02)">
+    <div style="font-size:.45rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gd);margin-bottom:.75rem">New in the Oracle's Chamber</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem">
+      <a href="reliquary.html" style="border:1px solid rgba(255,215,0,.15);padding:.75rem;text-decoration:none;text-align:center;background:rgba(255,215,0,.03)">
+        <div style="font-size:1.2rem;margin-bottom:.3rem">⚔️</div>
+        <div style="font-family:var(--font-serif);font-size:.82rem;color:var(--cream)">The Reliquary</div>
+        <div style="font-size:.42rem;color:var(--gd);margin-top:.2rem">3D Artifacts</div>
+      </a>
+      <a href="canary.html" style="border:1px solid rgba(255,215,0,.15);padding:.75rem;text-decoration:none;text-align:center;background:rgba(255,215,0,.03)">
+        <div style="font-size:1.2rem;margin-bottom:.3rem">🐦</div>
+        <div style="font-family:var(--font-serif);font-size:.82rem;color:var(--cream)">The Canary</div>
+        <div style="font-size:.42rem;color:var(--gd);margin-top:.2rem">Audio Memory</div>
+      </a>
+      <a href="loom.html" style="border:1px solid rgba(255,215,0,.15);padding:.75rem;text-decoration:none;text-align:center;background:rgba(255,215,0,.03)">
+        <div style="font-size:1.2rem;margin-bottom:.3rem">🧵</div>
+        <div style="font-family:var(--font-serif);font-size:.82rem;color:var(--cream)">The Loom</div>
+        <div style="font-size:.42rem;color:var(--gd);margin-top:.2rem">Star Lore</div>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script>
+const QUOTES=[
+  "The gold was never in the ground. It was in the hands that dug for it.",
+  "My sword is my pen. My kingdom is the human interior world.",
+  "I never starve again. Substance in my words.",
+  "Every story is a tunnel. Every tunnel leads somewhere real.",
+  "The mine doesn't reward the strongest. It rewards the one who reads it correctly.",
+  "Some people find the mine. Others let the mine find them.",
+  "The goldmine is within. Everything you seek, you carry.",
+  "Outbreak from the stars — they didn't come to destroy. They came to replace.",
+  "Lord Oro was never in any story. And yet he was in all of them.",
+  "I am a goldmine. Not because I have everything. Because I keep digging.",
+  "The first story I wrote at twelve was kept by someone who never returned it. That's how I learned what writing costs.",
+  "A lord leads people to victory in their minds. My sword is my pen.",
+];
+const q = QUOTES[new Date().getDate()%QUOTES.length];
+document.getElementById('dailyQuote').textContent = `"${q}"`;
+</script>
+
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> Lore Fragments</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span> Creatures</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
+  <a href="ledger.html" class="dg-link">📖 Ledger</a>
+</div>
+<script>
+(function(){
+  try{
+    var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+    var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
+    var gold=parseInt(localStorage.getItem('nmn_total_gold')||'0');
+    var el=document.getElementById('dgGold');if(el)el.textContent=gold;
+    var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
+    var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
+  }catch(e){}
+})();
+</script>
+
+<script>
+window.NMN_CONTEXT = "mine";
+// NMN LIVING SOUNDSCAPE — Excavation Committee
+// Gemini's Quad-Track Engine + Claude's integration layer
+// Zero external files. Under 2KB. Procedural — never repeats exactly.
+
+const NMN_Audio = {
+  ctx: null,
+  running: false,
+  masterGain: null,
+  layers: {},
+
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  },
+
+  // TRACK 1 — The Deep Earth (continuous, low hum)
+  playHum() {
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(55, this.ctx.currentTime); // G1
+    gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
+    // Slow breathing — mine is alive
+    // Gemini's LFO: 0.08Hz = one breath every 12.5 seconds
+    const lfo = this.ctx.createOscillator();
+    const lfoGain = this.ctx.createGain();
+    lfo.type = 'sine';
+    lfo.frequency.value = 0.08;
+    lfoGain.gain.value = 0.01; // depth of breath
+    lfo.connect(lfoGain);
+    lfoGain.connect(gain.gain);
+    lfo.start();
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+    osc.start();
+    this.layers.hum = { osc, gain };
+  },
+
+  // TRACK 2 — The Air Shaft (filtered noise / wind)
+  playWind() {
+    const bufferSize = 2 * this.ctx.sampleRate;
+    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+    const whiteNoise = this.ctx.createBufferSource();
+    whiteNoise.buffer = noiseBuffer;
+    whiteNoise.loop = true;
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 400;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.012, this.ctx.currentTime);
+    whiteNoise.connect(filter);
+    filter.connect(g);
+    g.connect(this.masterGain);
+    whiteNoise.start();
+    this.layers.wind = { src: whiteNoise, gain: g };
+  },
+
+  // TRACK 3 — The Distant Strike (random pickaxe echoes)
+  playStrike() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.75) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        // Metallic strike freq
+        osc.frequency.setValueAtTime(140 + Math.random() * 80, this.ctx.currentTime);
+        osc.type = 'sawtooth';
+        g.gain.setValueAtTime(0.04, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.6);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.6);
+      }
+      // Randomize interval — 3s to 6s — never predictable
+      setTimeout(tick, 3000 + Math.random() * 3000);
+    };
+    setTimeout(tick, 2000);
+  },
+
+  // TRACK 4 — The Gold Shimmer (crystal high tones)
+  playShimmer() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.85) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'triangle';
+        // Gold harmonic range — slightly randomized each time
+        osc.frequency.setValueAtTime(2200 + Math.random() * 1400, this.ctx.currentTime);
+        g.gain.setValueAtTime(0, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.012, this.ctx.currentTime + 1.2);
+        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2.5);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 2.5);
+      }
+      setTimeout(tick, 5000 + Math.random() * 4000);
+    };
+    setTimeout(tick, 4000);
+  },
+
+  // TRACK 5 — The Subterranean Drip (Gemini's finalized version)
+  // Fast pitch-drop simulates the physics of water hitting a cavern pool
+  playWaterDrip() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.6) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sine';
+        // Start mid-freq, drop 50% in 80ms — exact droplet physics
+        osc.frequency.setValueAtTime(400 + Math.random() * 100, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.08);
+        g.gain.setValueAtTime(0.02, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.08);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.08);
+      }
+      // 2-8 second random interval — no rhythmic pattern ever emerges
+      setTimeout(tick, 2000 + Math.random() * 6000);
+    };
+    setTimeout(tick, 5000 + Math.random() * 3000);
+  },
+
+  // TRACK 6 — The Oracle's Pad
+  playOraclePad() {
+    const AMAJ = [220, 277.18, 329.63];
+    const tick = () => {
+      if (!this.running) return;
+      AMAJ.forEach((freq, i) => {
+        const osc = this.ctx.createOscillator();
+        const filter = this.ctx.createBiquadFilter();
+        const g = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        filter.type = 'lowpass'; filter.frequency.value = 800;
+        g.gain.setValueAtTime(0, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.03, this.ctx.currentTime + 2);
+        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 9);
+        osc.connect(filter); filter.connect(g); g.connect(this.masterGain);
+        osc.start(this.ctx.currentTime + i * 0.08);
+        osc.stop(this.ctx.currentTime + 9.5);
+      });
+      setTimeout(tick, 9000);
+    };
+    setTimeout(tick, 8000);
+  },
+
+  // Page-context aware — different mix per section
+  startAll(context) {
+    if (this.running) return;
+    this.init();
+    this.running = true;
+    this.playHum();
+    this.playWind();
+    this.playStrike();
+    this.playShimmer();
+    this.playOraclePad();
+    // Only add water drip on deep mine pages
+    if (context === 'deep' || context === 'oracle' || context === 'vigil') {
+      this.playWaterDrip();
+    }
+    // Tora gets a slightly higher shimmer frequency (more ethereal)
+    if (context === 'tora') {
+      this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
+    }
+  },
+
+  stop() {
+    if (!this.running) return;
+    this.running = false;
+    if (this.masterGain) {
+      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
+    }
+  },
+
+  toggle() {
+    if (this.running) { this.stop(); return false; }
+    else { this.startAll(window.NMN_CONTEXT || 'mine'); return true; }
+  }
+};
+
+// Trigger on first interaction — browser autoplay policy requires user gesture
+document.addEventListener('click', () => {
+  if (!NMN_Audio.running) NMN_Audio.startAll(window.NMN_CONTEXT || 'mine');
+}, { once: true });
+
+</script>
+
+<button id="nmn-sound-btn" onclick="
+  const on = NMN_Audio.toggle();
+  this.textContent = on ? '🔊 Sound On' : '🔇 Sound Off';
+  this.style.color = on ? 'var(--gold,#c9962a)' : '#4a3c28';
+" style="position:fixed;bottom:42px;right:.75rem;z-index:998;background:rgba(12,10,7,.9);border:1px solid rgba(255,215,0,.2);color:#4a3c28;font-family:Josefin Sans,sans-serif;font-size:.42rem;letter-spacing:.1em;padding:.35rem .6rem;cursor:pointer;transition:all .3s">🔇 Sound Off</button>
+<script id="nmn-glow">
+(function(){
+  var r=document.createElement('div');
+  r.id='pickaxe-glow';
+  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
+  document.body.appendChild(r);
+  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
+  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
+  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
+})();
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js', {scope:'/'})
+    .then(function(reg){ console.log('NMN SW registered'); })
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poison Ivy's Tunnel — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28;--green:#4a8a3a;--lg:#6aaa4a;--dg:#2a5a1a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);background:#070a05;color:var(--cream);min-height:100vh;overflow-x:hidden;padding-bottom:50px}
+
+/* TUNNEL ENTRANCE */
+.tunnel-entrance{position:relative;text-align:center;padding:3rem 2rem 2rem;overflow:hidden;background:linear-gradient(to bottom,#050804,#0a0f07)}
+.vines-top{position:absolute;top:0;left:0;right:0;height:60px;display:flex;justify-content:space-around;align-items:flex-start;pointer-events:none}
+.vine{font-size:1.5rem;animation:vineHang 3s ease-in-out infinite}
+.vine:nth-child(2){animation-delay:.5s}.vine:nth-child(3){animation-delay:1s}.vine:nth-child(4){animation-delay:1.5s}.vine:nth-child(5){animation-delay:2s}.vine:nth-child(6){animation-delay:.25s}.vine:nth-child(7){animation-delay:.75s}
+@keyframes vineHang{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+.tunnel-label{font-size:.52rem;letter-spacing:.4em;text-transform:uppercase;color:var(--dg);margin-bottom:.75rem;margin-top:1.5rem}
+.tunnel-title{font-family:var(--font-serif);font-size:clamp(2rem,6vw,4rem);color:var(--cream);line-height:1;margin-bottom:.5rem}
+.tunnel-title em{color:var(--lg);font-style:italic;display:block}
+.tunnel-warning{font-size:.62rem;letter-spacing:.1em;color:#4a7a3a;font-style:italic;font-family:var(--font-serif);margin-bottom:.5rem}
+.tunnel-dedication{font-family:var(--font-serif);font-style:italic;font-size:.9rem;color:var(--gd);max-width:480px;margin:.75rem auto 0;line-height:1.8;padding:.75rem;border:1px solid rgba(106,170,74,.1)}
+
+/* NAV */
+header{padding:.8rem 2rem;border-bottom:1px solid rgba(106,170,74,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(7,10,5,.97);position:sticky;top:0;z-index:10}
+.logo{font-family:var(--font-serif);font-style:italic;color:var(--lg);font-size:1rem;text-decoration:none}
+.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.back:hover{color:var(--lg)}
+
+/* EXPERIENCES GRID */
+main{max-width:900px;margin:0 auto;padding:2rem 1.5rem}
+.section-tag{font-size:.52rem;letter-spacing:.35em;text-transform:uppercase;color:var(--dg);margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem}
+.section-tag::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(106,170,74,.2),transparent)}
+
+.ivy-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:rgba(106,170,74,.08);border:1px solid rgba(106,170,74,.1);margin-bottom:2rem}
+.ivy-card{padding:1.75rem 1.5rem;background:#070a05;text-decoration:none;display:block;transition:all .3s;position:relative;overflow:hidden}
+.ivy-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(to right,transparent,var(--lg),transparent);transform:scaleX(0);transition:transform .4s}
+.ivy-card:hover{background:rgba(74,138,58,.06);transform:translateY(-3px)}
+.ivy-card:hover::after{transform:scaleX(1)}
+.ivy-card.coming{opacity:.65;cursor:default;pointer-events:none}
+.ivy-card.coming:hover{transform:none;background:#070a05}
+.card-icon{font-size:2rem;display:block;margin-bottom:.85rem}
+.card-type{font-size:.48rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dg);margin-bottom:.4rem}
+.card-name{font-family:var(--font-serif);font-size:1.4rem;color:var(--cream);margin-bottom:.5rem;line-height:1.1}
+.card-name em{color:var(--lg);font-style:italic}
+.card-desc{font-size:.7rem;color:var(--muted);line-height:1.8;margin-bottom:.75rem}
+.card-status{font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;display:inline-block;padding:.2rem .6rem;border:1px solid}
+.status-live{color:var(--lg);border-color:rgba(106,170,74,.3)}
+.status-soon{color:var(--gd);border-color:rgba(122,90,24,.3)}
+
+/* IVY NOTE */
+.ivy-signed{text-align:center;margin:2rem 0;padding:1.25rem;border:1px solid rgba(106,170,74,.12);background:rgba(74,138,58,.03)}
+.ivy-signed p{font-family:var(--font-serif);font-style:italic;color:var(--lg);font-size:.95rem;line-height:1.8}
+.ivy-signed small{font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);display:block;margin-top:.5rem}
+
+/* DEPTH GAUGE */
+.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:34px;background:rgba(7,10,5,.97);border-top:1px solid rgba(106,170,74,.2);display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:999;padding:0 1rem}
+.dg-stat{display:flex;align-items:center;gap:.3rem;font-size:.4rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+.dg-val{font-family:var(--font-serif);font-size:.8rem;color:var(--lg)}
+.dg-sep{color:var(--faint)}
+.dg-link{font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-decoration:none}
+.dg-link:hover{color:var(--lg)}
+</style>
+
+<style id="nmn-cursor">
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
+</style>
+<style id="floating-gauge">
+.depth-gauge{
+  position:fixed!important;bottom:12px!important;left:50%!important;
+  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
+  height:42px!important;background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
+  padding:0 18px!important;pointer-events:none!important;
+  z-index:9999!important;backdrop-filter:blur(4px)!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:1.2rem!important;flex-wrap:nowrap!important;
+  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
+body{padding-bottom:65px!important}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+<script>(function(s){s.dataset.zone='10763810',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+<header>
+  <a href="index.html" class="logo">NMN — Lord Oro</a>
+  <a href="index.html" class="back">← Return to the Mine</a>
+</header>
+
+<div class="tunnel-entrance">
+  <div class="vines-top">
+    <span class="vine">🌿</span><span class="vine">🍃</span><span class="vine">🌿</span>
+    <span class="vine">🍃</span><span class="vine">🌿</span><span class="vine">🍃</span><span class="vine">🌿</span>
+  </div>
+  <div class="tunnel-label">Nonsense Media Network — Section Six</div>
+  <h1 class="tunnel-title">Poison <em>Ivy's Tunnel</em></h1>
+  <div class="tunnel-warning">⚠ You had to crawl through the vines to get here. Ivy says that means you're worth talking to.</div>
+  <div class="tunnel-dedication">"For Ivy Martin — who bought every expansion pack not to win, but because she wanted more world to live in." — Lord Oro</div>
+</div>
+
+<main>
+  <div class="section-tag">🌿 Live Now — Ivy's Corner</div>
+  <div class="ivy-grid">
+
+    <a href="gemshop.html" class="ivy-card">
+      <span class="card-icon">💎</span>
+      <div class="card-type">Match-3 Puzzle</div>
+      <div class="card-name">Ivy's <em>Gemstone Shop</em></div>
+      <div class="card-desc">Match gems to earn gold. Seven gem types each with birthstone powers. Four power-ups. Special moves. Daily gem display. Ivy named this shop herself — she runs it her way.</div>
+      <span class="card-status status-live">Live Now</span>
+    </a>
+
+    <a href="gemslots.html" class="ivy-card">
+      <span class="card-icon">🎰</span>
+      <div class="card-type">Gem Slots & Identity</div>
+      <div class="card-name">The Gem <em>Slots</em></div>
+      <div class="card-desc">Pull the lever. Three gem reels spin. Three of a kind reveals your Gem Identity — what stone you are, what it means, what the mine has been keeping for you. Ivy says: don't play to win. Play to find out.</div>
+      <span class="card-status status-live">Live Now</span>
+    </a>
+
+    <a href="apothecary.html" class="ivy-card">
+      <span class="card-icon">🌿</span>
+      <div class="card-type">Gem Healing & Mood Matching</div>
+      <div class="card-name">Ivy's <em>Apothecary</em></div>
+      <div class="card-desc">Tell the mine how you're feeling. One word is enough. The mine finds the gemstone that matches what you're carrying — its healing property, how to use it, what Lord Oro would say, and what Ivy has on the shelf for exactly this.</div>
+      <span class="card-status status-live">Live Now</span>
+    </a>
+
+    <a href="grimoire.html" class="ivy-card">
+      <span class="card-icon">🐾</span>
+      <div class="card-type">Sacred Archive — 14 Chapters</div>
+      <div class="card-name">Eskanar's <em>Grimoire</em></div>
+      <div class="card-desc">Named for Tara's cat. A record of fourteen cats who changed history — from the temples of Egypt to the streets of London, from space to the Ottoman Empire. Lord Oro wrote a poem for each one. Two chapters are earned. One page at the end is yours.</div>
+      <span class="card-status status-live">Live Now — Named for Eskanar</span>
+    </a>
+
+  </div>
+
+  <a href="ivysmine.html" class="ivy-card">
+      <span class="card-icon">🏠</span>
+      <div class="card-type">Life Simulation — No Objectives</div>
+      <div class="card-name">Ivy's <em>Mine</em></div>
+      <div class="card-desc">No win screen. No objectives. No end. Build your character, furnish your shaft apartment, visit Ivy's shop, share a meal with Pip, let Tora read the stone. Lord Oro appears in your doorway when the mine decides. Just life in the mine — as long as you want to stay.</div>
+      <span class="card-status status-live">Live Now — Dedicated to Ivy Martin</span>
+    </a>
+
+    <div class="ivy-signed">
+    <p>"I remember when this whole shaft was just a crawl-space. Look at us now."</p>
+    <small>— Ivy Martin, Proprietor, Poison Ivy's Tunnel</small>
+  </div>
+</main>
+
+<div class="depth-gauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span>&nbsp;Gold</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span>&nbsp;Lore</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <a href="index.html" class="dg-link">⛏ The Mine</a>
+</div>
+<script>
+try{
+  document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+  document.getElementById('dgGold').textContent=localStorage.getItem('nmn_total_gold')||'0';
+}catch(e){}
+</script>
+<script id="nmn-glow">
+(function(){
+  var r=document.createElement('div');
+  r.id='pickaxe-glow';
+  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
+  document.body.appendChild(r);
+  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
+  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
+  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
+})();
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js', {scope:'/'})
+    .then(function(reg){ console.log('NMN SW registered'); })
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>

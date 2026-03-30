@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ivy's Gemstone Shop — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28}
+*{margin:0;padding:0;box-sizing:border-box;user-select:none}
+body{font-family:var(--font-sans);background:var(--coal);color:var(--cream);min-height:100vh;background-image:linear-gradient(135deg,#0c0a07 25%,#110e0a 75%)}
+header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(12,10,7,.95)}
+.logo{font-family:var(--font-pixel);color:var(--gold);font-size:.5rem;text-decoration:none;text-shadow:0 0 15px rgba(255,215,0,.4);letter-spacing:1px}
+.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.back:hover{color:var(--gold)}
+
+/* SHOP HEADER */
+.shop-title{text-align:center;padding:1.5rem 1rem .5rem}
+.shop-name{font-family:var(--font-serif);font-size:2rem;color:var(--cream)}
+.shop-name em{color:var(--gold);font-style:italic}
+.shop-sub{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd);margin-top:.3rem}
+.ivy-note{font-family:var(--font-serif);font-style:italic;font-size:.8rem;color:var(--muted);margin:.4rem 0 .75rem}
+
+/* HUD */
+.hud{display:flex;justify-content:center;gap:1.5rem;padding:.5rem 1rem;background:rgba(255,215,0,.04);border-top:1px solid rgba(255,215,0,.1);border-bottom:1px solid rgba(255,215,0,.1);flex-wrap:wrap}
+.hud-cell{text-align:center}
+.hud-val{font-family:var(--font-serif);font-size:1.4rem;color:var(--gold);line-height:1}
+.hud-lab{font-size:.42rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-top:.15rem}
+.level-bar{width:120px;height:4px;background:rgba(255,215,0,.15);border-radius:2px;margin:.3rem auto 0}
+.level-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .4s}
+
+/* POWER-UP TRAY */
+.powerup-tray{display:flex;justify-content:center;gap:.5rem;padding:.5rem 1rem;flex-wrap:wrap}
+.pu-btn{padding:.35rem .7rem;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid;background:transparent;cursor:pointer;transition:all .25s;font-family:var(--font-sans)}
+.pu-btn:hover:not(:disabled){transform:translateY(-2px)}
+.pu-btn:disabled{opacity:.35;cursor:default}
+.pu-hammer{border-color:#cc6633;color:#ff8855}.pu-hammer:hover:not(:disabled){background:rgba(204,102,51,.15)}
+.pu-lightning{border-color:#ddcc44;color:#ffee66}.pu-lightning:hover:not(:disabled){background:rgba(221,204,68,.15)}
+.pu-bomb{border-color:#886699;color:#bb99cc}.pu-bomb:hover:not(:disabled){background:rgba(136,102,153,.15)}
+.pu-magnet{border-color:var(--gold);color:var(--gb)}.pu-magnet:hover:not(:disabled){background:rgba(255,215,0,.12)}
+
+/* BOARD */
+.board-wrap{display:flex;justify-content:center;padding:.75rem;position:relative}
+#board{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;background:rgba(255,215,0,.08);border:2px solid rgba(255,215,0,.2);padding:2px;max-width:440px;width:100%}
+.cell{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:clamp(1.2rem,4vw,1.8rem);cursor:pointer;transition:transform .12s,box-shadow .12s;position:relative;background:rgba(255,255,255,.03)}
+.cell:hover{transform:scale(1.08)}
+.cell.selected{box-shadow:0 0 0 3px var(--gold),0 0 12px rgba(255,215,0,.5);transform:scale(1.12);z-index:2}
+.cell.matched{animation:gemPop .3s ease forwards}
+.cell.falling{animation:gemFall .2s ease forwards}
+.cell.special::after{content:'★';position:absolute;top:1px;right:2px;font-size:.45rem;color:var(--gb)}
+@keyframes gemPop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(0);opacity:0}}
+@keyframes gemFall{from{transform:translateY(-40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.cell.hint{animation:hintPulse .5s ease-in-out 3}
+@keyframes hintPulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 3px rgba(232,184,75,.6)}}
+
+/* COMBO FLASH */
+.combo-flash{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;font-family:var(--font-serif);font-style:italic;font-size:2rem;color:var(--gb);text-shadow:0 0 20px rgba(232,184,75,.8);opacity:0;z-index:10;white-space:nowrap}
+.combo-flash.show{animation:comboAnim .8s ease forwards}
+@keyframes comboAnim{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}30%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}70%{opacity:1;transform:translate(-50%,-60%) scale(1)}100%{opacity:0;transform:translate(-50%,-70%) scale(.8)}}
+
+/* MESSAGES */
+.msg-bar{text-align:center;min-height:1.8rem;padding:.3rem 1rem;font-family:var(--font-serif);font-style:italic;font-size:.9rem;color:var(--gold)}
+
+/* OVERLAY */
+.overlay{display:none;position:fixed;inset:0;background:rgba(3,2,1,.9);z-index:50;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:2rem}
+.overlay.show{display:flex}
+.ov-title{font-family:var(--font-serif);font-size:2.5rem;color:var(--cream);margin-bottom:.5rem}
+.ov-title em{color:var(--gold);font-style:italic}
+.ov-sub{font-size:.72rem;color:var(--muted);line-height:1.9;margin-bottom:1.5rem;max-width:400px}
+.ov-stats{font-size:.62rem;color:var(--gd);margin-bottom:1.5rem;line-height:2}
+.ov-btn{padding:.8rem 2rem;font-family:var(--font-sans);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:all .3s;margin:.25rem}
+.ov-btn:hover{background:rgba(255,215,0,.1)}
+.ov-btn.primary{background:var(--gold);color:var(--coal)}
+.ov-btn.primary:hover{background:var(--gb)}
+
+/* DEPTH GAUGE */
+.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:34px;background:rgba(12,10,7,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:999;padding:0 1rem}
+.dg-stat{display:flex;align-items:center;gap:.3rem;font-size:.4rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+.dg-val{font-family:var(--font-serif);font-size:.8rem;color:var(--gold)}
+.dg-sep{color:var(--faint)}
+.dg-link{font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-decoration:none}
+.dg-link:hover{color:var(--gold)}
+
+/* LORE TOAST — non-disruptive, corner notification */
+.lore-toast{position:fixed;bottom:50px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(12,10,7,.92);border:1px solid rgba(255,215,0,.3);border-left:3px solid var(--gold,#c9962a);padding:.6rem 1rem;max-width:280px;width:90%;z-index:500;opacity:0;transition:opacity .4s,transform .4s;pointer-events:none;font-family:var(--font-sans)}
+.lore-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.lore-toast-label{font-size:.38rem;letter-spacing:.2em;text-transform:uppercase;color:#7a5a18;margin-bottom:.25rem}
+.lore-toast-text{font-size:.58rem;color:#f0e6cc;line-height:1.6;font-style:italic}.lore-toast-text strong{font-style:normal}
+</style>
+
+<style id="nmn-cursor">
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
+</style>
+<style id="gemini-viewport">
+.mining-frame{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-height:85vh;margin:0 auto;overflow:hidden}
+canvas{max-width:95%;height:auto!important}
+.active-glow{animation:pulseGold 2s infinite;color:#fff!important;text-shadow:0 0 10px #c9962a}
+@keyframes pulseGold{0%{opacity:.7}50%{opacity:1}100%{opacity:.7}}
+</style>
+<style id="floating-gauge">
+.depth-gauge{
+  position:fixed!important;bottom:12px!important;left:50%!important;
+  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
+  height:42px!important;background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
+  padding:0 18px!important;pointer-events:none!important;
+  z-index:9999!important;backdrop-filter:blur(4px)!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:1.2rem!important;flex-wrap:nowrap!important;
+  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
+body{padding-bottom:65px!important}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+<script>(function(s){s.dataset.zone='10763810',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+<header>
+  <a href="index.html" class="logo">NMN — Lord Oro</a>
+  <a href="games.html" class="back">← Recreation Hall</a>
+</header>
+
+<div class="shop-title">
+  <div class="shop-name">Ivy's <em>Gemstone Shop</em></div>
+  <div class="shop-sub">Named by Ivy May — She Runs It Her Way</div>
+  <div class="ivy-note">"For Ivy, and for Marcus, and for the 3D printer that started all of this."</div>
+</div>
+
+
+  <div id="ivyMessage" style="text-align:center;padding:.75rem 1rem;background:rgba(106,170,74,.04);border-bottom:1px solid rgba(106,170,74,.1)">
+    <div style="font-family:var(--font-serif);font-style:italic;font-size:.85rem;color:#6aaa4a;margin-bottom:.25rem">"For Ivy Martin — who bought every expansion pack not to win, but because she wanted more world to live in."</div>
+    <div id="dailyGem" style="font-size:.58rem;letter-spacing:.1em;color:#8a7654;display:none"></div>
+  </div>
+<div class="hud">
+  <div class="hud-cell"><div class="hud-val" id="scoreVal">0</div><div class="hud-lab">Score</div></div>
+  <div class="hud-cell"><div class="hud-val" id="goldVal">0</div><div class="hud-lab">⬡ Gold</div></div>
+  <div class="hud-cell"><div class="hud-val" id="movesVal">20</div><div class="hud-lab">Moves Left</div></div>
+  <div class="hud-cell"><div class="hud-val" id="levelVal">1</div><div class="hud-lab">Level</div>
+    <div class="level-bar"><div class="level-fill" id="levelFill" style="width:0%"></div></div>
+  </div>
+  <div class="hud-cell"><div class="hud-val" id="comboVal">×1</div><div class="hud-lab">Combo</div></div>
+</div>
+
+<div class="powerup-tray">
+  <button class="pu-btn pu-hammer" id="puHammer" onclick="activatePower('hammer')" title="Smash any gem">⚒ Hammer <span id="hammerCount">(3)</span></button>
+  <button class="pu-btn pu-lightning" id="puLightning" onclick="activatePower('lightning')" title="Clear whole row">⚡ Lightning <span id="lightningCount">(2)</span></button>
+  <button class="pu-btn pu-bomb" id="puBomb" onclick="activatePower('bomb')" title="3×3 explosion">💥 Bomb <span id="bombCount">(2)</span></button>
+  <button class="pu-btn pu-magnet" id="puMagnet" onclick="activatePower('magnet')" title="Collect all of one gem">🧲 Magnet <span id="magnetCount">(1)</span></button>
+</div>
+
+<div class="msg-bar" id="msgBar">Match 3 or more to earn gold. Swap adjacent gems.</div>
+
+<div class="board-wrap">
+  <canvas class="combo-flash" id="comboFlash"></canvas>
+  <div id="board"></div>
+  <div class="combo-flash" id="comboFlashDiv"></div>
+</div>
+
+<!-- START OVERLAY -->
+<div class="overlay show" id="startOv">
+  <div class="ov-title">Ivy's <em>Gemstone Shop</em></div>
+  <div class="ov-sub">Match 3 or more gems to earn gold. Build combos. Use power-ups. Every gem you match feeds Lord Oro's mine. Ivy named this shop herself — she runs it her way.</div>
+  <div class="ov-sub" style="font-size:.6rem;color:var(--gd)">💎 Gold = double points &nbsp;|&nbsp; 💜 Amethyst = combo boost &nbsp;|&nbsp; ❤️ Ruby = score boost &nbsp;|&nbsp; 💙 Sapphire = extra moves &nbsp;|&nbsp; 💚 Emerald = power-up refill &nbsp;|&nbsp; 🤍 Diamond = 3× everything</div>
+  <button class="ov-btn primary" onclick="startGame()">⬡ Open the Shop</button>
+</div>
+
+<!-- GAME OVER -->
+<div class="overlay" id="gameOv">
+  <div class="ov-title">Shop <em>Closed</em></div>
+  <div class="ov-stats" id="gameStats"></div>
+  <button class="ov-btn" onclick="shareScore(score, `Ivy's Gemstone Shop`)">⬡ Share My Score</button>
+  <button class="ov-btn primary" onclick="restartGame()">⬡ Reopen the Shop</button>
+  <a href="games.html" class="ov-btn">← Back to the Hall</a>
+</div>
+
+<!-- LEVEL COMPLETE -->
+<div class="overlay" id="levelOv">
+  <div class="ov-title" id="levelTitle">Level <em>Complete!</em></div>
+  <div class="ov-stats" id="levelStats"></div>
+  <button class="ov-btn primary" onclick="nextLevel()">⬡ Next Level</button>
+</div>
+
+<div class="depth-gauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span>&nbsp;Gold</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span>&nbsp;Lore</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
+</div>
+
+
+<script id="nmn-bridge">
+(function(){
+  try{
+    if(!localStorage.getItem('nmn_collector_v2'))
+      localStorage.setItem('nmn_collector_v2',JSON.stringify({G:{team:[],grimoire:{},starter:null,activeIdx:0,gold:0,clearedZones:['surface'],battles:0}}));
+    if(!localStorage.getItem('nmn_total_gold'))
+      localStorage.setItem('nmn_total_gold','0');
+  }catch(e){}
+})();
+</script>
+<script>
+const GEMS = ['💎','💜','❤️','💙','💚','🤍','🔶'];
+const GEM_NAMES = {
+  '💎':'Gold Diamond','💜':'Amethyst','❤️':'Ruby','💙':'Sapphire','💚':'Emerald','🤍':'White Diamond','🔶':'Amber Ore'
+};
+const GEM_POINTS = {'💎':200,'💜':80,'❤️':100,'💙':70,'💚':90,'🤍':300,'🔶':60};
+const BOARD_SIZE = 8;
+
+let board=[], selected=null, score=0, gold=0, moves=20, level=1, combo=1;
+let levelTarget=500, activePower=null, processing=false;
+let powers={hammer:3,lightning:2,bomb:2,magnet:1};
+
+function rand(arr){return arr[Math.floor(Math.random()*arr.length)]}
+
+function makeBoard(){
+  board=[];
+  for(let r=0;r<BOARD_SIZE;r++){
+    board[r]=[];
+    for(let c=0;c<BOARD_SIZE;c++){
+      let gem;
+      do{gem=rand(GEMS)}
+      while((c>=2&&board[r][c-1]===gem&&board[r][c-2]===gem)||
+            (r>=2&&board[r-1]&&board[r-1][c]===gem&&board[r-2]&&board[r-2][c]===gem));
+      board[r][c]=gem;
+    }
+  }
+}
+
+function renderBoard(){
+  const el=document.getElementById('board');
+  el.innerHTML='';
+  for(let r=0;r<BOARD_SIZE;r++){
+    for(let c=0;c<BOARD_SIZE;c++){
+      const cell=document.createElement('div');
+      cell.className='cell';
+      cell.textContent=board[r][c]||'';
+      cell.dataset.r=r;cell.dataset.c=c;
+      if(selected&&selected.r===r&&selected.c===c)cell.classList.add('selected');
+      cell.addEventListener('click',()=>handleClick(r,c));
+      el.appendChild(cell);
+    }
+  }
+}
+
+function handleClick(r,c){
+  if(processing||moves<=0)return;
+  
+  // Power-up mode
+  if(activePower){
+    applyPower(r,c);
+    return;
+  }
+  
+  if(!selected){
+    selected={r,c};
+    renderBoard();
+    return;
+  }
+  
+  const dr=Math.abs(r-selected.r),dc=Math.abs(c-selected.c);
+  if(dr+dc===1){
+    // Adjacent swap
+    swapAndCheck(selected.r,selected.c,r,c);
+  } else {
+    selected={r,c};
+  }
+  renderBoard();
+}
+
+function swapAndCheck(r1,c1,r2,c2){
+  processing=true;
+  selected=null;
+  // Swap
+  [board[r1][c1],board[r2][c2]]=[board[r2][c2],board[r1][c1]];
+  renderBoard();
+  
+  const matched=findMatches();
+  if(matched.length===0){
+    // Invalid swap - swap back
+    setTimeout(()=>{
+      [board[r1][c1],board[r2][c2]]=[board[r2][c2],board[r1][c1]];
+      renderBoard();
+      processing=false;
+      setMsg('No match — try again.');
+    },300);
+    combo=1;updateHUD();
+    return;
+  }
+  
+  moves--;
+  processMatches(matched);
+}
+
+function findMatches(){
+  const matched=new Set();
+  // Horizontal
+  for(let r=0;r<BOARD_SIZE;r++){
+    for(let c=0;c<BOARD_SIZE-2;c++){
+      if(board[r][c]&&board[r][c]===board[r][c+1]&&board[r][c]===board[r][c+2]){
+        let l=c;
+        while(l<BOARD_SIZE&&board[r][l]===board[r][c])l++;
+        for(let i=c;i<l;i++)matched.add(`${r},${i}`);
+      }
+    }
+  }
+  // Vertical
+  for(let c=0;c<BOARD_SIZE;c++){
+    for(let r=0;r<BOARD_SIZE-2;r++){
+      if(board[r][c]&&board[r][c]===board[r+1][c]&&board[r][c]===board[r+2][c]){
+        let l=r;
+        while(l<BOARD_SIZE&&board[l][c]===board[r][c])l++;
+        for(let i=r;i<l;i++)matched.add(`${i},${c}`);
+      }
+    }
+  }
+  return [...matched].map(k=>{const[r,c]=k.split(',');return{r:+r,c:+c}});
+}
+
+function processMatches(matched){
+  if(matched.length===0){
+    // Check level complete
+    if(score>=levelTarget){
+      showLevelComplete();
+      return;
+    }
+    if(moves<=0){gameOver();return;}
+    combo=1;updateHUD();
+    processing=false;
+    checkHint();
+    return;
+  }
+  
+  // Score the matches
+  const matchSize=matched.length;
+  // Birthstone fact every 3rd match
+  if(Math.floor(score/200) > Math.floor((score-matchSize*50)/200) && matched[0]) showBirthstoneFact(board[matched[0].r] ? board[matched[0].r][matched[0].c] : null);
+  let pts=0;
+  matched.forEach(({r,c})=>{
+    const gem=board[r][c];
+    const base=GEM_POINTS[gem]||50;
+    pts+=base*combo;
+    
+    // Special gem effects
+    if(gem==='💜'){combo=Math.min(combo+1,8)}  // Amethyst: boost combo
+    if(gem==='💙'){moves=Math.min(moves+1,99)}  // Sapphire: extra move
+    if(gem==='💚'&&Object.keys(powers).some(k=>powers[k]<3)){  // Emerald: refill power
+      const k=Object.keys(powers).find(k=>powers[k]<3);
+      if(k)powers[k]++;
+    }
+  });
+  
+  if(matchSize>=5){ pts*=2; checkSpecialMove(matchSize, matched[0] && board[matched[0].r] ? board[matched[0].r][matched[0].c] : '💎'); }
+  if(matchSize>=4) setMsg(`${matchSize}+ match! Bonus!`);
+  
+  // Diamond special: triple everything
+  if(matched.some(({r,c})=>board[r][c]==='🤍')) pts*=3;
+  
+  score+=pts;
+  gold+=Math.floor(pts/10);
+  
+  // Show combo flash
+  if(combo>1){
+    const cf=document.getElementById('comboFlashDiv');
+    cf.textContent=combo>=5?`★ ${combo}× COMBO! ★`:`${combo}× Combo!`;
+    cf.classList.add('show');
+    setTimeout(()=>cf.classList.remove('show'),800);
+  }
+  
+  updateHUD();
+  
+  // Animate and remove
+  matched.forEach(({r,c})=>{
+    const idx=r*BOARD_SIZE+c;
+    const cells=document.getElementById('board').children;
+    if(cells[idx])cells[idx].classList.add('matched');
+    board[r][c]=null;
+  });
+  
+  setTimeout(()=>{
+    gravity();
+    refill();
+    renderBoard();
+    combo++;
+    const newMatches=findMatches();
+    if(newMatches.length>0){
+      setTimeout(()=>processMatches(newMatches),400);
+    } else {
+      processMatches([]);
+    }
+  },350);
+}
+
+function gravity(){
+  for(let c=0;c<BOARD_SIZE;c++){
+    let empty=BOARD_SIZE-1;
+    for(let r=BOARD_SIZE-1;r>=0;r--){
+      if(board[r][c]!==null){
+        board[empty][c]=board[r][c];
+        if(empty!==r)board[r][c]=null;
+        empty--;
+      }
+    }
+    while(empty>=0){board[empty--][c]=null;}
+  }
+}
+
+function refill(){
+  for(let r=0;r<BOARD_SIZE;r++)
+    for(let c=0;c<BOARD_SIZE;c++)
+      if(!board[r][c])board[r][c]=rand(GEMS);
+}
+
+function applyPower(r,c){
+  const p=activePower;
+  activePower=null;
+  document.querySelectorAll('.pu-btn').forEach(b=>b.style.boxShadow='');
+  
+  if(p==='hammer'){
+    powers.hammer--;
+    const matched=[{r,c}];
+    setMsg(`💥 Hammer smashed ${board[r][c]}!`);
+    processMatches(matched);
+  } else if(p==='lightning'){
+    powers.lightning--;
+    const matched=[];
+    for(let cc=0;cc<BOARD_SIZE;cc++)matched.push({r,c:cc});
+    setMsg('⚡ Lightning cleared the whole row!');
+    processMatches(matched);
+  } else if(p==='bomb'){
+    powers.bomb--;
+    const matched=[];
+    for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){
+      const nr=r+dr,nc=c+dc;
+      if(nr>=0&&nr<BOARD_SIZE&&nc>=0&&nc<BOARD_SIZE)matched.push({r:nr,c:nc});
+    }
+    setMsg('💥 Bomb blasted a 3×3 area!');
+    processMatches(matched);
+  } else if(p==='magnet'){
+    powers.magnet--;
+    const target=board[r][c];
+    const matched=[];
+    for(let rr=0;rr<BOARD_SIZE;rr++)for(let cc=0;cc<BOARD_SIZE;cc++)
+      if(board[rr][cc]===target)matched.push({r:rr,c:cc});
+    setMsg(`🧲 Magnet collected all ${GEM_NAMES[target]}s!`);
+    processMatches(matched);
+  }
+  updateHUD();
+}
+
+function activatePower(p){
+  if(powers[p]<=0)return;
+  if(activePower===p){activePower=null;document.querySelectorAll('.pu-btn').forEach(b=>b.style.boxShadow='');setMsg('Power-up cancelled.');return;}
+  activePower=p;
+  document.querySelectorAll('.pu-btn').forEach(b=>b.style.boxShadow='');
+  document.querySelector(`.pu-${p}`).style.boxShadow='0 0 0 2px var(--gold),0 0 12px rgba(255,215,0,.4)';
+  const names={hammer:'Tap any gem to smash it',lightning:'Tap any gem to clear its row',bomb:'Tap center to explode 3×3',magnet:'Tap a gem type to collect all of them'};
+  setMsg(`${names[p]}`);
+}
+
+function updateHUD(){
+  document.getElementById('scoreVal').textContent=score.toLocaleString();
+  document.getElementById('goldVal').textContent=gold;
+  document.getElementById('movesVal').textContent=moves;
+  document.getElementById('levelVal').textContent=level;
+  document.getElementById('comboVal').textContent=`×${combo}`;
+  document.getElementById('levelFill').style.width=Math.min(100,score/levelTarget*100)+'%';
+  ['hammer','lightning','bomb','magnet'].forEach(p=>{
+    document.getElementById(p+'Count').textContent=`(${powers[p]})`;
+    document.getElementById('pu'+p.charAt(0).toUpperCase()+p.slice(1)).disabled=powers[p]<=0;
+  });
+  // Save gold to mine
+  try{localStorage.setItem('nmn_total_gold',(parseInt(localStorage.getItem('nmn_total_gold')||0)+gold).toString())}catch(e){}
+  try{document.getElementById('dgGold').textContent=localStorage.getItem('nmn_total_gold')||0}catch(e){}
+}
+
+function checkHint(){
+  // Find first valid move and briefly highlight it after 5s idle
+}
+
+function setMsg(m){document.getElementById('msgBar').textContent=m}
+
+function showLevelComplete(){
+  processing=false;
+  document.getElementById('levelTitle').innerHTML=`Level ${level} <em>Complete!</em>`;
+  document.getElementById('levelStats').innerHTML=`Score: ${score.toLocaleString()}<br>Gold Earned: ${gold}<br>Moves Remaining: ${moves}<br>Combo Peak: ×${combo-1}`;
+  document.getElementById('levelOv').classList.add('show');
+  // Save lore
+  try{const v=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]');v.push({text:`Cleared Level ${level} in Ivy's Gemstone Shop with ${score} points.`,source:"Ivy's Gemstone Shop",date:new Date().toLocaleDateString()});localStorage.setItem('nmn_lore_vault',JSON.stringify(v))}catch(e){}
+}
+
+function nextLevel(){
+  document.getElementById('levelOv').classList.remove('show');
+  level++;
+  levelTarget=Math.floor(levelTarget*1.6);
+  moves=18+Math.floor(level/2);
+  combo=1;
+  // Add power-up for completing level
+  if(level%2===0)powers.hammer++;
+  if(level%3===0)powers.bomb++;
+  makeBoard();
+  renderBoard();
+  updateHUD();
+  setMsg(`Level ${level}! Target: ${levelTarget.toLocaleString()} points.`);
+}
+
+function gameOver(){
+  processing=false;
+  document.getElementById('gameStats').innerHTML=`Level ${level}<br>Final Score: ${score.toLocaleString()}<br>Gold Collected: ${gold}<br>Ivy says: "${score>1000?"You honor the shop.":score>300?"Not bad, miner.":"The gems have more patience than you."}"`;
+  document.getElementById('gameOv').classList.add('show');
+}
+
+function restartGame(){
+  document.getElementById('gameOv').classList.remove('show');
+  score=0;gold=0;moves=20;level=1;combo=1;levelTarget=500;activePower=null;
+  powers={hammer:3,lightning:2,bomb:2,magnet:1};
+  makeBoard();renderBoard();updateHUD();setMsg('Match 3 or more gems to earn gold.');
+}
+
+function startGame(){
+  document.getElementById('startOv').classList.remove('show');
+  showDailyGem();
+  makeBoard();renderBoard();updateHUD();
+}
+
+
+function shareScore(score, game, extra) {
+  const text = extra || `I just scored ${score} in ${game} on Lord Oro's mine! 🏔️ nonsensemedianetwork.com`;
+  const url = 'https://nonsensemedianetwork.com';
+  
+  // Native share sheet on mobile (iOS/Android)
+  if(navigator.share) {
+    navigator.share({ title: game + ' — NMN', text: text, url: url })
+      .catch(()=>{});
+    return;
+  }
+  
+  // Desktop fallback — show share panel
+  const panel = document.getElementById('sharePanel');
+  if(panel) { panel.style.display='flex'; return; }
+  
+  const p = document.createElement('div');
+  p.id = 'sharePanel';
+  p.style.cssText = 'position:fixed;inset:0;background:rgba(3,2,1,.92);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem';
+  p.innerHTML = `
+    <div style="background:#1a1208;border:1px solid rgba(255,215,0,.3);padding:2rem;max-width:400px;width:100%;text-align:center">
+      <div style="font-family:Cormorant Garamond,serif;font-style:italic;font-size:1.3rem;color:#e8b84b;margin-bottom:.5rem">${game}</div>
+      <div style="font-size:.65rem;color:#8a7654;margin-bottom:1.5rem;line-height:1.8">${text}</div>
+      <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem">
+        <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}" target="_blank"
+           style="padding:.65rem;background:#1da1f2;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
+          𝕏 Share on X / Twitter
+        </a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}" target="_blank"
+           style="padding:.65rem;background:#1877f2;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
+          Share on Facebook
+        </a>
+        <a href="https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}" target="_blank"
+           style="padding:.65rem;background:#ff4500;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
+          Post to Reddit
+        </a>
+        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(text+' '+url)}" target="_blank"
+           style="padding:.65rem;background:#25d366;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
+          Send on WhatsApp
+        </a>
+        <button onclick="navigator.clipboard.writeText('${text.replace(/'/g,"\'")} ${url}').then(()=>this.textContent='✓ Copied!')"
+           style="padding:.65rem;background:transparent;border:1px solid rgba(255,215,0,.3);color:#FFD700;font-family:Josefin Sans,sans-serif;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer">
+          Copy Link
+        </button>
+      </div>
+      <button onclick="document.getElementById('sharePanel').style.display='none'"
+        style="font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:#4a3c28;background:transparent;border:none;cursor:pointer;padding:.5rem">
+        Close
+      </button>
+    </div>`;
+  document.body.appendChild(p);
+}
+
+
+// ── BIRTHSTONE FACTS ─────────────────────────────────────────────────
+const BIRTHSTONES = {
+  '💎': { name:'Diamond', month:'April', fact:'Diamonds form 100 miles underground under extreme pressure. The hardest natural substance on Earth.', power:'Clarity & Invincibility', sign:'Aries' },
+  '💜': { name:'Amethyst', month:'February', fact:'Ancient Greeks believed amethyst prevented intoxication. Warriors wore it into battle for clear thinking.', power:'Calm & Wisdom', sign:'Aquarius' },
+  '❤️': { name:'Ruby', month:'July', fact:'Rubies are rarer than diamonds. The finest ones come from Myanmar and glow red under UV light like they\'re lit from within.', power:'Passion & Protection', sign:'Cancer' },
+  '💙': { name:'Sapphire', month:'September', fact:'Sapphires come in every color except red. The same mineral as ruby — just a different trace element.', power:'Loyalty & Truth', sign:'Virgo' },
+  '💚': { name:'Emerald', month:'May', fact:'Cleopatra was obsessed with emeralds. She claimed ownership of all emerald mines in Egypt.', power:'Growth & Fertility', sign:'Taurus' },
+  '🤍': { name:'White Diamond', month:'April', fact:'The largest diamond ever found was the Cullinan — 3,106 carats. It was cut into the British Crown Jewels.', power:'Purity & Enlightenment', sign:'Aries' },
+  '🔶': { name:'Amber Ore', month:'NMN Exclusive', fact:'Amber Ore exists only in Lord Oro\'s mine. Compressed from 10,000 years of buried stories. No market value. Infinite mine value.', power:'Memory & Time', sign:'All Signs' },
+};
+
+// Show birthstone fact as enhanced toast when matching a gem type
+function showBirthstoneFact(gemEmoji) {
+  const data = BIRTHSTONES[gemEmoji];
+  if(!data) return;
+  const t = document.getElementById('loreToast');
+  const tx = document.getElementById('loreToastText');
+  if(!t||!tx) return;
+  tx.innerHTML = `<strong style="color:#e8b84b">${data.name}</strong> — ${data.month} Stone<br><span style="font-size:.5rem;opacity:.8">${data.fact}</span>`;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 4500);
+}
+
+// Show today's birthstone on load
+function showDailyGem() {
+  const months = ['💎','💜','❤️','💎','💚','💜','❤️','💎','💙','💜','💙','💎'];
+  const todayGem = months[new Date().getMonth()];
+  const data = BIRTHSTONES[todayGem];
+  const el = document.getElementById('dailyGem');
+  if(el && data) {
+    el.innerHTML = `${todayGem} <span style="color:#e8b84b">${data.name}</span> — ${data.month}'s Stone — ${data.power}`;
+    el.style.display = 'block';
+  }
+}
+
+// ── SPECIAL MOVES ────────────────────────────────────────────────────
+// When you match 5+ gems: triggers a special move
+// When you match 3 of same type twice in a row: chain bonus
+
+function checkSpecialMove(matchSize, gemType) {
+  if(matchSize >= 5) {
+    triggerSpecial('cascade', gemType);
+  } else if(matchSize >= 4) {
+    triggerSpecial('burst', gemType);
+  }
+}
+
+function triggerSpecial(type, gemType) {
+  const gem = BIRTHSTONES[gemType];
+  const name = gem ? gem.name : 'Gem';
+  const specials = {
+    cascade: { label:`✨ ${name} Cascade!`, desc:'All matching gems cleared!', bonus:3 },
+    burst:   { label:`💥 ${name} Burst!`, desc:'Bonus move earned!', bonus:1 },
+  };
+  const s = specials[type];
+  if(!s) return;
+  // Flash the board
+  const board = document.getElementById('board');
+  if(board) {
+    board.style.boxShadow = `0 0 30px rgba(232,184,75,.6)`;
+    setTimeout(()=>board.style.boxShadow='', 600);
+  }
+  // Bonus moves
+  moves = Math.min(99, moves + s.bonus);
+  // Show toast
+  const t = document.getElementById('loreToast');
+  const tx = document.getElementById('loreToastText');
+  if(t && tx) {
+    tx.innerHTML = `<strong style="color:#e8b84b">${s.label}</strong><br>${s.desc} +${s.bonus} move${s.bonus>1?'s':''}!`;
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'), 2500);
+  }
+  updateHUD();
+}
+
+// Depth gauge
+try{document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length}catch(e){}
+</script>
+
+<script>
+window.NMN_CONTEXT = "mine";
+// NMN LIVING SOUNDSCAPE — Excavation Committee
+// Gemini's Quad-Track Engine + Claude's integration layer
+// Zero external files. Under 2KB. Procedural — never repeats exactly.
+
+const NMN_Audio = {
+  ctx: null,
+  running: false,
+  masterGain: null,
+  layers: {},
+
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  },
+
+  // TRACK 1 — The Deep Earth (continuous, low hum)
+  playHum() {
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(55, this.ctx.currentTime); // G1
+    gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
+    // Slow breathing — mine is alive
+    // Gemini's LFO: 0.08Hz = one breath every 12.5 seconds
+    const lfo = this.ctx.createOscillator();
+    const lfoGain = this.ctx.createGain();
+    lfo.type = 'sine';
+    lfo.frequency.value = 0.08;
+    lfoGain.gain.value = 0.01; // depth of breath
+    lfo.connect(lfoGain);
+    lfoGain.connect(gain.gain);
+    lfo.start();
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+    osc.start();
+    this.layers.hum = { osc, gain };
+  },
+
+  // TRACK 2 — The Air Shaft (filtered noise / wind)
+  playWind() {
+    const bufferSize = 2 * this.ctx.sampleRate;
+    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+    const whiteNoise = this.ctx.createBufferSource();
+    whiteNoise.buffer = noiseBuffer;
+    whiteNoise.loop = true;
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 400;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.012, this.ctx.currentTime);
+    whiteNoise.connect(filter);
+    filter.connect(g);
+    g.connect(this.masterGain);
+    whiteNoise.start();
+    this.layers.wind = { src: whiteNoise, gain: g };
+  },
+
+  // TRACK 3 — The Distant Strike (random pickaxe echoes)
+  playStrike() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.75) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        // Metallic strike freq
+        osc.frequency.setValueAtTime(140 + Math.random() * 80, this.ctx.currentTime);
+        osc.type = 'sawtooth';
+        g.gain.setValueAtTime(0.04, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.6);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.6);
+      }
+      // Randomize interval — 3s to 6s — never predictable
+      setTimeout(tick, 3000 + Math.random() * 3000);
+    };
+    setTimeout(tick, 2000);
+  },
+
+  // TRACK 4 — The Gold Shimmer (crystal high tones)
+  playShimmer() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.85) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'triangle';
+        // Gold harmonic range — slightly randomized each time
+        osc.frequency.setValueAtTime(2200 + Math.random() * 1400, this.ctx.currentTime);
+        g.gain.setValueAtTime(0, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.012, this.ctx.currentTime + 1.2);
+        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2.5);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 2.5);
+      }
+      setTimeout(tick, 5000 + Math.random() * 4000);
+    };
+    setTimeout(tick, 4000);
+  },
+
+  // TRACK 5 — The Subterranean Drip (Gemini's finalized version)
+  // Fast pitch-drop simulates the physics of water hitting a cavern pool
+  playWaterDrip() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.6) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sine';
+        // Start mid-freq, drop 50% in 80ms — exact droplet physics
+        osc.frequency.setValueAtTime(400 + Math.random() * 100, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.08);
+        g.gain.setValueAtTime(0.02, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.08);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.08);
+      }
+      // 2-8 second random interval — no rhythmic pattern ever emerges
+      setTimeout(tick, 2000 + Math.random() * 6000);
+    };
+    setTimeout(tick, 5000 + Math.random() * 3000);
+  },
+
+  // TRACK 6 — The Oracle's Pad
+  playOraclePad() {
+    const AMAJ = [220, 277.18, 329.63];
+    const tick = () => {
+      if (!this.running) return;
+      AMAJ.forEach((freq, i) => {
+        const osc = this.ctx.createOscillator();
+        const filter = this.ctx.createBiquadFilter();
+        const g = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        filter.type = 'lowpass'; filter.frequency.value = 800;
+        g.gain.setValueAtTime(0, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.03, this.ctx.currentTime + 2);
+        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 9);
+        osc.connect(filter); filter.connect(g); g.connect(this.masterGain);
+        osc.start(this.ctx.currentTime + i * 0.08);
+        osc.stop(this.ctx.currentTime + 9.5);
+      });
+      setTimeout(tick, 9000);
+    };
+    setTimeout(tick, 8000);
+  },
+
+  // Page-context aware — different mix per section
+  startAll(context) {
+    if (this.running) return;
+    this.init();
+    this.running = true;
+    this.playHum();
+    this.playWind();
+    this.playStrike();
+    this.playShimmer();
+    this.playOraclePad();
+    // Only add water drip on deep mine pages
+    if (context === 'deep' || context === 'oracle' || context === 'vigil') {
+      this.playWaterDrip();
+    }
+    // Tora gets a slightly higher shimmer frequency (more ethereal)
+    if (context === 'tora') {
+      this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
+    }
+  },
+
+  stop() {
+    if (!this.running) return;
+    this.running = false;
+    if (this.masterGain) {
+      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
+    }
+  },
+
+  toggle() {
+    if (this.running) { this.stop(); return false; }
+    else { this.startAll(window.NMN_CONTEXT || 'mine'); return true; }
+  }
+};
+
+// Trigger on first interaction — browser autoplay policy requires user gesture
+document.addEventListener('click', () => {
+  if (!NMN_Audio.running) NMN_Audio.startAll(window.NMN_CONTEXT || 'mine');
+}, { once: true });
+
+</script>
+
+<button id="nmn-sound-btn" onclick="
+  const on = NMN_Audio.toggle();
+  this.textContent = on ? '🔊 Sound On' : '🔇 Sound Off';
+  this.style.color = on ? 'var(--gold,#c9962a)' : '#4a3c28';
+" style="position:fixed;bottom:42px;right:.75rem;z-index:998;background:rgba(12,10,7,.9);border:1px solid rgba(255,215,0,.2);color:#4a3c28;font-family:Josefin Sans,sans-serif;font-size:.42rem;letter-spacing:.1em;padding:.35rem .6rem;cursor:pointer;transition:all .3s">🔇 Sound Off</button>
+
+<div class="lore-toast" id="loreToast">
+  <div class="lore-toast-label">⬡ Lore Fragment</div>
+  <div class="lore-toast-text" id="loreToastText"></div>
+</div>
+<script id="nmn-glow">
+(function(){
+  var r=document.createElement('div');
+  r.id='pickaxe-glow';
+  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
+  document.body.appendChild(r);
+  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
+  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
+  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
+})();
+</script>
+<script id="gemini-init">
+window.addEventListener('load',function(){
+  if(!localStorage.getItem('nmn_total_gold')) localStorage.setItem('nmn_total_gold','0');
+  document.querySelectorAll('canvas').forEach(function(g){
+    if(g.parentElement&&!g.parentElement.classList.contains('mining-frame'))
+      g.parentElement.classList.add('mining-frame');
+  });
+});
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js', {scope:'/'})
+    .then(function(reg){ console.log('NMN SW registered'); })
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>

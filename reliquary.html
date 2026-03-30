@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Reliquary — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28;--pu:#6a3a8a;--lpu:#9a6aaa}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);background:#05030a;color:var(--cream);min-height:100vh;padding-bottom:65px;background-image:linear-gradient(45deg,#05030a 25%,#080512 50%,#05030a 75%);background-size:4px 4px}
+header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(5,3,10,.97);position:sticky;top:0;z-index:10}
+.logo{font-family:var(--font-pixel);color:var(--gold);font-size:.5rem;text-decoration:none;text-shadow:0 0 15px rgba(255,215,0,.4);letter-spacing:1px}
+.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.back:hover{color:var(--gold)}
+main{max-width:700px;margin:0 auto;padding:2.5rem 1.5rem}
+h1{font-family:var(--font-serif);font-size:2.5rem;color:var(--cream);text-align:center;margin-bottom:.3rem}
+h1 em{color:var(--gold);font-style:italic}
+.sub{font-family:var(--font-serif);font-style:italic;font-size:.9rem;color:var(--muted);text-align:center;margin-bottom:2.5rem;line-height:1.8}
+.artifact-vault{perspective:1200px;display:flex;gap:3rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.5rem}
+.artifact-wrap{text-align:center;cursor:pointer}
+.artifact{width:70px;height:110px;margin:0 auto 1rem;transform-style:preserve-3d;animation:rotate3D 8s linear infinite;position:relative}
+.artifact-wrap:hover .artifact{animation-play-state:paused}
+@keyframes rotate3D{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
+.artifact-face{position:absolute;inset:0;border:2px solid rgba(255,215,0,.4);display:flex;align-items:center;justify-content:center;font-size:2.5rem;background:rgba(255,215,0,.05);backface-visibility:hidden}
+.artifact-back{background:rgba(255,215,0,.08);transform:rotateY(180deg)}
+.artifact-name{font-family:var(--font-serif);font-size:.95rem;color:var(--cream);margin-bottom:.3rem}
+.artifact-owner{font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd)}
+.journal-box{border:1px solid rgba(255,215,0,.15);background:rgba(255,215,0,.03);padding:1.5rem;margin-bottom:1.5rem;min-height:120px;transition:all .5s;display:none}
+.journal-box.show{display:block;animation:fadeIn .5s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.journal-speaker{font-size:.48rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gd);margin-bottom:.6rem}
+.journal-text{font-family:var(--font-serif);font-style:italic;font-size:.95rem;color:var(--cream);line-height:1.9}
+.depth-gauge{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:auto;max-width:92%;height:42px;background:rgba(5,3,10,.88);border:1px solid rgba(255,215,0,.3);border-radius:22px;padding:0 18px;pointer-events:none;z-index:9999;display:flex;align-items:center;gap:1rem;justify-content:center}
+.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-decoration:none;pointer-events:auto}
+.dg-link:hover{color:var(--gold)}
+</style>
+<style id="nmn-cursor">
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+<script>(function(s){s.dataset.zone='10763810',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+<header>
+  <a href="oracle.html" class="logo">🔮 The Oracle's Chamber</a>
+  <a href="oracle.html" class="back">← Back to Chamber</a>
+</header>
+<main>
+  <h1>The <em>Reliquary</em></h1>
+  <p class="sub">Objects that belonged to characters who are still becoming. Touch each one — they remember being held.</p>
+  <div class="artifact-vault">
+    <div class="artifact-wrap" onclick="openJournal('felik')">
+      <div class="artifact">
+        <div class="artifact-face">⚔️</div>
+        <div class="artifact-face artifact-back">🟡</div>
+      </div>
+      <div class="artifact-name">Felik's Blade</div>
+      <div class="artifact-owner">Man with Two Souls</div>
+    </div>
+    <div class="artifact-wrap" onclick="openJournal('juni')">
+      <div class="artifact" style="animation-delay:-3s">
+        <div class="artifact-face">🪬</div>
+        <div class="artifact-face artifact-back">💜</div>
+      </div>
+      <div class="artifact-name">Juni's Locket</div>
+      <div class="artifact-owner">The Immortal</div>
+    </div>
+    <div class="artifact-wrap" onclick="openJournal('nayla')">
+      <div class="artifact" style="animation-delay:-6s">
+        <div class="artifact-face">🎗️</div>
+        <div class="artifact-face artifact-back">🟠</div>
+      </div>
+      <div class="artifact-name">Nayla's Ribbon</div>
+      <div class="artifact-owner">The Lioness</div>
+    </div>
+    <div class="artifact-wrap" onclick="openJournal('pip')">
+      <div class="artifact" style="animation-delay:-2s">
+        <div class="artifact-face">⚙️</div>
+        <div class="artifact-face artifact-back">🔵</div>
+      </div>
+      <div class="artifact-name">Pip's First Circuit</div>
+      <div class="artifact-owner">The Robot Who Chose His Family</div>
+    </div>
+  </div>
+  <div class="journal-box" id="journalBox">
+    <div class="journal-speaker" id="journalSpeaker"></div>
+    <div class="journal-text" id="journalText"></div>
+  </div>
+</main>
+<div class="depth-gauge">
+  <a href="oracle.html" class="dg-link">🔮 Oracle's Chamber</a>
+  <span style="color:var(--faint);font-size:.4rem">⬡</span>
+  <a href="index.html" class="dg-link">⛏ The Mine</a>
+</div>
+<script>
+const JOURNALS = {
+  felik:{speaker:"Felik — Man with Two Souls",text:"The blade doesn't choose which hand holds it. That was always the problem. The gold side wanted to build. The blue side wanted to burn. I learned eventually that both were necessary. The blade is retired now. I carry it because it weighs the right amount."},
+  juni:{speaker:"Juni — The Immortal",text:"I stopped counting after the seventh century. The locket has a portrait inside that I haven't opened in three hundred years. I know what's in it. I'm not ready to see it again yet. That's the thing about immortality nobody tells you — you get to choose which griefs to carry open and which to keep sealed."},
+  nayla:{speaker:"Nayla — The Lioness",text:"The ribbon was from a girl who tied it around my wrist when I was young and told me I was going to be something. I didn't believe her. I kept the ribbon. Somewhere between then and the threshold, I understood she was right — not about what I would become, but about the fact that becoming was happening at all."},
+  pip:{speaker:"Pip — The Robot Who Chose His Family",text:"The first circuit I ever ran a current through. The spark went the wrong direction and nearly shorted the whole board. Lord Oro was watching. He said: 'That's not a malfunction. That's a personality.' I have kept the circuit. It does not do anything anymore. It does not need to."}
+};
+function openJournal(id) {
+  const j = JOURNALS[id];
+  if(!j) return;
+  document.getElementById('journalSpeaker').textContent = j.speaker;
+  document.getElementById('journalText').textContent = j.text;
+  const box = document.getElementById('journalBox');
+  box.classList.remove('show');
+  setTimeout(()=>box.classList.add('show'),50);
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+</script>
+<script id="nmn-glow">
+(function(){var r=document.createElement('div');r.id='pickaxe-glow';r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';document.body.appendChild(r);document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});})();
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js', {scope:'/'})
+    .then(function(reg){ console.log('NMN SW registered'); })
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>

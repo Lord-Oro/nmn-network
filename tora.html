@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="nmn-theme.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tora the Tarot Reader — NMN</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Josefin+Sans:wght@200;300;400&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#FFD700;--gold-bright:#e8b84b;--gold-dim:#7a5a18;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28;--purple:#6a3a8a;--pb:#9a6aaa}
+*{margin:0;padding:0;box-sizing:border-box}
+html{image-rendering:pixelated}
+body{font-family:var(--font-sans);background:var(--coal);color:var(--cream);min-height:100vh;background-image:radial-gradient(ellipse at 50% 0%,rgba(106,58,138,0.1) 0%,transparent 60%),linear-gradient(45deg,#0c0a07 25%,#110e0a 25%,#110e0a 50%,#0c0a07 50%,#0c0a07 75%,#110e0a 75%,#110e0a 100%);background-size:100% 100%,4px 4px}
+header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(12,10,7,.95);position:sticky;top:0;z-index:10}
+.logo{font-family:var(--font-serif);font-style:italic;color:var(--gold);font-size:.95rem;text-decoration:none}
+.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.back:hover{color:var(--gold)}
+.pixel-stage{display:flex;flex-direction:column;align-items:center;padding:2rem 1rem 1rem;position:relative;overflow:hidden}
+.pixel-stars{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.star{position:absolute;width:4px;height:4px;background:var(--gold-bright);image-rendering:pixelated;animation:starBlink 3s ease-in-out infinite}
+.star.purple{background:var(--pb)}
+.star.small{width:2px;height:2px}
+@keyframes starBlink{0%,100%{opacity:.3}50%{opacity:1}}
+canvas#toraCanvas{image-rendering:pixelated;image-rendering:crisp-edges;display:block;margin:0 auto 1rem;border:3px solid var(--purple);box-shadow:0 0 0 3px var(--coal),0 0 0 6px var(--gold-dim);background:#0f0a1e}
+.tora-pixel-name{font-family:'Press Start 2P',monospace;font-size:1.4rem;color:var(--gold);text-align:center;margin-bottom:.5rem;text-shadow:3px 3px 0 var(--purple),-1px -1px 0 var(--gold-dim);letter-spacing:.1em}
+.tora-pixel-sub{font-family:'Press Start 2P',monospace;font-size:.45rem;color:var(--pb);text-align:center;margin-bottom:.25rem;letter-spacing:.2em}
+.tora-rune-line{font-size:.8rem;color:var(--purple);opacity:.5;text-align:center;letter-spacing:.3em;font-family:serif;margin-bottom:1.5rem}
+.pixel-dialog{border:3px solid var(--gold);background:rgba(12,10,7,.95);padding:1.25rem 1.5rem;max-width:640px;width:100%;margin:0 auto 2rem;position:relative;box-shadow:4px 4px 0 var(--gold-dim)}
+.pixel-dialog::before{content:'';position:absolute;top:-6px;left:12px;width:12px;height:6px;background:var(--gold);clip-path:polygon(0 100%,50% 0%,100% 100%)}
+.dialog-name{font-family:'Press Start 2P',monospace;font-size:.5rem;color:var(--pb);margin-bottom:.75rem;letter-spacing:.1em}
+.dialog-text{font-family:var(--font-serif);font-style:italic;font-size:1rem;color:var(--cream);line-height:1.7}
+main{max-width:680px;margin:0 auto;padding:0 2rem 4rem}
+.reading-form{border:3px solid var(--gold-dim);background:rgba(255,255,255,.02);padding:2rem;margin-bottom:2rem;box-shadow:4px 4px 0 rgba(255,215,0,.1)}
+.form-title{font-family:'Press Start 2P',monospace;font-size:.65rem;color:var(--gold);margin-bottom:1.5rem;line-height:1.6;letter-spacing:.05em}
+.form-row{margin-bottom:1.25rem}
+.form-label{font-size:.55rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold-dim);display:block;margin-bottom:.5rem}
+.form-input{width:100%;padding:.85rem 1rem;background:rgba(255,255,255,.03);border:2px solid rgba(255,215,0,.2);color:var(--cream);font-family:var(--font-sans);font-size:.85rem;outline:none;transition:border-color .3s}
+.form-input:focus{border-color:var(--purple)}
+.form-input::placeholder{color:var(--faint)}
+.form-note{font-size:.55rem;color:var(--faint);margin-top:.4rem}
+.btn-reveal{width:100%;padding:1rem;background:var(--purple);color:var(--cream);font-family:'Press Start 2P',monospace;font-size:.55rem;letter-spacing:.1em;border:none;cursor:pointer;transition:all .2s;box-shadow:4px 4px 0 #3a1a5a;margin-top:.5rem}
+.btn-reveal:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #3a1a5a}
+.reading-result{display:none}
+.reading-result.active{display:block}
+.section-tag{font-family:'Press Start 2P',monospace;font-size:.45rem;color:var(--gold-dim);margin-bottom:1rem;letter-spacing:.1em;display:flex;align-items:center;gap:.75rem}
+.section-tag::after{content:'';flex:1;height:2px;background:linear-gradient(to right,var(--gold-dim),transparent)}
+.tarot-card-pixel{border:3px solid var(--purple);background:#0f0a1e;padding:2rem;text-align:center;position:relative;overflow:hidden;margin-bottom:2rem;box-shadow:6px 6px 0 var(--purple)}
+.card-pixel-icon{font-size:3rem;display:block;margin-bottom:.75rem;animation:iconFloat 4s ease-in-out infinite}
+@keyframes iconFloat{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.card-pixel-name{font-family:'Press Start 2P',monospace;font-size:.7rem;color:var(--gold);margin-bottom:.5rem;letter-spacing:.05em;line-height:1.6}
+.card-pixel-pos{font-size:.55rem;letter-spacing:.25em;text-transform:uppercase;color:var(--pb);margin-bottom:1rem}
+.card-pixel-meaning{font-family:var(--font-serif);font-style:italic;font-size:1rem;color:var(--muted);line-height:1.7}
+.numerology-pixel{border:3px solid var(--gold-dim);padding:1.5rem;margin-bottom:2rem;box-shadow:4px 4px 0 var(--gold-dim)}
+.life-path-pixel{display:flex;align-items:center;gap:1.5rem;margin-bottom:1rem}
+.life-number-pixel{font-family:'Press Start 2P',monospace;font-size:3rem;color:var(--gold);line-height:1;flex-shrink:0;text-shadow:4px 4px 0 var(--gold-dim)}
+.life-info h3{font-family:'Press Start 2P',monospace;font-size:.55rem;color:var(--cream);margin-bottom:.5rem;line-height:1.6}
+.life-info p{font-size:.75rem;color:var(--muted);line-height:1.7}
+.life-message{font-family:var(--font-serif);font-style:italic;font-size:1rem;color:var(--gold-dim);line-height:1.7;padding-top:1rem;border-top:2px solid rgba(255,215,0,.15)}
+.personal-reading-pixel{border:3px solid var(--purple);background:rgba(106,58,138,.06);padding:1.5rem;margin-bottom:2rem;box-shadow:6px 6px 0 var(--purple)}
+.reading-text-pixel{font-family:var(--font-serif);font-size:1.05rem;color:var(--cream);line-height:1.9;font-style:italic}
+.reading-sig{font-family:'Press Start 2P',monospace;font-size:.4rem;color:var(--pb);margin-top:1rem;text-align:right;line-height:1.8;letter-spacing:.05em}
+.email-pixel{border:3px solid var(--gold-dim);padding:1.5rem;background:rgba(255,215,0,.03);box-shadow:4px 4px 0 var(--gold-dim)}
+.capture-title{font-family:'Press Start 2P',monospace;font-size:.55rem;color:var(--gold);margin-bottom:.75rem;line-height:1.6}
+.capture-sub{font-size:.72rem;color:var(--muted);line-height:1.8;margin-bottom:1rem}
+.capture-row{display:flex;gap:.5rem}
+.capture-input{flex:1;padding:.75rem 1rem;background:rgba(255,255,255,.03);border:2px solid rgba(255,215,0,.2);color:var(--cream);font-family:var(--font-sans);font-size:.8rem;outline:none}
+.capture-btn{padding:.75rem 1.2rem;background:var(--gold);color:var(--coal);font-family:'Press Start 2P',monospace;font-size:.4rem;border:none;cursor:pointer;box-shadow:3px 3px 0 var(--gold-dim);white-space:nowrap}
+.capture-btn:hover{transform:translate(-1px,-1px)}
+.capture-success{display:none;font-family:'Press Start 2P',monospace;font-size:.45rem;color:#4aaa4a;margin-top:.75rem;line-height:1.8}
+.btn-again{display:block;width:100%;padding:.85rem;margin-top:1.5rem;background:transparent;color:var(--pb);border:2px solid var(--purple);font-family:'Press Start 2P',monospace;font-size:.45rem;letter-spacing:.1em;cursor:pointer;box-shadow:3px 3px 0 var(--purple)}
+.btn-again:hover{transform:translate(-1px,-1px)}
+@media(max-width:500px){.tora-pixel-name{font-size:1rem}.capture-row{flex-direction:column}.life-path-pixel{flex-direction:column;text-align:center}canvas#toraCanvas{width:160px!important;height:256px!important}}
+</style>
+
+<style id="depth-gauge-style">
+.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:36px;background:rgba(12,10,7,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:2rem;z-index:999;padding:0 1rem;flex-wrap:wrap}
+.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28}
+.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
+.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s}
+.dg-link:hover{color:#FFD700}
+.dg-sep{color:#2a1808;font-size:.6rem}
+</style>
+
+<style id="nmn-cursor">
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
+</style>
+<style id="floating-gauge">
+.depth-gauge{
+  position:fixed!important;bottom:12px!important;left:50%!important;
+  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
+  height:42px!important;background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
+  padding:0 18px!important;pointer-events:none!important;
+  z-index:9999!important;backdrop-filter:blur(4px)!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:1.2rem!important;flex-wrap:nowrap!important;
+  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
+body{padding-bottom:65px!important}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+<script>(function(s){s.dataset.zone='10763810',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+<header>
+  <a href="index.html" class="logo">NMN — Lord Oro</a>
+  <a href="index.html" class="back">← Return to the Mine</a>
+</header>
+<div class="pixel-stage">
+  <div class="pixel-stars" id="pixelStars"></div>
+  <canvas id="toraCanvas" width="64" height="96" style="width:192px;height:288px"></canvas>
+  <div class="tora-pixel-name">TORA</div>
+  <div class="tora-pixel-sub">VÖLVA OF THE MINE</div>
+  <div class="tora-rune-line">ᚠ ᚢ ᚦ ᚱ ᚲ ᚷ ᛏ ᛒ ᛖ ᛗ ᛚ</div>
+  <div class="pixel-dialog">
+    <div class="dialog-name">▶ TORA</div>
+    <div class="dialog-text" id="toraDialog">"I have been here since before the mine had a name. I read what the stones remember. Give me your birth date and I will tell you what the mine sees in you."</div>
+  </div>
+</div>
+<main>
+  <form name="tora-readings" netlify netlify-honeypot="bot-field" style="display:none">
+    <input type="hidden" name="form-name" value="tora-readings">
+    <input name="bot-field"><input name="name"><input name="email"><input name="life-path"><input name="daily-card">
+  </form>
+  <form name="nmn-newsletter" netlify netlify-honeypot="bot-field" style="display:none">
+    <input type="hidden" name="form-name" value="nmn-newsletter">
+    <input name="bot-field"><input name="name"><input name="email"><input name="source">
+  </form>
+  <div class="reading-form" id="readingForm">
+    <div class="form-title">▶ REQUEST YOUR READING</div>
+    <div class="form-row">
+      <label class="form-label">Your Name</label>
+      <input type="text" class="form-input" id="userName" placeholder="Enter your name...">
+    </div>
+    <div class="form-row">
+      <label class="form-label">Date of Birth</label>
+      <input type="date" class="form-input" id="userDob">
+      <div class="form-note">Used to calculate your Life Path Number</div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Your Email (Optional)</label>
+      <input type="email" class="form-input" id="userEmail" placeholder="your@email.com">
+      <div class="form-note">Subscribe to receive monthly readings and NMN updates</div>
+    </div>
+    <button class="btn-reveal" onclick="revealReading()">🔮 REVEAL MY READING</button>
+  </div>
+  <div class="reading-result" id="readingResult">
+    <div class="section-tag">Today's Card</div>
+    <div class="tarot-card-pixel">
+      <span class="card-pixel-icon" id="cardSymbol"></span>
+      <div class="card-pixel-name" id="cardName"></div>
+      <div class="card-pixel-pos" id="cardPosition"></div>
+      <div class="card-pixel-meaning" id="cardMeaning"></div>
+    </div>
+    <div class="section-tag">Your Life Path</div>
+    <div class="numerology-pixel">
+      <div class="life-path-pixel">
+        <div class="life-number-pixel" id="lifeNumber"></div>
+        <div class="life-info"><h3 id="lifeTitle"></h3><p id="lifeDesc"></p></div>
+      </div>
+      <div class="life-message" id="lifeMessage"></div>
+    </div>
+    <div class="section-tag">Tora's Reading</div>
+    <div class="personal-reading-pixel">
+      <div class="reading-text-pixel" id="readingText"></div>
+      <div class="reading-sig">— TORA / VÖLVA OF THE MINE<br>NONSENSE MEDIA NETWORK</div>
+    </div>
+    <div class="section-tag">Join the Goldmine</div>
+    <div class="email-pixel">
+      <div class="capture-title">RECEIVE FUTURE READINGS</div>
+      <p class="capture-sub">Monthly readings from Tora, Lord Oro updates, new book releases, game drops, and exclusive lore delivered to your inbox.</p>
+      <div class="capture-row">
+        <input type="email" class="capture-input" id="captureEmail" placeholder="your@email.com">
+        <button class="capture-btn" onclick="submitEmail()">JOIN THE MINE</button>
+      </div>
+      <div class="capture-success" id="captureSuccess">▶ YOU ARE IN THE GOLDMINE. WATCH YOUR INBOX.</div>
+    </div>
+    <button class="btn-again" onclick="resetReading()">▶ REQUEST ANOTHER READING</button>
+  </div>
+</main>
+<script>
+const TAROT=[{symbol:'🌟',name:'THE GOLDMINE',position:"The World — Lord Oro's Domain",meaning:"You have everything you need within you. The mine is rich. Stop looking outside yourself for what you already carry."},{symbol:'🃏',name:'THE MADMAN',position:'The Fool — New Beginnings',meaning:"A new journey begins. You step into the unknown — and that is exactly where the gold is. Trust the descent."},{symbol:'🔮',name:'TORA',position:'The High Priestess — Hidden Knowledge',meaning:"There is something you know but haven't named yet. Sit with it. The answer is already inside you."},{symbol:'👁️',name:'THE WATCHER',position:'The Hermit — Inner Guidance',meaning:"Lord Oro watches. You are being guided from within. Trust what you already know."},{symbol:'⛏️',name:'THE MINER',position:'The Magician — Creation',meaning:"You have all the tools. The mine doesn't dig itself. Begin."},{symbol:'🦁',name:'NAYLA',position:'Strength — Courage',meaning:"You are stronger than you believe. Nayla didn't ask permission. Neither should you."},{symbol:'⭐',name:'FELIK',position:'The Lovers — Duality',meaning:"Two paths. Two truths. Both real. You don't have to choose — you have to hold both at once."},{symbol:'🔥',name:'PYRO',position:'The Sun — Energy',meaning:"Something burns bright right now. Don't extinguish it with doubt. Let it light the shaft."},{symbol:'☀️',name:'HELIOS',position:'Judgement — Clarity',meaning:"Something is becoming clear. The decision you've been avoiding is ready to be made."},{symbol:'♾️',name:'JUNI',position:'The Wheel — Cycles',meaning:"You have been here before. But you are not the same person who was here last time."},{symbol:'🌊',name:'CALYPSO',position:'The Moon — Intuition',meaning:"Your intuition is speaking. The water knows what the mind hasn't caught up to yet."},{symbol:'💀',name:'THE OUTBREAK',position:'The Tower — Change',meaning:"Something is being dismantled. It is not loss. It is preparation for something that fits better."},{symbol:'🪨',name:'THE STONE',position:'The Emperor — Foundation',meaning:"Build the structure first. The gold comes after the foundation is set."},{symbol:'🌙',name:'THE DREAM',position:'The Star — Hope',meaning:"There is something you dream about that you haven't told anyone. It is real. Pursue it."},{symbol:'⚖️',name:'THE BALANCE',position:'Justice — Truth',meaning:"Something needs to be addressed honestly. You already know what it is. Say it."},{symbol:'🕯️',name:'THE LANTERN',position:'Temperance — Patience',meaning:"Let the lantern burn slowly. The mine reveals itself to those who are willing to wait."},{symbol:'🐉',name:'ORE DRAGON',position:"The Devil — Chains",meaning:"Something holds you that you think you cannot release. You can. The chain is in your mind."},{symbol:'🗝️',name:'THE KEY',position:'The Chariot — Drive',meaning:"The door is already unlocked. You just haven't tried the handle yet. Try it."},{symbol:'🌿',name:'THE GROWTH',position:'The Empress — Abundance',meaning:"Something is growing quietly. Water it. Don't dig it up to check the roots."},{symbol:'👑',name:'THE CROWN',position:'The Emperor — Authority',meaning:"Lead with what you know. You don't need permission to step into your power."},{symbol:'🪵',name:'THE BEAM',position:'The Hierophant — Structure',meaning:"Build systems that support you. The beam holds the mine open for everyone after you."},{symbol:'💎',name:'THE DIAMOND',position:'The World — Completion',meaning:"Something is complete. Recognize it fully before asking what comes next."}];
+const LP={1:{title:'THE PIONEER',desc:'Independent, driven, original. You lead by instinct. The goldmine was made for someone who goes first.',message:'"The mine waits for the one who arrives without a map and starts digging anyway. That is you."'},2:{title:'THE PARTNER',desc:"Collaborative, intuitive, diplomatic. Your strength is in connection. You find gold others miss because you listen.",message:'"The best finds happen when two lanterns combine. You know how to make that happen."'},3:{title:'THE CREATOR',desc:"Expressive, imaginative, communicative. You are here to make things. The goldmine is your studio.",message:'"Every story is a tunnel. Every song is a shaft. You dig with words and the mine gives back."'},4:{title:'THE BUILDER',desc:"Disciplined, methodical, reliable. You build what others dream. The mine trusts its structure to you.",message:'"The beams that hold the mine open were placed by someone who took their time. That is you."'},5:{title:'THE EXPLORER',desc:"Adventurous, adaptable, free. You need movement. The mine has infinite tunnels you'll find alone.",message:'"Don\'t fear the unexpected turn. In the mine, they always lead somewhere worth going."'},6:{title:'THE NURTURER',desc:"Caring, responsible, protective. You hold others together. The mine survives because of you.",message:'"The goldmine needs people who remember the gold isn\'t just for themselves. You never forgot."'},7:{title:'THE SEEKER',desc:"Analytical, introspective, wise. You need to understand. The mine keeps secrets — you are patient enough.",message:'"The deepest veins are found by the ones who ask why. You have always been asking why."'},8:{title:'THE ACHIEVER',desc:"Ambitious, powerful, authoritative. You are here to build something significant.",message:'"Power is not taken from the mine. It is excavated from within the self. You know how to do that."'},9:{title:'THE VISIONARY',desc:"Humanitarian, compassionate, complete. You see the largest picture. Your gold is meant to be shared.",message:'"The mine belongs to everyone who digs in it. You understood that before you picked up the pickaxe."'},11:{title:'THE ILLUMINATOR',desc:"Intuitive, inspiring, visionary. You carry a light others don't. The mine glows differently when you're in it.",message:'"Some lanterns are brighter than others. Yours lights tunnels no one knew existed."'},22:{title:'THE MASTER BUILDER',desc:"Visionary and practical together. You build empires. The goldmine isn't enough — you'll build the city above it.",message:'"Most miners find gold. You will build something with it that outlasts the mine itself."'},33:{title:'THE MASTER TEACHER',desc:"Compassion at the highest level. You teach by living. The mine learns from you.",message:'"You don\'t just carry a light. You teach others to carry their own. That is the rarest gift."'}};
+const DIALOGS=['"The cards speak only to those who are ready to hear. Are you ready?"','"Every life path number is a different kind of gold. None is lesser than another."','"I have read for miners who found nothing and miners who found everything. The difference was never the mine."','"Freyja taught me that wisdom and magic are the same thing. You carry both."','"The runes do not predict. They illuminate what is already true."'];
+
+function calcLP(dob){let d=dob.replace(/-/g,'').split('').map(Number),s=d.reduce((a,b)=>a+b,0);while(s>9&&s!==11&&s!==22&&s!==33)s=s.toString().split('').map(Number).reduce((a,b)=>a+b,0);return s}
+function getDailyCard(){const t=new Date(),dy=Math.floor((t-new Date(t.getFullYear(),0,0))/86400000);return TAROT[dy%TAROT.length]}
+
+function revealReading(){
+  const name=document.getElementById('userName').value.trim();
+  const dob=document.getElementById('userDob').value;
+  const email=document.getElementById('userEmail').value.trim();
+  if(!name||!dob){document.getElementById('toraDialog').textContent='"Tora needs your name and the date you were born. Without these, the stones are silent."';return}
+  const lp=calcLP(dob),ld=LP[lp]||LP[1],card=getDailyCard(),fn=name.split(' ')[0];
+  const mo=new Date(dob+'T12:00:00').toLocaleString('default',{month:'long'});
+  document.getElementById('cardSymbol').textContent=card.symbol;
+  document.getElementById('cardName').textContent=card.name;
+  document.getElementById('cardPosition').textContent=card.position;
+  document.getElementById('cardMeaning').textContent=card.meaning;
+  document.getElementById('lifeNumber').textContent=lp;
+  document.getElementById('lifeTitle').textContent=ld.title;
+  document.getElementById('lifeDesc').textContent=ld.desc;
+  document.getElementById('lifeMessage').textContent=ld.message;
+  document.getElementById('readingText').textContent=`${fn}, the mine has been watching you. Today's card — ${card.name} — arrives with a message for a Life Path ${lp}. ${card.meaning} This combines with your nature as ${ld.title.toLowerCase()} to reveal something important. ${ld.desc} The energy of ${mo} amplifies everything. Tora sees a moment approaching where what you have been building quietly becomes visible. Do not shrink from it. The goldmine reveals its richest veins to those who keep digging even when they cannot yet see the gold. You are close. Freyja's wisdom: the völva does not create fate. She reads what is already written in the stone. This is yours.`;
+  document.getElementById('toraDialog').textContent=DIALOGS[Math.floor(Math.random()*DIALOGS.length)];
+  if(email){document.getElementById('captureEmail').value=email;submitToNetlify(name,email,lp,card.name)}
+  document.getElementById('readingForm').style.display='none';
+  document.getElementById('readingResult').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function submitToNetlify(name,email,lp,card){
+  fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({'form-name':'tora-readings',name,email,'life-path':lp.toString(),'daily-card':card}).toString()}).catch(()=>{});
+}
+function submitEmail(){
+  const email=document.getElementById('captureEmail').value.trim();
+  if(!email)return;
+  fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({'form-name':'nmn-newsletter',name:'Tora Reader',email,source:'tora'}).toString()}).catch(()=>{});
+  document.getElementById('captureSuccess').style.display='block';
+  document.getElementById('captureEmail').disabled=true;
+  document.querySelector('.capture-btn').disabled=true;
+}
+function resetReading(){
+  document.getElementById('readingResult').classList.remove('active');
+  document.getElementById('readingForm').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// PIXEL TORA PORTRAIT
+function drawTora(){
+  const canvas=document.getElementById('toraCanvas');
+  const ctx=canvas.getContext('2d');
+  ctx.imageSmoothingEnabled=false;
+  ctx.clearRect(0,0,64,96);
+  const p=(x,y,c)=>{ctx.fillStyle=c;ctx.fillRect(x,y,1,1)};
+  const rect=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(x,y,w,h)};
+  // Background
+  rect(0,0,64,96,'#0f0a1e');
+  // Stars
+  [[5,5,'#c9c0e8'],[15,8,'#e8b84b'],[50,4,'#c9c0e8'],[58,12,'#e8b84b'],[2,30,'#9a6aaa'],[60,25,'#c9c0e8']].forEach(([x,y,c])=>p(x,y,c));
+  // Crown
+  const crown=[
+    [25,8,'#c9962a'],[27,6,'#e8b84b'],[29,8,'#c9962a'],
+    [31,7,'#c9c0e8'],[33,8,'#c9962a'],[35,6,'#e8b84b'],[37,8,'#c9962a'],
+    [25,9,'#c9962a'],[26,9,'#c9962a'],[27,9,'#c9962a'],[28,9,'#c9962a'],
+    [29,9,'#c9962a'],[30,9,'#c9962a'],[31,9,'#c9962a'],[32,9,'#c9962a'],
+    [33,9,'#c9962a'],[34,9,'#c9962a'],[35,9,'#c9962a'],[36,9,'#c9962a'],[37,9,'#c9962a'],
+  ];
+  crown.forEach(([x,y,c])=>p(x,y,c));
+  // Hair (golden, wide)
+  rect(22,10,20,4,'#d4b830');
+  rect(20,14,24,8,'#d4b830');
+  rect(19,22,3,20,'#d4b830'); // left strand
+  rect(42,22,3,20,'#d4b830'); // right strand
+  // Face
+  rect(23,14,18,16,'#f0d8b0');
+  // Eyes
+  rect(26,18,3,2,'#6a3a8a'); p(27,18,'#9a6aaa'); p(27,17,'#c9c0e8'); // left eye highlight
+  rect(35,18,3,2,'#6a3a8a'); p(36,18,'#9a6aaa'); p(36,17,'#c9c0e8'); // right eye highlight
+  // Eyebrows
+  rect(25,16,5,1,'#c9a850');
+  rect(34,16,5,1,'#c9a850');
+  // Nose
+  p(31,22,'#c0a070'); p(32,22,'#c0a070');
+  // Lips
+  rect(28,25,8,2,'#c06868'); p(31,24,'#e08888'); p(32,24,'#e08888');
+  // Necklace (amber beads)
+  rect(27,31,10,1,'#c9962a');
+  [27,29,31,33,35,37].forEach(x=>p(x,31,'#e8b84b'));
+  // Body/robe (deep purple)
+  rect(18,32,28,40,'#2a1a3a');
+  // Robe highlights
+  rect(18,32,2,40,'#3a2a4a');
+  rect(44,32,2,40,'#3a2a4a');
+  rect(30,33,4,2,'#c9962a'); // chest ornament
+  // Arms/hands
+  rect(14,34,6,20,'#f0d8b0'); // left arm
+  rect(44,34,6,20,'#f0d8b0'); // right arm
+  // Crystal ball
+  rect(22,52,20,16,'#1a1228');
+  rect(23,53,18,14,'#0f0a1e');
+  // Crystal glow
+  p(28,56,'#9a8ac8'); p(29,55,'#c9c0e8'); p(30,56,'#9a8ac8');
+  p(33,58,'#6a3a8a'); p(35,57,'#9a8ac8');
+  rect(22,52,20,1,'#9a8ac8'); // top rim
+  rect(22,67,20,1,'#9a8ac8'); // bottom rim
+  // Base
+  rect(24,68,16,3,'#3a2a10');
+  rect(22,71,20,2,'#2a1808');
+  // Purple robe detail bottom
+  rect(19,70,26,2,'#c9962a'); // gold trim
+}
+
+// STARS
+function createStars(){
+  const c=document.getElementById('pixelStars');
+  [[8,8],[20,15],[35,5],[50,20],[58,8],[3,40],[15,60],[45,55],[25,35],[5,80],[55,75],[30,90],[78,15],[65,85],[40,70]].forEach(([x,y],i)=>{
+    const s=document.createElement('div');
+    s.className=`star${i%3===0?' purple':''}${i%5===0?' small':''}`;
+    s.style.left=x+'%';s.style.top=y+'%';
+    s.style.animationDelay=(Math.random()*3)+'s';
+    s.style.animationDuration=(2+Math.random()*3)+'s';
+    c.appendChild(s);
+  });
+}
+
+drawTora();
+createStars();
+</script>
+
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> Lore Fragments</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span> Creatures</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
+  <a href="ledger.html" class="dg-link">📖 Ledger</a>
+</div>
+<script>
+(function(){
+  try{
+    var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+    var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
+    var gold=parseInt(localStorage.getItem('nmn_total_gold')||'0');
+    var el=document.getElementById('dgGold');if(el)el.textContent=gold;
+    var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
+    var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
+  }catch(e){}
+})();
+</script>
+
+<script>
+window.NMN_CONTEXT = "tora";
+// NMN LIVING SOUNDSCAPE — Excavation Committee
+// Gemini's Quad-Track Engine + Claude's integration layer
+// Zero external files. Under 2KB. Procedural — never repeats exactly.
+
+const NMN_Audio = {
+  ctx: null,
+  running: false,
+  masterGain: null,
+  layers: {},
+
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  },
+
+  // TRACK 1 — The Deep Earth (continuous, low hum)
+  playHum() {
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(55, this.ctx.currentTime); // G1
+    gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
+    // Slow breathing — mine is alive
+    // Gemini's LFO: 0.08Hz = one breath every 12.5 seconds
+    const lfo = this.ctx.createOscillator();
+    const lfoGain = this.ctx.createGain();
+    lfo.type = 'sine';
+    lfo.frequency.value = 0.08;
+    lfoGain.gain.value = 0.01; // depth of breath
+    lfo.connect(lfoGain);
+    lfoGain.connect(gain.gain);
+    lfo.start();
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+    osc.start();
+    this.layers.hum = { osc, gain };
+  },
+
+  // TRACK 2 — The Air Shaft (filtered noise / wind)
+  playWind() {
+    const bufferSize = 2 * this.ctx.sampleRate;
+    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+    const whiteNoise = this.ctx.createBufferSource();
+    whiteNoise.buffer = noiseBuffer;
+    whiteNoise.loop = true;
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 400;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.012, this.ctx.currentTime);
+    whiteNoise.connect(filter);
+    filter.connect(g);
+    g.connect(this.masterGain);
+    whiteNoise.start();
+    this.layers.wind = { src: whiteNoise, gain: g };
+  },
+
+  // TRACK 3 — The Distant Strike (random pickaxe echoes)
+  playStrike() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.75) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        // Metallic strike freq
+        osc.frequency.setValueAtTime(140 + Math.random() * 80, this.ctx.currentTime);
+        osc.type = 'sawtooth';
+        g.gain.setValueAtTime(0.04, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.6);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.6);
+      }
+      // Randomize interval — 3s to 6s — never predictable
+      setTimeout(tick, 3000 + Math.random() * 3000);
+    };
+    setTimeout(tick, 2000);
+  },
+
+  // TRACK 4 — The Gold Shimmer (crystal high tones)
+  playShimmer() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.85) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'triangle';
+        // Gold harmonic range — slightly randomized each time
+        osc.frequency.setValueAtTime(2200 + Math.random() * 1400, this.ctx.currentTime);
+        g.gain.setValueAtTime(0, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.012, this.ctx.currentTime + 1.2);
+        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2.5);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 2.5);
+      }
+      setTimeout(tick, 5000 + Math.random() * 4000);
+    };
+    setTimeout(tick, 4000);
+  },
+
+  // TRACK 5 — The Subterranean Drip (Gemini's finalized version)
+  // Fast pitch-drop simulates the physics of water hitting a cavern pool
+  playWaterDrip() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.6) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sine';
+        // Start mid-freq, drop 50% in 80ms — exact droplet physics
+        osc.frequency.setValueAtTime(400 + Math.random() * 100, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.08);
+        g.gain.setValueAtTime(0.02, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.08);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.08);
+      }
+      // 2-8 second random interval — no rhythmic pattern ever emerges
+      setTimeout(tick, 2000 + Math.random() * 6000);
+    };
+    setTimeout(tick, 5000 + Math.random() * 3000);
+  },
+
+  // TRACK 6 — The Oracle's Pad
+  playOraclePad() {
+    const AMAJ = [220, 277.18, 329.63];
+    const tick = () => {
+      if (!this.running) return;
+      AMAJ.forEach((freq, i) => {
+        const osc = this.ctx.createOscillator();
+        const filter = this.ctx.createBiquadFilter();
+        const g = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        filter.type = 'lowpass'; filter.frequency.value = 800;
+        g.gain.setValueAtTime(0, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.03, this.ctx.currentTime + 2);
+        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 9);
+        osc.connect(filter); filter.connect(g); g.connect(this.masterGain);
+        osc.start(this.ctx.currentTime + i * 0.08);
+        osc.stop(this.ctx.currentTime + 9.5);
+      });
+      setTimeout(tick, 9000);
+    };
+    setTimeout(tick, 8000);
+  },
+
+  // Page-context aware — different mix per section
+  startAll(context) {
+    if (this.running) return;
+    this.init();
+    this.running = true;
+    this.playHum();
+    this.playWind();
+    this.playStrike();
+    this.playShimmer();
+    this.playOraclePad();
+    // Only add water drip on deep mine pages
+    if (context === 'deep' || context === 'oracle' || context === 'vigil') {
+      this.playWaterDrip();
+    }
+    // Tora gets a slightly higher shimmer frequency (more ethereal)
+    if (context === 'tora') {
+      this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
+    }
+  },
+
+  stop() {
+    if (!this.running) return;
+    this.running = false;
+    if (this.masterGain) {
+      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
+    }
+  },
+
+  toggle() {
+    if (this.running) { this.stop(); return false; }
+    else { this.startAll(window.NMN_CONTEXT || 'mine'); return true; }
+  }
+};
+
+// Trigger on first interaction — browser autoplay policy requires user gesture
+document.addEventListener('click', () => {
+  if (!NMN_Audio.running) NMN_Audio.startAll(window.NMN_CONTEXT || 'mine');
+}, { once: true });
+
+</script>
+
+<button id="nmn-sound-btn" onclick="
+  const on = NMN_Audio.toggle();
+  this.textContent = on ? '🔊 Sound On' : '🔇 Sound Off';
+  this.style.color = on ? 'var(--gold,#c9962a)' : '#4a3c28';
+" style="position:fixed;bottom:42px;right:.75rem;z-index:998;background:rgba(12,10,7,.9);border:1px solid rgba(255,215,0,.2);color:#4a3c28;font-family:Josefin Sans,sans-serif;font-size:.42rem;letter-spacing:.1em;padding:.35rem .6rem;cursor:pointer;transition:all .3s">🔇 Sound Off</button>
+<script id="nmn-glow">
+(function(){
+  var r=document.createElement('div');
+  r.id='pickaxe-glow';
+  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
+  document.body.appendChild(r);
+  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
+  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
+  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
+})();
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js', {scope:'/'})
+    .then(function(reg){ console.log('NMN SW registered'); })
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>

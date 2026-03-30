@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ivy's Apothecary — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28;--lg:#6aaa4a;--dg:#2a5a1a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);background:#070a05;color:var(--cream);min-height:100vh;background-image:linear-gradient(45deg,#070a05 25%,#0a0f07 25%,#0a0f07 50%,#070a05 50%,#070a05 75%,#0a0f07 75%,#0a0f07 100%);background-size:4px 4px;padding-bottom:50px}
+header{padding:.8rem 2rem;border-bottom:1px solid rgba(106,170,74,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(7,10,5,.97);position:sticky;top:0;z-index:10}
+.logo{font-family:var(--font-serif);font-style:italic;color:var(--lg);font-size:1rem;text-decoration:none}
+.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.back:hover{color:var(--lg)}
+main{max-width:580px;margin:0 auto;padding:3rem 1.5rem}
+
+/* HEADER */
+.apo-hero{text-align:center;margin-bottom:2.5rem}
+.vine-divider{font-size:.9rem;letter-spacing:.4rem;color:var(--dg);opacity:.6;margin-bottom:1rem;animation:vineSway 4s ease-in-out infinite}
+@keyframes vineSway{0%,100%{letter-spacing:.4rem}50%{letter-spacing:.5rem}}
+.apo-title{font-family:var(--font-serif);font-size:clamp(2rem,5vw,3rem);color:var(--cream);margin-bottom:.3rem}
+.apo-title em{color:var(--lg);font-style:italic}
+.apo-sub{font-size:.72rem;color:var(--muted);line-height:2;max-width:440px;margin:0 auto}
+.ivy-sig{font-family:var(--font-serif);font-style:italic;font-size:.82rem;color:var(--dg);margin-top:.75rem}
+
+/* INPUT AREA */
+.input-section{margin-bottom:2rem}
+.input-label{font-size:.52rem;letter-spacing:.3em;text-transform:uppercase;color:var(--dg);margin-bottom:.75rem;display:block}
+.feeling-input{width:100%;padding:1rem 1.25rem;background:rgba(255,255,255,.03);border:1px solid rgba(106,170,74,.2);color:var(--cream);font-family:var(--font-serif);font-style:italic;font-size:1.1rem;outline:none;transition:border-color .3s;text-align:center}
+.feeling-input:focus{border-color:rgba(106,170,74,.5)}
+.feeling-input::placeholder{color:var(--faint)}
+.suggest-row{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem;justify-content:center}
+.suggest-btn{padding:.3rem .7rem;font-size:.5rem;letter-spacing:.1em;background:transparent;border:1px solid rgba(106,170,74,.15);color:var(--faint);cursor:pointer;transition:all .25s;font-family:var(--font-sans)}
+.suggest-btn:hover{border-color:rgba(106,170,74,.4);color:var(--lg)}
+.consult-btn{display:block;width:100%;margin-top:.85rem;padding:.9rem;background:transparent;border:1px solid rgba(106,170,74,.3);color:var(--lg);font-family:var(--font-sans);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.consult-btn:hover{background:rgba(106,170,74,.08);border-color:var(--lg)}
+
+/* RESULT */
+.result-section{display:none;animation:resultReveal .8s ease}
+.result-section.show{display:block}
+@keyframes resultReveal{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.result-gem-big{font-size:4rem;text-align:center;display:block;margin-bottom:1rem;animation:gemFloat 3s ease-in-out infinite}
+@keyframes gemFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.result-box{border:1px solid rgba(106,170,74,.2);background:rgba(74,138,58,.04);padding:1.75rem;text-align:center;position:relative}
+.result-box::before{content:'🌿';position:absolute;top:-.8rem;left:50%;transform:translateX(-50%);background:#070a05;padding:0 .5rem;font-size:1.1rem}
+.result-gem-name{font-family:var(--font-serif);font-size:1.6rem;color:var(--cream);margin-bottom:.2rem}
+.result-gem-name em{color:var(--lg);font-style:italic}
+.result-property{font-size:.52rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dg);margin-bottom:1rem}
+.result-healing{font-family:var(--font-serif);font-style:italic;font-size:1rem;color:var(--cream);line-height:1.9;margin-bottom:1rem}
+.result-how{font-size:.65rem;color:var(--muted);line-height:1.9;padding:.75rem;border:1px solid rgba(106,170,74,.1);margin-bottom:1rem;text-align:left}
+.result-how strong{color:var(--lg);font-weight:400;font-size:.52rem;letter-spacing:.15em;text-transform:uppercase;display:block;margin-bottom:.3rem}
+.result-oro{font-family:var(--font-serif);font-style:italic;font-size:.9rem;color:var(--gd);padding:.75rem 1rem;border-left:2px solid var(--dg);text-align:left;margin-bottom:.75rem}
+.result-ivy{font-family:var(--font-serif);font-style:italic;font-size:.82rem;color:var(--lg);margin-top:.5rem}
+.try-again-btn{display:block;margin:.75rem auto 0;padding:.65rem 1.75rem;background:transparent;border:1px solid rgba(106,170,74,.2);color:var(--dg);font-family:var(--font-sans);font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.try-again-btn:hover{border-color:var(--lg);color:var(--lg)}
+
+/* DEPTH GAUGE */
+.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:34px;background:rgba(7,10,5,.97);border-top:1px solid rgba(106,170,74,.15);display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:999;padding:0 1rem}
+.dg-stat{display:flex;align-items:center;gap:.3rem;font-size:.4rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+.dg-val{font-family:var(--font-serif);font-size:.8rem;color:var(--lg)}
+.dg-sep{color:var(--faint)}
+.dg-link{font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-decoration:none}
+.dg-link:hover{color:var(--lg)}
+</style>
+
+<style id="nmn-cursor">
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
+</style>
+<style id="floating-gauge">
+.depth-gauge{
+  position:fixed!important;bottom:12px!important;left:50%!important;
+  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
+  height:42px!important;background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
+  padding:0 18px!important;pointer-events:none!important;
+  z-index:9999!important;backdrop-filter:blur(4px)!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:1.2rem!important;flex-wrap:nowrap!important;
+  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
+body{padding-bottom:65px!important}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+<script>(function(s){s.dataset.zone='10763810',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+<header>
+  <a href="ivytunnel.html" class="logo">🌿 Poison Ivy's Tunnel</a>
+  <a href="ivytunnel.html" class="back">← Back Through the Vines</a>
+</header>
+<main>
+  <div class="apo-hero">
+    <div class="vine-divider">🌿 🌱 🌿</div>
+    <h1 class="apo-title">Ivy's <em>Apothecary</em></h1>
+    <p class="apo-sub">Tell the mine how you're feeling. One word — or a few. The mine will find the gemstone that matches what you're carrying and tell you what it's good for.</p>
+    <div class="ivy-sig">"Every gem has a story. This one says it wants to go home with you." — Ivy Martin</div>
+  </div>
+
+  <div class="input-section">
+    <label class="input-label" for="feelingInput">How are you feeling right now?</label>
+    <input type="text" class="feeling-input" id="feelingInput" placeholder="tired, anxious, hopeful, lost, proud..." maxlength="60">
+    <div class="suggest-row">
+      <button class="suggest-btn" onclick="setFeeling('tired')">tired</button>
+      <button class="suggest-btn" onclick="setFeeling('anxious')">anxious</button>
+      <button class="suggest-btn" onclick="setFeeling('lost')">lost</button>
+      <button class="suggest-btn" onclick="setFeeling('hopeful')">hopeful</button>
+      <button class="suggest-btn" onclick="setFeeling('angry')">angry</button>
+      <button class="suggest-btn" onclick="setFeeling('proud')">proud</button>
+      <button class="suggest-btn" onclick="setFeeling('heartbroken')">heartbroken</button>
+      <button class="suggest-btn" onclick="setFeeling('stuck')">stuck</button>
+      <button class="suggest-btn" onclick="setFeeling('grateful')">grateful</button>
+      <button class="suggest-btn" onclick="setFeeling('lonely')">lonely</button>
+      <button class="suggest-btn" onclick="setFeeling('creative')">creative</button>
+      <button class="suggest-btn" onclick="setFeeling('brave')">brave</button>
+    </div>
+    <button class="consult-btn" onclick="consult()">🌿 Ask the Apothecary</button>
+  </div>
+
+  <div class="result-section" id="resultSection">
+    <span class="result-gem-big" id="resultGem"></span>
+    <div class="result-box">
+      <div class="result-gem-name" id="resultName"></div>
+      <div class="result-property" id="resultProperty"></div>
+      <div class="result-healing" id="resultHealing"></div>
+      <div class="result-how" id="resultHow"></div>
+      <div class="result-oro" id="resultOro"></div>
+      <div class="result-ivy" id="resultIvy"></div>
+      <button class="try-again-btn" onclick="reset()">🌿 Ask Again</button>
+    </div>
+  </div>
+</main>
+
+<div class="depth-gauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span>&nbsp;Gold</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span>&nbsp;Lore</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <a href="ivytunnel.html" class="dg-link">🌿 Ivy's Tunnel</a>
+</div>
+
+<script>
+// ── THE APOTHECARY LOOKUP ─────────────────────────────────────────────
+// Keyed on mood words. Ivy's wisdom + gem healing properties + Lord Oro quote.
+
+const REMEDIES = {
+  tired: {
+    gem:'🔵', name:'Blue Lace Agate', property:'Rest & Renewal',
+    healing:'Blue Lace Agate is the stone of rest. It slows the nervous system, quiets the mind that won\'t stop running, and reminds the body it is allowed to stop. The mine has been holding this one for the miners who push too hard.',
+    how:'Hold it in your left hand. Breathe out longer than you breathe in. Do this three times. Then sleep if you can.',
+    oro:'"The mine will wait. Rest is a form of work. The gold does not go anywhere while you sleep." — Lord Oro',
+    ivy:'"I keep one on the counter for the long days. Brian doesn\'t believe in crystals but he\'s been sleeping better since I put it on the nightstand." — Ivy'
+  },
+  anxious: {
+    gem:'💜', name:'Amethyst', property:'Calm & Clarity',
+    healing:'Amethyst has been used for 2,000 years to quiet the noise. Ancient Greeks wore it into battle not for courage but for clear thinking. Anxiety is not weakness — it is the mind working too hard on too many futures at once. Amethyst narrows the field.',
+    how:'Keep it somewhere you can touch it without thinking. The act of reaching for it is the intervention.',
+    oro:'"Is the air heavy today? Or is it just the thoughts you brought down? The mine holds them. You don\'t have to." — Lord Oro',
+    ivy:'"Amethyst is my most stocked gem. Take a breath first. Then take the stone." — Ivy'
+  },
+  lost: {
+    gem:'🧭', name:'Labradorite', property:'Direction & Intuition',
+    healing:'Labradorite is the stone of navigation — not the kind that tells you where to go but the kind that reminds you that you already know. The mine never loses its miners. They just forget they have an interior compass.',
+    how:'Look at it in different light. The colors shift. That\'s the point — what you\'re looking for looks different depending on where you\'re standing.',
+    oro:'"The best ore is found at the intersection of fear and faith. You are not lost. You are between two certainties." — Lord Oro',
+    ivy:'"I couldn\'t find labradorite for three months once. Then I stopped looking and it was in the first shipment. The mine has a sense of humor." — Ivy'
+  },
+  hopeful: {
+    gem:'💚', name:'Green Aventurine', property:'Opportunity & Growth',
+    healing:'Green Aventurine is the stone of optimism that has done its homework. Not naive hope — earned hope. The kind that knows what it has survived and has decided to keep going anyway. The mine grows this one near the surface where the light still reaches.',
+    how:'Carry it in your right pocket. The side of action. Let it remind you that forward exists.',
+    oro:'"The mine gives what you need, not always what you want. Today it is giving you a green stone and a reason to keep going." — Lord Oro',
+    ivy:'"My favorite. I always keep the best pieces for people who come in hopeful. You deserve the good ones." — Ivy'
+  },
+  angry: {
+    gem:'❤️', name:'Red Jasper', property:'Grounding & Patience',
+    healing:'Red Jasper does not extinguish anger — it grounds it. Anger is energy. Energy can be redirected. This stone has been used by warriors for centuries not to calm down but to aim better. The mine respects your fire. It just wants to know where you\'re pointing it.',
+    how:'Hold it tight. Squeeze it. Let the stone take some of what you\'re carrying. Then decide what to do next.',
+    oro:'"Every strike of the pickaxe is a word in your own story. Anger is a strike. Make sure you\'re hitting the right wall." — Lord Oro',
+    ivy:'"Red jasper is the one I bring out for the hard days. You\'re allowed to be angry. You\'re just not required to stay there." — Ivy'
+  },
+  proud: {
+    gem:'💛', name:'Citrine', property:'Confidence & Achievement',
+    healing:'Citrine is called the merchant\'s stone — the stone of people who built something. It carries solar energy, warmth, the particular satisfaction of making a thing exist that did not exist before. You earned this feeling. Let it be real.',
+    how:'Put it somewhere you can see it. Not hidden. You built something. Let the stone be visible too.',
+    oro:'"A kingdom is just a cave until a lord decides to lead. You decided. That is the whole thing." — Lord Oro',
+    ivy:'"Citrine. Of course. Come here — let me find you the brightest one in the case." — Ivy'
+  },
+  heartbroken: {
+    gem:'🌹', name:'Rose Quartz', property:'Healing & Self-Love',
+    healing:'Rose quartz is the oldest love stone — not for finding love, but for surviving its absence. The mine has held this one at its warmest depth. Heartbreak is the proof that something mattered. The stone does not argue with grief. It just stays warm.',
+    how:'Keep it near where you sleep. Not to forget — to remember that the warmth was real and will be real again.',
+    oro:'"Some things are only visible when the lantern goes out. What you loved was real. What you feel is real. The mine acknowledges both." — Lord Oro',
+    ivy:'"Rose quartz. I\'ll wrap it for you. No charge today." — Ivy'
+  },
+  stuck: {
+    gem:'🟡', name:'Tiger\'s Eye', property:'Momentum & Courage',
+    healing:'Tiger\'s Eye is the stone of forward motion. Not reckless — deliberate. It has been used by soldiers, miners, and travelers who needed to take the next step when the next step was the hardest one. The mine knows stuck. It also knows how tunnels open up.',
+    how:'Hold it and name one small thing you can do today. Not the whole tunnel. Just one swing of the pickaxe.',
+    oro:'"The tunnel that looks like a dead end is usually a door with no handle. Push anyway." — Lord Oro',
+    ivy:'"Tiger\'s Eye. Brian thinks I stock too much of it. I don\'t. People get stuck. They need this one more than they need the fancy ones." — Ivy'
+  },
+  grateful: {
+    gem:'🟢', name:'Jade', property:'Harmony & Abundance',
+    healing:'Jade has been the stone of gratitude for 7,000 years across cultures that never spoke to each other. They all arrived at the same stone. That is not coincidence. Gratitude opens something in the chest that other feelings keep closed. The mine notices.',
+    how:'Just hold it for a moment. No instructions needed for gratitude. It already knows what to do.',
+    oro:'"The mine gives what you need. Today you already have it. That is rarer than gold." — Lord Oro',
+    ivy:'"Jade. My grandmother had a jade bracelet she wore every day of her adult life. I think about her every time I handle it." — Ivy'
+  },
+  lonely: {
+    gem:'💙', name:'Blue Kyanite', property:'Connection & Communication',
+    healing:'Blue Kyanite opens the throat — the part of you that wants to reach out but stops itself. Loneliness is usually not the absence of people. It is the presence of something unsaid. This stone has been used for centuries to make the unsayable sayable.',
+    how:'Hold it near your throat. Think of one person. Consider reaching out. You don\'t have to. Just consider.',
+    oro:'"Ivy tells me you\'re a good neighbor. That matters more than the gold. The mine is full of people who forgot to say that." — Lord Oro',
+    ivy:'"You found your way to the shop. That\'s already something. Sit a while — business is slow today and I have good tea." — Ivy'
+  },
+  creative: {
+    gem:'🟣', name:'Lapis Lazuli', property:'Inspiration & Vision',
+    healing:'Lapis Lazuli was crushed into the blue of every Renaissance painting. Michelangelo\'s ceiling. Vermeer\'s girl with the pearl earring. For 5,000 years, human beings associated this stone with the act of making something. The mine keeps a vein of it near the surface for exactly this reason.',
+    how:'Keep it near where you work. Not as a talisman — as a reminder that making things is the oldest human act.',
+    oro:'"Every story is a tunnel. Every tunnel leads somewhere real. The mine built itself one story at a time." — Lord Oro',
+    ivy:'"Lapis. The artists always go for the lapis. I save the deep blue pieces — not the pale ones. You deserve the deep ones." — Ivy'
+  },
+  brave: {
+    gem:'🔴', name:'Carnelian', property:'Courage & Action',
+    healing:'Carnelian is the warrior stone. Ancient Egyptian soldiers wore it. Napoleon wore a carnelian seal ring. It does not grant courage — it reminds you that the courage is already present. You are feeling brave because you are brave. The stone is just a mirror.',
+    how:'Wear it or carry it when you need to remember what you\'re made of. Not because it adds anything — because you deserve a reminder.',
+    oro:'"The best ore is found at the intersection of fear and faith. Brave is not the absence of fear. It is the decision to go anyway." — Lord Oro',
+    ivy:'"Carnelian. Good. You should come in feeling brave more often. It suits you." — Ivy'
+  },
+};
+
+// Mood keyword matching — broader than exact match
+const MOOD_MAP = {
+  // Tired / exhausted
+  tired:['tired','exhausted','drained','worn','burnt','burnout','spent','weary','fatigue','sleep','sleepy','low energy','no energy','depleted'],
+  // Anxious / worried
+  anxious:['anxious','anxiety','worried','worry','nervous','scared','fear','panic','stress','stressed','overwhelmed','tense','uneasy','dread'],
+  // Lost / confused
+  lost:['lost','confused','unsure','uncertain','direction','purpose','pointless','adrift','wandering','searching','stuck in my head','don\'t know'],
+  // Hopeful / optimistic
+  hopeful:['hopeful','hope','optimistic','excited','looking forward','better days','possibility','possible','bright','light at the end'],
+  // Angry / frustrated
+  angry:['angry','anger','mad','furious','frustrated','frustration','rage','irritated','annoyed','resentful','bitter'],
+  // Proud / accomplished
+  proud:['proud','accomplished','achievement','did it','made it','finished','completed','won','success','built','created'],
+  // Heartbroken / sad
+  heartbroken:['heartbroken','heartbreak','sad','sadness','grief','grieving','lost someone','miss','missing','broken','depressed','depression','hurt','pain','crying'],
+  // Stuck / blocked
+  stuck:['stuck','blocked','can\'t move','paralyzed','frozen','stagnant','not moving','plateau','rut','same place'],
+  // Grateful / thankful
+  grateful:['grateful','gratitude','thankful','blessed','lucky','fortunate','appreciate','appreciation','thank'],
+  // Lonely / isolated
+  lonely:['lonely','alone','isolated','disconnected','no one','abandoned','forgotten','invisible','unseen'],
+  // Creative / inspired
+  creative:['creative','inspired','inspiration','creating','making','writing','building','artistic','idea','ideas','flow','flowing'],
+  // Brave / courageous
+  brave:['brave','courageous','courage','bold','strong','powerful','ready','determined','resolved','warrior'],
+};
+
+function matchMood(input) {
+  const lower = input.toLowerCase().trim();
+  for(const [mood, keywords] of Object.entries(MOOD_MAP)) {
+    if(keywords.some(k => lower.includes(k))) return mood;
+  }
+  // Default — use tired as fallback with a modified message
+  return 'tired';
+}
+
+function setFeeling(word) {
+  document.getElementById('feelingInput').value = word;
+  document.getElementById('feelingInput').focus();
+}
+
+function consult() {
+  const input = document.getElementById('feelingInput').value.trim();
+  if(!input) { document.getElementById('feelingInput').focus(); return; }
+  
+  const mood = matchMood(input);
+  const remedy = REMEDIES[mood];
+  if(!remedy) return;
+  
+  document.getElementById('resultGem').textContent = remedy.gem;
+  document.getElementById('resultName').innerHTML = `${remedy.gem} <em>${remedy.name}</em>`;
+  document.getElementById('resultProperty').textContent = remedy.property;
+  document.getElementById('resultHealing').textContent = remedy.healing;
+  document.getElementById('resultHow').innerHTML = `<strong>How to use it</strong>${remedy.how}`;
+  document.getElementById('resultOro').textContent = remedy.oro;
+  document.getElementById('resultIvy').textContent = remedy.ivy;
+  
+  const section = document.getElementById('resultSection');
+  section.classList.add('show');
+  section.scrollIntoView({behavior:'smooth', block:'start'});
+  
+  // Save to lore vault
+  try {
+    const v = JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]');
+    v.push({text:`Ivy's Apothecary prescribed ${remedy.name} for feeling "${input}". ${remedy.property}.`, source:"Ivy's Apothecary", date:new Date().toLocaleDateString()});
+    localStorage.setItem('nmn_lore_vault', JSON.stringify(v));
+  } catch(e){}
+}
+
+function reset() {
+  document.getElementById('resultSection').classList.remove('show');
+  document.getElementById('feelingInput').value = '';
+  document.getElementById('feelingInput').focus();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+document.getElementById('feelingInput').addEventListener('keydown', e => {
+  if(e.key === 'Enter') consult();
+});
+
+try{
+  document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+  document.getElementById('dgGold').textContent=localStorage.getItem('nmn_total_gold')||'0';
+}catch(e){}
+</script>
+<script id="nmn-glow">
+(function(){
+  var r=document.createElement('div');
+  r.id='pickaxe-glow';
+  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
+  document.body.appendChild(r);
+  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
+  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
+  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
+})();
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js', {scope:'/'})
+    .then(function(reg){ console.log('NMN SW registered'); })
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>

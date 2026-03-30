@@ -1,0 +1,2159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="nmn-theme.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nonsense Media Network — Lord Oro</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;
+  --coal:#070605;--shaft:#0d0c08;--rock:#1a1510;
+  --cream:#f0e6cc;--muted:#a0905a;--faint:#5a4a30;
+  --font-pixel:'Press Start 2P',monospace;
+  --font-display:'Cinzel Decorative',serif;
+  --font-serif:'Cormorant Garamond',serif;
+  --font-sans:'Josefin Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;background:#070605}
+body{
+  font-family:var(--font-sans);
+  background:var(--coal);
+  background-image:
+    linear-gradient(45deg,#070605 25%,#0d0c08 25%,#0d0c08 50%,#070605 50%,#070605 75%,#0d0c08 75%,#0d0c08 100%),
+    repeating-linear-gradient(0deg,transparent,transparent 79px,rgba(255,215,0,0.018) 79px,rgba(255,215,0,0.018) 80px),
+    repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(255,215,0,0.018) 79px,rgba(255,215,0,0.018) 80px);
+  background-size:4px 4px, 100% 100%, 100% 100%;
+  color:var(--cream);
+  overflow-x:hidden;
+  padding-top:56px;
+  padding-bottom:40px;
+}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  padding:.75rem 2rem;
+  display:flex;justify-content:space-between;align-items:center;
+  background:rgba(7,6,5,.97);
+  border-bottom:1px solid rgba(255,215,0,.12);
+  backdrop-filter:blur(8px);
+}
+.nav-logo{
+  font-family:var(--font-pixel);
+  font-size:.55rem;
+  color:var(--gold);
+  text-decoration:none;
+  flex-shrink:0;
+  letter-spacing:1px;
+  text-shadow:0 0 15px rgba(255,215,0,0.4);
+}
+nav ul{display:flex;list-style:none;flex-wrap:wrap}
+.nav-pillar{position:relative}
+.nav-pillar>a{display:block;color:var(--muted);text-decoration:none;font-size:.52rem;letter-spacing:.15em;text-transform:uppercase;padding:.5rem .7rem;white-space:nowrap;transition:color .3s;font-family:var(--font-pixel);}
+.nav-pillar>a:hover{color:var(--gold);text-shadow:0 0 10px rgba(255,215,0,0.4)}
+.nav-dropdown{display:none;position:absolute;top:100%;left:0;background:rgba(7,6,5,.99);border:1px solid rgba(255,215,0,.15);min-width:200px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.8)}
+.nav-pillar:hover .nav-dropdown{display:block}
+.nav-dropdown a{display:block;padding:.55rem .9rem;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;border-bottom:1px solid rgba(255,215,0,.06);transition:all .2s;font-family:var(--font-pixel);}
+.nav-dropdown a:hover{color:var(--gold);background:rgba(255,215,0,.04);padding-left:1.1rem}
+.nav-dropdown a:last-child{border-bottom:none}
+@media(max-width:768px){nav ul{display:none}}
+.lang-switcher{position:relative;margin-left:.5rem;flex-shrink:0}
+.lang-sw-btn{background:transparent;border:1px solid rgba(255,215,0,.2);color:var(--gold);font-family:var(--font-pixel);font-size:.45rem;letter-spacing:.1em;padding:.3rem .6rem;cursor:none;transition:all .3s;white-space:nowrap}
+.lang-sw-btn:hover{border-color:var(--gold);background:rgba(255,215,0,.06)}
+.lang-sw-menu{display:none;position:absolute;top:110%;right:0;background:rgba(7,6,5,.99);border:1px solid rgba(255,215,0,.15);z-index:200;min-width:150px}
+.lang-sw-menu.open{display:block}
+.lang-sw-menu button{display:block;width:100%;padding:.55rem .9rem;background:transparent;border:none;border-bottom:1px solid rgba(255,215,0,.06);color:var(--muted);font-family:var(--font-pixel);font-size:.45rem;letter-spacing:.08em;text-align:left;cursor:none;transition:all .2s}
+.lang-sw-menu button:hover{color:var(--gold);background:rgba(255,215,0,.04)}
+.lang-sw-menu button:last-child{border-bottom:none}
+
+/* ── LANTERN CURSOR (replaces cursor-lamp) ── */
+#cursor-lamp{display:none} /* disable old lamp */
+#nmn-cursor-el{position:fixed;width:48px;height:64px;pointer-events:none;z-index:99999;transform:translate(-50%,-50%)}
+#nmn-halo{position:fixed;width:160px;height:160px;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,200,50,.09) 0%,transparent 65%);transition:width .2s,height .2s,background .2s}
+#nmn-pool{position:fixed;width:200px;height:70px;pointer-events:none;z-index:99997;transform:translate(-50%,22px);border-radius:50%;background:radial-gradient(ellipse,rgba(255,200,50,.06) 0%,transparent 70%);transition:width .25s,height .25s,background .25s}
+#nmn-halo.hot{width:240px;height:240px;background:radial-gradient(circle,rgba(255,215,0,.25) 0%,rgba(255,160,0,.08) 50%,transparent 70%)}
+#nmn-pool.hot{width:300px;height:100px;background:radial-gradient(ellipse,rgba(255,215,0,.2) 0%,transparent 70%)}
+.l-body{animation:sway 3s ease-in-out infinite;transform-origin:24px 4px}
+.l-flame{animation:flamePulse 1.6s ease-in-out infinite;transform-origin:24px 30px}
+.l-glow{animation:glowPulse 1.6s ease-in-out infinite}
+#nmn-cursor-el.hot .l-flame{animation:flameBright .5s ease-in-out infinite}
+#nmn-cursor-el.hot .l-glow{animation:glowBright .5s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+@keyframes flamePulse{0%,100%{transform:scaleY(1) scaleX(1);opacity:.9}50%{transform:scaleY(.85) scaleX(1.1);opacity:.7}}
+@keyframes glowPulse{0%,100%{opacity:.5}50%{opacity:.3}}
+@keyframes flameBright{0%,100%{transform:scaleY(1.25) scaleX(1.1);opacity:1}50%{transform:scaleY(1.45) scaleX(.9);opacity:.85}}
+@keyframes glowBright{0%,100%{opacity:.95}50%{opacity:.65}}
+
+/* BEAMS */
+.beam{position:fixed;top:0;width:1px;height:100vh;background:linear-gradient(to bottom,transparent,rgba(255,215,0,.05) 30%,rgba(255,215,0,.08) 50%,rgba(255,215,0,.05) 70%,transparent);pointer-events:none;z-index:0}
+.beam-1{left:15%;animation:beamFlicker 8s ease-in-out infinite}
+.beam-2{left:40%;animation:beamFlicker 12s ease-in-out infinite 2s}
+.beam-3{left:65%;animation:beamFlicker 10s ease-in-out infinite 4s}
+.beam-4{left:85%;animation:beamFlicker 9s ease-in-out infinite 1s}
+@keyframes beamFlicker{0%,100%{opacity:.4}50%{opacity:1}75%{opacity:.6}}
+
+/* PARTICLES */
+#particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.particle{position:absolute;width:2px;height:2px;background:var(--gold);border-radius:50%;opacity:0;animation:driftUp linear infinite}
+@keyframes driftUp{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:.4}90%{opacity:.1}100%{transform:translateY(-5vh) rotate(360deg);opacity:0}}
+
+/* SECTION DIVIDER */
+.divider{height:20px;background:#1a1208;border-top:2px solid rgba(255,215,0,.1);border-bottom:2px solid rgba(255,215,0,.04)}
+
+/* SECTION BASE */
+section{position:relative;z-index:1;padding:5rem 3rem}
+section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1px;background:linear-gradient(to right,transparent,rgba(255,215,0,.1),transparent)}
+.section-tag{font-family:var(--font-pixel);font-size:.48rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gd);margin-bottom:3rem;display:flex;align-items:center;gap:1rem}
+.section-tag::after{content:'';height:1px;width:60px;background:linear-gradient(to right,var(--gd),transparent)}
+@media(max-width:768px){section{padding:4rem 1.5rem}}
+
+/* ── HERO — Golden Eyes + Giant Title ── */
+.hero{
+  position:relative;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:6rem 3rem 4rem;
+  overflow:hidden;
+  text-align:center;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 30%,rgba(255,200,50,.06),transparent 60%),
+    radial-gradient(ellipse 60% 80% at 50% 120%,rgba(255,215,0,.06),transparent 60%),
+    linear-gradient(to bottom,var(--coal),var(--shaft) 40%,var(--rock));
+}
+.hero-lantern{display:none} /* replaced by real lantern cursor */
+
+/* Golden eyes */
+.hero-eyes{
+  display:flex;gap:64px;justify-content:center;
+  margin-bottom:44px;
+  position:relative;z-index:2;
+}
+/\* TRADEMARK GEOMETRIC EYES — PURE GOLD, NO RED \*/
+.hero-eye{
+  position:relative;
+  width:52px;height:30px;
+  image-rendering:pixelated;
+  background:
+    linear-gradient(#000,#000) 18px 10px/16px 10px no-repeat,
+    linear-gradient(#FFD700,#C59200) 6px 4px/40px 22px no-repeat,
+    linear-gradient(#e8b84b,#8B6914) 0 0/52px 30px no-repeat;
+  clip-path:polygon(0 8px,8px 0,44px 0,52px 8px,52px 22px,44px 30px,8px 30px,0 22px);
+  box-shadow:0 0 20px 4px rgba(232,184,75,.8),0 0 40px 8px rgba(197,146,0,.4);
+  animation:pureGoldPulse 3.5s ease-in-out infinite;
+}
+.hero-eye::after{
+  content:'';position:absolute;top:-10px;left:0;
+  width:100%;height:4px;
+  background:var(--gd);
+  transform:rotate(-8deg);
+  opacity:.5;
+}
+.hero-eye:last-child::after{transform:rotate(8deg);}
+.hero-eyebrow{
+  font-family:var(--font-pixel);
+  font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1.5rem;
+  display:flex;align-items:center;justify-content:center;gap:.75rem;
+}
+.hero-eyebrow::before{content:'⬡';font-size:.75rem}
+
+/* THE BIG TITLE */
+.hero-title{
+  font-family:var(--font-display);
+  font-size:clamp(2.8rem,8vw,7.5rem);
+  line-height:.95;font-weight:700;
+  color:var(--cream);
+  margin-bottom:1.5rem;
+  text-shadow:0 0 60px rgba(255,215,0,.15);
+  letter-spacing:2px;
+}
+.hero-title em{
+  font-style:italic;
+  color:var(--gold);
+  display:block;
+  text-shadow:0 0 40px rgba(255,215,0,.4),0 0 80px rgba(255,215,0,.15);
+}
+
+.hero-tagline{
+  font-family:var(--font-pixel);
+  font-size:.5rem;
+  letter-spacing:.05em;line-height:2.2;
+  color:var(--muted);max-width:520px;
+  margin:0 auto 2.5rem;
+  padding:.75rem 1.25rem;
+  border:1px solid rgba(255,215,0,.1);
+  background:rgba(255,215,0,.02);
+}
+.hero-actions{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center}
+@media(max-width:768px){.hero{padding:5rem 1.5rem 3rem}}
+
+/* BUTTONS */
+.btn{padding:.85rem 2rem;font-family:var(--font-pixel);font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;text-decoration:none;display:inline-block;transition:all .3s;cursor:none;border:none}
+.btn-primary{background:var(--gold);color:var(--coal);box-shadow:0 0 20px rgba(255,215,0,.4)}
+.btn-primary:hover{background:#fff;box-shadow:0 0 35px rgba(255,215,0,.8);transform:translateY(-2px)}
+.btn-outline{background:transparent;color:var(--gold);border:1px solid rgba(255,215,0,.35)}
+.btn-outline:hover{border-color:var(--gold);background:rgba(255,215,0,.06)}
+.btn-green{background:linear-gradient(135deg,#02a95c,#017a42);color:white;font-family:var(--font-pixel);font-size:.5rem;}
+.btn-green:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(2,169,92,.35)}
+.btn-patreon{background:linear-gradient(135deg,#C59200,#8B6914);color:#000;font-family:var(--font-pixel);font-size:.5rem;}
+.btn-patreon:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(197,146,0,.5)}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:5rem;align-items:start}
+@media(max-width:768px){.about-grid{grid-template-columns:1fr;gap:2.5rem}}
+.about-headline{font-family:var(--font-display);font-size:clamp(1.6rem,3.5vw,2.8rem);line-height:1.1;color:var(--cream);margin-bottom:1.5rem}
+.about-headline em{color:var(--gold);font-style:italic}
+.about-body{font-size:.72rem;line-height:2;color:var(--muted);margin-bottom:1.25rem;letter-spacing:.02em}
+.quote-box{margin-top:2rem;padding:1.5rem;background:rgba(255,215,0,.03);border:1px solid rgba(255,215,0,.1)}
+.quote-box p{font-family:var(--font-serif);font-style:italic;font-size:1.05rem;color:var(--gold);line-height:1.7}
+.pillars{display:flex;flex-direction:column}
+.pillar{padding:1.25rem 0;border-bottom:1px solid rgba(255,215,0,.07);transition:padding-left .3s}
+.pillar:hover{padding-left:.75rem}
+.pillar-num{font-family:var(--font-pixel);font-size:.45rem;letter-spacing:.3em;color:var(--gd);margin-bottom:.4rem}
+.pillar h3{font-family:var(--font-display);font-size:1rem;color:var(--cream);margin-bottom:.3rem}
+.pillar p{font-size:.72rem;color:var(--faint);line-height:1.7}
+
+/* WORKS */
+/* ── WORKS GRID — Painterly Book Cards ── */
+.works-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:24px;
+}
+.work-card{
+  background:var(--coal);
+  border:1px solid rgba(255,215,0,0.12);
+  text-decoration:none;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  overflow:hidden;
+  transition:transform .3s, box-shadow .3s, border-color .3s;
+}
+.work-card:hover{
+  transform:translateY(-5px);
+  border-color:rgba(255,215,0,0.4);
+  box-shadow:0 12px 40px rgba(0,0,0,0.6), 0 0 30px rgba(255,215,0,0.08);
+}
+/* Painterly cover art panel */
+.book-cover-art{
+  width:100%;
+  height:200px;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+/* Each book gets its own painted palette */
+.book-cover-art.pyro{
+  background:
+    radial-gradient(ellipse at 30% 60%, rgba(220,80,20,0.7) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 30%, rgba(255,160,30,0.5) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 100%, rgba(180,40,0,0.8) 0%, transparent 60%),
+    linear-gradient(170deg,#0a0604 0%,#1a0c04 40%,#2a1008 100%);
+}
+.book-cover-art.tabbies{
+  background:
+    radial-gradient(ellipse at 50% 70%, rgba(200,140,40,0.5) 0%, transparent 55%),
+    radial-gradient(ellipse at 20% 30%, rgba(160,100,20,0.4) 0%, transparent 40%),
+    radial-gradient(ellipse at 80% 80%, rgba(180,120,30,0.3) 0%, transparent 45%),
+    linear-gradient(160deg,#080605 0%,#120e06 50%,#1a1408 100%);
+}
+.book-cover-art.outbreak{
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(20,60,140,0.6) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(0,30,80,0.7) 0%, transparent 45%),
+    radial-gradient(ellipse at 20% 60%, rgba(40,10,80,0.4) 0%, transparent 40%),
+    linear-gradient(180deg,#020408 0%,#040a12 50%,#06040a 100%);
+}
+.book-cover-art.juni{
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(180,180,200,0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 30% 70%, rgba(100,100,140,0.4) 0%, transparent 40%),
+    radial-gradient(ellipse at 70% 20%, rgba(200,190,160,0.25) 0%, transparent 45%),
+    linear-gradient(170deg,#06060a 0%,#0c0c12 50%,#080810 100%);
+}
+.book-cover-art.shortstories{
+  background:
+    radial-gradient(ellipse at 40% 50%, rgba(255,215,0,0.35) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 30%, rgba(180,100,20,0.3) 0%, transparent 40%),
+    radial-gradient(ellipse at 20% 80%, rgba(120,80,20,0.4) 0%, transparent 45%),
+    linear-gradient(165deg,#080604 0%,#110e06 50%,#0c0a04 100%);
+}
+.book-cover-art.nayla{
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(255,215,0,0.4) 0%, transparent 45%),
+    radial-gradient(ellipse at 20% 70%, rgba(160,100,0,0.35) 0%, transparent 40%),
+    radial-gradient(ellipse at 80% 20%, rgba(100,60,0,0.3) 0%, transparent 40%),
+    linear-gradient(175deg,#070604 0%,#0f0c04 45%,#080602 100%);
+}
+/* Painterly texture overlay — crosshatch ink wash effect */
+.book-cover-art::before{
+  content:'';
+  position:absolute;inset:0;
+  background-image:
+    repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px),
+    repeating-linear-gradient(-45deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px);
+  pointer-events:none;
+  z-index:1;
+}
+/* Vignette over cover */
+.book-cover-art::after{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(0,0,0,0.5) 100%);
+  pointer-events:none;
+  z-index:1;
+}
+/* Cover icon / illustration */
+.cover-icon{
+  position:relative;
+  z-index:2;
+  font-size:52px;
+  filter:drop-shadow(0 0 20px currentColor);
+  animation:coverFloat 4s ease-in-out infinite;
+  user-select:none;
+}
+.cover-icon.pyro-icon{filter:drop-shadow(0 0 18px rgba(255,120,20,0.9));}
+.cover-icon.tabbies-icon{filter:drop-shadow(0 0 15px rgba(220,160,60,0.7));}
+.cover-icon.outbreak-icon{filter:drop-shadow(0 0 18px rgba(60,100,220,0.8));}
+.cover-icon.juni-icon{filter:drop-shadow(0 0 15px rgba(180,180,220,0.7));}
+.cover-icon.stories-icon{filter:drop-shadow(0 0 15px rgba(255,215,0,0.8));}
+.cover-icon.nayla-icon{filter:drop-shadow(0 0 20px rgba(255,215,0,1));}
+@keyframes coverFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+/* Decorative corner marks — illustration feel */
+.cover-corner{
+  position:absolute;
+  z-index:2;
+  width:18px;height:18px;
+  opacity:0.4;
+}
+.cover-corner.tl{top:10px;left:10px;border-top:1px solid var(--gold);border-left:1px solid var(--gold);}
+.cover-corner.tr{top:10px;right:10px;border-top:1px solid var(--gold);border-right:1px solid var(--gold);}
+.cover-corner.bl{bottom:10px;left:10px;border-bottom:1px solid var(--gold);border-left:1px solid var(--gold);}
+.cover-corner.br{bottom:10px;right:10px;border-bottom:1px solid var(--gold);border-right:1px solid var(--gold);}
+/* Status ribbon */
+.cover-ribbon{
+  position:absolute;
+  top:14px;left:0;
+  z-index:3;
+  font-family:var(--font-sans);
+  font-size:.45rem;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  padding:3px 10px 3px 8px;
+  clip-path:polygon(0 0,100% 0,calc(100% - 6px) 100%,0 100%);
+}
+.cover-ribbon.live{background:var(--gold);color:var(--coal);}
+.cover-ribbon.soon{background:rgba(255,215,0,0.2);color:var(--gold);border:1px solid rgba(255,215,0,0.3);}
+.cover-ribbon.progress{background:rgba(100,80,20,0.3);color:var(--gd);border:1px solid rgba(100,80,20,0.4);}
+/* Book info panel */
+.book-info{
+  padding:1.5rem;
+  display:flex;
+  flex-direction:column;
+  flex:1;
+  border-top:1px solid rgba(255,215,0,0.08);
+}
+.work-type{font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gd);margin-bottom:.6rem}
+.work-card h3{
+  font-family:var(--font-serif);
+  font-size:1.15rem;
+  color:var(--cream);
+  margin-bottom:.6rem;
+  line-height:1.25;
+  font-weight:600;
+}
+.work-card p{font-size:.72rem;color:var(--faint);line-height:1.8;flex:1}
+.book-price{
+  font-family:var(--font-sans);
+  font-size:.62rem;
+  letter-spacing:.1em;
+  color:var(--gold);
+  margin-top:.75rem;
+  margin-bottom:.75rem;
+}
+.book-price .was{color:var(--gd);text-decoration:line-through;margin-right:.4rem;font-size:.52rem;}
+.work-badge{
+  display:inline-block;
+  margin-top:.5rem;
+  font-size:.5rem;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:1px solid rgba(255,215,0,0.3);
+  padding:.3rem .8rem;
+  align-self:flex-start;
+  transition:all .2s;
+}
+.work-card:hover .work-badge{background:rgba(255,215,0,0.08);border-color:var(--gold);}
+
+/* MUSIC */
+.music-section{background:var(--shaft)}
+.album-grid{display:grid;grid-template-columns:240px 1fr;gap:3.5rem;align-items:start}
+@media(max-width:768px){.album-grid{grid-template-columns:1fr}}
+.album-cover{aspect-ratio:1;background:linear-gradient(135deg,var(--rock),#0a0600);border:1px solid rgba(255,215,0,.2);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.album-monogram{font-family:var(--font-serif);font-size:3.5rem;font-style:italic;color:var(--gold);opacity:.7}
+.album-cover-label{font-size:.5rem;letter-spacing:.2em;color:var(--gd);margin-top:.5rem}
+.album-title{font-family:var(--font-serif);font-size:2.5rem;color:var(--cream);margin-bottom:.3rem}
+.album-title em{color:var(--gold);font-style:italic}
+.album-sub{font-size:.55rem;letter-spacing:.25em;text-transform:uppercase;color:var(--faint);margin-bottom:2rem}
+.tracklist{list-style:none;border-top:1px solid rgba(255,215,0,.08)}
+.tracklist li{display:flex;align-items:center;padding:.85rem 0;border-bottom:1px solid rgba(255,215,0,.06);gap:1rem;transition:padding-left .3s}
+.tracklist li:hover{padding-left:.5rem}
+.track-num{font-family:var(--font-serif);font-style:italic;font-size:.8rem;color:var(--faint);width:18px;text-align:right;flex-shrink:0}
+.track-name{font-size:.78rem;color:var(--muted);flex:1}
+.track-theme{font-size:.58rem;color:var(--faint);font-style:italic}
+
+/* LANGUAGES */
+.lang-section{background:linear-gradient(to bottom,var(--shaft),var(--coal))}
+.lang-headline{font-family:var(--font-serif);font-size:clamp(1.8rem,4vw,3rem);color:var(--cream);margin-bottom:.75rem}
+.lang-headline em{color:var(--gold);font-style:italic}
+.lang-sub{font-size:.75rem;color:var(--muted);line-height:2;max-width:520px;margin-bottom:2.5rem}
+.lang-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,215,0,.08);max-width:760px}
+@media(max-width:600px){.lang-grid{grid-template-columns:repeat(2,1fr)}}
+.lang-card{background:var(--coal);padding:1.75rem 1.25rem;text-align:center;transition:background .3s}
+.lang-card:hover{background:var(--shaft)}
+.lang-flag{font-size:2.2rem;display:block;margin-bottom:.75rem}
+.lang-name{font-family:var(--font-serif);font-size:.95rem;color:var(--cream);margin-bottom:.3rem}
+.lang-desc{font-size:.55rem;letter-spacing:.1em;color:var(--faint);text-transform:uppercase}
+
+/* SUPPORT */
+.support-section{background:linear-gradient(to bottom,var(--coal),var(--shaft))}
+.support-headline{font-family:var(--font-serif);font-size:clamp(1.8rem,4vw,3rem);color:var(--cream);margin-bottom:.75rem}
+.support-headline em{color:var(--gold);font-style:italic}
+.support-sub{font-size:.75rem;color:var(--muted);line-height:2;max-width:560px;margin-bottom:1.5rem}
+.vein-label{font-size:.55rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gd);margin-bottom:.5rem}
+.vein-bar{width:100%;max-width:560px;height:24px;background:#050402;border:1px solid #2a1b0a;overflow:hidden;margin-bottom:.4rem}
+.vein-fill{height:100%;background:linear-gradient(90deg,#7a5a18,var(--gold),var(--gb));position:relative}
+.vein-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);animation:streak 2.5s infinite}
+@keyframes streak{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}
+.vein-sub{font-size:.55rem;color:var(--faint);margin-bottom:2.5rem}
+.support-cards{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:680px}
+@media(max-width:600px){.support-cards{grid-template-columns:1fr}}
+.support-card{padding:1.75rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,215,0,.1);transition:all .3s}
+.support-card:hover{border-color:rgba(255,215,0,.3);transform:translateY(-2px)}
+.support-card h3{font-family:var(--font-serif);font-size:1.3rem;color:var(--gold);margin-bottom:.6rem}
+.support-card p{font-size:.72rem;color:var(--faint);line-height:1.8;margin-bottom:1.25rem}
+
+/* GAMES */
+.games-section{background:var(--shaft)}
+.games-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.08);margin-bottom:1.5rem}
+.game-card{padding:1.75rem;background:var(--coal);text-decoration:none;display:block;transition:background .3s;position:relative;overflow:hidden}
+.game-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(to right,transparent,var(--gold),transparent);transform:scaleX(0);transition:transform .4s}
+.game-card:hover{background:var(--shaft)}
+.game-card:hover::after{transform:scaleX(1)}
+.game-icon{font-size:1.6rem;display:block;margin-bottom:.85rem}
+.game-type{font-size:.5rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gd);margin-bottom:.4rem}
+.game-card h3{font-family:var(--font-serif);font-size:1.1rem;color:var(--cream);margin-bottom:.4rem}
+.game-card h3 em{color:var(--gold);font-style:italic}
+.game-card p{font-size:.68rem;color:var(--faint);line-height:1.7}
+.games-cta{text-align:center;margin-top:1rem}
+
+/* CONTACT */
+.contact-section{background:var(--rock)}
+.contact-headline{font-family:var(--font-serif);font-size:clamp(1.8rem,4vw,3rem);color:var(--cream);margin-bottom:.75rem}
+.contact-headline em{color:var(--gold);font-style:italic}
+.contact-sub{font-size:.75rem;color:var(--muted);line-height:2;max-width:480px;margin-bottom:2.5rem}
+.contact-list{display:flex;flex-direction:column;max-width:520px;border:1px solid rgba(255,215,0,.1)}
+.contact-item{display:flex;align-items:center;padding:1.1rem 1.4rem;border-bottom:1px solid rgba(255,215,0,.08);text-decoration:none;transition:background .3s;gap:1.25rem}
+.contact-item:last-child{border-bottom:none}
+.contact-item:hover{background:rgba(255,215,0,.04)}
+.contact-label{font-size:.5rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gd);width:60px;flex-shrink:0}
+.contact-val{font-size:.78rem;color:var(--muted)}
+
+/* FOOTER */
+footer{padding:1.75rem 3rem;border-top:1px solid rgba(255,215,0,.08);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-brand{font-family:var(--font-serif);font-style:italic;color:var(--gd);font-size:.9rem}
+.footer-copy{font-size:.55rem;letter-spacing:.15em;color:var(--faint)}
+
+/* DEPTH GAUGE */
+.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:52px;background:rgba(10,8,5,.99);border-top:2px solid #c9962a;display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:999;padding:0 1rem;flex-wrap:wrap}
+.dg-stat{display:flex;align-items:center;gap:.35rem;font-size:.4rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+.dg-val{font-family:var(--font-serif);font-size:1.3rem;color:var(--gold);line-height:1;text-shadow:0 0 10px rgba(255,215,0,.4)}
+.dg-sep{color:var(--faint);font-size:.55rem}
+.dg-link{font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-decoration:none;transition:color .3s}
+.dg-link:hover{color:var(--gold)}
+
+
+/* SECTIONS GRID */
+/* ── TUNNEL BUBBLES ── */
+.tunnels-intro{margin-bottom:3rem}
+.tunnels-tagline{font-family:var(--font-pixel);font-size:.42rem;color:var(--muted);line-height:2.4;max-width:480px;margin-top:.75rem}
+/* ── MINE CARTS — replaces floating bubbles ── */
+.mine-bubbles{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:1.25rem;
+  max-width:1100px;
+  margin:0 auto;
+  padding:0 1rem 2rem;
+}
+.mine-bubble{
+  position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  padding:1rem .75rem .85rem;
+  text-decoration:none;
+  background:rgba(10,9,6,.85);
+  border:1px solid rgba(255,215,0,.13);
+  transition:transform .25s,box-shadow .25s,border-color .25s;
+  overflow:hidden;
+  image-rendering:pixelated;
+  min-height:114px;
+}
+/* PIXEL ART MINE CART — drawn in CSS */
+.mine-bubble::before{
+  content:'';
+  position:absolute;
+  top:10px;left:50%;
+  transform:translateX(-50%);
+  width:60px;height:40px;
+  background:
+    /* left wheel */
+    radial-gradient(circle,#777 0%,#444 45%,#222 60%,transparent 61%) 2px 28px/14px 14px no-repeat,
+    /* right wheel */
+    radial-gradient(circle,#777 0%,#444 45%,#222 60%,transparent 61%) 44px 28px/14px 14px no-repeat,
+    /* axle bar */
+    linear-gradient(#555,#333) 2px 33px/56px 4px no-repeat,
+    /* cart body sides */
+    linear-gradient(#7a5a1a,#5a3e08) 0 8px/6px 22px no-repeat,
+    linear-gradient(#7a5a1a,#5a3e08) 54px 8px/6px 22px no-repeat,
+    /* cart body bottom */
+    linear-gradient(#5a3e08,#3a2808) 0 26px/60px 4px no-repeat,
+    /* cart body fill */
+    linear-gradient(#B8860B,#8B6000) 6px 8px/48px 18px no-repeat,
+    /* cart top rim */
+    linear-gradient(#FFD700,#e8b84b) 4px 6px/52px 5px no-repeat,
+    /* ore glow inside — color per cart */
+    radial-gradient(ellipse,var(--ore-clr,rgba(255,215,0,.7)) 0%,transparent 65%) 10px 12px/40px 14px no-repeat;
+  image-rendering:pixelated;
+  transition:transform .25s;
+}
+/* Track rails under cart */
+.mine-bubble::after{
+  content:'';
+  position:absolute;
+  bottom:24px;left:4px;right:4px;height:3px;
+  background:repeating-linear-gradient(
+    90deg,
+    rgba(255,215,0,.35) 0,rgba(255,215,0,.35) 7px,
+    transparent 7px,transparent 12px
+  );
+}
+.mine-bubble:hover{
+  border-color:rgba(255,215,0,.45);
+  transform:translateY(-5px);
+  box-shadow:0 10px 28px rgba(0,0,0,.7),0 0 18px var(--ore-clr,rgba(255,215,0,.15));
+}
+.mine-bubble:hover::before{transform:translateX(-50%) translateY(-3px);}
+.bubble-icon{display:none}
+.bubble-name{
+  font-family:var(--font-pixel);
+  font-size:.36rem;
+  letter-spacing:.08em;
+  color:var(--gold);
+  text-align:center;
+  margin-top:54px;
+  text-transform:uppercase;
+  line-height:1.9;
+  position:relative;z-index:1;
+}
+.bubble-count{
+  font-family:var(--font-pixel);
+  font-size:.27rem;
+  letter-spacing:.07em;
+  color:var(--muted);
+  text-align:center;
+  margin-top:.25rem;
+  position:relative;z-index:1;
+}
+/* Ore color per cart */
+.bubble-games{--ore-clr:rgba(255,140,0,.8)}
+.bubble-oracle{--ore-clr:rgba(153,50,255,.8)}
+.bubble-archives{--ore-clr:rgba(0,191,255,.8)}
+.bubble-sound{--ore-clr:rgba(50,220,130,.8)}
+.bubble-mine{--ore-clr:rgba(255,215,0,.9)}
+.bubble-join{--ore-clr:rgba(80,220,80,.8)}
+.bubble-ivy{--ore-clr:rgba(80,200,80,.8)}
+.bubble-tora{--ore-clr:rgba(200,140,255,.8)}
+.bubble-shorts{--ore-clr:rgba(255,60,60,.8)}
+.bubble-flow{--ore-clr:rgba(0,200,255,.8)}
+
+/* FADE IN */
+..hero,.hero-content,section{opacity:1!important;visibility:visible!important}.hero-bg{z-index:-2}.hero-content{position:relative;z-index:10}.fade-in{opacity:1!important;transform:none!important;transition:none!important}.fade-in.visible{opacity:1;transform:none}
+
+/* PORTAL BUTTONS for book catalog */
+.portal-btns{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.75rem}
+.portal-btn{
+  font-family:var(--font-pixel);font-size:.28rem;letter-spacing:.06em;
+  padding:.3rem .55rem;text-decoration:none;white-space:nowrap;
+  border:1px solid rgba(255,215,0,.15);transition:all .2s;
+}
+.portal-btn.live{
+  background:rgba(255,215,0,.12);color:var(--gold);
+  border-color:rgba(255,215,0,.35);
+}
+.portal-btn.live:hover{background:rgba(255,215,0,.22);border-color:var(--gold)}
+.portal-btn.pending{
+  background:transparent;color:var(--muted);
+  border-color:rgba(255,215,0,.08);opacity:.7;cursor:default;
+}
+.portal-btn.coming{
+  background:transparent;color:var(--faint);
+  border-color:rgba(255,215,0,.05);opacity:.5;cursor:default;
+}
+/* ORO PICKS */
+.picks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;margin-bottom:2rem}
+.picks-category{
+  padding:1.5rem;border:1px solid rgba(255,215,0,.1);
+  background:rgba(255,215,0,.02);
+}
+.picks-cat-title{
+  font-family:var(--font-pixel);font-size:.4rem;letter-spacing:.1em;
+  color:var(--gold);margin-bottom:.75rem;
+}
+.picks-cat-desc{
+  font-family:var(--font-sans);font-size:.8rem;color:var(--muted);
+  line-height:1.6;margin-bottom:1rem;
+}
+.picks-placeholder{text-align:center;padding:1rem .5rem}
+.picks-coming{
+  font-family:var(--font-pixel);font-size:.3rem;letter-spacing:.15em;
+  color:var(--gd);display:block;margin-bottom:.5rem;
+}
+.picks-note{font-family:var(--font-sans);font-size:.75rem;color:var(--faint);line-height:1.6}
+/* BOOK GRID expanded */
+.works-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:1.5rem;
+}
+</style>
+
+<style id="lesson-popup-css">
+.lesson-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:none}
+.lesson-backdrop.show{display:block}
+.lesson-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.92);background:rgba(10,8,5,.98);border:2px solid rgba(255,215,0,.35);padding:2rem 1.75rem;max-width:400px;width:92%;z-index:10000;opacity:0;transition:all .35s;pointer-events:none;text-align:center;backdrop-filter:blur(4px)}
+.lesson-popup.show{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:all}
+.lesson-flag{font-size:2.5rem;display:block;margin-bottom:.4rem}
+.lesson-lang-name{font-size:.45rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gd,#7a5a18);margin-bottom:.85rem}
+.lesson-word{font-family:var(--font-serif);font-size:2rem;color:#e8b84b;margin-bottom:.25rem;min-height:2.8rem;line-height:1.1}
+.lesson-pron{font-size:.7rem;color:var(--muted,#8a7654);margin-bottom:.3rem;font-family:var(--font-serif);font-style:italic}
+.lesson-meaning{font-family:var(--font-serif);font-size:1.1rem;color:var(--cream,#f0e6cc);margin-bottom:.75rem}
+.lesson-fact{font-size:.68rem;color:var(--muted,#8a7654);line-height:1.85;padding:.7rem .5rem;border-top:1px solid rgba(255,215,0,.1);font-family:var(--font-serif);font-style:italic}
+.lesson-btns{display:flex;gap:.5rem;justify-content:center;margin-top:.85rem;flex-wrap:wrap}
+.lesson-btn{padding:.5rem 1.2rem;background:transparent;border:1px solid rgba(255,215,0,.3);color:#FFD700;font-family:var(--font-sans);font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .25s}
+.lesson-btn:hover{background:rgba(255,215,0,.08);border-color:#FFD700}
+</style>
+<style id="nmn-cursor">
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
+</style>
+<style id="gemini-v5">
+.mining-frame{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-height:85vh;margin:0 auto;overflow:hidden}
+canvas,.slot-machine,.loom-grid{max-width:95%;height:auto!important;border:2px solid var(--gold,#c9962a)}
+.pixel-sticker{
+  display:block;
+  width:100%;height:100%;
+  object-fit:cover;object-position:center top;
+  image-rendering:pixelated;
+  filter:contrast(110%) brightness(108%);
+  transition:transform .35s ease,filter .35s ease;
+}
+.book-cover-art:hover .pixel-sticker{transform:scale(1.04);filter:contrast(115%) brightness(115%);}
+.oro-eyes{background:#000;position:relative;width:100px;height:100px;border-radius:8px;display:inline-block}
+.oro-eyes::before,.oro-eyes::after{content:'';position:absolute;top:45%;width:14px;height:7px;background:#c9962a;border-radius:50%;box-shadow:0 0 20px #e8b84b}
+.oro-eyes::before{left:25%}.oro-eyes::after{right:25%}
+.active-glow{animation:pulseGold 2s infinite;color:#fff!important;text-shadow:0 0 10px var(--gold,#c9962a)}
+@keyframes pulseGold{0%{opacity:.7}50%{opacity:1}100%{opacity:.7}}
+.lesson-popup .pixel-sticker{margin:0 auto .75rem;display:block}
+</style>
+<style id="floating-gauge">
+.depth-gauge{
+  position:fixed!important;bottom:12px!important;left:50%!important;
+  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
+  height:42px!important;background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
+  padding:0 18px!important;pointer-events:none!important;
+  z-index:9999!important;backdrop-filter:blur(4px)!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:1.2rem!important;flex-wrap:nowrap!important;
+  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
+body{padding-bottom:65px!important}
+</style>
+<style id="lesson-z">#lessonPopup{z-index:10001!important;display:none}#lessonPopup.show{display:block!important}#lessonBackdrop{display:none}#lessonBackdrop.show{display:block!important}</style>
+
+<!-- Monetag vignette popup removed — Obsidian & Gold brand experience preserved -->
+
+
+
+<style>
+/* ─── GLASS MONITOR / CRT SCANLINES ─── */
+body::after{
+  content:"";
+  position:fixed;
+  top:0;left:0;
+  width:100vw;height:100vh;
+  background:
+    linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.08) 50%),
+    linear-gradient(90deg,rgba(232,184,75,0.015),rgba(197,146,0,0.008),rgba(255,215,0,0.015));
+  background-size:100% 3px,3px 100%;
+  pointer-events:none;
+  z-index:10000;
+  opacity:0.18;
+}
+/* Vignette — edges darken like a CRT bezel */
+body::before{
+  content:"";
+  position:fixed;
+  top:0;left:0;
+  width:100vw;height:100vh;
+  background:radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.55) 100%);
+  pointer-events:none;
+  z-index:9999;
+}
+/* ─── EMBLEM SEAL ─── */
+.nmn-seal{
+  position:fixed;
+  bottom:1.25rem;right:1.25rem;
+  width:56px;height:56px;
+  border-radius:50%;
+  overflow:hidden;
+  border:2px solid rgba(255,215,0,.35);
+  box-shadow:0 0 18px rgba(255,215,0,.25),0 0 4px rgba(0,0,0,.9);
+  z-index:9998;
+  opacity:.7;
+  transition:opacity .25s,box-shadow .25s,transform .25s;
+  cursor:pointer;
+}
+.nmn-seal:hover{
+  opacity:1;
+  box-shadow:0 0 28px rgba(255,215,0,.6),0 0 8px rgba(0,0,0,.9);
+  transform:scale(1.08);
+}
+.nmn-seal img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated;}
+</style>
+
+/* ─── DUAL VESSEL COLLECTION SYSTEM ─── */
+.collection-gateway{
+  display:flex;gap:2rem;justify-content:center;align-items:stretch;
+  margin-bottom:3rem;flex-wrap:wrap;
+}
+.vessel-anchor-wrap{
+  flex:1;min-width:280px;max-width:520px;
+  cursor:pointer;
+  position:relative;
+  border:2px solid var(--gd);
+  overflow:hidden;
+  transition:border-color .3s,box-shadow .3s,transform .3s;
+  background:#0a0806;
+}
+.vessel-anchor-wrap:hover{
+  border-color:var(--gold);
+  box-shadow:0 0 28px rgba(255,215,0,.35),inset 0 0 18px rgba(0,0,0,.5);
+  transform:scale(1.02);
+}
+.vessel-anchor-wrap.active{
+  border-color:var(--gold);
+  box-shadow:0 0 40px rgba(255,215,0,.5),inset 0 0 24px rgba(0,0,0,.5);
+}
+.vessel-anchor-wrap img{
+  display:block;width:100%;
+  image-rendering:pixelated;
+  filter:brightness(.85) contrast(1.05);
+  transition:filter .3s;
+}
+.vessel-anchor-wrap:hover img,
+.vessel-anchor-wrap.active img{
+  filter:brightness(1.08) contrast(1.1);
+}
+.vessel-label{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,rgba(0,0,0,.92));
+  padding:1.5rem 1.25rem .85rem;
+  font-family:var(--font-pixel);
+  font-size:.38rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gold);
+  display:flex;justify-content:space-between;align-items:flex-end;
+}
+.vessel-sublabel{font-size:.28rem;color:var(--muted);letter-spacing:.1em;}
+.vessel-chevron{font-size:.55rem;color:var(--gold);transition:transform .25s;}
+.vessel-anchor-wrap.active .vessel-chevron{transform:rotate(90deg);}
+/* Filter panels */
+.filter-panel{
+  display:none;
+  animation:slideDown .3s ease;
+}
+.filter-panel.visible{display:block;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+/* Obsidian panel — dark purple accent override */
+#vessel-obsidian{border-color:rgba(138,43,226,.4);}
+#vessel-obsidian:hover,#vessel-obsidian.active{
+  border-color:#9B59B6;
+  box-shadow:0 0 28px rgba(155,89,182,.35),inset 0 0 18px rgba(0,0,0,.5);
+}
+#vessel-obsidian .vessel-label{color:#c084fc;}
+
+</head>
+<body>
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
+<div id="cursor-lamp"></div>
+<div id="nmn-pool"></div>
+<div id="nmn-halo"></div>
+<div id="nmn-cursor-el">
+  <svg viewBox="0 0 48 64" width="48" height="64" xmlns="http://www.w3.org/2000/svg">
+    <g class="l-body">
+      <rect x="22" y="0" width="4" height="3" fill="#6a5a30" rx="1"/>
+      <rect x="23" y="3" width="2" height="5" fill="#8B6914"/>
+      <rect x="14" y="8" width="20" height="3" fill="#8B6914" rx="1"/>
+      <rect x="17" y="11" width="14" height="2" fill="#B8860B"/>
+      <rect x="14" y="13" width="3" height="26" fill="#8B6914"/>
+      <rect x="31" y="13" width="3" height="26" fill="#8B6914"/>
+      <rect x="17" y="13" width="14" height="6" fill="#1a1000" opacity="0.6"/>
+      <rect x="17" y="20" width="14" height="6" fill="#1a1000" opacity="0.6"/>
+      <rect x="17" y="27" width="14" height="6" fill="#1a1000" opacity="0.6"/>
+      <rect x="17" y="34" width="14" height="5" fill="#1a1000" opacity="0.6"/>
+      <rect x="14" y="19" width="20" height="2" fill="#8B6914"/>
+      <rect x="14" y="26" width="20" height="2" fill="#8B6914"/>
+      <rect x="14" y="33" width="20" height="2" fill="#8B6914"/>
+      <rect class="l-glow" x="17" y="13" width="14" height="26" fill="#FFD700" opacity="0.45" rx="1"/>
+      <g class="l-flame">
+        <ellipse cx="24" cy="26" rx="5" ry="7" fill="#FF8C00" opacity="0.9"/>
+        <ellipse cx="24" cy="27" rx="3.5" ry="5" fill="#FFD700"/>
+        <ellipse cx="24" cy="28" rx="2" ry="3" fill="#FFFAAA"/>
+        <ellipse cx="24" cy="22" rx="1.5" ry="2.5" fill="#FF6600" opacity="0.7"/>
+      </g>
+      <rect x="18" y="14" width="2" height="10" fill="rgba(255,255,255,0.12)" rx="1"/>
+      <rect x="14" y="39" width="20" height="3" fill="#8B6914" rx="1"/>
+      <rect x="19" y="44" width="10" height="3" fill="#8B6914" rx="1"/>
+    </g>
+  </svg>
+</div>
+<div id="particles"></div>
+<div class="beam beam-1"></div>
+<div class="beam beam-2"></div>
+<div class="beam beam-3"></div>
+<div class="beam beam-4"></div>
+
+<nav>
+  <a href="/" class="nav-logo">NMN — Lord Oro</a>
+  <ul>
+    <li class="nav-pillar">
+      <a href="games.html">🎮 Recreation Hall</a>
+      <div class="nav-dropdown">
+        <a href="motherlode.html">Mother Lode</a>
+        <a href="collector.html">The Collector</a>
+        <a href="gemshop.html">Ivy's Gemstone Shop</a>
+        <a href="depths.html">Depths of the Mine</a>
+        <a href="games.html">All Games →</a>
+      </div>
+    </li>
+    <li class="nav-pillar">
+      <a href="oracle.html">🔮 Oracle's Chamber</a>
+      <div class="nav-dropdown">
+        <a href="tora.html">Tora the Tarot Reader</a>
+        <a href="reliquary.html">🎗️ The Reliquary</a>
+        <a href="loom.html">🧵 Weaver's Loom</a>
+        <a href="canary.html">🐦 Canary's Song</a>
+        <a href="grimoire.html">🐾 Eskanar's Grimoire</a>
+        <a href="well.html">The Echoing Well</a>
+        <a href="starmap.html">The Star Map</a>
+        <a href="dualsouls.html">Chamber of Dual Souls</a>
+        <a href="mirror.html">The Mirror Room</a>
+        <a href="lorevault.html">The Lore Vault</a>
+      </div>
+    </li>
+    <li class="nav-pillar">
+      <a href="archives.html">📖 The Archives</a>
+      <div class="nav-dropdown">
+        <a href="archives.html">Book Catalog</a>
+        <a href="soundshaft.html">The Sound Shaft</a>
+        <a href="origins.html">Hall of Origins</a>
+        <a href="cartographer.html">Cartographer's Table</a>
+        <a href="alchemist.html">Alchemist's Table</a>
+        <a href="scrapheap.html">The Scrap Heap</a>
+        <a href="shorts.html">🎬 Projection Room</a>
+      </div>
+    </li>
+    <li class="nav-pillar">
+      <a href="lantern.html">🕯️ The Mine</a>
+      <div class="nav-dropdown">
+        <a href="toradomain.html">🌕 Tora's Domain</a>
+        <a href="lantern.html">The Lantern</a>
+        <a href="vigil.html">The Vigil</a>
+        <a href="transmission.html">The Transmission</a>
+        <a href="ledger.html">The Forgotten Ledger</a>
+        <a href="crew.html">The Crew</a>
+        <a href="newsletter.html">Join the Goldmine</a>
+      </div>
+    </li>
+    <li class="nav-pillar">
+      <a href="ivytunnel.html">🌿 Ivy's Tunnel</a>
+      <div class="nav-dropdown">
+        <a href="gemshop.html">Gemstone Shop</a>
+        <a href="gemslots.html">The Gem Slots</a>
+        <a href="ivytunnel.html">All of Ivy's Corner →</a>
+      </div>
+    </li>
+  </ul>
+  <div class="lang-switcher">
+    <button class="lang-sw-btn" onclick="toggleLang()" id="langBtn">🌐 EN</button>
+    <div class="lang-sw-menu" id="langMenu">
+      <button onclick="setLang('en')">🇺🇸 English</button>
+      <button onclick="setLang('ko');launchLesson('ko')">🇰🇷 한국어</button>
+      <button onclick="setLang('es');launchLesson('es')">🇵🇷 Español</button>
+      <button onclick="setLang('ja');launchLesson('ja')">🇯🇵 日本語</button>
+      <button onclick="setLang('no');launchLesson('no')">🇳🇴 Norsk</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <!-- Golden Eyes -->
+    <div class="hero-eyes">
+      <div class="hero-eye"></div>
+      <div class="hero-eye"></div>
+    </div>
+    <div class="lang-bar"><span id="langCycleText"></span></div>
+    <div class="hero-eyebrow">Nonsense Media Network — Est. 2026</div>
+    <h1 class="hero-title">The goldmine<em>is within.</em></h1>
+    <p class="hero-tagline">"My sword is my pen. My kingdom is the human interior world.<br>I never starve again — substance in my words."</p>
+    <div class="hero-actions">
+      <a href="#works" class="btn btn-primary">Enter the Mine</a>
+      <a href="https://gofund.me/e643a8283" target="_blank" class="btn btn-green">Support on GoFundMe</a>
+      <a href="https://patreon.com/Lordminadeoro" target="_blank" class="btn btn-patreon">Join on Patreon</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-tag">About Lord Oro</div>
+  <div class="about-grid fade-in">
+    <div>
+      <h2 class="about-headline">A lord leads people to victory<br>in their <em>minds.</em></h2>
+      <p class="about-body">Lord Oro is the creative identity of a Brooklyn-born storyteller building a transmedia empire from the inside out. The name carries its own mythology — born at 17 as Mina De Oro, refined through years of living, creating, and surviving.</p>
+      <p class="about-body">Nonsense Media Network is the home of that empire. Books, music, games, experiences — all channels tunneling into the same goldmine. Every story connected. Every world inhabited by the same quiet observer.</p>
+      <div class="quote-box">
+        <p>The sword is the pen. The kingdom is the human interior world. Gold is not what you find — it's what you become when you stop running from yourself.</p>
+      </div>
+    </div>
+    <div class="pillars">
+      <div class="pillar"><div class="pillar-num">01 — Books</div><h3>The Written Universe</h3><p>Fantasy novels, novellas, serialized fiction. Lord Oro woven as a silent observer across every world.</p></div>
+      <div class="pillar"><div class="pillar-num">02 — Music</div><h3>Lord Oro's Allegory</h3><p>A concept album tracing awakening, temptation, shadow work, and enlightenment.</p></div>
+      <div class="pillar"><div class="pillar-num">03 — Games</div><h3>The Recreation Hall</h3><p>12 games built inside the mine shaft by the Excavation Committee.</p></div>
+      <div class="pillar"><div class="pillar-num">04 — Experiences</div><h3>The Oracle's Chamber</h3><p>Tora, the Echoing Well, the Star Map, the Vigil. Corners of the mine that reward curiosity.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- WORKS -->
+<section id="works">
+  <div class="section-tag">The Mine</div>
+  <div class="fade-in">
+    <p style="font-family:var(--font-pixel);font-size:.34rem;color:var(--muted);letter-spacing:.1em;margin-bottom:2rem;line-height:2.4;text-align:center">SELECT YOUR COLLECTION — 12 TITLES — 5 LANGUAGES</p>
+
+    <!-- DUAL VESSEL GATEWAY -->
+    <div class="collection-gateway">
+      <div class="vessel-anchor-wrap active" id="vessel-gold" onclick="filterVessel('gold')" role="button" tabindex="0">
+        <img src="goldmine_anchor.jpeg" alt="The Goldmine Collection">
+        <div class="vessel-label">
+          <div>
+            <div>The Goldmine Collection</div>
+            <div class="vessel-sublabel">Full Novels &amp; Multilingual Pillars</div>
+          </div>
+          <span class="vessel-chevron">&#9656;</span>
+        </div>
+      </div>
+      <div class="vessel-anchor-wrap" id="vessel-obsidian" onclick="filterVessel('obsidian')" role="button" tabindex="0">
+        <img src="obsidian_anchor.jpeg" alt="The Obsidian Extractions">
+        <div class="vessel-label">
+          <div>
+            <div>The Obsidian Extractions</div>
+            <div class="vessel-sublabel">Short Transmissions &amp; Lore Fragments</div>
+          </div>
+          <span class="vessel-chevron">&#9656;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- GOLDMINE PANEL -->
+    <div id="panel-gold" class="filter-panel visible">
+    <div class="works-grid">
+
+      <!-- PYRO & HELIOS -->
+      <div class="work-card">
+        <div class="book-cover-art pyro">
+          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
+          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
+          <span class="cover-ribbon live">Live</span>
+          <img src="pyro_en.jpeg" class="pixel-sticker" alt="Pyro and Helios">
+        </div>
+        <div class="book-info">
+          <div class="work-type">English — Amazon KDP</div>
+          <h3>Pyro and Helios: A Journey Home</h3>
+          <p>A story of fire, identity, and the long road back to where you belong.</p>
+          <div class="portal-btns">
+            <a href="https://amzn.to/4uOpLpA" target="_blank" class="portal-btn live">Amazon ↗</a>
+            <span class="portal-btn pending">Google Play ⏳</span>
+            <span class="portal-btn coming">Kobo 🔜</span>
+            <span class="portal-btn coming">Apple 🔜</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALL TABBIES — ENGLISH -->
+      <div class="work-card">
+        <div class="book-cover-art tabbies">
+          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
+          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
+          <span class="cover-ribbon live">Live</span>
+          <img src="tabbies_en.jpeg" class="pixel-sticker" alt="All Tabbies EN">
+        </div>
+        <div class="book-info">
+          <div class="work-type">English — Amazon KDP</div>
+          <h3>All Tabbies Have a Place Too</h3>
+          <p>A story about belonging, found in the unlikeliest of places.</p>
+          <div class="portal-btns">
+            <a href="https://amzn.to/4bNAQ1y" target="_blank" class="portal-btn live">Amazon ↗</a>
+            <span class="portal-btn pending">Google Play ⏳</span>
+            <span class="portal-btn coming">Kobo 🔜</span>
+            <span class="portal-btn coming">Apple 🔜</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALL TABBIES — SPANISH -->
+      <div class="work-card">
+        <div class="book-cover-art tabbies">
+          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
+          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
+          <span class="cover-ribbon live">Live · ES</span>
+          <img src="tabbies_es.jpg" class="pixel-sticker" alt="All Tabbies ES">
+        </div>
+        <div class="book-info">
+          <div class="work-type">Español — Amazon KDP</div>
+          <h3>Todos los Gatos Tienen su Lugar</h3>
+          <p>La edición en español. Disponible ahora en Amazon.</p>
+          <div class="portal-btns">
+            <a href="https://amzn.to/47qbOUT" target="_blank" class="portal-btn live">Amazon ↗</a>
+            <span class="portal-btn pending">Google Play ⏳</span>
+            <span class="portal-btn coming">Kobo 🔜</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALL TABBIES — JAPANESE -->
+      <div class="work-card">
+        <div class="book-cover-art tabbies">
+          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
+          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
+          <span class="cover-ribbon live">Live · JP</span>
+          <img src="tabbies_ja.jpg" class="pixel-sticker" alt="All Tabbies JA">
+        </div>
+        <div class="book-info">
+          <div class="work-type">日本語 — Amazon KDP Japan</div>
+          <h3>猫にも居場所がある</h3>
+          <p>日本語版。Amazonで今すぐ購入。</p>
+          <div class="portal-btns">
+            <a href="https://amzn.to/3PPrJG9" target="_blank" class="portal-btn live">Amazon ↗</a>
+            <span class="portal-btn pending">Google Play ⏳</span>
+            <span class="portal-btn coming">Kobo 🔜</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALL TABBIES — PORTUGUESE -->
+      <div class="work-card">
+        <div class="book-cover-art tabbies">
+          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
+          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
+          <span class="cover-ribbon live">Live · PT</span>
+          <img src="tabbies_pt.jpeg" class="pixel-sticker" alt="All Tabbies PT">
+        </div>
+        <div class="book-info">
+          <div class="work-type">Português — Amazon KDP Brasil</div>
+          <h3>Todos os Gatos Têm o Seu Lugar</h3>
+          <p>Edição em português brasileiro. Disponível agora.</p>
+          <div class="portal-btns">
+            <a href="https://amzn.to/4uTtNgB" target="_blank" class="portal-btn live">Amazon ↗</a>
+            <span class="portal-btn pending">Google Play ⏳</span>
+            <span class="portal-btn coming">Kobo 🔜</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALL TABBIES — KOREAN -->
+      <div class="work-card">
+        <div class="book-cover-art tabbies">
+          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
+          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
+          <span class="cover-ribbon live">Live · KO</span>
+          <img src="tabbies_ko.jpeg" class="pixel-sticker" alt="All Tabbies KO">
+        </div>
+        <div class="book-info">
+          <div class="work-type">한국어 — Google Play Books</div>
+          <h3>모든 고양이는 갈 곳이 있다</h3>
+          <p>한국어판. 구글 플레이 북스에서 지금 구입하세요.</p>
+          <div class="portal-btns">
+            <span class="portal-btn pending">Google Play ⏳</span>
+            <span class="portal-btn coming">Amazon 🔜</span>
+            <span class="portal-btn coming">Ridibooks 🔜</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- OUTBREAK FROM THE STARS -->
+      <div class="work-card">
+        <div class="book-cover-art outbreak">
+          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
+          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
+          <span class="cover-ribbon live">New Release</span>
+          <img src="outbreak_en.jpeg" class="pixel-sticker" alt="Outbreak EN">
+        </div>
+        <div class="book-info">
+          <div class="work-type">English — Amazon KDP</div>
+          <h3>Outbreak From the Stars</h3>
+          <p>They didn't come to destroy. They came to replace. Found-footage cosmic horror.</p>
+          <div class="portal-btns">
+            <a href="https://amzn.to/3NIeQ08" target="_blank" class="portal-btn live">Amazon ↗</a>
+            <span class="portal-btn pending">Google Play ⏳</span>
+            <span class="portal-btn coming">Kobo 🔜</span>
+            <span class="portal-btn coming">Apple 🔜</span>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- OUTBREAK — SPANISH -->
+      <div class="work-card">
+        <div class="book-cover-art outbreak">
+          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
+          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
+          <span class="cover-ribbon live">Live · ES</span>
+          <img src="outbreak_es.jpeg" class="pixel-sticker" alt="Outbreak ES">
+        </div>
+        <div class="book-info">
+          <div class="work-type">Español — Amazon KDP</div>
+          <h3>Brote Desde Las Estrellas</h3>
+          <p>Una transmisión interdimensional. Horror cósmico en español.</p>
+          <div class="portal-btns">
+            <a href="https://amzn.to/3NIeQ08" target="_blank" class="portal-btn live">Amazon ↗</a>
+            <span class="portal-btn coming">Google Play 🔜</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- OUTBREAK — PORTUGUESE -->
+      <div class="work-card">
+        <div class="book-cover-art outbreak">
+          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
+          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
+          <span class="cover-ribbon live">Live · PT</span>
+          <img src="outbreak_pt.jpeg" class="pixel-sticker" alt="Outbreak PT">
+        </div>
+        <div class="book-info">
+          <div class="work-type">Português — Amazon KDP Brasil</div>
+          <h3>Surto Das Estrelas</h3>
+          <p>Uma transmissão transdimensional. Horror cósmico em português.</p>
+          <div class="portal-btns">
+            <a href="https://amzn.to/3NIeQ08" target="_blank" class="portal-btn live">Amazon ↗</a>
+            <span class="portal-btn coming">Google Play 🔜</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- OUTBREAK — JAPANESE -->
+      <div class="work-card">
+        <div class="book-cover-art outbreak">
+          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
+          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
+          <span class="cover-ribbon live">Live · JA</span>
+          <img src="outbreak_ja.jpg" class="pixel-sticker" alt="Outbreak JA">
+        </div>
+        <div class="book-info">
+          <div class="work-type">日本語 — Amazon KDP Japan</div>
+          <h3>星々からのアウトブレイク</h3>
+          <p>次元間通信。日本語版。今すぐAmazonで。</p>
+          <div class="portal-btns">
+            <a href="https://amzn.to/3NIeQ08" target="_blank" class="portal-btn live">Amazon ↗</a>
+            <span class="portal-btn coming">Google Play 🔜</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- OUTBREAK — KOREAN -->
+      <div class="work-card">
+        <div class="book-cover-art outbreak">
+          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
+          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
+          <span class="cover-ribbon live">Live · KO</span>
+          <img src="outbreak_ko.jpg" class="pixel-sticker" alt="Outbreak KO">
+        </div>
+        <div class="book-info">
+          <div class="work-type">한국어 — Ridibooks / Google Play</div>
+          <h3>별들로부터의 발생</h3>
+          <p>차원 간 전송. 한국어판.</p>
+          <div class="portal-btns">
+            <span class="portal-btn pending">Ridibooks ⏳</span>
+            <span class="portal-btn coming">Google Play 🔜</span>
+          </div>
+        </div>
+      </div>
+      <!-- JUNI THE IMMORTAL -->
+      <div class="work-card">
+        <div class="book-cover-art juni">
+          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
+          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
+          <span class="cover-ribbon live">Live</span>
+          <img src="juni_en.jpeg" class="pixel-sticker" alt="Juni the Immortal">
+        </div>
+        <div class="book-info">
+          <div class="work-type">English — Amazon KDP</div>
+          <h3>Juni the Immortal</h3>
+          <p>Immortality is not a gift. Juni has lived long enough to know the difference.</p>
+          <div class="portal-btns">
+            <a href="https://amzn.to/4tfhJoc" target="_blank" class="portal-btn live">Amazon ↗</a>
+            <span class="portal-btn pending">Google Play ⏳</span>
+            <span class="portal-btn coming">Kobo 🔜</span>
+            <span class="portal-btn coming">Apple 🔜</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- NAYLA & FELIK — coming soon -->
+      <div class="work-card">
+        <div class="book-cover-art nayla">
+          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
+          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
+          <span class="cover-ribbon progress">18 Years in the Making</span>
+          <span class="cover-icon nayla-icon">🦁</span>
+        </div>
+        <div class="book-info">
+          <div class="work-type">Epic Fantasy — In Progress</div>
+          <h3>Nayla the Lioness &amp; Felik</h3>
+          <p>A lioness. A man split between worlds. The origin story of everything in the mine.</p>
+          <div class="portal-btns">
+            <span class="portal-btn coming">Coming 2026 🔜</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    </div><!-- /.works-grid goldmine -->
+    </div><!-- /#panel-gold -->
+
+    <!-- OBSIDIAN PANEL -->
+    <div id="panel-obsidian" class="filter-panel">
+      <div class="works-grid">
+
+        <!-- THE WANDERER -->
+        <div class="work-card">
+          <div class="book-cover-art shortstories" style="border-color:rgba(155,89,182,.4);">
+            <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
+            <div class="cover-corner bl"></div><div class="cover-corner br"></div>
+            <span class="cover-ribbon progress" style="background:linear-gradient(135deg,#6B2FA0,#9B59B6);">City-by-City</span>
+            <span class="cover-icon" style="font-size:2rem;display:flex;align-items:center;justify-content:center;height:100%;color:#c084fc;text-shadow:0 0 20px rgba(155,89,182,.8);">🌆</span>
+          </div>
+          <div class="book-info">
+            <div class="work-type" style="color:#9B59B6;">Identity Thriller — Serial</div>
+            <h3>The Wanderer</h3>
+            <p>City-by-city episodic identity thriller. $0.99 per transmission. The strongest recurring Obsidian candidate.</p>
+            <div class="portal-btns">
+              <span class="portal-btn coming">Coming Soon 🔜</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- THE SWIMMER -->
+        <div class="work-card">
+          <div class="book-cover-art shortstories" style="border-color:rgba(155,89,182,.4);">
+            <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
+            <div class="cover-corner bl"></div><div class="cover-corner br"></div>
+            <span class="cover-ribbon progress" style="background:linear-gradient(135deg,#6B2FA0,#9B59B6);">In Development</span>
+            <span class="cover-icon" style="font-size:2rem;display:flex;align-items:center;justify-content:center;height:100%;color:#c084fc;text-shadow:0 0 20px rgba(155,89,182,.8);">🌊</span>
+          </div>
+          <div class="book-info">
+            <div class="work-type" style="color:#9B59B6;">Obsidian Extraction — Short</div>
+            <h3>The Swimmer</h3>
+            <p>A short-form lore transmission from the Obsidian vein. $0.99 extraction.</p>
+            <div class="portal-btns">
+              <span class="portal-btn coming">Coming Soon 🔜</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 19 SHORT STORIES -->
+        <div class="work-card">
+          <div class="book-cover-art shortstories" style="border-color:rgba(155,89,182,.4);">
+            <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
+            <div class="cover-corner bl"></div><div class="cover-corner br"></div>
+            <span class="cover-ribbon progress" style="background:linear-gradient(135deg,#6B2FA0,#9B59B6);">90-Day Drop</span>
+            <span class="cover-icon" style="font-size:2rem;display:flex;align-items:center;justify-content:center;height:100%;color:#c084fc;text-shadow:0 0 20px rgba(155,89,182,.8);">📡</span>
+          </div>
+          <div class="book-info">
+            <div class="work-type" style="color:#9B59B6;">19 Transmissions — $0.99 Each</div>
+            <h3>Tales From a Madman</h3>
+            <p>50 stories planned. 19 dropping in 90 days. Vol. I outlines locked. Each one a signal from the mine.</p>
+            <div class="portal-btns">
+              <span class="portal-btn coming">Drops Beginning 2026 🔜</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /#panel-obsidian -->
+
+    <!-- ORO'S PICKS -->
+    <div style="margin-top:4rem;padding-top:3rem;border-top:1px solid rgba(255,215,0,.08)">
+      <div class="section-tag" style="margin-bottom:1.5rem">Oro's Picks</div>
+      <p style="font-family:var(--font-pixel);font-size:.32rem;color:var(--muted);letter-spacing:.1em;margin-bottom:2rem;line-height:2.4">THE ARCHITECT'S SELECTIONS — CURATED FROM THE GOLDMINE</p>
+      <div class="picks-grid">
+        <div class="picks-category">
+          <div class="picks-cat-title">🖥️ Architect's Station</div>
+          <p class="picks-cat-desc">The setup behind the NMN. Obsidian black, gold accents, built for creation.</p>
+          <div class="picks-placeholder">
+            <span class="picks-coming">⬡ DROPPING SOON ⬡</span>
+            <p class="picks-note">Monitors, chairs, lighting rigs, and the 16-bit gear Lord Oro actually uses.</p>
+          </div>
+        </div>
+        <div class="picks-category">
+          <div class="picks-cat-title">🍳 Obsidian Kitchen</div>
+          <p class="picks-cat-desc">Gold and black cookware. Sharp. Clean. Built like the mine.</p>
+          <div class="picks-placeholder">
+            <span class="picks-coming">⬡ DROPPING SOON ⬡</span>
+            <p class="picks-note">Matte-black knives, obsidian-finish kettles, and cast iron the color of coal.</p>
+          </div>
+        </div>
+        <div class="picks-category">
+          <div class="picks-cat-title">⛏️ Forge Supplies</div>
+          <p class="picks-cat-desc">The exact materials used to build NMN merch. Pins, patches, lighters.</p>
+          <div class="picks-placeholder">
+            <span class="picks-coming">⬡ DROPPING SOON ⬡</span>
+            <p class="picks-note">Full transparency — the tools that built this network, available for your own forge.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MERCH STORE PLACEHOLDER -->
+    <div style="margin-top:2.5rem;text-align:center;padding:2.5rem 2rem;border:1px dashed rgba(255,215,0,.18);background:rgba(255,215,0,.015)">
+      <div style="font-family:var(--font-pixel);font-size:.45rem;color:var(--gold);letter-spacing:.2em;margin-bottom:1rem">⬡ THE GOLDMINE STORE ⬡</div>
+      <p style="font-family:var(--font-pixel);font-size:.32rem;color:var(--muted);letter-spacing:.1em;line-height:2.4;margin-bottom:1.5rem">PINS · PATCHES · PRINTS · LIGHTERS<br>PHYSICAL MERCH — DROPPING SOON</p>
+      <a href="newsletter.html" style="display:inline-block;font-family:var(--font-pixel);font-size:.35rem;padding:.55rem 1.4rem;background:transparent;border:1px solid rgba(255,215,0,.28);color:var(--gold);text-decoration:none;letter-spacing:.1em;transition:all .3s" onmouseover="this.style.background='rgba(255,215,0,.07)'" onmouseout="this.style.background='transparent'">JOIN EARLY ACCESS →</a>
+    </div>
+
+  </div>
+</section>
+
+
+<div class="divider"></div>
+
+<!-- MUSIC -->
+<section id="music" class="music-section">
+  <div class="section-tag">Music</div>
+  <div class="album-grid fade-in">
+    <div class="album-cover">
+      <div class="album-monogram">LO</div>
+      <div class="album-cover-label">Lord Oro's Allegory</div>
+    </div>
+    <div>
+      <h2 class="album-title">Lord Oro's <em>Allegory</em></h2>
+      <div class="album-sub">Concept Album — Coming 2026</div>
+      <ul class="tracklist">
+        <li><span class="track-num">I</span><span class="track-name">The Awakening</span><span class="track-theme">Purpose</span></li>
+        <li><span class="track-num">II</span><span class="track-name">Glitter Isn't Gold</span><span class="track-theme">Temptation</span></li>
+        <li><span class="track-num">—</span><span class="track-name">Interlude: The Oasis</span><span class="track-theme">Rest</span></li>
+        <li><span class="track-num">III</span><span class="track-name">Shadow Work</span><span class="track-theme">Breaking the Cycle</span></li>
+        <li><span class="track-num">IV</span><span class="track-name">Untitled</span><span class="track-theme">Latin-Influenced</span></li>
+        <li><span class="track-num">V</span><span class="track-name">Untitled</span><span class="track-theme">Enlightenment</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- LANGUAGES -->
+<section id="languages" class="lang-section">
+  <div class="section-tag">Learn With the Madman</div>
+  <div class="fade-in">
+    <h2 class="lang-headline">The goldmine has <em>no borders.</em></h2>
+    <p class="lang-sub">Lord Oro is learning four languages in public. Not as a teacher — as a fellow student. Follow the journey.</p>
+    <div class="lang-grid">
+    <div class="lang-card" onclick="launchLesson('ko')" style="cursor:pointer">
+      <span class="lang-flag">🇰🇷</span>
+      <div class="lang-name">Korean</div>
+      <div class="lang-desc">Begin Lesson</div>
+    </div>
+    <div class="lang-card" onclick="launchLesson('es')" style="cursor:pointer">
+      <span class="lang-flag">🇵🇷</span>
+      <div class="lang-name">Spanish</div>
+      <div class="lang-desc">Begin Lesson</div>
+    </div>
+    <div class="lang-card" onclick="launchLesson('ja')" style="cursor:pointer">
+      <span class="lang-flag">🇯🇵</span>
+      <div class="lang-name">Japanese</div>
+      <div class="lang-desc">Begin Lesson</div>
+    </div>
+    <div class="lang-card" onclick="launchLesson('no')" style="cursor:pointer">
+      <span class="lang-flag">🇳🇴</span>
+      <div class="lang-name">Norwegian</div>
+      <div class="lang-desc">Begin Lesson</div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SUPPORT -->
+<section id="support" class="support-section">
+  <div class="section-tag">Fund the Expedition</div>
+  <div class="fade-in">
+    <h2 class="support-headline">Stake your <em>claim.</em></h2>
+    <p class="support-sub">The goldmine is real — the ore is already here. What it needs is light.</p>
+    <div class="vein-label">Expedition Fund — Active</div>
+    <div class="vein-bar"><div class="vein-fill" style="width:12%"></div></div>
+    <div class="vein-sub">Every contribution fills the vein. Goal: $3,000</div>
+    <div class="support-cards">
+      <div class="support-card">
+        <h3>Fund the Expedition</h3>
+        <p>Direct support. Keep the mine operational. Every dollar is a tunnel dug deeper.</p>
+        <a href="https://gofund.me/e643a8283" target="_blank" class="btn btn-green">Contribute →</a>
+      </div>
+      <div class="support-card">
+        <h3>Stake Your Claim</h3>
+        <p>Monthly investors gain exclusive access — early releases, behind the scenes, and a name etched in every project.</p>
+        <a href="https://patreon.com/Lordminadeoro" target="_blank" class="btn btn-patreon">Stake Your Claim →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTIONS SHOWCASE -->
+<section id="sections">
+  <div class="section-tag">Explore the Mine</div>
+  <div class="fade-in">
+    <div class="tunnels-intro">
+      <h2 class="about-headline">The mine has many <em>rooms.</em></h2>
+      <p class="tunnels-tagline">Games, tarot, lore, music, books, history, ritual. You don't have to play to belong here. You just have to descend.</p>
+    </div>
+
+    <div class="mine-bubbles">
+
+      <a href="games.html" class="mine-bubble bubble-games">
+        <span class="bubble-icon">🎮</span>
+        <span class="bubble-name">Recreation Hall</span>
+        <span class="bubble-count">⛏ 12 GAMES LIVE</span>
+      </a>
+
+      <a href="oracle.html" class="mine-bubble bubble-oracle">
+        <span class="bubble-icon">🔮</span>
+        <span class="bubble-name">Oracle's Chamber</span>
+        <span class="bubble-count">⛏ 6 EXPERIENCES</span>
+      </a>
+
+      <a href="archives.html" class="mine-bubble bubble-archives">
+        <span class="bubble-icon">📖</span>
+        <span class="bubble-name">The Archives</span>
+        <span class="bubble-count">⛏ 6 TITLES + QUOTE</span>
+      </a>
+
+      <a href="soundshaft.html" class="mine-bubble bubble-sound">
+        <span class="bubble-icon">🎵</span>
+        <span class="bubble-name">Sound Shaft</span>
+        <span class="bubble-count">⛏ 5 TRACKS</span>
+      </a>
+
+      <a href="lantern.html" class="mine-bubble bubble-mine">
+        <span class="bubble-icon">🕯️</span>
+        <span class="bubble-name">The Deep Mine</span>
+        <span class="bubble-count">⛏ 8 ROOMS</span>
+      </a>
+
+      <a href="newsletter.html" class="mine-bubble bubble-join">
+        <span class="bubble-icon">⬡</span>
+        <span class="bubble-name">The Goldmine</span>
+        <span class="bubble-count">⛏ FREE NEWSLETTER</span>
+      </a>
+
+      <a href="ivytunnel.html" class="mine-bubble bubble-ivy">
+        <span class="bubble-icon">🌿</span>
+        <span class="bubble-name">Ivy's Tunnel</span>
+        <span class="bubble-count">⛏ 3 LIVE NOW</span>
+      </a>
+
+      <a href="toradomain.html" class="mine-bubble bubble-tora">
+        <span class="bubble-icon">🌕</span>
+        <span class="bubble-name">Tora's Domain</span>
+        <span class="bubble-count">⛏ VÖLVA'S QUARTER</span>
+      </a>
+
+      <a href="shorts.html" class="mine-bubble bubble-shorts">
+        <span class="bubble-icon">🎬</span>
+        <span class="bubble-name">Projection Room</span>
+        <span class="bubble-count">⛏ 5 SHORTS</span>
+      </a>
+
+      <a href="flowpipes.html" class="mine-bubble bubble-flow">
+        <span class="bubble-icon">🔵</span>
+        <span class="bubble-name">Ore Flow</span>
+        <span class="bubble-count">⛏ 5 LEVELS</span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact-section">
+  <div class="section-tag">Contact</div>
+  <div class="fade-in">
+    <h2 class="contact-headline">A new tunnel is always <em>being dug.</em></h2>
+    <p class="contact-sub">Collaborations, media inquiries, and transmedia opportunities. The network is always expanding.</p>
+    <div class="contact-list">
+      <a href="mailto:doradoyoro@gmail.com" class="contact-item"><span class="contact-label">Email</span><span class="contact-val">doradoyoro@gmail.com</span></a>
+      <a href="https://nonsensemedianetwork.com" class="contact-item"><span class="contact-label">Web</span><span class="contact-val">nonsensemedianetwork.com</span></a>
+      <a href="https://twitter.com/LordOroNMN" target="_blank" class="contact-item"><span class="contact-label">Twitter</span><span class="contact-val">@LordOroNMN</span></a>
+      <a href="https://www.tiktok.com/@orominade" target="_blank" class="contact-item"><span class="contact-label">TikTok</span><span class="contact-val">@orominade</span></a>
+      <a href="https://www.youtube.com/@LordOroNMN" target="_blank" class="contact-item"><span class="contact-label">YouTube</span><span class="contact-val">Lord Oro / NMN</span></a>
+      <div class="contact-item"><span class="contact-label">Press</span><span class="contact-val">Nonsense Media Network LLC — Est. 2026</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand">Nonsense Media Network — Lord Oro</div>
+  <div style="display:flex;align-items:center;gap:.75rem;">
+    <img src="lord_oro_emblem.jpg" alt="NMN" style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,215,0,.3);image-rendering:pixelated;opacity:.7;">
+    <div class="footer-copy">© 2026 Nonsense Media Network LLC &nbsp;·&nbsp; A Masterpiece From the Madman's Mind</div>
+  </div>
+</footer>
+
+<div class="depth-gauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span>&nbsp;Gold</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span>&nbsp;Lore Fragments</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span>&nbsp;Creatures</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
+  <a href="ledger.html" class="dg-link">📖 Ledger</a>
+</div>
+
+<script>
+// Gemini's Nuclear Reset — force everything visible 0.5s after load
+window.onload = function() {
+  setTimeout(() => {
+    document.querySelectorAll('.fade-in,section,.hero-content').forEach(el => {
+      el.classList.add('visible');
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+  }, 500);
+};
+
+// PARTICLES
+const pc=document.getElementById('particles');
+for(let i=0;i<40;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  p.style.cssText=`left:${Math.random()*100}%;width:${Math.random()*2+1}px;height:${p.style.width};animation-duration:${Math.random()*18+10}s;animation-delay:${Math.random()*18}s;background:radial-gradient(circle,#c9962a,transparent 70%);filter:blur(1px)`;
+  pc.appendChild(p);
+}
+
+// CURSOR LAMP
+const lamp=document.getElementById('cursor-lamp');
+// Old lamp disabled — lantern cursor takes over
+const CE=document.getElementById('nmn-cursor-el');
+const HA=document.getElementById('nmn-halo');
+const PO=document.getElementById('nmn-pool');
+document.addEventListener('mousemove',e=>{
+  if(lamp){lamp.style.left=e.clientX+'px';lamp.style.top=e.clientY+'px';}
+  CE.style.left=e.clientX+'px'; CE.style.top=e.clientY+'px';
+  HA.style.left=e.clientX+'px'; HA.style.top=e.clientY+'px';
+  PO.style.left=e.clientX+'px'; PO.style.top=e.clientY+'px';
+});
+document.addEventListener('mouseleave',()=>{CE.style.opacity='0'});
+document.addEventListener('mouseenter',()=>{CE.style.opacity='1'});
+// Hover glow on interactive elements
+document.querySelectorAll('a,button,.work-card,.btn,.nav-pillar>a,.lang-sw-btn').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{CE.classList.add('hot');HA.classList.add('hot');PO.classList.add('hot')});
+  el.addEventListener('mouseleave',()=>{CE.classList.remove('hot');HA.classList.remove('hot');PO.classList.remove('hot')});
+});
+
+// FADE IN — wrapped in DOMContentLoaded for reliability
+document.addEventListener('DOMContentLoaded',()=>{
+  // Force hero visible immediately — never trap above-fold content
+  document.querySelectorAll('.hero-content,.hero-title,.hero-tagline,.hero-actions,.hero-eyebrow,.lang-bar').forEach(el=>{
+    el.style.opacity='1';el.style.transform='none';
+  });
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+        // Nudge any direct children that might be stuck
+        e.target.querySelectorAll('h2,h3,p').forEach(c=>{c.style.opacity='1'});
+      }
+    });
+  },{threshold:0.05,rootMargin:'0px 0px -50px 0px'});
+  document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+  // Nuclear fallback — after 2s force everything visible no matter what
+  setTimeout(()=>{
+    document.querySelectorAll('.fade-in').forEach(el=>el.classList.add('visible'));
+  },2000);
+});
+
+// LANGUAGE TYPEWRITER
+const PHRASES=[
+  'Nonsense Media Network — Est. 2026',
+  '논센스 미디어 네트워크 — 금광은 내 안에 있다',
+  'Red Nonsense Media — La mina de oro está dentro',
+  'ナンセンスメディア — 金鉱は内にある',
+  'Nonsense Media Nettverk — Gullgruven er inni deg',
+];
+let lIdx=0,lTyping=false;
+function typeIt(text,el,cb){
+  el.textContent='';let i=0;lTyping=true;
+  const iv=setInterval(()=>{
+    el.textContent=text.slice(0,++i);
+    if(i>=text.length){clearInterval(iv);lTyping=false;if(cb)setTimeout(cb,2800)}
+  },45);
+}
+function eraseIt(el,cb){
+  let t=el.textContent;
+  const iv=setInterval(()=>{
+    if(!t.length){clearInterval(iv);cb();return}
+    t=t.slice(0,-1);el.textContent=t;
+  },22);
+}
+function cycle(){
+  const el=document.getElementById('langCycleText');
+  if(!el||lTyping)return;
+  lIdx=(lIdx+1)%PHRASES.length;
+  eraseIt(el,()=>typeIt(PHRASES[lIdx],el,cycle));
+}
+window.addEventListener('load',()=>{
+  const el=document.getElementById('langCycleText');
+  if(el)typeIt(PHRASES[0],el,cycle);
+});
+
+// LANG SWITCHER
+const LANGS={
+  en:{flag:'🇺🇸',label:'EN',title:'The goldmine',em:'is within.'},
+  ko:{flag:'🇰🇷',label:'한',title:'금광은',em:'내 안에 있다.'},
+  es:{flag:'🇵🇷',label:'ES',title:'La mina de oro',em:'está dentro.'},
+  ja:{flag:'🇯🇵',label:'JP',title:'金鉱は',em:'内にある。'},
+  no:{flag:'🇳🇴',label:'NO',title:'Gullgruven',em:'er inni deg.'},
+};
+function setLang(l){
+  const d=LANGS[l];if(!d)return;
+  document.getElementById('langBtn').textContent=d.flag+' '+d.label;
+  const t=document.querySelector('.hero-title');
+  if(t){t.childNodes[0].textContent=d.title;const em=t.querySelector('em');if(em)em.textContent=d.em}
+  document.getElementById('langMenu').classList.remove('open');
+  lIdx=['en','ko','es','ja','no'].indexOf(l);
+}
+function toggleLang(){document.getElementById('langMenu').classList.toggle('open')}
+document.addEventListener('click',e=>{if(!e.target.closest('.lang-switcher'))document.getElementById('langMenu').classList.remove('open')});
+
+// DEPTH GAUGE
+try{
+  document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+  const cv=JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}');
+  document.getElementById('dgCreatures').textContent=Object.keys(cv.G.grimoire||{}).length;
+  document.getElementById('dgGold').textContent=localStorage.getItem('nmn_total_gold')||'0';
+}catch(e){}
+
+// GOLD CURSOR — pickaxe SVG that actually works
+(function(){
+  const svg = "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><line x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/><path d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/><circle cx='8' cy='24' r='2' fill='%23c9962a'/></svg>";
+  const enc = svg.replace(/'/g,'%27');
+  const style = document.createElement('style');
+  style.textContent = 'body,*{cursor:url("data:image/svg+xml,' + enc + '") 6 26,auto!important}';
+  document.head.appendChild(style);
+  // Gold glow ring that follows cursor
+  const ring = document.createElement('div');
+  ring.style.cssText = 'position:fixed;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.25) 0%,rgba(255,215,0,.1) 50%,transparent 70%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:left .05s,top .05s;mix-blend-mode:screen';
+  document.body.appendChild(ring);
+  document.addEventListener('mousemove',e=>{ring.style.left=e.clientX+'px';ring.style.top=e.clientY+'px'});
+  // Click flash
+  document.addEventListener('mousedown',()=>{ring.style.width='60px';ring.style.height='60px';ring.style.background='radial-gradient(circle,rgba(232,184,75,.5) 0%,transparent 70%)';});
+  document.addEventListener('mouseup',()=>{ring.style.width='40px';ring.style.height='40px';ring.style.background='radial-gradient(circle,rgba(232,184,75,.25) 0%,rgba(255,215,0,.1) 50%,transparent 70%)';});
+})();
+
+// PICKAXE SHAKE ON CLICK
+document.addEventListener('click',e=>{
+  const el=e.target;
+  el.style.transition='transform .1s';
+  el.style.transform='translate(-2px,-2px) rotate(-3deg)';
+  setTimeout(()=>{el.style.transform='';},120);
+});
+
+// TEXT SHUFFLE on section scroll
+const glyphs=['로','드','오','금','광','g','u','l','v','o','r','金','鉱','夢','光','魂','炎'];
+function shuffleText(el){
+  if(!el||el.dataset.shuffled)return;
+  el.dataset.shuffled='1';
+  const orig=el.textContent;let iter=0;
+  const iv=setInterval(()=>{
+    el.textContent=orig.split('').map((c,i)=>{ if(c===' ')return c;
+      if(iter>i*1.2)return orig[i];
+      return glyphs[Math.floor(Math.random()*glyphs.length)];
+    }).join('');
+    iter++;
+    if(iter>=20){clearInterval(iv);el.textContent=orig;delete el.dataset.shuffled;}
+  },80);
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const sObs=new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(e.isIntersecting){
+      const h=e.target.querySelector('h2');
+      if(h)setTimeout(()=>shuffleText(h),300);
+    }
+  }),{threshold:.2});
+  document.querySelectorAll('section').forEach(s=>sObs.observe(s));
+});
+
+
+// NMN_Audio (below) handles all sound
+
+// SHADOW OBSERVER
+const sh=document.createElement('div');
+sh.style.cssText='position:fixed;bottom:15%;right:-90px;width:55px;height:170px;background:linear-gradient(to left,rgba(0,0,0,.5),transparent);clip-path:polygon(25% 0%,75% 0%,100% 8%,100% 92%,75% 100%,25% 100%,0% 92%,0% 8%);opacity:0;pointer-events:none;z-index:50;transition:right 2.5s ease,opacity 2s ease;filter:blur(3px)';
+document.body.appendChild(sh);
+let shOut=false;
+function showOro(){if(shOut)return;shOut=true;sh.style.opacity='.5';sh.style.right='-15px';setTimeout(()=>{sh.style.opacity='0';sh.style.right='-90px';setTimeout(()=>{shOut=false},2500)},4000)}
+setTimeout(showOro,20000);
+setInterval(()=>{if(Math.random()>.5)showOro()},45000);
+
+// ── LANGUAGE LESSONS — FINAL CLEAN VERSION ───────────────────────────
+const LESSON_DB = {
+  ko:[
+    {word:'금 (Geum)',pron:'[geum]',meaning:'Gold',fact:'Korea buried kings with gold crowns shaped like trees. Gold was the language of royalty for 2,000 years.'},
+    {word:'광산 (Gwangsan)',pron:'[gwang-san]',meaning:'Mine',fact:'Cheongyang gold mine operated for over 1,000 years. The mountain remembers every miner.'},
+    {word:'영혼 (Yeonghon)',pron:'[yeong-hon]',meaning:'Soul',fact:'In Korean shamanism, the yeong-hon wanders after death. Shamans called mudang guide it home.'},
+    {word:'이야기 (Iyagi)',pron:'[ee-ya-gi]',meaning:'Story',fact:'Korean tradition holds that every mountain has a spirit and every river remembers its history.'},
+    {word:'꿈 (Kkum)',pron:'[kkum]',meaning:'Dream',fact:'Significant dreams must be shared before breakfast. Kept too long, they lose their power.'},
+    {word:'사자 (Saja)',pron:'[sa-ja]',meaning:'Lion',fact:'Lions in Korean temple art arrived via Buddhist trade routes from India — guardians from far away.'},
+    {word:'빛 (Bit)',pron:'[bit]',meaning:'Light',fact:'Ancient Koreans believed light carried the memory of the sun. One of the oldest words in the language.'},
+    {word:'뿌리 (Ppuri)',pron:'[ppu-ri]',meaning:'Roots',fact:'Used literally and metaphorically. To know your ppuri is to know yourself.'},
+  ],
+  es:[
+    {word:'Oro',pron:'[OH-roh]',meaning:'Gold',fact:'From Latin aurum. Every gold mine in the Americas was called a mina de oro. Lord Oro carries this name.'},
+    {word:'Mina',pron:'[MEE-nah]',meaning:'Mine',fact:'Mina is also a name. Lord Oro\'s first identity at 17 was La Mina de Oro — the goldmine itself.'},
+    {word:'Alma',pron:'[AL-mah]',meaning:'Soul',fact:'From Arabic — meaning nourishing. The soul as something that feeds you from the inside.'},
+    {word:'Leonesa',pron:'[leh-oh-NEH-sah]',meaning:'Lioness',fact:'The lioness carries the hunting and the strength. Nayla is a leonesa.'},
+    {word:'Susurro',pron:'[soo-SOO-rroh]',meaning:'Whisper',fact:'One of the most musical words in Spanish — the double-r actually sounds like whispering stone.'},
+    {word:'Tesoro',pron:'[teh-SO-roh]',meaning:'Treasure',fact:'Shares its root with thesaurus — a treasury of words. Language is treasure.'},
+    {word:'Forja',pron:'[FOR-hah]',meaning:'Forge',fact:'A forge is where raw metal becomes something. Every story is a forja.'},
+    {word:'Oscuridad',pron:'[os-koo-ree-DAD]',meaning:'Darkness',fact:'La noche oscura del alma — the dark night of the soul — is the necessary passage before illumination.'},
+  ],
+  ja:[
+    {word:'金 (Kin)',pron:'[keen]',meaning:'Gold',fact:'The same character means both gold and metal — because gold was the first metal considered truly precious.'},
+    {word:'鉱山 (Kozan)',pron:'[koh-zan]',meaning:'Mine',fact:'The kanji combine ore and mountain. A mine is literally an ore-mountain.'},
+    {word:'魂 (Tamashii)',pron:'[ta-ma-shee]',meaning:'Soul',fact:'The tamashii is the irreducible essence. Not the mind but the core. It persists after death.'},
+    {word:'物語 (Monogatari)',pron:'[mo-no-ga-ta-ri]',meaning:'Story',fact:'Literally thing-speaking. Stories are objects that speak. The mine speaks.'},
+    {word:'縁 (En)',pron:'[en]',meaning:'Fate',fact:'The invisible thread connecting people across time. Some call it coincidence. The mine calls it something else.'},
+    {word:'静寂 (Seijaku)',pron:'[sey-ja-ku]',meaning:'Silence',fact:'Not empty silence but full silence — the kind that contains everything about to happen.'},
+    {word:'光 (Hikari)',pron:'[he-ka-ri]',meaning:'Light',fact:'When sun hit gold in ancient mines, workers called it kami-hikari — god-light.'},
+    {word:'道 (Michi)',pron:'[mee-chee]',meaning:'Path',fact:'Both a physical road and a philosophical way. Every miner knows their michi before knowing where it leads.'},
+  ],
+  no:[
+    {word:'Gull',pron:'[gull]',meaning:'Gold',fact:'Old Norse gull gave English the word gold. Viking traders carried it across three continents.'},
+    {word:'Gruve',pron:'[groo-veh]',meaning:'Mine',fact:'The Roeros mines operated for 333 years. The miners built a church underground so they never had to leave.'},
+    {word:'Sjel',pron:'[shel]',meaning:'Soul',fact:'The Norse soul had layers — the hamr (shape), hugr (mind), and fylgja (spirit animal).'},
+    {word:'Volvax',pron:'[vol-vah]',meaning:'Seeress',fact:'The volva traveled between villages, read fate, and answered to no one. Tora is a volva.'},
+    {word:'Skjebne',pron:'[sheb-neh]',meaning:'Fate',fact:'What the Norns weave. Three weavers cut every life-thread at its appointed time.'},
+    {word:'Morke',pron:'[mor-keh]',meaning:'Darkness',fact:'Norway has months of polar night. The Norse did not fear darkness — they made myths inside it.'},
+    {word:'Kveld',pron:'[kveld]',meaning:'Evening',fact:'From the root to quell — to quiet. Evening is when noise quiets and real things become audible.'},
+    {word:'Kart',pron:'[kart]',meaning:'Map',fact:'Norse navigators mapped by memory and stars before paper. The cartographer art began on longships.'},
+  ]
+};
+
+const LANG_META = {
+  ko:{flag:'🇰🇷',name:'Korean — 한국어',pitch:600},
+  es:{flag:'🇵🇷',name:'Spanish — Español',pitch:400},
+  ja:{flag:'🇯🇵',name:'Japanese — 日本語',pitch:800},
+  no:{flag:'🇳🇴',name:'Norwegian — Norsk',pitch:350},
+};
+
+let _lessonLang=null, _lessonIdx=0;
+
+let _typingBusy = false;
+function launchLesson(lang) {
+  if(_typingBusy) return; // Prevent clashing voices
+  if(!LESSON_DB[lang]) return;
+  _lessonLang = lang;
+  _lessonIdx = Math.floor(Math.random()*LESSON_DB[lang].length);
+  _doShowLesson();
+}
+
+function _doShowLesson() {
+  const l = LESSON_DB[_lessonLang][_lessonIdx];
+  const m = LANG_META[_lessonLang];
+  // Populate
+  var flagEl=document.getElementById('lessonFlag');
+  var nameEl=document.getElementById('lessonLangName');
+  var wordEl=document.getElementById('lessonWord');
+  var pronEl=document.getElementById('lessonPron');
+  var meanEl=document.getElementById('lessonMeaning');
+  var factEl=document.getElementById('lessonFact');
+  if(flagEl) flagEl.textContent=m.flag;
+  if(nameEl) nameEl.textContent=m.name;
+  if(wordEl) wordEl.textContent=l.word;
+  if(pronEl) pronEl.textContent=l.pron;
+  if(meanEl) meanEl.textContent=l.meaning;
+  if(factEl) factEl.textContent=l.fact;
+  // Force show — both classList and inline style
+  var bd=document.getElementById('lessonBackdrop');
+  var pp=document.getElementById('lessonPopup');
+  if(bd){bd.classList.add('show');bd.style.display='block';}
+  if(pp){pp.classList.add('show');pp.style.display='block';pp.style.opacity='1';pp.style.transform='translate(-50%,-50%) scale(1)';pp.style.pointerEvents='all';}
+  // Pitched beep
+  try{
+    var ctx2=new(window.AudioContext||window.webkitAudioContext)();
+    var osc=ctx2.createOscillator(),g=ctx2.createGain();
+    osc.type='triangle';osc.frequency.value=m.pitch;
+    g.gain.setValueAtTime(.05,ctx2.currentTime);
+    g.gain.exponentialRampToValueAtTime(.0001,ctx2.currentTime+.5);
+    osc.connect(g).connect(ctx2.destination);
+    osc.start();osc.stop(ctx2.currentTime+.5);
+  }catch(e){}
+}
+
+function nextLesson() {
+  if(!_lessonLang) return;
+  _lessonIdx = (_lessonIdx+1) % LESSON_DB[_lessonLang].length;
+  _doShowLesson();
+}
+
+function closeLesson() {
+  var bd=document.getElementById('lessonBackdrop');
+  var pp=document.getElementById('lessonPopup');
+  if(bd){bd.classList.remove('show');bd.style.display='none';}
+  if(pp){pp.classList.remove('show');pp.style.display='none';pp.style.opacity='0';}
+}
+
+</script>
+
+<script>
+window.NMN_CONTEXT = "mine";
+// NMN LIVING SOUNDSCAPE — Excavation Committee
+// Gemini's Quad-Track Engine + Claude's integration layer
+// Zero external files. Under 2KB. Procedural — never repeats exactly.
+
+const NMN_Audio = {
+  ctx: null,
+  running: false,
+  masterGain: null,
+  layers: {},
+
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  },
+
+  // TRACK 1 — The Deep Earth (continuous, low hum)
+  playHum() {
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(55, this.ctx.currentTime); // G1
+    gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
+    // Slow breathing — mine is alive
+    // Gemini's LFO: 0.08Hz = one breath every 12.5 seconds
+    const lfo = this.ctx.createOscillator();
+    const lfoGain = this.ctx.createGain();
+    lfo.type = 'sine';
+    lfo.frequency.value = 0.08;
+    lfoGain.gain.value = 0.01; // depth of breath
+    lfo.connect(lfoGain);
+    lfoGain.connect(gain.gain);
+    lfo.start();
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+    osc.start();
+    this.layers.hum = { osc, gain };
+  },
+
+  // TRACK 2 — The Air Shaft (filtered noise / wind)
+  playWind() {
+    const bufferSize = 2 * this.ctx.sampleRate;
+    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+    const whiteNoise = this.ctx.createBufferSource();
+    whiteNoise.buffer = noiseBuffer;
+    whiteNoise.loop = true;
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 400;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.012, this.ctx.currentTime);
+    whiteNoise.connect(filter);
+    filter.connect(g);
+    g.connect(this.masterGain);
+    whiteNoise.start();
+    this.layers.wind = { src: whiteNoise, gain: g };
+  },
+
+  // TRACK 3 — The Distant Strike (random pickaxe echoes)
+  playStrike() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.75) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        // Metallic strike freq
+        osc.frequency.setValueAtTime(140 + Math.random() * 80, this.ctx.currentTime);
+        osc.type = 'sawtooth';
+        g.gain.setValueAtTime(0.04, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.6);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.6);
+      }
+      // Randomize interval — 3s to 6s — never predictable
+      setTimeout(tick, 3000 + Math.random() * 3000);
+    };
+    setTimeout(tick, 2000);
+  },
+
+  // TRACK 4 — The Gold Shimmer (crystal high tones)
+  playShimmer() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.85) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'triangle';
+        // Gold harmonic range — slightly randomized each time
+        osc.frequency.setValueAtTime(2200 + Math.random() * 1400, this.ctx.currentTime);
+        g.gain.setValueAtTime(0, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.012, this.ctx.currentTime + 1.2);
+        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2.5);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 2.5);
+      }
+      setTimeout(tick, 5000 + Math.random() * 4000);
+    };
+    setTimeout(tick, 4000);
+  },
+
+  // TRACK 5 — The Subterranean Drip (Gemini's finalized version)
+  // Fast pitch-drop simulates the physics of water hitting a cavern pool
+  playWaterDrip() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.6) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sine';
+        // Start mid-freq, drop 50% in 80ms — exact droplet physics
+        osc.frequency.setValueAtTime(400 + Math.random() * 100, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.08);
+        g.gain.setValueAtTime(0.02, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.08);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.08);
+      }
+      // 2-8 second random interval — no rhythmic pattern ever emerges
+      setTimeout(tick, 2000 + Math.random() * 6000);
+    };
+    setTimeout(tick, 5000 + Math.random() * 3000);
+  },
+
+  // TRACK 6 — The Oracle's Pad (Gemini's cinematic layer)
+  // Low-pass filtered sawtooth cycling through A-Major every 9 seconds
+  playOraclePad() {
+    const AMAJ = [220, 277.18, 329.63]; // A3, C#4, E4
+    let chordIdx = 0;
+    const tick = () => {
+      if (!this.running) return;
+      AMAJ.forEach((freq, i) => {
+        const osc = this.ctx.createOscillator();
+        const filter = this.ctx.createBiquadFilter();
+        const g = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        filter.type = 'lowpass';
+        filter.frequency.value = 800;
+        filter.Q.value = 0.5;
+        g.gain.setValueAtTime(0, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.03, this.ctx.currentTime + 2);
+        g.gain.linearRampToValueAtTime(0.015, this.ctx.currentTime + 7);
+        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 9);
+        osc.connect(filter);
+        filter.connect(g);
+        g.connect(this.masterGain);
+        osc.start(this.ctx.currentTime + i * 0.08);
+        osc.stop(this.ctx.currentTime + 9.5);
+      });
+      setTimeout(tick, 9000);
+    };
+    setTimeout(tick, 8000); // First chord after 8 seconds — subtle entry
+  },
+
+  // Page-context aware — different mix per section
+  startAll(context) {
+    if (this.running) return;
+    this.init();
+    this.running = true;
+    this.playHum();
+    this.playWind();
+    this.playStrike();
+    this.playShimmer();
+    this.playOraclePad();
+    // Only add water drip on deep mine pages
+    if (context === 'deep' || context === 'oracle' || context === 'vigil') {
+      this.playWaterDrip();
+    }
+    // Tora gets a slightly higher shimmer frequency (more ethereal)
+    if (context === 'tora') {
+      this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
+    }
+  },
+
+  stop() {
+    if (!this.running) return;
+    this.running = false;
+    if (this.masterGain) {
+      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
+    }
+  },
+
+  toggle() {
+    if (this.running) { this.stop(); return false; }
+    else { this.startAll(window.NMN_CONTEXT || 'mine'); return true; }
+  }
+};
+
+// Trigger audio on first interaction — does NOT consume the click event
+document.addEventListener('click', () => {
+  if (!NMN_Audio.running) NMN_Audio.startAll(window.NMN_CONTEXT || 'mine');
+});
+
+</script>
+
+<button id="nmn-sound-btn" onclick="
+  const on = NMN_Audio.toggle();
+  this.textContent = on ? '🔊 Sound On' : '🔇 Sound Off';
+  this.style.color = on ? 'var(--gold,#c9962a)' : '#4a3c28';
+" style="position:fixed;bottom:42px;right:.75rem;z-index:998;background:rgba(12,10,7,.9);border:1px solid rgba(255,215,0,.2);color:#4a3c28;font-family:Josefin Sans,sans-serif;font-size:.42rem;letter-spacing:.1em;padding:.35rem .6rem;cursor:pointer;transition:all .3s">🔇 Sound Off</button>
+
+<!-- Language Lesson Popup -->
+<div class="lesson-backdrop" id="lessonBackdrop" onclick="closeLesson()"></div>
+<div class="lesson-popup" id="lessonPopup">
+  <div id="lessonIcon" class="pixel-sticker oro-eyes" style="margin:0 auto .75rem"></div>
+  <span class="lesson-flag" id="lessonFlag" style="display:block;font-size:1.8rem;margin-bottom:.3rem">🇰🇷</span>
+  <div class="lesson-lang-name" id="lessonLangName">Korean — 한국어</div>
+  <div class="lesson-word" id="lessonWord"></div>
+  <div class="lesson-pron" id="lessonPron"></div>
+  <div class="lesson-meaning" id="lessonMeaning"></div>
+  <div class="lesson-fact" id="lessonFact"></div>
+  <div class="lesson-btns">
+    <button class="lesson-btn" onclick="nextLesson()">⬡ Another Word</button>
+    <button class="lesson-btn" onclick="closeLesson()">Close</button>
+  </div>
+</div>
+<script id="nmn-glow">
+(function(){
+  var r=document.createElement('div');
+  r.id='pickaxe-glow';
+  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
+  document.body.appendChild(r);
+  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
+  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
+  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
+})();
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').catch(function(){})
+    .then(function(reg){ console.log('NMN SW registered'); })
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+
+<!-- NMN Seal of Authenticity -->
+<a href="/" class="nmn-seal" title="Nonsense Media Network — Lord Oro">
+  <img src="lord_oro_emblem.jpg" alt="NMN Emblem">
+</a>
+
+<script>
+// ─── DUAL VESSEL FILTER ───
+function filterVessel(vessel) {
+  const goldWrap = document.getElementById('vessel-gold');
+  const obsidianWrap = document.getElementById('vessel-obsidian');
+  const goldPanel = document.getElementById('panel-gold');
+  const obsidianPanel = document.getElementById('panel-obsidian');
+
+  if (vessel === 'gold') {
+    goldWrap.classList.add('active');
+    obsidianWrap.classList.remove('active');
+    goldPanel.classList.add('visible');
+    obsidianPanel.classList.remove('visible');
+  } else {
+    obsidianWrap.classList.add('active');
+    goldWrap.classList.remove('active');
+    obsidianPanel.classList.add('visible');
+    goldPanel.classList.remove('visible');
+  }
+  // Smooth scroll to panel
+  const panel = vessel === 'gold' ? goldPanel : obsidianPanel;
+  setTimeout(() => panel.scrollIntoView({behavior:'smooth', block:'start'}), 80);
+}
+
+// Keyboard support for vessels
+document.querySelectorAll('.vessel-anchor-wrap').forEach(el => {
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      const id = el.id === 'vessel-gold' ? 'gold' : 'obsidian';
+      filterVessel(id);
+    }
+  });
+});
+</script>
+
+</body>
+</html>

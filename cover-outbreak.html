@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Juni the Immortal — Cover</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#111; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; font-family:sans-serif; gap:20px; padding:20px; }
+  .label { color:#666; font-size:12px; letter-spacing:2px; text-transform:uppercase; }
+  canvas { display:block; }
+  .hint { color:#444; font-size:11px; text-align:center; }
+  .dl-btn { background:#1a1a3a; color:#c0c0e0; border:1px solid rgba(144,144,204,.4); padding:8px 20px; font-size:12px; letter-spacing:2px; cursor:pointer; transition:all .2s; font-family:monospace; }
+  .dl-btn:hover { background:#2a2a5a; }
+</style>
+</head>
+<body>
+<div class="label">Juni the Immortal — Book Cover Preview</div>
+
+<canvas id="cover" width="540" height="810"></canvas>
+
+<button class="dl-btn" onclick="downloadCover()">⬇ DOWNLOAD COVER (PNG)</button>
+<div class="hint">540×810px preview · Scale to 1800×2700 for KDP print (300dpi @ 6×9in)</div>
+
+<script>
+const cv = document.getElementById('cover');
+const ctx = cv.getContext('2d');
+const W = cv.width, H = cv.height;
+
+// ── PARTICLES — centuries of lives ──
+const particles = Array.from({length:120}, () => ({
+  x: Math.random()*W,
+  y: Math.random()*H,
+  vx: (Math.random()-.5)*.3,
+  vy: -Math.random()*.5-.1,
+  r: Math.random()*.8+.2,
+  life: Math.random(),
+  maxLife: Math.random()*200+100,
+  color: Math.random() > .5 ? '#c0c0e0' : '#9090cc'
+}));
+
+let bolts = [];
+let nextBolt = 60;
+
+function spawnBolt() {
+  const sx = W*.3 + Math.random()*W*.4;
+  function branch(x1,y1,x2,y2,depth,alpha){
+    if(depth<=0||alpha<.01)return[];
+    const segs=[{x1,y1,x2,y2,alpha,depth}];
+    const mx=(x1+x2)/2+(Math.random()-.5)*45*(depth/4);
+    const my=(y1+y2)/2+(Math.random()-.5)*45*(depth/4);
+    segs.push(...branch(x1,y1,mx,my,depth-1,alpha*.7));
+    segs.push(...branch(mx,my,x2,y2,depth-1,alpha*.7));
+    if(Math.random()>.65)segs.push(...branch(mx,my,mx+(Math.random()-.5)*80,my+Math.random()*60+20,depth-2,alpha*.4));
+    return segs;
+  }
+  const segments = branch(sx, 0, sx+(Math.random()-.5)*100, H*.45+Math.random()*H*.2, 5, 1);
+  bolts.push({segments, life:30, maxLife:30});
+}
+
+function drawBackground() {
+  ctx.fillStyle = '#06060a';
+  ctx.fillRect(0,0,W,H);
+  
+  // Ash-grey atmospheric glow — centuries of existence
+  const g1 = ctx.createRadialGradient(W*.5, H*.4, 0, W*.5, H*.4, W*.6);
+  g1.addColorStop(0, 'rgba(160,160,180,.08)');
+  g1.addColorStop(.5, 'rgba(80,80,120,.05)');
+  g1.addColorStop(1, 'transparent');
+  ctx.fillStyle = g1; ctx.fillRect(0,0,W,H);
+  
+  // Deep purple undertone bottom
+  const g2 = ctx.createRadialGradient(W*.5, H, 0, W*.5, H, W*.5);
+  g2.addColorStop(0, 'rgba(50,20,80,.2)');
+  g2.addColorStop(1, 'transparent');
+  ctx.fillStyle = g2; ctx.fillRect(0,0,W,H);
+  
+  // Silver vein — the thread of immortality
+  ctx.strokeStyle = 'rgba(180,180,200,.04)';
+  ctx.lineWidth = 1;
+  for(let i=0;i<8;i++){
+    ctx.beginPath();
+    const sx2 = W*.5 + Math.sin(i*1.3)*W*.3;
+    ctx.moveTo(sx2, 0);
+    ctx.bezierCurveTo(
+      sx2 + Math.sin(i)*40, H*.3,
+      W*.5 + Math.cos(i)*50, H*.6,
+      W*.5 + Math.sin(i+1)*W*.25, H
+    );
+    ctx.stroke();
+  }
+}
+
+function drawParticles(t) {
+  particles.forEach(p => {
+    p.x += p.vx + Math.sin(t*.5+p.life)*0.2;
+    p.y += p.vy;
+    p.life++;
+    if(p.y < -10 || p.life > p.maxLife) {
+      p.x = Math.random()*W;
+      p.y = H + 10;
+      p.life = 0;
+      p.vy = -Math.random()*.5-.1;
+    }
+    const alpha = Math.sin(p.life/p.maxLife*Math.PI) * .5;
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = p.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+    ctx.globalAlpha = 1;
+  });
+}
+
+function drawBolts(t) {
+  nextBolt--;
+  if(nextBolt <= 0) {
+    spawnBolt();
+    nextBolt = Math.floor(Math.random()*90+30);
+  }
+  bolts = bolts.filter(b => b.life > 0);
+  bolts.forEach(b => {
+    const progress = b.life / b.maxLife;
+    b.segments.forEach(s => {
+      ctx.beginPath();
+      ctx.moveTo(s.x1, s.y1);
+      ctx.lineTo(s.x2, s.y2);
+      ctx.strokeStyle = `rgba(180,180,255,${s.alpha * progress * .7})`;
+      ctx.lineWidth = s.depth * .4;
+      ctx.stroke();
+      // White core on main bolts
+      if(s.depth >= 3) {
+        ctx.strokeStyle = `rgba(255,255,255,${s.alpha * progress * .4})`;
+        ctx.lineWidth = .5;
+        ctx.stroke();
+      }
+    });
+    b.life--;
+  });
+}
+
+// ── JUNI FIGURE — hooded silhouette, coat #73 ──
+function drawJuni(t) {
+  const jx = W*.5, jy = H*.58;
+  const breathe = Math.sin(t*.25) * 2;
+  
+  ctx.save();
+  
+  // Coat — long, layered
+  const coatGrad = ctx.createLinearGradient(jx, jy-120, jx, jy+180);
+  coatGrad.addColorStop(0, 'rgba(60,60,80,.85)');
+  coatGrad.addColorStop(.4, 'rgba(40,40,60,.9)');
+  coatGrad.addColorStop(1, 'rgba(20,20,35,.6)');
+  ctx.fillStyle = coatGrad;
+  
+  // Body
+  ctx.beginPath();
+  ctx.moveTo(jx-45, jy-80);
+  ctx.bezierCurveTo(jx-55, jy-20, jx-65+breathe, jy+80, jx-50, jy+170);
+  ctx.lineTo(jx+50, jy+170);
+  ctx.bezierCurveTo(jx+65-breathe, jy+80, jx+55, jy-20, jx+45, jy-80);
+  ctx.closePath();
+  ctx.fill();
+  
+  // Coat edge highlight — silver
+  ctx.strokeStyle = 'rgba(160,160,190,.25)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  
+  // Head — slightly downturned
+  ctx.fillStyle = 'rgba(50,50,70,.95)';
+  ctx.beginPath();
+  ctx.ellipse(jx, jy-110+breathe*.5, 28, 34, -.1, 0, Math.PI*2);
+  ctx.fill();
+  
+  // Face — barely visible features
+  ctx.fillStyle = 'rgba(180,170,160,.15)';
+  ctx.beginPath();
+  ctx.ellipse(jx+2, jy-108+breathe*.5, 18, 22, -.05, 0, Math.PI*2);
+  ctx.fill();
+  
+  // Eyes — the oldest thing about her
+  const eyeAge = .4 + Math.abs(Math.sin(t*.2)) * .3;
+  const el = ctx.createRadialGradient(jx-8, jy-112, 0, jx-8, jy-112, 8);
+  el.addColorStop(0, `rgba(200,200,220,${eyeAge})`);
+  el.addColorStop(1, 'transparent');
+  ctx.fillStyle = el;
+  ctx.beginPath(); ctx.arc(jx-8, jy-112, 3, 0, Math.PI*2); ctx.fill();
+  
+  const er = ctx.createRadialGradient(jx+8, jy-112, 0, jx+8, jy-112, 8);
+  er.addColorStop(0, `rgba(200,200,220,${eyeAge})`);
+  er.addColorStop(1, 'transparent');
+  ctx.fillStyle = er;
+  ctx.beginPath(); ctx.arc(jx+8, jy-112, 3, 0, Math.PI*2); ctx.fill();
+  
+  // Ambient glow around figure
+  ctx.globalAlpha = .12 + Math.abs(Math.sin(t*.3)) * .06;
+  const figGlow = ctx.createRadialGradient(jx, jy, 0, jx, jy, 100);
+  figGlow.addColorStop(0, 'rgba(180,180,220,1)');
+  figGlow.addColorStop(1, 'transparent');
+  ctx.fillStyle = figGlow;
+  ctx.beginPath(); ctx.arc(jx, jy, 100, 0, Math.PI*2); ctx.fill();
+  ctx.globalAlpha = 1;
+  
+  ctx.restore();
+}
+
+function drawVignette() {
+  const vig = ctx.createRadialGradient(W/2,H*.45,H*.15, W/2,H*.45,H*.65);
+  vig.addColorStop(0, 'transparent');
+  vig.addColorStop(1, 'rgba(3,3,6,.8)');
+  ctx.fillStyle = vig; ctx.fillRect(0,0,W,H);
+}
+
+function drawTitle() {
+  ctx.textAlign = 'center';
+  
+  // Author
+  ctx.font = 'bold 11px "Courier New", monospace';
+  ctx.fillStyle = 'rgba(144,144,180,.6)';
+  ctx.fillText('LORD ORO', W/2, 50);
+  
+  ctx.strokeStyle = 'rgba(120,120,160,.2)';
+  ctx.lineWidth = .5;
+  ctx.beginPath(); ctx.moveTo(W*.2,58); ctx.lineTo(W*.8,58); ctx.stroke();
+  
+  // Main title
+  ctx.font = `bold ${Math.floor(W*.13)}px "Georgia", serif`;
+  ctx.fillStyle = 'rgba(210,210,230,.9)';
+  ctx.shadowColor = 'rgba(144,144,204,.35)';
+  ctx.shadowBlur = 18;
+  ctx.fillText('JUNI', W/2, H*.155);
+  
+  ctx.font = `italic ${Math.floor(W*.048)}px "Georgia", serif`;
+  ctx.fillStyle = 'rgba(144,144,180,.6)';
+  ctx.shadowBlur = 8;
+  ctx.fillText('the', W/2, H*.205);
+  
+  ctx.font = `bold ${Math.floor(W*.115)}px "Georgia", serif`;
+  ctx.fillStyle = 'rgba(190,190,220,.92)';
+  ctx.shadowBlur = 22;
+  ctx.fillText('IMMORTAL', W/2, H*.27);
+  
+  ctx.shadowBlur = 0;
+  
+  // Genre strip
+  ctx.fillStyle = 'rgba(20,20,40,.75)';
+  ctx.fillRect(W*.08, H*.285, W*.84, 22);
+  ctx.strokeStyle = 'rgba(120,120,180,.25)';
+  ctx.lineWidth = .5;
+  ctx.strokeRect(W*.08, H*.285, W*.84, 22);
+  ctx.font = '9px "Courier New", monospace';
+  ctx.fillStyle = 'rgba(144,144,200,.75)';
+  ctx.fillText('YA FANTASY · 21,000+ WORDS', W/2, H*.285+14);
+  
+  // Tagline bottom
+  ctx.font = `italic ${Math.floor(W*.033)}px "Georgia", serif`;
+  ctx.fillStyle = 'rgba(144,144,180,.5)';
+  ctx.fillText('"Immortality is not a gift.', W/2, H*.855);
+  ctx.fillText('Juni has lived long enough to know the difference."', W/2, H*.877);
+  
+  ctx.strokeStyle = 'rgba(120,120,180,.18)';
+  ctx.lineWidth = .5;
+  ctx.beginPath(); ctx.moveTo(W*.2,H*.9); ctx.lineTo(W*.8,H*.9); ctx.stroke();
+  
+  // NMN brand
+  ctx.font = '9px "Courier New", monospace';
+  ctx.fillStyle = 'rgba(100,100,160,.4)';
+  ctx.fillText('NONSENSE MEDIA NETWORK', W/2, H*.94);
+  
+  ctx.textAlign = 'left';
+}
+
+let startTime = Date.now();
+function render() {
+  const t = (Date.now() - startTime) * .001;
+  drawBackground();
+  drawParticles(t);
+  drawBolts(t);
+  drawJuni(t);
+  drawVignette();
+  drawTitle();
+  requestAnimationFrame(render);
+}
+render();
+
+function downloadCover() {
+  const printCV = document.createElement('canvas');
+  printCV.width = 1800; printCV.height = 2700;
+  const pCtx = printCV.getContext('2d');
+  pCtx.scale(1800/540, 2700/810);
+  pCtx.drawImage(cv, 0, 0);
+  const link = document.createElement('a');
+  link.download = 'juni-the-immortal-cover.png';
+  link.href = printCV.toDataURL('image/png');
+  link.click();
+}
+</script>
+</body>
+</html>

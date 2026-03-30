@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>??? — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+<style>
+body{padding-top:56px;overflow:hidden;background:#000}
+.game-wrap{max-width:700px;margin:0 auto;padding:.75rem 1rem}
+.hud{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;padding:.4rem .75rem;background:rgba(0,0,0,.7);border:1px solid rgba(255,215,0,.08);margin-bottom:6px}
+.hud-stat{font-family:var(--font-pixel);font-size:.42rem;color:var(--gold)}
+.hud-stat span{color:var(--cream)}
+.canvas-wrap{position:relative;border:2px solid rgba(255,215,0,.15);background:#000}
+canvas{display:block;width:100%;image-rendering:pixelated}
+.controls{display:flex;gap:5px;padding:.4rem .75rem;background:rgba(0,0,0,.6);border:1px solid rgba(255,215,0,.06);border-top:none;flex-wrap:wrap}
+.ctrl-btn{font-family:var(--font-pixel);font-size:.38rem;background:rgba(255,215,0,.06);color:var(--muted);border:1px solid rgba(255,215,0,.15);padding:4px 9px;letter-spacing:.05em;transition:all .2s}
+.ctrl-btn:hover{color:var(--gold);border-color:rgba(255,215,0,.4)}
+.overlay{position:absolute;inset:0;background:rgba(0,0,0,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9rem;z-index:10}
+.overlay.hidden{display:none}
+.ov-title{font-family:var(--font-display);font-size:clamp(1.2rem,4vw,2rem);color:var(--gold);text-shadow:0 0 30px rgba(255,215,0,.5);text-align:center;line-height:1.2}
+.ov-sub{font-family:var(--font-pixel);font-size:.38rem;color:var(--muted);text-align:center;line-height:2.2;max-width:320px}
+.ov-btn{font-family:var(--font-pixel);font-size:.45rem;background:var(--gold);color:var(--coal);border:none;padding:.65rem 1.75rem;letter-spacing:.1em;transition:all .2s}
+.ov-btn:hover{background:#fff;box-shadow:0 0 25px rgba(255,215,0,.7)}
+.ov-stat{font-family:var(--font-pixel);font-size:.48rem;color:var(--cream);text-align:center}
+.ov-stat strong{color:var(--gold)}
+.byline{font-family:var(--font-pixel);font-size:.3rem;color:rgba(139,105,20,.4);text-align:center;letter-spacing:.15em;margin-top:.25rem}
+/* MOBILE D-PAD */
+.dpad{display:none;flex-direction:column;align-items:center;gap:4px;padding:.5rem;user-select:none}
+.dpad-row{display:flex;gap:4px}
+.dpad-btn{font-family:var(--font-pixel);font-size:.55rem;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);color:var(--gold);width:44px;height:44px;display:flex;align-items:center;justify-content:center;transition:all .1s}
+.dpad-btn:active{background:rgba(255,215,0,.25)}
+@media(max-width:600px){.dpad{display:flex}}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+<script>(function(s){s.dataset.zone='10763810',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+<script src="nmn-scene.js"></script>
+
+<div class="game-wrap">
+  <div class="hud">
+    <span class="hud-stat">DEPTH <span id="h-depth">0</span>m</span>
+    <span class="hud-stat">GOLD <span id="h-gold">0</span></span>
+    <span class="hud-stat">OXYGEN <span id="h-oxy">100</span>%</span>
+    <span class="hud-stat">LEGEND <span id="h-legend">0</span></span>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="cv"></canvas>
+    <div class="overlay" id="ov-start">
+      <p class="ov-title">You weren't<br>supposed to<br>find this.</p>
+      <p class="ov-sub">The mine goes deeper than the maps show. Something is down there. It has been waiting since before Lord Oro lit the first lantern.</p>
+      <button class="ov-btn" onclick="startGame()">⛏ DESCEND ANYWAY</button>
+      <p class="byline">— THE FLINT ARCHITECT</p>
+    </div>
+    <div class="overlay hidden" id="ov-over">
+      <p class="ov-title">The Mine<br>Remembered<br>You.</p>
+      <div class="ov-stat">DEPTH REACHED <strong id="fs-depth">0</strong>m</div>
+      <div class="ov-stat">GOLD CARRIED <strong id="fs-gold">0</strong> 💎</div>
+      <div class="ov-stat">LEGEND FRAGMENTS <strong id="fs-legend">0</strong></div>
+      <button class="ov-btn" onclick="startGame()">⛏ DESCEND AGAIN</button>
+      <a href="oracle.html" style="font-family:var(--font-pixel);font-size:.36rem;color:var(--muted);text-decoration:none">← RETURN TO THE ORACLE</a>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn" onclick="startGame()">▶ START</button>
+    <button class="ctrl-btn" onclick="NMNScene.toggle()">⏸ PAUSE</button>
+    <button class="ctrl-btn" onclick="NMNWallet.convertGems()">⚗ CONVERT</button>
+    <span style="font-family:var(--font-pixel);font-size:.3rem;color:rgba(139,105,20,.5);margin-left:auto;align-self:center">← ↑ → ↓ / WASD TO MOVE</span>
+  </div>
+
+  <div class="dpad">
+    <div class="dpad-row"><div class="dpad-btn" id="dp-up">▲</div></div>
+    <div class="dpad-row">
+      <div class="dpad-btn" id="dp-left">◀</div>
+      <div class="dpad-btn" id="dp-down">▼</div>
+      <div class="dpad-btn" id="dp-right">▶</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   PROJECT: CIPHER
+   By: The Flint Architect
+   Hidden in the Oracle's Chamber
+   Triggered by: mirror.html triple-click
+   
+   Genre: [REDACTED]
+   ═══════════════════════════════════════════════════ */
+
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+
+function resize(){
+  const W = Math.min(cv.parentElement.clientWidth, 700);
+  cv.width = W; cv.height = Math.floor(W * .65);
+  cv.style.width = W+'px'; cv.style.height = cv.height+'px';
+}
+resize(); window.addEventListener('resize', resize);
+
+// ── WORLD CONSTANTS ──
+const TILE = 20;
+const WORLD_W = 50; // tiles wide
+const WORLD_H = 60; // tiles deep — the mine GOES DOWN
+
+// ── TILE TYPES ──
+const T = {
+  AIR:0, STONE:1, DIRT:2, COPPER_ORE:3, SILVER_ORE:4,
+  GOLD_ORE:5, LEGEND_ORE:6, DARKNESS:7, WATER:8,
+  LORE_WALL:9, LORD_ORO:10
+};
+
+const TILE_COLOR = {
+  [T.AIR]:'#000000',
+  [T.STONE]:'#2a2a18',
+  [T.DIRT]:'#3a2e1c',
+  [T.COPPER_ORE]:'#6b3820',
+  [T.SILVER_ORE]:'#4a4a5a',
+  [T.GOLD_ORE]:'#4a3808',
+  [T.LEGEND_ORE]:'#2a0a3a',
+  [T.DARKNESS]:'#080608',
+  [T.WATER]:'#0a1a3a',
+  [T.LORE_WALL]:'#1a0808',
+  [T.LORD_ORO]:'#1a1200',
+};
+
+const ORE_GLOW = {
+  [T.COPPER_ORE]:'rgba(184,115,51,0.6)',
+  [T.SILVER_ORE]:'rgba(192,192,192,0.5)',
+  [T.GOLD_ORE]:'rgba(255,215,0,0.7)',
+  [T.LEGEND_ORE]:'rgba(204,68,255,0.8)',
+  [T.LORD_ORO]:'rgba(255,215,0,1.0)',
+};
+
+const ORE_VALUE = {
+  [T.COPPER_ORE]:5,
+  [T.SILVER_ORE]:15,
+  [T.GOLD_ORE]:40,
+  [T.LEGEND_ORE]:100,
+};
+
+const LORE_FRAGMENTS = [
+  '"The mine remembers every tool that ever struck it."',
+  '"Lord Oro was here. The wall still holds his warmth."',
+  '"Depth 18: The ore started whispering back."',
+  '"She left the lantern. I left the gold. Neither of us went back."',
+  '"The deepest vein is not gold. It is silence."',
+  '"Nayla descended once. The walls parted for her."',
+  '"This is not treasure. This is what the mine chose to keep."',
+  '"Felik\'s second soul came from here."',
+];
+
+// ── WORLD GENERATION ──
+function generateWorld(){
+  const w = Array(WORLD_H).fill(0).map(()=>Array(WORLD_W).fill(T.STONE));
+  // Top rows: air shaft
+  for(let c=20;c<30;c++){ w[0][c]=T.AIR; w[1][c]=T.AIR; }
+  // Carve cave passages
+  let cx=24,cy=2;
+  for(let step=0;step<400;step++){
+    w[cy][cx]=T.AIR;
+    const dir=Math.floor(Math.random()*4);
+    if(dir===0&&cy>1)cy--;
+    else if(dir===1&&cy<WORLD_H-2)cy++;
+    else if(dir===2&&cx>1)cx--;
+    else if(dir===3&&cx<WORLD_W-2)cx++;
+  }
+  // More horizontal tunnels
+  for(let r=5;r<WORLD_H;r+=8+Math.floor(Math.random()*4)){
+    const len=8+Math.floor(Math.random()*15);
+    const sc=Math.floor(Math.random()*(WORLD_W-len));
+    for(let c=sc;c<sc+len;c++) w[r][c]=T.AIR;
+  }
+  // Ore veins — denser deeper
+  for(let r=3;r<WORLD_H;r++){
+    for(let c=0;c<WORLD_W;c++){
+      if(w[r][c]===T.STONE){
+        const depth=r/WORLD_H;
+        const roll=Math.random();
+        if(roll<0.005+depth*.01)       w[r][c]=T.LEGEND_ORE;
+        else if(roll<0.02+depth*.02)   w[r][c]=T.GOLD_ORE;
+        else if(roll<0.06+depth*.03)   w[r][c]=T.SILVER_ORE;
+        else if(roll<0.14)             w[r][c]=T.COPPER_ORE;
+        else if(depth>.6&&roll<0.18)   w[r][c]=T.DARKNESS;
+        else if(depth>.4&&roll<0.16)   w[r][c]=T.WATER;
+      }
+    }
+  }
+  // DIRT layer near top
+  for(let r=2;r<6;r++)
+    for(let c=0;c<WORLD_W;c++)
+      if(w[r][c]===T.STONE)w[r][c]=T.DIRT;
+  // Lore walls — scattered deep
+  for(let i=0;i<8;i++){
+    const lr=20+Math.floor(Math.random()*(WORLD_H-20));
+    const lc=Math.floor(Math.random()*WORLD_W);
+    w[lr][lc]=T.LORE_WALL;
+  }
+  // LORD ORO at the very bottom
+  const lordRow=WORLD_H-3, lordCol=Math.floor(WORLD_W/2);
+  w[lordRow][lordCol]=T.LORD_ORO;
+  for(let c=lordCol-2;c<=lordCol+2;c++) if(w[lordRow+1])w[lordRow+1][c]=T.AIR;
+  return w;
+}
+
+// ── GAME STATE ──
+let G=null, _locked=false;
+
+function initState(){
+  return {
+    world: generateWorld(),
+    player:{ x:24*TILE+TILE/2, y:1*TILE, vx:0, vy:0, onGround:false, facing:1,
+             mining:false, mineTarget:null, mineProgress:0 },
+    cam:{ x:0, y:0 },
+    gold:0, oxygen:100, depth:0, legend:0,
+    loreFound:new Set(),
+    sessionGold:0,
+    particles:[],
+    loreMsg:null, loreMsgTimer:0,
+    lordOroFound:false,
+    running:false,
+  };
+}
+
+function startGame(){
+  if(_locked)return; _locked=true;
+  NMNScene.destroy();
+  G=initState();
+  G.running=true;
+  document.getElementById('ov-start').classList.add('hidden');
+  document.getElementById('ov-over').classList.add('hidden');
+  NMNScene.raf(loop);
+  _locked=false;
+}
+
+// ── INPUT ──
+const keys={};
+NMNScene.on(document,'keydown',e=>{keys[e.key]=true;});
+NMNScene.on(document,'keyup',  e=>{delete keys[e.key];});
+
+// D-pad
+[['dp-up','ArrowUp'],['dp-down','ArrowDown'],['dp-left','ArrowLeft'],['dp-right','ArrowRight']].forEach(([id,k])=>{
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.addEventListener('touchstart',e=>{e.preventDefault();keys[k]=true;},{passive:false});
+  el.addEventListener('touchend',e=>{delete keys[k];});
+});
+
+// Mine on click/tap
+NMNScene.on(cv,'mousedown',e=>{
+  if(!G||!G.running)return;
+  const r=cv.getBoundingClientRect();
+  const mx=(e.clientX-r.left)*(cv.width/r.width)+G.cam.x;
+  const my=(e.clientY-r.top)*(cv.height/r.height)+G.cam.y;
+  const tc=Math.floor(mx/TILE),tr=Math.floor(my/TILE);
+  if(tr>=0&&tr<WORLD_H&&tc>=0&&tc<WORLD_W){
+    const pc=Math.floor(G.player.x/TILE),pr=Math.floor(G.player.y/TILE);
+    const dist=Math.abs(tc-pc)+Math.abs(tr-pr);
+    if(dist<=2&&G.world[tr][tc]!==T.AIR){
+      G.player.mining=true;
+      G.player.mineTarget={r:tr,c:tc};
+      G.player.mineProgress=0;
+    }
+  }
+});
+
+// ── PHYSICS & UPDATE ──
+function update(){
+  if(!G||!G.running||NMNScene.isPaused())return;
+  const p=G.player,W=WORLD_W,H=WORLD_H;
+
+  // Horizontal movement
+  const spd=2.2;
+  if(keys['ArrowLeft']||keys['a']){p.vx=-spd;p.facing=-1;}
+  else if(keys['ArrowRight']||keys['d']){p.vx=spd;p.facing=1;}
+  else p.vx*=.7;
+
+  // Jump
+  if((keys['ArrowUp']||keys['w']||keys[' '])&&p.onGround){p.vy=-6;}
+
+  // Gravity
+  p.vy+=.3; p.vy=Math.min(p.vy,8);
+
+  // Move X
+  p.x+=p.vx;
+  const pc=()=>Math.floor(p.x/TILE),pr=()=>Math.floor(p.y/TILE);
+  // Wall collision X
+  if(p.vx>0){const rc=Math.floor((p.x+6)/TILE);if(rc<W&&G.world[pr()][rc]&&G.world[pr()][rc]!==T.AIR){p.x=rc*TILE-7;p.vx=0;}}
+  if(p.vx<0){const rc=Math.floor((p.x-6)/TILE);if(rc>=0&&G.world[pr()][rc]&&G.world[pr()][rc]!==T.AIR){p.x=(rc+1)*TILE+6;p.vx=0;}}
+
+  // Move Y
+  p.y+=p.vy; p.onGround=false;
+  if(p.vy>0){
+    const floorR=Math.floor((p.y+10)/TILE);
+    if(floorR<H&&G.world[floorR][pc()]&&G.world[floorR][pc()]!==T.AIR){
+      p.y=floorR*TILE-10; p.vy=0; p.onGround=true;
+    }
+  }
+  if(p.vy<0){
+    const ceilR=Math.floor((p.y-8)/TILE);
+    if(ceilR>=0&&G.world[ceilR][pc()]&&G.world[ceilR][pc()]!==T.AIR){
+      p.y=(ceilR+1)*TILE+8; p.vy=0;
+    }
+  }
+
+  // Clamp world bounds
+  p.x=Math.max(6,Math.min(W*TILE-6,p.x));
+  if(p.y<0)p.y=0;
+  if(p.y>=H*TILE){endGame();return;}
+
+  // MINING
+  if(p.mining&&p.mineTarget){
+    const mt=p.mineTarget;
+    const hardness={[T.STONE]:60,[T.DIRT]:20,[T.COPPER_ORE]:40,[T.SILVER_ORE]:55,[T.GOLD_ORE]:70,[T.LEGEND_ORE]:100,[T.DARKNESS]:80,[T.WATER]:30,[T.LORE_WALL]:120,[T.LORD_ORO]:200}[G.world[mt.r][mt.c]]||60;
+    p.mineProgress+=2;
+    if(p.mineProgress>=hardness){
+      const tileType=G.world[mt.r][mt.c];
+      // Collect ore
+      if(ORE_VALUE[tileType]){
+        const val=ORE_VALUE[tileType];
+        G.gold+=val; G.sessionGold+=val;
+        NMNWallet.addXP(val);
+        NMNWallet.addGem();
+        spawnOreParticles(mt.c*TILE+TILE/2,mt.r*TILE+TILE/2,ORE_GLOW[tileType]);
+        if(tileType===T.LEGEND_ORE){G.legend++;nmnToast('⬡ LEGEND FRAGMENT FOUND');}
+      }
+      if(tileType===T.LORE_WALL){
+        const idx=G.loreFound.size%LORE_FRAGMENTS.length;
+        G.loreFound.add(idx);
+        G.loreMsg=LORE_FRAGMENTS[idx]; G.loreMsgTimer=180;
+        nmnToast('📜 LORE UNCOVERED');
+      }
+      if(tileType===T.LORD_ORO){
+        G.lordOroFound=true;
+        G.gold+=1000; G.sessionGold+=1000;
+        G.loreMsg='"You made it. I knew you would."'; G.loreMsgTimer=300;
+        NMNWallet.addGold(500);
+        nmnToast('👁 LORD ORO FOUND — +1000 GOLD');
+      }
+      if(tileType===T.WATER){
+        G.oxygen=Math.max(0,G.oxygen-20);
+        if(G.oxygen<=0){endGame();return;}
+      }
+      if(tileType===T.DARKNESS){
+        G.loreMsg='"Some things in the mine don\'t want to be found."';
+        G.loreMsgTimer=120;
+      }
+      // Clear tile
+      if(tileType!==T.LORD_ORO||G.lordOroFound) G.world[mt.r][mt.c]=T.AIR;
+      p.mining=false; p.mineTarget=null; p.mineProgress=0;
+    }
+  }
+  if(!keys['ArrowLeft']&&!keys['ArrowRight']&&!keys['ArrowUp']&&!keys['ArrowDown']&&!keys['a']&&!keys['d']&&!keys['w']){
+    p.mining=false;
+  }
+
+  // Depth & oxygen
+  G.depth=Math.max(G.depth,Math.floor(p.y/TILE));
+  G.oxygen=Math.min(100,G.oxygen+.02);
+  if(G.loreMsgTimer>0)G.loreMsgTimer--;
+
+  // Camera follow
+  const VW=cv.width,VH=cv.height;
+  G.cam.x=Math.max(0,Math.min(WORLD_W*TILE-VW, p.x-VW/2));
+  G.cam.y=Math.max(0,Math.min(WORLD_H*TILE-VH, p.y-VH/3));
+
+  // Update HUD
+  document.getElementById('h-depth').textContent=G.depth+'m';
+  document.getElementById('h-gold').textContent=G.gold;
+  document.getElementById('h-oxy').textContent=Math.floor(G.oxygen)+'%';
+  document.getElementById('h-legend').textContent=G.legend;
+
+  // Particles
+  G.particles=G.particles.filter(p2=>{p2.life--;p2.x+=p2.vx;p2.y+=p2.vy;p2.vy+=.15;return p2.life>0;});
+}
+
+function spawnOreParticles(x,y,color){
+  for(let i=0;i<8;i++){
+    G.particles.push({x,y,vx:(Math.random()-.5)*4,vy:(Math.random()-1)*3,color,life:20+Math.floor(Math.random()*10)});
+  }
+}
+
+// ── DRAW ──
+function draw(){
+  if(!G)return;
+  const VW=cv.width,VH=cv.height;
+  ctx.fillStyle='#000';ctx.fillRect(0,0,VW,VH);
+
+  const startC=Math.max(0,Math.floor(G.cam.x/TILE));
+  const endC=Math.min(WORLD_W,startC+Math.ceil(VW/TILE)+2);
+  const startR=Math.max(0,Math.floor(G.cam.y/TILE));
+  const endR=Math.min(WORLD_H,startR+Math.ceil(VH/TILE)+2);
+
+  // TILES
+  for(let r=startR;r<endR;r++){
+    for(let c=startC;c<endC;c++){
+      const tile=G.world[r][c];
+      if(tile===T.AIR)continue;
+      const sx=c*TILE-G.cam.x, sy=r*TILE-G.cam.y;
+      // Base color
+      ctx.fillStyle=TILE_COLOR[tile]||'#111';
+      ctx.fillRect(sx,sy,TILE,TILE);
+      // Texture
+      ctx.fillStyle='rgba(255,255,255,0.04)';
+      ctx.fillRect(sx,sy,TILE/2,TILE/2);
+      ctx.fillStyle='rgba(0,0,0,0.3)';
+      ctx.fillRect(sx+TILE/2,sy+TILE/2,TILE/2,TILE/2);
+      // Ore glow + gem pixel
+      if(ORE_GLOW[tile]){
+        const gl=ctx.createRadialGradient(sx+TILE/2,sy+TILE/2,0,sx+TILE/2,sy+TILE/2,TILE);
+        gl.addColorStop(0,ORE_GLOW[tile]); gl.addColorStop(1,'transparent');
+        ctx.fillStyle=gl; ctx.fillRect(sx,sy,TILE,TILE);
+        // Ore crystal pixel
+        ctx.fillStyle=ORE_GLOW[tile].replace(/,[\d.]+\)$/,',1)').replace('rgba','rgb').split(',').slice(0,3).join(',')+')'||'#FFD700';
+        ctx.fillRect(sx+TILE/2-3,sy+TILE/2-3,6,6);
+        ctx.fillStyle='rgba(255,255,255,.5)';
+        ctx.fillRect(sx+TILE/2-2,sy+TILE/2-2,2,2);
+      }
+      // Lore wall glyph
+      if(tile===T.LORE_WALL){
+        ctx.fillStyle='rgba(255,80,80,.5)';
+        ctx.font=`${TILE-4}px serif`; ctx.textAlign='center';
+        ctx.fillText('𓂀',sx+TILE/2,sy+TILE-2);
+        ctx.textAlign='left';
+      }
+      // Lord Oro marker
+      if(tile===T.LORD_ORO){
+        const b=.5+.5*Math.sin(Date.now()*.003);
+        const gl2=ctx.createRadialGradient(sx+TILE/2,sy+TILE/2,0,sx+TILE/2,sy+TILE/2,TILE*2);
+        gl2.addColorStop(0,`rgba(255,215,0,${b*.8})`); gl2.addColorStop(1,'transparent');
+        ctx.fillStyle=gl2; ctx.fillRect(sx-TILE,sy-TILE,TILE*3,TILE*3);
+        ctx.fillStyle='rgba(255,215,0,0.9)';
+        ctx.font='10px "Press Start 2P"'; ctx.textAlign='center';
+        ctx.fillText('👁',sx+TILE/2,sy+TILE-2);
+        ctx.textAlign='left';
+      }
+      // Water shimmer
+      if(tile===T.WATER){
+        const ws=ctx.createLinearGradient(sx,sy,sx,sy+TILE);
+        ws.addColorStop(0,'rgba(30,80,180,.3)'); ws.addColorStop(1,'rgba(10,30,100,.6)');
+        ctx.fillStyle=ws; ctx.fillRect(sx,sy,TILE,TILE);
+      }
+      // Mine progress overlay
+      if(G.player.mineTarget&&G.player.mineTarget.r===r&&G.player.mineTarget.c===c){
+        const hardness={[T.STONE]:60,[T.DIRT]:20,[T.COPPER_ORE]:40,[T.SILVER_ORE]:55,[T.GOLD_ORE]:70,[T.LEGEND_ORE]:100,[T.DARKNESS]:80,[T.WATER]:30,[T.LORE_WALL]:120,[T.LORD_ORO]:200}[tile]||60;
+        const pct=G.player.mineProgress/hardness;
+        ctx.fillStyle=`rgba(255,215,0,${pct*.4})`;
+        ctx.fillRect(sx,sy,TILE,TILE);
+        // Progress bar
+        ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(sx,sy+TILE-4,TILE,4);
+        ctx.fillStyle='#FFD700';ctx.fillRect(sx,sy+TILE-4,TILE*pct,4);
+      }
+    }
+  }
+
+  // ── PLAYER PIXEL SPRITE ──
+  const px=G.player.x-G.cam.x-8;
+  const py=G.player.y-G.cam.y-16;
+  const flip=G.player.facing<0;
+  ctx.save();
+  if(flip){ctx.translate(px+16,0);ctx.scale(-1,1);ctx.translate(-px,0);}
+  // Body
+  ctx.fillStyle='#8B6914';ctx.fillRect(px,py+8,16,12);
+  // Head
+  ctx.fillStyle='#FFD700';ctx.fillRect(px+2,py,12,10);
+  // Eyes
+  ctx.fillStyle='#000';ctx.fillRect(px+4,py+3,3,3);ctx.fillRect(px+9,py+3,3,3);
+  // Gold eye glint
+  const eb=.5+.5*Math.sin(Date.now()*.004);
+  ctx.fillStyle=`rgba(255,215,0,${eb})`;ctx.fillRect(px+5,py+4,1,1);ctx.fillRect(px+10,py+4,1,1);
+  // Legs
+  const legPhase=Math.sin(Date.now()*.008)>0;
+  ctx.fillStyle='#5a3a0a';
+  ctx.fillRect(px+(legPhase?1:5),py+20,5,8);
+  ctx.fillRect(px+(legPhase?10:6),py+20,5,6);
+  // Lantern
+  ctx.fillStyle='#8B6914';ctx.fillRect(px+14,py+4,5,14);
+  ctx.fillStyle='rgba(255,215,0,0.9)';ctx.fillRect(px+15,py+6,3,8);
+  ctx.restore();
+
+  // Lantern light cone
+  const lightX=G.player.x-G.cam.x+(G.player.facing>0?14:-14);
+  const lightY=G.player.y-G.cam.y-8;
+  const light=ctx.createRadialGradient(lightX,lightY,0,lightX,lightY,Math.min(VW,200)*(.4+.1*Math.sin(Date.now()*.002)));
+  light.addColorStop(0,'rgba(255,200,50,0.12)');
+  light.addColorStop(.5,'rgba(255,180,30,0.05)');
+  light.addColorStop(1,'transparent');
+  ctx.fillStyle=light;ctx.fillRect(0,0,VW,VH);
+
+  // Darkness vignette — deeper = darker
+  const depth=G.player.y/(WORLD_H*TILE);
+  const vig=ctx.createRadialGradient(G.player.x-G.cam.x,G.player.y-G.cam.y,30,G.player.x-G.cam.x,G.player.y-G.cam.y,VW*.6);
+  vig.addColorStop(0,'transparent');
+  vig.addColorStop(.6+depth*.2,`rgba(0,0,0,${.3+depth*.5})`);
+  vig.addColorStop(1,`rgba(0,0,0,${.6+depth*.3})`);
+  ctx.fillStyle=vig;ctx.fillRect(0,0,VW,VH);
+
+  // Particles
+  G.particles.forEach(p2=>{
+    ctx.fillStyle=p2.color.replace(/,[\d.]+\)$/,','+p2.life/30+')')||'rgba(255,215,0,.5)';
+    ctx.fillRect(p2.x-G.cam.x-2,p2.y-G.cam.y-2,4,4);
+  });
+
+  // MINI MAP
+  const MW=80,MH=50,MX=VW-MW-6,MY=6;
+  ctx.fillStyle='rgba(0,0,0,.7)';ctx.fillRect(MX,MY,MW,MH);
+  ctx.strokeStyle='rgba(255,215,0,.2)';ctx.lineWidth=1;ctx.strokeRect(MX,MY,MW,MH);
+  // Ore dots on minimap
+  for(let r=0;r<WORLD_H;r+=2)for(let c=0;c<WORLD_W;c+=2){
+    const tile=G.world[r][c];
+    if(ORE_GLOW[tile]){
+      ctx.fillStyle=ORE_GLOW[tile].replace(/,[\d.]+\)$/,',.6)');
+      ctx.fillRect(MX+c*(MW/WORLD_W),MY+r*(MH/WORLD_H),2,2);
+    }
+  }
+  // Player dot
+  const mpx=MX+G.player.x/TILE*(MW/WORLD_W);
+  const mpy=MY+G.player.y/TILE*(MH/WORLD_H);
+  ctx.fillStyle='#FFD700';ctx.fillRect(mpx-2,mpy-2,5,5);
+
+  // Oxygen bar
+  const oxyColor=G.oxygen>50?'#22cc44':G.oxygen>25?'#FFD700':'#FF3333';
+  ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(6,VH-18,100,8);
+  ctx.fillStyle=oxyColor;ctx.fillRect(6,VH-18,G.oxygen,8);
+  ctx.fillStyle='rgba(255,255,255,.15)';ctx.fillRect(6,VH-18,100,1);
+  ctx.fillStyle=oxyColor;ctx.font='5px "Press Start 2P"';ctx.fillText('O2',110,VH-12);
+
+  // LORE MESSAGE
+  if(G.loreMsgTimer>0&&G.loreMsg){
+    const alpha=Math.min(1,G.loreMsgTimer/20);
+    ctx.save();
+    ctx.globalAlpha=alpha;
+    ctx.fillStyle='rgba(0,0,0,.85)';
+    ctx.fillRect(VW/2-160,VH*.3-18,320,44);
+    ctx.strokeStyle='rgba(255,215,0,.4)';ctx.lineWidth=1;
+    ctx.strokeRect(VW/2-160,VH*.3-18,320,44);
+    ctx.fillStyle='#FFD700';
+    ctx.font='5px "Press Start 2P"';ctx.textAlign='center';
+    // Word wrap
+    const words=G.loreMsg.split(' ');let line='',lines=[];
+    words.forEach(w=>{
+      if(ctx.measureText(line+w).width<270){line+=w+' ';}
+      else{lines.push(line.trim());line=w+' ';}
+    });
+    lines.push(line.trim());
+    lines.forEach((l,i)=>ctx.fillText(l,VW/2,VH*.3+i*14));
+    ctx.textAlign='left';
+    ctx.restore();
+  }
+}
+
+function loop(){
+  if(!G)return;
+  update();
+  draw();
+  NMNScene.raf(loop);
+}
+
+function endGame(){
+  if(!G)return;
+  G.running=false;
+  NMNWallet.addGold(G.sessionGold);
+  document.getElementById('fs-depth').textContent=G.depth+'m';
+  document.getElementById('fs-gold').textContent=G.sessionGold;
+  document.getElementById('fs-legend').textContent=G.legend;
+  document.getElementById('ov-over').classList.remove('hidden');
+  NMNScene.destroy();
+}
+
+// Initial black screen
+ctx.fillStyle='#000';ctx.fillRect(0,0,cv.width,cv.height);
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js', {scope:'/'})
+    .then(function(reg){ console.log('NMN SW registered'); })
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>

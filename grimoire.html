@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eskanar's Grimoire — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28;--pu:#6a3a8a;--lpu:#9a6aaa;--dp:#3a1a5a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);background:#05030a;color:var(--cream);min-height:100vh;background-image:linear-gradient(45deg,#05030a 25%,#080512 25%,#080512 50%,#05030a 50%,#05030a 75%,#080512 75%,#080512 100%);background-size:4px 4px;padding-bottom:50px}
+header{padding:.8rem 2rem;border-bottom:1px solid rgba(106,58,138,.2);display:flex;justify-content:space-between;align-items:center;background:rgba(5,3,10,.97);position:sticky;top:0;z-index:10}
+.logo{font-family:var(--font-serif);font-style:italic;color:var(--lpu);font-size:1rem;text-decoration:none}
+.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.back:hover{color:var(--lpu)}
+
+/* GRIMOIRE COVER */
+.cover{text-align:center;padding:3rem 2rem 2rem;background:linear-gradient(to bottom,rgba(106,58,138,.08),transparent)}
+.cover-paw{font-size:2.5rem;display:block;margin-bottom:.75rem;animation:pawFloat 4s ease-in-out infinite}
+@keyframes pawFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.cover-eyebrow{font-size:.52rem;letter-spacing:.4em;text-transform:uppercase;color:var(--dp);margin-bottom:.75rem}
+.cover-title{font-family:var(--font-serif);font-size:clamp(2rem,6vw,3.5rem);color:var(--cream);line-height:1;margin-bottom:.3rem}
+.cover-title em{color:var(--lpu);font-style:italic;display:block}
+.cover-sub{font-family:var(--font-serif);font-style:italic;font-size:.9rem;color:var(--muted);max-width:480px;margin:.75rem auto;line-height:1.8}
+.cover-tora{font-size:.62rem;color:var(--dp);letter-spacing:.15em;font-style:italic;font-family:var(--font-serif)}
+.progress-bar-wrap{max-width:400px;margin:1.25rem auto 0}
+.progress-label{font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dp);margin-bottom:.4rem;display:flex;justify-content:space-between}
+.progress-bar{height:4px;background:rgba(106,58,138,.15);border-radius:2px}
+.progress-fill{height:100%;background:linear-gradient(to right,var(--dp),var(--lpu));border-radius:2px;transition:width .6s ease}
+
+/* CHAPTER LIST */
+main{max-width:800px;margin:0 auto;padding:2rem 1.5rem}
+.chapters-label{font-size:.52rem;letter-spacing:.35em;text-transform:uppercase;color:var(--dp);margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem}
+.chapters-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(106,58,138,.2),transparent)}
+.chapter-row{border:1px solid rgba(106,58,138,.12);background:rgba(106,58,138,.03);margin-bottom:.5rem;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.chapter-row::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lpu);transform:scaleY(0);transition:transform .3s}
+.chapter-row:hover::after,.chapter-row.unlocked:hover::after{transform:scaleY(1)}
+.chapter-row.locked{opacity:.5;cursor:default}
+.chapter-row.locked:hover{transform:none}
+.chapter-row.completed::after{transform:scaleY(1);background:var(--gold)}
+.chapter-header{padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem}
+.ch-num{font-family:var(--font-serif);font-style:italic;font-size:.85rem;color:var(--dp);width:24px;flex-shrink:0;text-align:right}
+.ch-cat{font-size:1.3rem;flex-shrink:0}
+.ch-info{flex:1}
+.ch-name{font-family:var(--font-serif);font-size:1.1rem;color:var(--cream);margin-bottom:.15rem}
+.ch-name em{color:var(--lpu);font-style:italic}
+.ch-sub{font-size:.52rem;color:var(--muted);letter-spacing:.08em}
+.ch-status{font-size:.45rem;letter-spacing:.15em;text-transform:uppercase;flex-shrink:0}
+.ch-status.open{color:var(--lpu)}
+.ch-status.done{color:var(--gold)}
+.ch-status.locked{color:var(--faint)}
+
+/* CHAPTER VIEW */
+.chapter-view{display:none;animation:chReveal .5s ease}
+.chapter-view.show{display:block}
+@keyframes chReveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.cv-header{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid rgba(106,58,138,.15)}
+.cv-cat{font-size:3rem}
+.cv-title{font-family:var(--font-serif);font-size:1.8rem;color:var(--cream);line-height:1.1}
+.cv-title em{color:var(--lpu);font-style:italic}
+.cv-meta{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dp);margin-top:.3rem}
+.cv-back{font-size:.52rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dp);text-decoration:none;cursor:pointer;background:none;border:none;margin-bottom:1.25rem;display:block;padding:0}
+.cv-back:hover{color:var(--lpu)}
+
+/* HISTORY BLOCK */
+.history-block{margin-bottom:1.5rem}
+.block-label{font-size:.48rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dp);margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+.block-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(106,58,138,.2),transparent)}
+.history-text{font-family:var(--font-serif);font-size:.95rem;color:var(--cream);line-height:1.9}
+
+/* POEM BLOCK */
+.poem-block{border-left:2px solid var(--dp);padding:1rem 1.25rem;background:rgba(106,58,138,.04);margin-bottom:1.5rem}
+.poem-label{font-size:.45rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dp);margin-bottom:.6rem}
+.poem-text{font-family:var(--font-serif);font-style:italic;font-size:1rem;color:var(--cream);line-height:2.1;white-space:pre-line}
+.poem-sig{font-size:.48rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gd);margin-top:.6rem;text-align:right}
+
+/* TORA MARGIN NOTE */
+.tora-note{background:rgba(58,26,90,.15);border:1px solid rgba(106,58,138,.2);padding:.85rem 1rem;margin-bottom:1.5rem;position:relative}
+.tora-note::before{content:'🔮';position:absolute;top:-.7rem;left:1rem;background:#05030a;padding:0 .4rem;font-size:.9rem}
+.tora-label{font-size:.42rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dp);margin-bottom:.4rem}
+.tora-text{font-family:var(--font-serif);font-style:italic;font-size:.88rem;color:var(--lpu);line-height:1.7}
+
+/* PUZZLE */
+.puzzle-block{border:1px solid rgba(106,58,138,.2);background:rgba(5,3,10,.8);padding:1.25rem;margin-bottom:1.5rem}
+.puzzle-label{font-size:.48rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dp);margin-bottom:.75rem}
+.puzzle-instruction{font-family:var(--font-serif);font-style:italic;font-size:.88rem;color:var(--muted);margin-bottom:1rem;line-height:1.7}
+/* PUZZLE TYPES */
+.color-options{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem}
+.color-chip{width:44px;height:44px;border-radius:4px;cursor:pointer;border:3px solid transparent;transition:all .2s;flex-shrink:0}
+.color-chip:hover{transform:scale(1.1)}
+.color-chip.selected{border-color:white;transform:scale(1.1)}
+.color-sequence{display:flex;gap:.5rem;margin-bottom:.75rem;min-height:50px;border:1px dashed rgba(106,58,138,.2);padding:.5rem;align-items:center;flex-wrap:wrap}
+.sequence-slot{width:44px;height:44px;border-radius:4px;border:2px dashed rgba(106,58,138,.3);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.word-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;margin-bottom:.75rem;font-family:monospace;font-size:.75rem}
+.wg-cell{padding:.3rem;text-align:center;cursor:pointer;border-radius:2px;transition:background .15s;color:var(--muted);line-height:1}
+.wg-cell.highlighted{background:rgba(106,58,138,.4);color:var(--cream)}
+.wg-cell.found{background:rgba(255,215,0,.3);color:var(--gb)}
+.match-pairs{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.75rem}
+.match-col{display:flex;flex-direction:column;gap:.4rem}
+.match-item{padding:.5rem .75rem;border:1px solid rgba(106,58,138,.2);font-size:.6rem;color:var(--muted);cursor:pointer;transition:all .2s;text-align:center}
+.match-item:hover{border-color:var(--lpu);color:var(--lpu)}
+.match-item.selected{border-color:var(--lpu);background:rgba(106,58,138,.1);color:var(--lpu)}
+.match-item.matched{border-color:var(--gold);background:rgba(255,215,0,.08);color:var(--gb);cursor:default}
+.fill-blank{width:100%;padding:.6rem .8rem;background:rgba(255,255,255,.03);border:1px solid rgba(106,58,138,.2);color:var(--cream);font-family:var(--font-serif);font-style:italic;font-size:.9rem;outline:none;margin-bottom:.75rem}
+.fill-blank:focus{border-color:var(--lpu)}
+.unlock-btn{width:100%;padding:.8rem;background:transparent;border:1px solid rgba(106,58,138,.3);color:var(--lpu);font-family:var(--font-sans);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.unlock-btn:hover{background:rgba(106,58,138,.08);border-color:var(--lpu)}
+.puzzle-feedback{font-size:.62rem;color:var(--dp);margin-top:.5rem;min-height:1rem;font-style:italic;font-family:var(--font-serif)}
+.puzzle-feedback.correct{color:var(--gold)}
+.puzzle-feedback.wrong{color:#aa4444}
+
+/* BLANK PAGE */
+.blank-page{text-align:center;padding:3rem 2rem;border:1px solid rgba(255,215,0,.15);background:rgba(255,215,0,.02)}
+.blank-oro{font-family:var(--font-serif);font-style:italic;font-size:1.1rem;color:var(--gd);line-height:1.9;margin-bottom:2rem;max-width:400px;margin-left:auto;margin-right:auto}
+.blank-input{width:100%;max-width:300px;padding:.75rem 1rem;background:transparent;border:none;border-bottom:1px solid rgba(255,215,0,.3);color:var(--cream);font-family:var(--font-serif);font-style:italic;font-size:1.2rem;outline:none;text-align:center;display:block;margin:0 auto 1rem}
+.blank-input::placeholder{color:var(--faint)}
+.blank-save{padding:.6rem 1.5rem;background:transparent;border:1px solid rgba(255,215,0,.2);color:var(--gd);font-family:var(--font-sans);font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.blank-save:hover{border-color:var(--gold);color:var(--gold)}
+.blank-saved{font-size:.6rem;color:var(--gold);margin-top:.5rem;font-family:var(--font-serif);font-style:italic;min-height:1.2rem}
+
+/* DEPTH GAUGE */
+.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:34px;background:rgba(5,3,10,.97);border-top:1px solid rgba(106,58,138,.2);display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:999;padding:0 1rem}
+.dg-stat{display:flex;align-items:center;gap:.3rem;font-size:.4rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+.dg-val{font-family:var(--font-serif);font-size:.8rem;color:var(--lpu)}
+.dg-sep{color:var(--faint)}
+.dg-link{font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-decoration:none}
+.dg-link:hover{color:var(--lpu)}
+</style>
+
+<style id="nmn-cursor">
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
+</style>
+<style id="floating-gauge">
+.depth-gauge{
+  position:fixed!important;bottom:12px!important;left:50%!important;
+  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
+  height:42px!important;background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
+  padding:0 18px!important;pointer-events:none!important;
+  z-index:9999!important;backdrop-filter:blur(4px)!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:1.2rem!important;flex-wrap:nowrap!important;
+  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
+body{padding-bottom:65px!important}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+<script>(function(s){s.dataset.zone='10763810',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+<header>
+  <a href="oracle.html" class="logo">🔮 The Oracle's Chamber</a>
+  <a href="oracle.html" class="back">← Back to the Chamber</a>
+</header>
+
+<div class="cover">
+  <span class="cover-paw">🐾</span>
+  <div class="cover-eyebrow">The Oracle's Chamber — Sacred Archive</div>
+  <h1 class="cover-title">Eskanar's<em>Grimoire</em></h1>
+  <p class="cover-sub">A record of the cats who changed history — and the humans who finally understood what they were living with. Named for Eskanar. Kept by Tora. Read by whoever crawls far enough into the mine to find it.</p>
+  <div class="cover-tora">"Every cat in here knew something its human was still learning." — Tora</div>
+  <div class="progress-bar-wrap">
+    <div class="progress-label"><span>Chapters Read</span><span id="progressText">0 / 14</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<main>
+  <div class="chapters-label">The Fourteen Chapters</div>
+  <div id="chapterList"></div>
+  <div id="chapterView" class="chapter-view"></div>
+</main>
+
+<div class="depth-gauge">
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span>&nbsp;Lore</div>
+  <span class="dg-sep">🐾</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <a href="oracle.html" class="dg-link">🔮 Chamber</a>
+</div>
+
+<script>
+// ── THE FOURTEEN CHAPTERS ─────────────────────────────────────────────
+
+const CHAPTERS = [
+  {
+    id:'bastet', num:'I', cat:'🐱', name:"Bastet's Chosen", sub:'Ancient Egypt — 3000 BCE',
+    locked:false,
+    history:`In ancient Egypt, cats were not merely pets. They were the earthly embodiment of Bastet — goddess of home, fertility, and protection. To kill a cat, even accidentally, was punishable by death. When a household cat died, the family shaved their eyebrows as a sign of mourning. Cats were mummified and buried with offerings. Entire necropolises were dedicated to them.\n\nThey earned this not through mysticism but through utility — they protected the grain stores from rodents, keeping entire civilizations alive. The Egyptians understood something most people still don't: the cat chose to stay. That choice meant everything.`,
+    poem:`They did not worship the cat because it was divine.
+They worshipped the cat because it was useful
+and then it became divine anyway — which is
+how most sacred things actually happen.
+
+Bastet walked the grain stores at night
+and in the morning the grain was still there.
+That is the whole miracle.
+That is the whole religion.`,
+    tora:`"The Egyptians understood that a god who protects the grain is worth more than a god who only protects the soul. Bastet knew this. That is why she had a cat's face."`,
+    puzzle:{
+      type:'color',
+      instruction:'The Temple of Bastet held three sacred colors. Arrange them in the order they appeared on her altar: the gold of the grain, the deep blue of the Nile, the black of the rich earth.',
+      colors:['#c9962a','#1a5a9a','#1a1208'],
+      labels:['Gold of the Grain','Blue of the Nile','Black of the Earth'],
+      answer:[0,1,2]
+    }
+  },
+  {
+    id:'pangur', num:'II', cat:'🤍', name:'Pangur Bán', sub:'Ireland — 9th Century CE',
+    locked:false,
+    history:`In a monastery scriptorium somewhere in Ireland or possibly Austria, a monk sat copying manuscripts by candlelight. His white cat hunted mice in the corners. Sometime around 800 CE, the monk stopped copying and wrote a poem comparing his own work to the cat's.\n\nThe poem survived. We do not know the monk's name. We know the cat's: Pangur Bán — White Fuller in Old Irish. The poem was found in the margins of a theological text in a Swiss monastery, written in the monk's native Irish tongue, hidden among Latin scripture like a private joke between a man and his cat.\n\nIt is one of the oldest pieces of writing about the bond between a human and a pet. The monk and the cat, both hunting. Both content. Neither one explaining themselves.`,
+    poem:`The monk has his ink; the cat has his claws.
+Both are looking for something
+that doesn't want to be caught.
+
+One finds a mouse; one finds a truth.
+Neither one shares the prize.
+Neither one needs to.
+
+Pangur Bán practiced her art
+in the margin of the same book
+where the monk practiced his —
+which is exactly where
+the best things are always written.`,
+    tora:`"The monk hid his love for the cat inside a manuscript about God. As if those were two different subjects."`,
+    puzzle:{
+      type:'wordsearch',
+      instruction:'Find three words hidden in this scriptorium grid — the monk\'s name for his work, the cat\'s name, and the word they shared.',
+      grid:[
+        ['L','U','X','M','A','R','T','P'],
+        ['I','B','A','N','G','U','R','A'],
+        ['B','E','I','F','E','L','I','X'],
+        ['R','R','H','U','N','T','I','G'],
+        ['I','I','S','L','X','M','C','U'],
+        ['B','A','N','U','S','C','R','I'],
+        ['I','P','A','X','L','O','R','B'],
+        ['S','T','U','D','I','U','M','A']
+      ],
+      words:['PANGUR','FELIS','STUDIUM'],
+      wordPositions:{
+        'PANGUR':[[1,1],[1,2],[1,3],[1,4],[1,5],[1,6]],
+        'FELIS':[[2,2],[2,3],[2,4],[2,5],[2,6]],
+        'STUDIUM':[[7,0],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6]]
+      }
+    }
+  },
+  {
+    id:'mike', num:'III', cat:'🏛️', name:'Mike of the British Museum', sub:'London — 1908 to 1929',
+    locked:false,
+    history:`Mike arrived at the British Museum as a kitten and never left. For twenty-one years he guarded the gates — not the exhibits, not the mummies, not the Rosetta Stone. The gates. Specifically, he guarded them with the head gatekeeper, a man named Mr. Treadwell.\n\nMike had no interest in the public. He tolerated visitors with the profound indifference of a being who understood that the building would outlast all of them. He liked Mr. Treadwell. He liked the other gatekeepers. He liked fish, which was brought to him from a nearby shop.\n\nWhen Mike died in 1929, the Times of London published his obituary. The British Museum issued an official statement of mourning. He had been on their payroll — listed under "staff." His job description was "cat."`,
+    poem:`He didn't guard the mummies for the gold.
+He guarded the gate because he liked the man who held the key.
+
+The tourists brought cameras.
+He brought silence.
+
+The museum is stone,
+but Mike was the soul of the entrance —
+which is to say, he decided who belonged there
+and then mostly ignored them anyway.
+
+He is still there, if you know how to look.
+Every threshold has a cat like Mike.
+Most of them you never see.`,
+    tora:`"He knew what the artifacts forgot: a gate is only as strong as the one who refuses to leave it."`,
+    puzzle:{
+      type:'match',
+      instruction:'Match each member of Mike\'s world to their role at the museum.',
+      left:['Mike','Mr. Treadwell','The Times of London','The British Museum'],
+      right:['Head Gatekeeper','Cat in Residence','Wrote his obituary','Listed him as staff'],
+      answer:{0:0,1:1,2:2,3:3}
+    }
+  },
+  {
+    id:'hodge', num:'IV', cat:'📖', name:'Hodge', sub:'London — 18th Century',
+    locked:false,
+    history:`Samuel Johnson was the man who wrote the first comprehensive English dictionary — a work that took nine years and defined 40,000 words. He was one of the most celebrated literary minds of his era. He was also, without apology, deeply devoted to his cat Hodge.\n\nJohnson bought Hodge oysters personally from the market rather than send a servant, because he worried the servants might resent the cat for the extra work and treat him poorly. His biographer James Boswell recorded this. Boswell did not share Johnson's affection for Hodge, noting with barely concealed irritation that the cat was "a very fine cat indeed."\n\nA statue of Hodge now sits outside Johnson's house in Gough Square, London. He is sitting on the dictionary. He looks unbothered.`,
+    poem:`The man who defined forty thousand words
+spent nine years looking for the right ones
+and came home every night to a creature
+who used none of them.
+
+He bought the oysters himself.
+Not because the cat asked.
+Because he understood
+that love expressed through inconvenience
+is the most honest kind.
+
+Hodge outlived most of Johnson's opinions.
+The dictionary is still in print.
+The cat is still on the cover.`,
+    tora:`"Johnson spent a lifetime with words and recognized immediately a being that had no use for any of them. That is either irony or wisdom. Tora suspects both."`,
+    puzzle:{
+      type:'sequence',
+      instruction:'Place these four words in the order Johnson defined them in his dictionary — alphabetical, as he worked through the language.',
+      items:['MELANCHOLY','KINDNESS','LOYALTY','PATIENCE'],
+      answer:[1,2,0,3]
+    }
+  },
+  {
+    id:'trim', num:'V', cat:'⚓', name:'Trim', sub:'Australia — 1801',
+    locked:false,
+    history:`Trim was born at sea in 1799 and was, from the first moments of his life, a sailor. He fell overboard as a kitten during a storm in the Indian Ocean and swam back to the ship. The crew considered this an excellent sign.\n\nHe sailed with Captain Matthew Flinders on the Investigator, becoming the first cat to circumnavigate the Australian continent. He was present for the first complete charting of Australia's coastline. He was, by all accounts, a competent navigator in the sense that he always seemed to know where the food was.\n\nFlinders was later imprisoned by the French on Mauritius. Trim disappeared there. Flinders never recovered from the loss. He wrote a biographical tribute to Trim from his prison cell that remained unpublished until after his death. A statue of Trim now sits on a window ledge above the statue of Flinders in Sydney, watching him from above.`,
+    poem:`He fell overboard in the Indian Ocean
+and swam back to the ship.
+The crew took this as a sign of good character.
+They were not wrong.
+
+He circumnavigated Australia
+without charting a single thing —
+which made him the most honest member
+of the expedition.
+
+Flinders mapped the continent.
+Trim knew where the food was.
+Between them, they understood
+everything that needed to be understood.`,
+    tora:`"Trim fell into the ocean and climbed back onto the ship. That is not luck. That is a decision. The mine respects decisions."`,
+    puzzle:{
+      type:'compass',
+      instruction:'Trim sailed around Australia. Mark which direction he traveled from Sydney to complete the circumnavigation — the way the currents ran in 1801.',
+      options:['Clockwise — North first','Counter-clockwise — South first'],
+      answer:0
+    }
+  },
+  {
+    id:'sam', num:'VI', cat:'🚢', name:'Unsinkable Sam', sub:'World War II — 1941 to 1945',
+    locked:false,
+    history:`The cat who would become Unsinkable Sam began the war as Oskar, the ship's cat aboard the German battleship Bismarck. When the Bismarck was sunk in May 1941, the British destroyer HMS Cossack rescued survivors — and one orange-and-white cat found floating on a board among the wreckage, described as "angry but unharmed."\n\nThe Cossack was damaged by a torpedo in October 1941. Sam survived. He was transferred to the aircraft carrier HMS Ark Royal. The Ark Royal was sunk by a torpedo three weeks later. Sam was found floating on a floating board, described again as "angry but unharmed."\n\nHe was retired to land after this. His official service record noted he was "not to be regarded as a lucky cat." He lived out his days in a Belfast home for sailors, then a museum. He never went near water again. A portrait of him hangs in the National Maritime Museum in Greenwich.`,
+    poem:`Three ships went down.
+He floated.
+
+Not because the sea loved him —
+the sea doesn't love anyone.
+Because he refused
+to accept the premise.
+
+They called him unsinkable
+like it was a compliment.
+He accepted it like a fact
+and went to find somewhere dry to sleep.
+
+The portrait in Greenwich shows him
+looking directly at you.
+He is not impressed.
+He has survived three navies.
+He has seen enough.`,
+    tora:`"The sea tried three times and got the same answer. Sam was not brave. He was simply unwilling to participate in his own drowning. There is a lesson in that."`,
+    puzzle:{
+      type:'match',
+      instruction:'Match each ship to what happened to it.',
+      left:['Bismarck','HMS Cossack','HMS Ark Royal','Retirement'],
+      right:['Sunk by British fleet','Torpedo damaged','Sunk by torpedo','Home for sailors, Belfast'],
+      answer:{0:0,1:1,2:2,3:3}
+    }
+  },
+  {
+    id:'felicette', num:'VII', cat:'🚀', name:'Félicette', sub:'France — October 18, 1963',
+    locked:false,
+    history:`On October 18, 1963, a black-and-white cat named Félicette was launched into space aboard a French Véronique AG1 rocket. She was in space for fifteen minutes. She returned alive. She was the first cat in space and the only one to survive the journey.\n\nFrance had originally planned to send a cat named Félix, but he escaped before the launch. Félicette was selected from fourteen candidates. She had electrodes implanted in her brain to monitor neurological activity. She was given no recognition. Her story was largely forgotten for decades.\n\nIn 2017, a campaign raised funds for a statue in her honor. It was unveiled in 2019 — fifty-six years after her flight — at the International Space University in Strasbourg. She sits on top of a globe, looking up.`,
+    poem:`They sent her up without asking.
+She went anyway — the way cats always go,
+with complete indifference to what humans
+have decided matters.
+
+She was in space for fifteen minutes.
+She came back changed the way space changes everything.
+
+France gave her a statue fifty-six years later.
+The mine gave her a page.
+She would not have cared either way —
+
+but she is looking up in the statue,
+which means she remembered
+what it was like
+to be above everything,
+and found it worth keeping.`,
+    tora:`"They forgot her for fifty-six years and she didn't complain once. That is either patience or superiority. Tora cannot tell and suspects it is both."`,
+    puzzle:{
+      type:'sequence',
+      instruction:'Place these four mission stages in the correct order.',
+      items:['Return and recovery','Selection from 14 cats','Launch on Véronique rocket','Fifteen minutes in space'],
+      answer:[1,2,3,0]
+    }
+  },
+  {
+    id:'bob', num:'VIII', cat:'🟠', name:'Bob', sub:'London — 2007',
+    locked:false,
+    history:`James Bowen was sleeping rough in London in 2007, recovering from drug addiction, when a ginger tom cat appeared outside his supported housing building with an infected leg. Bowen treated the wound. The cat stayed. He named him Bob.\n\nBob began riding the bus with Bowen, sitting on his shoulder. He sat beside him while Bowen busked on the streets of Covent Garden. People who had walked past Bowen alone stopped for Bob. The cat made him visible in a city that had learned not to see him.\n\nBowen wrote a book about Bob. Then another. They were translated into forty-seven languages. A film was made. Bob lived to be fourteen years old and died in 2020. James Bowen has not relapsed since the day Bob found him.`,
+    poem:`The city had learned not to see him.
+Bob had not learned this lesson
+and had no interest in learning it.
+
+He sat on the shoulder of the invisible man
+and made him visible —
+not through magic,
+but through the simple act of
+choosing him
+in public,
+every day.
+
+Some rescues go upward.
+Some go sideways.
+Bob's went both ways at once
+and they are both still going.`,
+    tora:`"Bob did not save James because he was trained to. He saved him because he chose to. The mine notes the difference."`,
+    puzzle:{
+      type:'match',
+      instruction:'Match the four moments in Bob\'s story.',
+      left:['2007','Covent Garden','47 languages','2020'],
+      right:['Bob and James first meet','Where Bob busked','How many the book reached','The year Bob died'],
+      answer:{0:0,1:1,2:2,3:3}
+    }
+  },
+  {
+    id:'muezza', num:'IX', cat:'☪️', name:'Muezza', sub:'Arabia — 7th Century CE',
+    locked:false,
+    history:`Muezza was the cat of the Prophet Mohammed. The tradition holds that when the call to prayer came and Mohammed needed to rise, Muezza was sleeping on the sleeve of his robe. Rather than disturb her, he cut the sleeve away and rose without waking her.\n\nThis story — whether literal or parable — established a tradition of care for cats throughout Islamic culture. Cats are considered ritually clean animals in Islam. They are permitted in homes and mosques. In many cities of the Muslim world, cats live freely in and around sacred spaces.\n\nThe M-shaped marking on the forehead of tabby cats is called, in some traditions, the Mark of Mohammed — placed there in gratitude for the cats who comforted him. The mine has no position on theology. But it notes that a religion that cuts its sleeve for a sleeping cat is a religion that understands something important about the weight of small things.`,
+    poem:`He cut the sleeve away
+rather than wake her.
+
+This is recorded in history
+as an act of kindness —
+but anyone who has ever lived with a cat
+knows it is an act of recognition:
+
+the acknowledgment that the sleep
+of the thing you love
+is worth more than the cloth
+you were wearing.
+
+The M on the tabby's forehead
+is a reminder
+that someone noticed.
+The mine noticed too.`,
+    tora:`"He cut the cloth. Not the cat's sleep. That distinction is the whole religion, if you read it correctly."`,
+    puzzle:{
+      type:'fill',
+      instruction:'Complete the three fragments. What did Mohammed choose not to disturb?',
+      blanks:['Her _____ (the cat\'s state)', 'The _____ (what he sacrificed)', 'The _____ (what remained on her forehead)'],
+      answers:['sleep','sleeve','mark']
+    }
+  },
+  {
+    id:'dewey', num:'X', cat:'📚', name:'Dewey Readmore Books', sub:'Spencer, Iowa — 1988 to 2006',
+    locked:false,
+    history:`On a January night in 1988, during the worst cold snap in Iowa memory, the staff of the Spencer Public Library found a kitten in the book return drop box. He was nearly frozen. They warmed him. He stayed.\n\nThe library held a naming contest. The winner was Dewey Readmore Books — a name both practical and magnificent. For eighteen years, Dewey greeted every person who came through the library doors. He sat with children learning to read. He slept on the laps of elderly patrons who came in to be warm. He found the lonely people and stayed with them specifically.\n\nWhen Dewey died in 2006, over 250 newspapers ran the story. The library received condolence letters from around the world. A biography written by the head librarian, Vicki Myron, became a New York Times bestseller. Spencer, Iowa — population 11,000 — was suddenly known for something.`,
+    poem:`He was put through the book return on the coldest night of the year.
+He had no opinion about this. He was nearly frozen.
+He survived. He stayed.
+
+For eighteen years he found the lonely ones —
+the children who couldn't read yet,
+the old ones who came in just to be somewhere warm,
+the ones who sat in the corner
+hoping no one would notice them.
+
+Dewey noticed.
+Dewey always noticed.
+That was his job.
+He never stopped doing it.`,
+    tora:`"He chose the lonely ones specifically. Not the happy ones, not the scholars. The lonely ones. The mine keeps a record of everyone who does that."`,
+    puzzle:{
+      type:'match',
+      instruction:'Match each type of patron to what Dewey gave them.',
+      left:['Children','Elderly patrons','The lonely','The world'],
+      right:['Warmth on cold days','Someone who noticed them','Help learning to read','250 newspapers worth of grief'],
+      answer:{0:2,1:0,2:1,3:3}
+    }
+  },
+  {
+    id:'ottoman', num:'XI', cat:'🕌', name:'Cats of the Ottoman Empire', sub:'Istanbul — 1000 years and counting',
+    locked:false,
+    history:`Istanbul has always been a city of cats. Not as pets — as residents. The Ottoman sultans fed them. The mosques kept them. The grand bazaar sheltered them. They have been documented in miniature paintings from the 15th century, sleeping on prayer rugs and climbing minarets.\n\nWhen Constantinople became Istanbul, the cats stayed. When the empire fell, the cats stayed. They are still there — tens of thousands of them, living between the ancient and the modern, respected by a culture that has understood for a thousand years that a city with cats in it is a city that is still alive.\n\nThe cats of Istanbul are different from strays. They are not owned. They are not abandoned. They belong to the city itself, which tends to them collectively — feeding stations, veterinary care, the quiet understanding that they are part of the architecture.`,
+    poem:`The empire fell.
+The cats stayed.
+
+They had been there before the sultans
+and they will be there after
+the tourists are done taking photographs —
+sitting on the ancient stones
+with the patience of things
+that understand
+how long stone lasts.
+
+Istanbul does not belong to anyone.
+Istanbul belongs to its cats.
+They have never announced this.
+They didn't need to.`,
+    tora:`"A city that keeps its cats is a city that has not forgotten what it is. Istanbul has not forgotten."`,
+    puzzle:{
+      type:'fill',
+      instruction:'Name any three of Istanbul\'s ancient districts where cats have been documented for centuries. (Any three correct answers unlock the chapter.)',
+      blanks:['District one','District two','District three'],
+      answers:['beyoglu','sultanahmet','eminonu','fatih','uskudar','kadikoy','besiktas','galata','pera']
+    }
+  },
+  {
+    id:'shipcat', num:'XII', cat:'🌊', name:'The Ship-Cat Lineage', sub:'Every Ocean — All of History',
+    locked:false,
+    history:`Every vessel that ever sailed carried a cat. This was not superstition — it was practicality. Rats destroyed food supplies, gnawed through rope, and spread disease. A ship's cat earned its passage.\n\nBut over centuries of sailing, the ship's cat became something else. Sailors are people who leave everything behind and live in a small moving world with a fixed crew for months or years at a time. The cat was the one thing on the ship that was not the mission. It was not a tool. It was not a colleague. It was a creature that had chosen to be there — or at least had not chosen to leave — and in the context of the ocean, that was enough.\n\nEvery famous ship's cat had a name. Every sailor remembered the name. When the cat died, it was recorded in the ship's log with the same formality as a crew member. The lineage runs from ancient Phoenician traders to WWII warships to the research vessels of today. The last recorded official ship's cat in the Royal Navy retired in 1975.`,
+    poem:`They were practical first —
+the rats, the ropes, the grain.
+But somewhere in the middle of the ocean,
+far enough from land that land seems impossible,
+the cat stopped being practical
+and became necessary in a different way.
+
+Every sailor on every ship
+for four thousand years
+has had a name for the cat.
+Has known the cat's habits.
+Has told someone on shore about the cat.
+
+This is not superstition.
+This is the human understanding
+that you cannot cross an ocean
+without something that chooses
+to cross it with you.`,
+    tora:`"The ship's cat did not cross oceans for the sailors. The sailors crossed oceans for themselves. The cat crossed for reasons the ocean understands and we do not."`,
+    puzzle:{
+      type:'match',
+      instruction:'Match each vessel type to its traditional role for the ship\'s cat.',
+      left:['Merchant vessel','Naval warship','Whaling ship','Research vessel'],
+      right:['Morale on long hunts','Last one: retired 1975','Protecting the cargo','Companion on expeditions'],
+      answer:{0:2,1:1,2:0,3:3}
+    }
+  },
+  {
+    id:'nausicaa', num:'XIII', cat:'🌙', name:'Nausicaa', sub:'Named for the princess who offered shelter',
+    locked:true,
+    earnedAfter:12,
+    history:`In Homer's Odyssey, the shipwrecked Odysseus washes ashore on the island of Phaeacia, exhausted and stripped of everything. The first person he encounters is Nausicaa — a princess who has come to the shore to wash laundry with her maidens.\n\nShe does not run from the bedraggled stranger. She gives him food, clothing, and directions to her father's palace. She asks nothing in return except that he remember where kindness came from.\n\nNausicaa the cat was named for this — for the quality of meeting a stranger and offering warmth without calculation. She was Tara's cat. The mine keeps her chapter as a threshold. You had to read twelve others to earn her. That is the point. Some things are not for those who haven't done the work.`,
+    poem:`The princess didn't know the stranger was a hero.
+She gave him food anyway.
+That is the whole lesson.
+
+Nausicaa the cat learned it naturally —
+she did not ask where you came from
+or whether you deserved warmth.
+She simply assessed whether you were cold.
+
+If you were cold,
+she stayed.
+
+This is not simple.
+This is the hardest thing.`,
+    tora:`"Nausicaa the princess asked one thing: remember where the kindness came from. The cat asked for nothing. The cat was wiser."`,
+    puzzle:{
+      type:'fill',
+      instruction:'Nausicaa offered the stranger one thing before anything else. One word.',
+      blanks:['What she offered'],
+      answers:['shelter','food','warmth','kindness','help']
+    }
+  },
+  {
+    id:'eskanar', num:'XIV', cat:'🐾', name:'Eskanar', sub:'The last chapter — the one this book is named for',
+    locked:true,
+    earnedAfter:13,
+    isLast:true,
+    history:`Eskanar was Tara's other cat. The name the grimoire is named for. The mine does not know Eskanar's full story — only Lord Oro knows, and he keeps it the way he keeps everything that matters: sealed, present, stronger for being closed.\n\nWhat the mine knows: Eskanar existed. Eskanar was loved. Eskanar is in the name of this grimoire not as a decoration but as an acknowledgment — that the things most worth naming are sometimes the ones you cannot fully explain.\n\nThe rest of this page is yours.`,
+    poem:`Some things are kept sealed
+because sealed
+they give more strength
+than opened.
+
+The mine does not explain Eskanar.
+The mine does not need to.
+The name is enough.
+The name was always enough.`,
+    tora:`"This page belongs to you now. The mine held it. You came this far. Write your word."`,
+    puzzle:null
+  }
+];
+
+// ── STATE ──────────────────────────────────────────────────────────────
+function loadState() {
+  try { return JSON.parse(localStorage.getItem('nmn_grimoire')||'{}'); } catch(e){ return {}; }
+}
+function saveState(s) {
+  try { localStorage.setItem('nmn_grimoire', JSON.stringify(s)); } catch(e){}
+}
+
+let state = loadState();
+let currentChapter = null;
+
+function getCompletedCount() {
+  return CHAPTERS.filter(c => state[c.id+'_complete']).length;
+}
+
+function isUnlocked(ch) {
+  if(!ch.locked) return true;
+  const earned = ch.earnedAfter || 0;
+  return getCompletedCount() >= earned;
+}
+
+// ── RENDER CHAPTER LIST ────────────────────────────────────────────────
+function renderList() {
+  const completed = getCompletedCount();
+  document.getElementById('progressText').textContent = `${completed} / 14`;
+  document.getElementById('progressFill').style.width = (completed/14*100)+'%';
+
+  const list = document.getElementById('chapterList');
+  list.innerHTML = CHAPTERS.map(ch => {
+    const unlocked = isUnlocked(ch);
+    const done = state[ch.id+'_complete'];
+    const cls = done ? 'completed' : unlocked ? 'unlocked' : 'locked';
+    return `<div class="chapter-row ${cls}" onclick="${unlocked?`openChapter('${ch.id}')`:''}" >
+      <div class="chapter-header">
+        <span class="ch-num">${ch.num}</span>
+        <span class="ch-cat">${ch.cat}</span>
+        <div class="ch-info">
+          <div class="ch-name">${ch.locked && !unlocked ? '<em>Locked</em>' : ch.name}</div>
+          <div class="ch-sub">${ch.locked && !unlocked ? `Unlocks after ${ch.earnedAfter} chapters read` : ch.sub}</div>
+        </div>
+        <span class="ch-status ${done?'done':unlocked?'open':'locked'}">${done?'✦ Read':unlocked?'Open':'Locked'}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('chapterView').classList.remove('show');
+  document.getElementById('chapterList').style.display='block';
+}
+
+// ── OPEN CHAPTER ──────────────────────────────────────────────────────
+function openChapter(id) {
+  const ch = CHAPTERS.find(c=>c.id===id);
+  if(!ch || !isUnlocked(ch)) return;
+  currentChapter = ch;
+  document.getElementById('chapterList').style.display='none';
+  const view = document.getElementById('chapterView');
+  const done = state[ch.id+'_complete'];
+
+  let puzzleHtml = '';
+  if(ch.isLast) {
+    const savedWord = state['eskanar_word'] || '';
+    puzzleHtml = `<div class="blank-page">
+      <div class="blank-oro">"Some things are kept sealed because sealed they give more strength than opened."<br><br>The mine held this page for you.<br>Write one word.</div>
+      <input type="text" class="blank-input" id="blankWord" placeholder="one word..." maxlength="30" value="${savedWord}">
+      <button class="blank-save" onclick="saveBlankWord()">⬡ Seal it in the mine</button>
+      <div class="blank-saved" id="blankSaved">${savedWord?`"${savedWord}" — sealed in the mine.`:''}</div>
+    </div>`;
+  } else if(ch.puzzle && !done) {
+    puzzleHtml = buildPuzzle(ch);
+  } else if(done) {
+    puzzleHtml = `<div style="text-align:center;padding:1rem;font-family:var(--font-serif);font-style:italic;color:var(--gold);font-size:.9rem">✦ This chapter has been read. The words remain.</div>`;
+  }
+
+  view.innerHTML = `
+    <button class="cv-back" onclick="renderList()">← Back to all chapters</button>
+    <div class="cv-header">
+      <span class="cv-cat">${ch.cat}</span>
+      <div>
+        <div class="cv-title">Chapter ${ch.num} — <em>${ch.name}</em></div>
+        <div class="cv-meta">${ch.sub}</div>
+      </div>
+    </div>
+    <div class="history-block">
+      <div class="block-label">The History</div>
+      <div class="history-text">${ch.history.replace(/\n\n/g,'</div><div class="history-text" style="margin-top:1rem">')}</div>
+    </div>
+    <div class="poem-block">
+      <div class="poem-label">Lord Oro's Poem</div>
+      <div class="poem-text">${ch.poem}</div>
+      <div class="poem-sig">— Lord Oro, Eskanar's Grimoire</div>
+    </div>
+    <div class="tora-note">
+      <div class="tora-label">Tora's Margin Note</div>
+      <div class="tora-text">${ch.tora}</div>
+    </div>
+    ${puzzleHtml}`;
+
+  view.classList.add('show');
+  view.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── BUILD PUZZLE ──────────────────────────────────────────────────────
+function buildPuzzle(ch) {
+  const p = ch.puzzle;
+  let inner = '';
+
+  if(p.type==='color') {
+    inner = `<div class="color-options" id="colorOptions">
+      ${p.colors.map((c,i)=>`<div class="color-chip" style="background:${c}" data-idx="${i}" onclick="selectColor(this,${i})" title="${p.labels[i]}"></div>`).join('')}
+    </div>
+    <div style="font-size:.52rem;color:var(--faint);margin-bottom:.75rem">Selected order will appear below</div>
+    <div class="color-sequence" id="colorSeq"></div>`;
+  } else if(p.type==='wordsearch') {
+    inner = `<div class="word-grid" id="wordGrid">
+      ${p.grid.map((row,r)=>row.map((cell,c)=>`<div class="wg-cell" data-r="${r}" data-c="${c}" onclick="toggleCell(this)">${cell}</div>`).join('')).join('')}
+    </div>
+    <div style="font-size:.52rem;color:var(--faint);margin-bottom:.75rem">Find: ${p.words.join(' · ')}</div>`;
+  } else if(p.type==='match') {
+    inner = `<div class="match-pairs">
+      <div class="match-col" id="matchLeft">
+        ${p.left.map((item,i)=>`<div class="match-item" data-side="left" data-idx="${i}" onclick="selectMatch(this,'left',${i})">${item}</div>`).join('')}
+      </div>
+      <div class="match-col" id="matchRight">
+        ${p.right.map((item,i)=>`<div class="match-item" data-side="right" data-idx="${i}" onclick="selectMatch(this,'right',${i})">${item}</div>`).join('')}
+      </div>
+    </div>`;
+  } else if(p.type==='sequence') {
+    inner = `<div id="seqItems" style="display:flex;flex-direction:column;gap:.4rem;margin-bottom:.75rem">
+      ${shuffleArray([...p.items.entries()]).map(([orig,item])=>`<div class="match-item" data-orig="${orig}" draggable="true" onclick="seqClick(this)" style="cursor:pointer;display:flex;align-items:center;gap:.5rem"><span style="color:var(--dp);font-size:.5rem">▶</span>${item}</div>`).join('')}
+    </div>
+    <div style="font-size:.5rem;color:var(--faint);margin-bottom:.75rem">Tap items to arrange in correct order</div>`;
+  } else if(p.type==='fill') {
+    inner = p.blanks.map((label,i)=>`<div style="font-size:.6rem;color:var(--muted);margin-bottom:.3rem">${label}</div>
+      <input type="text" class="fill-blank" id="fill_${i}" placeholder="your answer..."></input>`).join('');
+  } else if(p.type==='compass') {
+    inner = p.options.map((opt,i)=>`<div class="match-item" onclick="selectCompass(${i})" id="compass_${i}" style="margin-bottom:.4rem;cursor:pointer">${opt}</div>`).join('');
+  }
+
+  return `<div class="puzzle-block">
+    <div class="puzzle-label">🔑 The Ritual — Complete to Enter the Chapter</div>
+    <div class="puzzle-instruction">${p.instruction}</div>
+    ${inner}
+    <button class="unlock-btn" onclick="checkPuzzle('${ch.id}')">⬡ Enter the Chapter</button>
+    <div class="puzzle-feedback" id="puzzleFeedback"></div>
+  </div>`;
+}
+
+// ── PUZZLE MECHANICS ──────────────────────────────────────────────────
+let colorSequence = [];
+let selectedMatchLeft = null;
+let matchState = {};
+let seqOrder = [];
+let selectedCompass = null;
+
+function selectColor(el, idx) {
+  if(colorSequence.includes(idx)) {
+    colorSequence = colorSequence.filter(i=>i!==idx);
+    el.classList.remove('selected');
+  } else {
+    colorSequence.push(idx);
+    el.classList.add('selected');
+  }
+  const ch = CHAPTERS.find(c=>c.id===currentChapter.id);
+  const seq = document.getElementById('colorSeq');
+  if(seq) seq.innerHTML = colorSequence.map(i=>`<div style="width:44px;height:44px;border-radius:4px;background:${ch.puzzle.colors[i]};border:2px solid rgba(255,255,255,.3)"></div>`).join('');
+}
+
+let selectedCells = [];
+let foundWords = [];
+function toggleCell(el) {
+  const r=+el.dataset.r, c=+el.dataset.c;
+  if(el.classList.contains('found')) return;
+  el.classList.toggle('highlighted');
+  const key=`${r},${c}`;
+  if(selectedCells.find(s=>s.key===key)) {
+    selectedCells = selectedCells.filter(s=>s.key!==key);
+  } else {
+    selectedCells.push({r,c,key});
+  }
+}
+
+function selectMatch(el, side, idx) {
+  if(el.classList.contains('matched')) return;
+  if(side==='left') {
+    document.querySelectorAll('[data-side="left"]').forEach(e=>e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedMatchLeft = idx;
+  } else {
+    if(selectedMatchLeft===null) return;
+    const ch = CHAPTERS.find(c=>c.id===currentChapter.id);
+    const correct = ch.puzzle.answer[selectedMatchLeft]===idx;
+    if(correct) {
+      document.querySelector(`[data-side="left"][data-idx="${selectedMatchLeft}"]`).classList.replace('selected','matched');
+      el.classList.add('matched');
+      matchState[selectedMatchLeft] = idx;
+    } else {
+      document.querySelectorAll('[data-side="left"]').forEach(e=>e.classList.remove('selected'));
+      document.getElementById('puzzleFeedback').textContent = 'Not quite — try another pairing.';
+      document.getElementById('puzzleFeedback').className = 'puzzle-feedback wrong';
+    }
+    selectedMatchLeft = null;
+  }
+}
+
+let seqSelected = null;
+let seqCurrent = [];
+function seqClick(el) {
+  const items = [...document.getElementById('seqItems').children];
+  if(!seqSelected) {
+    seqSelected = el;
+    el.style.borderColor = 'var(--lpu)';
+    el.style.color = 'var(--lpu)';
+  } else {
+    const parent = document.getElementById('seqItems');
+    const idx1 = [...parent.children].indexOf(seqSelected);
+    const idx2 = [...parent.children].indexOf(el);
+    if(idx1!==idx2) {
+      const clone1 = seqSelected.cloneNode(true);
+      const clone2 = el.cloneNode(true);
+      clone1.addEventListener('click',()=>seqClick(clone1));
+      clone2.addEventListener('click',()=>seqClick(clone2));
+      if(idx1<idx2){parent.insertBefore(clone2,seqSelected);parent.insertBefore(clone1,clone2.nextSibling);}
+      else{parent.insertBefore(clone1,el);parent.insertBefore(clone2,clone1.nextSibling);}
+      seqSelected.remove(); el.remove();
+    }
+    seqSelected=null;
+    document.querySelectorAll('#seqItems .match-item').forEach(e=>{e.style.borderColor='';e.style.color='';});
+  }
+}
+
+function selectCompass(idx) {
+  selectedCompass = idx;
+  [0,1].forEach(i=>{
+    const el=document.getElementById('compass_'+i);
+    if(el) el.className = i===idx ? 'match-item selected' : 'match-item';
+  });
+}
+
+function shuffleArray(arr) {
+  for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr;
+}
+
+// ── CHECK PUZZLE ──────────────────────────────────────────────────────
+function checkPuzzle(chId) {
+  const ch = CHAPTERS.find(c=>c.id===chId);
+  const p = ch.puzzle;
+  const fb = document.getElementById('puzzleFeedback');
+  let correct = false;
+
+  if(p.type==='color') {
+    correct = JSON.stringify(colorSequence) === JSON.stringify(p.answer);
+    if(!correct) { fb.textContent='The order isn\'t right — feel the colors.'; fb.className='puzzle-feedback wrong'; return; }
+  } else if(p.type==='wordsearch') {
+    const found = p.words.filter(word => {
+      const positions = p.wordPositions[word];
+      return positions.every(([r,c])=>selectedCells.find(s=>s.r===r&&s.c===c));
+    });
+    correct = found.length === p.words.length;
+    if(!correct) { fb.textContent=`Found ${found.length} of ${p.words.length} words — keep looking.`; fb.className='puzzle-feedback wrong'; return; }
+  } else if(p.type==='match') {
+    correct = Object.keys(p.answer).every(k=>matchState[k]===p.answer[k]);
+    if(!correct) { fb.textContent='Some pairings aren\'t right yet.'; fb.className='puzzle-feedback wrong'; return; }
+  } else if(p.type==='sequence') {
+    const items = [...document.getElementById('seqItems').children];
+    const order = items.map(el=>+el.dataset.orig);
+    correct = JSON.stringify(order) === JSON.stringify(p.answer);
+    if(!correct) { fb.textContent='The sequence isn\'t right — rearrange.'; fb.className='puzzle-feedback wrong'; return; }
+  } else if(p.type==='fill') {
+    const inputs = p.blanks.map((_,i)=>document.getElementById('fill_'+i)?.value?.toLowerCase().trim());
+    if(p.answers.length === p.blanks.length) {
+      // Each blank has its own answer
+      correct = inputs.every((val,i)=>val===p.answers[i]);
+    } else {
+      // Any answer from the pool works for each blank (Istanbul districts)
+      correct = inputs.every(val=>val&&p.answers.includes(val));
+    }
+    if(!correct) { fb.textContent='Not quite — the mine waits for the right words.'; fb.className='puzzle-feedback wrong'; return; }
+  } else if(p.type==='compass') {
+    correct = selectedCompass === p.answer;
+    if(!correct) { fb.textContent='The currents ran the other way.'; fb.className='puzzle-feedback wrong'; return; }
+  }
+
+  if(correct) {
+    completeChapter(chId);
+  }
+}
+
+function completeChapter(chId) {
+  state[chId+'_complete'] = true;
+  saveState(state);
+
+  // Save to lore vault
+  const ch = CHAPTERS.find(c=>c.id===chId);
+  try {
+    const v = JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]');
+    v.push({text:`Read Chapter ${ch.num} of Eskanar's Grimoire: "${ch.name}." ${ch.tora}`, source:"Eskanar's Grimoire", date:new Date().toLocaleDateString()});
+    localStorage.setItem('nmn_lore_vault', JSON.stringify(v));
+  } catch(e){}
+
+  // Re-render chapter without puzzle
+  openChapter(chId);
+  // Show completion
+  const fb = document.getElementById('puzzleFeedback');
+  if(fb) { fb.textContent = `✦ "${ch.name}" is now part of your Grimoire.`; fb.className='puzzle-feedback correct'; }
+
+  // Update progress
+  const completed = getCompletedCount();
+  document.getElementById('progressText').textContent = `${completed} / 14`;
+  document.getElementById('progressFill').style.width = (completed/14*100)+'%';
+}
+
+function saveBlankWord() {
+  const word = document.getElementById('blankWord')?.value?.trim();
+  if(!word) return;
+  state['eskanar_word'] = word;
+  saveState(state);
+  completeChapter('eskanar');
+  const saved = document.getElementById('blankSaved');
+  if(saved) { saved.textContent = `"${word}" — sealed in the mine.`; }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+renderList();
+try{document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length}catch(e){}
+</script>
+<script id="nmn-glow">
+(function(){
+  var r=document.createElement('div');
+  r.id='pickaxe-glow';
+  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
+  document.body.appendChild(r);
+  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
+  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
+  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
+})();
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js', {scope:'/'})
+    .then(function(reg){ console.log('NMN SW registered'); })
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>

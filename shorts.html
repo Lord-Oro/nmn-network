@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Projection Room — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);background:#030201;color:var(--cream);min-height:100vh;overflow-x:hidden;padding-bottom:50px}
+header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(3,2,1,.97);position:sticky;top:0;z-index:10}
+.logo{font-family:var(--font-pixel);color:var(--gold);font-size:.5rem;text-decoration:none;text-shadow:0 0 15px rgba(255,215,0,.4);letter-spacing:1px}
+.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.back:hover{color:var(--gold)}
+
+/* LOBBY */
+.lobby{text-align:center;padding:2.5rem 2rem 2rem;background:linear-gradient(to bottom,rgba(255,215,0,.05),transparent)}
+.lobby-eyebrow{font-size:.52rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gd);margin-bottom:.75rem}
+.lobby-title{font-family:var(--font-serif);font-size:clamp(2rem,5vw,3rem);color:var(--cream);margin-bottom:.3rem}
+.lobby-title em{color:var(--gold);font-style:italic}
+.lobby-sub{font-size:.72rem;color:var(--muted);max-width:480px;margin:.5rem auto;line-height:1.9;font-style:italic;font-family:var(--font-serif)}
+.lobby-note{font-size:.52rem;color:var(--faint);margin-top:.5rem;letter-spacing:.08em}
+
+/* REEL GRID */
+.reel-grid{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;padding:2rem 1.5rem}
+.reel-wrap{text-align:center;cursor:pointer}
+.reel{width:110px;height:110px;border:3px dashed rgba(255,215,0,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;transition:all .5s cubic-bezier(.4,0,.2,1);margin:0 auto .75rem;background:rgba(255,215,0,.03)}
+.reel:hover{transform:rotate(180deg) scale(1.1);border-color:var(--gold);background:rgba(255,215,0,.08)}
+.reel-spokes{position:absolute;inset:0;border-radius:50%}
+.reel-spoke{position:absolute;width:2px;height:50%;left:50%;top:0;transform-origin:bottom center;background:rgba(255,215,0,.2)}
+.reel-center{width:24px;height:24px;border-radius:50%;background:rgba(255,215,0,.15);border:2px solid rgba(255,215,0,.3);position:relative;z-index:1;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.reel-label{font-family:var(--font-serif);font-size:.95rem;color:var(--cream);margin-bottom:.2rem}
+.reel-label em{color:var(--gold);font-style:italic}
+.reel-char{font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gd)}
+.reel-dur{font-size:.45rem;color:var(--faint)}
+
+/* CINEMA OVERLAY — full screen short player */
+.cinema{position:fixed;inset:0;background:#000;z-index:1000;display:none;flex-direction:column;align-items:center;justify-content:center}
+.cinema.open{display:flex}
+
+/* The 9:16 short frame */
+.short-frame{position:relative;width:min(100vw, 56.25vh);height:min(177.78vw, 100vh);max-width:360px;max-height:640px;background:#030201;overflow:hidden;border:1px solid rgba(255,215,0,.1)}
+
+/* SCENE BACKGROUNDS */
+.scene-bg{position:absolute;inset:0;transition:background 1s}
+.bg-doorway{background:radial-gradient(ellipse 40% 60% at 50% 45%,rgba(255,215,0,.08),transparent 70%),#030201}
+.bg-workshop{background:radial-gradient(ellipse 60% 40% at 50% 70%,rgba(106,170,74,.06),transparent 70%),#03050a}
+.bg-jungle{background:radial-gradient(ellipse 50% 70% at 30% 50%,rgba(106,170,74,.1),transparent 60%),#020503}
+.bg-circuit{background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(0,238,255,.06),transparent 70%),#010308}
+
+/* DOORFRAME for Lord Oro */
+.doorframe{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:120px;height:220px;pointer-events:none}
+.doorframe-left{position:absolute;left:0;top:0;bottom:0;width:12px;background:linear-gradient(to right,#1a1208,#2a1a08,#1a1208);border-right:2px solid rgba(255,215,0,.2)}
+.doorframe-right{position:absolute;right:0;top:0;bottom:0;width:12px;background:linear-gradient(to left,#1a1208,#2a1a08,#1a1208);border-left:2px solid rgba(255,215,0,.2)}
+.doorframe-top{position:absolute;top:0;left:0;right:0;height:12px;background:linear-gradient(to bottom,#1a1208,#2a1a08);border-bottom:2px solid rgba(255,215,0,.2)}
+
+/* CHARACTER SPRITES — pixel art CSS */
+.character{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);transition:transform .05s ease;image-rendering:pixelated;font-size:3rem;text-align:center;line-height:1;filter:drop-shadow(0 0 8px rgba(255,215,0,.3))}
+.character.bounce{animation:charBounce .1s ease}
+@keyframes charBounce{0%,100%{transform:translateX(-50%) scale(1) translateY(0)}50%{transform:translateX(-50%) scale(1.08) translateY(-6px)}}
+
+/* Shadow silhouette for Lord Oro */
+.oro-shadow{position:absolute;bottom:55px;left:50%;transform:translateX(-50%);width:60px;height:120px;background:linear-gradient(to bottom,#0a0805,#050302);clip-path:polygon(30% 0%,70% 0%,80% 5%,85% 50%,90% 100%,10% 100%,15% 50%,20% 5%);filter:blur(1px);opacity:.85;transition:transform .05s}
+.oro-eyes{position:absolute;bottom:148px;left:50%;transform:translateX(-50%);display:flex;gap:10px}
+.oro-eye{width:5px;height:5px;border-radius:50%;background:#e8b84b;box-shadow:0 0 6px #e8b84b;animation:eyeGlow 2s ease-in-out infinite}
+@keyframes eyeGlow{0%,100%{opacity:.7}50%{opacity:1}}
+
+/* LANTERN FLICKER */
+.lantern-light{position:absolute;top:20%;right:15%;width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.3),rgba(255,215,0,.1) 40%,transparent 70%);animation:lanternFlicker 1.5s ease-in-out infinite}
+@keyframes lanternFlicker{0%,100%{opacity:.7;transform:scale(1)}33%{opacity:1;transform:scale(1.08)}66%{opacity:.8;transform:scale(.97)}}
+
+/* MINE SHAFT LINES */
+.shaft-line{position:absolute;width:1px;background:linear-gradient(to bottom,transparent,rgba(255,215,0,.08) 30%,rgba(255,215,0,.12) 50%,rgba(255,215,0,.08) 70%,transparent);top:0;bottom:0}
+
+/* DIALOGUE BOX */
+.dialogue-box{position:absolute;bottom:0;left:0;right:0;background:rgba(3,2,1,.92);border-top:2px solid rgba(255,215,0,.3);padding:1rem 1.25rem 1.5rem}
+.dialogue-speaker{font-size:.45rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gd);margin-bottom:.4rem}
+.dialogue-text{font-family:var(--font-serif);font-style:italic;font-size:1.05rem;color:var(--cream);line-height:1.6;min-height:3.5rem}
+.dialogue-cursor{display:inline-block;width:2px;height:1em;background:var(--gold);vertical-align:middle;animation:blink .6s step-end infinite;margin-left:1px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.dialogue-continue{position:absolute;bottom:.5rem;right:1rem;font-size:.45rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gd);animation:blink 1s step-end infinite}
+
+/* GOLD GLOW PULSE on speak */
+.speak-glow{position:absolute;inset:0;background:radial-gradient(circle at 50% 60%,rgba(255,215,0,.06),transparent 60%);opacity:0;transition:opacity .05s;pointer-events:none}
+
+/* PROGRESS BAR */
+.short-progress{position:absolute;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,.1)}
+.short-progress-fill{height:100%;background:var(--gold);transition:width .1s linear;width:0%}
+
+/* CLOSE / SKIP */
+.cinema-close{position:absolute;top:1rem;right:1rem;background:transparent;border:none;color:rgba(255,215,0,.4);font-size:1.2rem;cursor:pointer;z-index:10;padding:.5rem;transition:color .3s}
+.cinema-close:hover{color:var(--gold)}
+.cinema-skip{position:absolute;bottom:1.5rem;right:1rem;background:transparent;border:1px solid rgba(255,215,0,.2);color:var(--faint);font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;padding:.3rem .6rem;transition:all .3s;z-index:10}
+.cinema-skip:hover{color:var(--gold);border-color:var(--gold)}
+
+/* SCENE TITLE CARD */
+.title-card{position:absolute;inset:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5;transition:opacity .8s}
+.title-card.hidden{opacity:0;pointer-events:none}
+.tc-label{font-size:.45rem;letter-spacing:.35em;text-transform:uppercase;color:var(--gd);margin-bottom:.5rem}
+.tc-title{font-family:var(--font-serif);font-style:italic;font-size:1.4rem;color:var(--cream);text-align:center;line-height:1.3}
+.tc-title em{color:var(--gold)}
+.tc-char{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-top:.5rem}
+
+/* CTA OVERLAY */
+.cta-overlay{position:absolute;inset:0;background:rgba(3,2,1,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:8;opacity:0;transition:opacity .8s;pointer-events:none;text-align:center;padding:2rem}
+.cta-overlay.show{opacity:1;pointer-events:all}
+.cta-oro-line{font-family:var(--font-serif);font-style:italic;font-size:1.1rem;color:var(--gold);margin-bottom:1.5rem;line-height:1.7}
+.cta-btn{display:block;margin:.4rem auto;padding:.65rem 1.5rem;font-family:var(--font-sans);font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;transition:all .3s;width:200px}
+.cta-primary{background:var(--gold);color:var(--coal)}
+.cta-primary:hover{background:var(--gb)}
+.cta-ghost{background:transparent;border:1px solid rgba(255,215,0,.3);color:var(--gold)}
+.cta-ghost:hover{background:rgba(255,215,0,.08);border-color:var(--gold)}
+.cta-replay{background:transparent;border:none;color:var(--faint);font-family:var(--font-sans);font-size:.45rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;margin-top:.5rem}
+.cta-replay:hover{color:var(--gold)}
+
+/* DEPTH GAUGE */
+.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:34px;background:rgba(3,2,1,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:5;padding:0 1rem}
+.dg-stat{font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.dg-link{font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-decoration:none}
+.dg-link:hover{color:var(--gold)}
+</style>
+
+<style id="nmn-cursor">
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
+</style>
+<style id="floating-gauge">
+.depth-gauge{
+  position:fixed!important;bottom:12px!important;left:50%!important;
+  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
+  height:42px!important;background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
+  padding:0 18px!important;pointer-events:none!important;
+  z-index:9999!important;backdrop-filter:blur(4px)!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:1.2rem!important;flex-wrap:nowrap!important;
+  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
+body{padding-bottom:65px!important}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+<script>(function(s){s.dataset.zone='10763810',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+<header>
+  <a href="index.html" class="logo">NMN — Lord Oro</a>
+  <a href="archives.html" class="back">← The Archives</a>
+</header>
+
+<div class="lobby">
+  <div class="lobby-eyebrow">Nonsense Media Network — The Archives</div>
+  <h1 class="lobby-title">The Projection <em>Room</em></h1>
+  <p class="lobby-sub">"The mine doesn't wait for an audience. It broadcasts whether anyone is listening." — The Transmission</p>
+  <div class="lobby-note">Select a reel to play. Screen-record for YouTube Shorts. The mine is the signal.</div>
+</div>
+
+<div class="reel-grid" id="reelGrid"></div>
+
+<!-- CINEMA OVERLAY -->
+<div class="cinema" id="cinema">
+  <div class="short-frame" id="shortFrame">
+    <div class="short-progress"><div class="short-progress-fill" id="progressFill"></div></div>
+
+    <!-- Scene BG and FX -->
+    <div class="scene-bg" id="sceneBg"></div>
+    <div class="shaft-line" style="left:15%"></div>
+    <div class="shaft-line" style="left:85%"></div>
+    <div class="lantern-light" id="lanternLight"></div>
+    <div class="speak-glow" id="speakGlow"></div>
+
+    <!-- Lord Oro specific -->
+    <div class="doorframe" id="doorframe" style="display:none">
+      <div class="doorframe-left"></div>
+      <div class="doorframe-right"></div>
+      <div class="doorframe-top"></div>
+    </div>
+    <div class="oro-shadow" id="oroShadow" style="display:none"></div>
+    <div class="oro-eyes" id="oroEyes" style="display:none">
+      <div class="oro-eye"></div>
+      <div class="oro-eye" style="animation-delay:.3s"></div>
+    </div>
+
+    <!-- Generic character -->
+    <div class="character" id="character" style="display:none"></div>
+
+    <!-- Title card -->
+    <div class="title-card" id="titleCard">
+      <div class="tc-label">Nonsense Media Network</div>
+      <div class="tc-title" id="tcTitle"></div>
+      <div class="tc-char" id="tcChar"></div>
+    </div>
+
+    <!-- Dialogue -->
+    <div class="dialogue-box" id="dialogueBox" style="opacity:0;transition:opacity .4s">
+      <div class="dialogue-speaker" id="dialogueSpeaker"></div>
+      <div class="dialogue-text" id="dialogueText"><span class="dialogue-cursor"></span></div>
+      <div class="dialogue-continue" id="dialogueContinue" style="display:none">▼ tap to continue</div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-overlay" id="ctaOverlay">
+      <div class="cta-oro-line" id="ctaLine"></div>
+      <a href="newsletter.html" class="cta-btn cta-primary">⬡ Join the Goldmine</a>
+      <a href="index.html" class="cta-btn cta-ghost">Enter the Mine</a>
+      <button class="cta-replay" onclick="replayShort()">↺ Play again</button>
+    </div>
+  </div>
+
+  <button class="cinema-close" onclick="closeCinema()">✕</button>
+  <button class="cinema-skip" onclick="skipToEnd()" id="skipBtn">Skip →</button>
+</div>
+
+<div class="depth-gauge">
+  <span class="dg-stat">The Projection Room — NMN</span>
+  <a href="archives.html" class="dg-link">📖 Archives</a>
+  <a href="index.html" class="dg-link">⛏ The Mine</a>
+</div>
+
+<script>
+// ── SUPERSTAR SAGA ENGINE ─────────────────────────────────────────────
+const AudioCtx = { ctx: null, get() { if(!this.ctx) this.ctx=new(window.AudioContext||window.webkitAudioContext)(); return this.ctx; } };
+
+const VOICES = {
+  oro:   { type:'square',   freq:150, jitter:8,  vol:.04 },
+  pip:   { type:'sine',     freq:820, jitter:60, vol:.03 },
+  nayla: { type:'sawtooth', freq:290, jitter:25, vol:.03 },
+  ivy:   { type:'triangle', freq:440, jitter:20, vol:.03 },
+};
+
+function playBeep(charKey) {
+  try {
+    const ctx = AudioCtx.get();
+    const v = VOICES[charKey] || VOICES.oro;
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = v.type;
+    osc.frequency.value = v.freq + (Math.random()*v.jitter - v.jitter/2);
+    g.gain.setValueAtTime(v.vol, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.0001, ctx.currentTime+.06);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime+.06);
+  } catch(e){}
+}
+
+function bounceCharacter(charKey) {
+  const el = charKey==='oro' ? document.getElementById('oroShadow') : document.getElementById('character');
+  if(!el) return;
+  el.classList.add('bounce');
+  setTimeout(()=>el.classList.remove('bounce'), 120);
+  // Glow pulse
+  const glow = document.getElementById('speakGlow');
+  if(glow){ glow.style.opacity='1'; setTimeout(()=>glow.style.opacity='0', 80); }
+}
+
+async function typeDialogue(text, charKey, speed=65) {
+  const el = document.getElementById('dialogueText');
+  const cursor = '<span class="dialogue-cursor"></span>';
+  el.innerHTML = '';
+  let beepCounter = 0;
+  for(let i=0; i<text.length; i++) {
+    const ch = text[i];
+    el.innerHTML = text.slice(0,i+1) + cursor;
+    if(ch !== ' ' && ch !== '\n') {
+      beepCounter++;
+      if(beepCounter % 2 === 0) { // beep every 2 chars — not too rapid
+        playBeep(charKey);
+        bounceCharacter(charKey);
+      }
+    }
+    await sleep(ch === '.' || ch === '—' ? speed*4 : ch === ',' ? speed*2 : speed);
+  }
+  el.innerHTML = text;
+}
+
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+// ── THE SHORTS LIBRARY ────────────────────────────────────────────────
+const SHORTS = [
+  {
+    id:'oro_warning',
+    title:"Lord Oro's Warning",
+    character:'oro',
+    charLabel:'Lord Oro',
+    duration:'~25 sec',
+    emoji:'👁️',
+    bg:'bg-doorway',
+    ctaLine:'"The goldmine is within. Everything you seek, you carry."',
+    scenes:[
+      { speaker:'', text:'', pause:1200, showTitle:true },
+      { speaker:'Lord Oro', text:'The mine is not a metaphor.', pause:800 },
+      { speaker:'Lord Oro', text:'The mine is the thing itself —', pause:600 },
+      { speaker:'Lord Oro', text:'your interior world,', pause:600 },
+      { speaker:'Lord Oro', text:'waiting.', pause:1200 },
+      { speaker:'Lord Oro', text:'You have been here before.', pause:800 },
+      { speaker:'Lord Oro', text:'You are not the same person who was here last time.', pause:1000 },
+      { speaker:'Lord Oro', text:'nonsensemedianetwork.com', pause:2000 },
+    ]
+  },
+  {
+    id:'pip_secret',
+    title:"Pip's Secret Fact",
+    character:'pip',
+    charLabel:'Pip',
+    duration:'~20 sec',
+    emoji:'🤖',
+    bg:'bg-circuit',
+    ctaLine:'"Pip says: the gold is already in there. You just haven\'t dug that far yet."',
+    scenes:[
+      { speaker:'', text:'', pause:800, showTitle:true },
+      { speaker:'Pip', text:'GREETINGS. I am Pip.', pause:600 },
+      { speaker:'Pip', text:'I have a 98.7% chance of having information you will find useful.', pause:800 },
+      { speaker:'Pip', text:'In The Collector, Lord Oro cannot be caught.', pause:600 },
+      { speaker:'Pip', text:'He appears after you complete the full Grimoire.', pause:600 },
+      { speaker:'Pip', text:'He speaks one line.', pause:500 },
+      { speaker:'Pip', text:'He always escapes.', pause:800 },
+      { speaker:'Pip', text:'My optical sensors find this logically pleasing.', pause:1000 },
+      { speaker:'Pip', text:'Enter the mine at nonsensemedianetwork.com', pause:1500 },
+    ]
+  },
+  {
+    id:'nayla_instinct',
+    title:"Nayla's Instinct",
+    character:'nayla',
+    charLabel:'Nayla',
+    duration:'~20 sec',
+    emoji:'🦁',
+    bg:'bg-jungle',
+    ctaLine:'"She didn\'t ask if the world was safe. She asked if it was real."',
+    scenes:[
+      { speaker:'', text:'', pause:1000, showTitle:true },
+      { speaker:'Nayla', text:'She didn\'t need anyone to believe in her.', pause:700 },
+      { speaker:'Nayla', text:'She believed enough for all of them.', pause:800 },
+      { speaker:'Nayla', text:'The threshold was just a door.', pause:600 },
+      { speaker:'Nayla', text:'The world on the other side was real.', pause:700 },
+      { speaker:'Nayla', text:'That was the only question that mattered.', pause:900 },
+      { speaker:'Nayla', text:'Her story continues at nonsensemedianetwork.com', pause:1500 },
+    ]
+  },
+  {
+    id:'ivy_gem',
+    title:"Ivy's Gem Advice",
+    character:'ivy',
+    charLabel:'Ivy Martin',
+    duration:'~20 sec',
+    emoji:'💎',
+    bg:'bg-workshop',
+    ctaLine:'"Every gem has a story. This one says it wants to go home with you."',
+    scenes:[
+      { speaker:'', text:'', pause:800, showTitle:true },
+      { speaker:'Ivy', text:'Welcome back.', pause:500 },
+      { speaker:'Ivy', text:'I saved something special —', pause:500 },
+      { speaker:'Ivy', text:'I had a feeling you\'d be in today.', pause:700 },
+      { speaker:'Ivy', text:'The ruby with the fracture?', pause:500 },
+      { speaker:'Ivy', text:'That\'s where the light gets in.', pause:600 },
+      { speaker:'Ivy', text:'Just like us.', pause:900 },
+      { speaker:'Ivy', text:'Find your gem at nonsensemedianetwork.com', pause:1500 },
+    ]
+  },
+  {
+    id:'oro_mine',
+    title:'The Mine Breathes',
+    character:'oro',
+    charLabel:'Lord Oro',
+    duration:'~20 sec',
+    emoji:'⛏️',
+    bg:'bg-doorway',
+    ctaLine:'"Keep the lamp lit. The shadows are hungry tonight."',
+    scenes:[
+      { speaker:'', text:'', pause:1000, showTitle:true },
+      { speaker:'Lord Oro', text:'Every day begins in darkness.', pause:700 },
+      { speaker:'Lord Oro', text:'Every miner who descends', pause:500 },
+      { speaker:'Lord Oro', text:'must light their own way.', pause:800 },
+      { speaker:'Lord Oro', text:'This is yours.', pause:1000 },
+      { speaker:'Lord Oro', text:'The lantern is lit at nonsensemedianetwork.com', pause:1800 },
+    ]
+  },
+];
+
+// ── RENDER REELS ──────────────────────────────────────────────────────
+function renderReels() {
+  const grid = document.getElementById('reelGrid');
+  grid.innerHTML = SHORTS.map(s => `
+    <div class="reel-wrap" onclick="playShort('${s.id}')">
+      <div class="reel">
+        <div class="reel-spokes">
+          ${[0,45,90,135].map(deg=>`<div class="reel-spoke" style="transform:rotate(${deg}deg) translateX(-50%)"></div>`).join('')}
+        </div>
+        <div class="reel-center">${s.emoji}</div>
+      </div>
+      <div class="reel-label"><em>${s.title}</em></div>
+      <div class="reel-char">${s.charLabel}</div>
+      <div class="reel-dur">${s.duration}</div>
+    </div>`).join('');
+}
+
+// ── PLAY SHORT ────────────────────────────────────────────────────────
+let currentShort = null;
+let sceneIdx = 0;
+let playing = false;
+let aborted = false;
+
+function playShort(id) {
+  const short = SHORTS.find(s=>s.id===id);
+  if(!short) return;
+  currentShort = short;
+  sceneIdx = 0;
+  aborted = false;
+
+  // Setup scene
+  document.getElementById('sceneBg').className = `scene-bg ${short.bg}`;
+  document.getElementById('titleCard').classList.remove('hidden');
+  document.getElementById('tcTitle').innerHTML = `"<em>${short.title}</em>"`;
+  document.getElementById('tcChar').textContent = short.charLabel + ' — NMN';
+  document.getElementById('ctaLine').textContent = short.ctaLine;
+  document.getElementById('ctaOverlay').classList.remove('show');
+  document.getElementById('dialogueBox').style.opacity = '0';
+  document.getElementById('progressFill').style.width = '0%';
+
+  // Show correct character elements
+  const isOro = short.character === 'oro';
+  document.getElementById('doorframe').style.display = isOro ? 'block' : 'none';
+  document.getElementById('oroShadow').style.display = isOro ? 'block' : 'none';
+  document.getElementById('oroEyes').style.display = isOro ? 'flex' : 'none';
+  document.getElementById('character').style.display = isOro ? 'none' : 'block';
+  document.getElementById('lanternLight').style.display = isOro ? 'block' : 'none';
+
+  // Character emoji
+  const charEmojis = { pip:'🤖', nayla:'🦁', ivy:'💎' };
+  if(!isOro) document.getElementById('character').textContent = charEmojis[short.character] || '⬡';
+
+  document.getElementById('cinema').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  setTimeout(() => runShort(short), 800);
+}
+
+async function runShort(short) {
+  playing = true;
+  const totalScenes = short.scenes.length;
+
+  // Hide title card after first pause
+  await sleep(1200);
+  if(aborted) return;
+  document.getElementById('titleCard').classList.add('hidden');
+  document.getElementById('dialogueBox').style.opacity = '1';
+
+  for(let i=0; i<short.scenes.length; i++) {
+    if(aborted) return;
+    const scene = short.scenes[i];
+    if(scene.showTitle) continue;
+
+    document.getElementById('dialogueSpeaker').textContent = scene.speaker;
+    document.getElementById('progressFill').style.width = ((i/totalScenes)*100)+'%';
+
+    await typeDialogue(scene.text, short.character);
+    if(aborted) return;
+    await sleep(scene.pause || 700);
+  }
+
+  if(aborted) return;
+  document.getElementById('progressFill').style.width = '100%';
+  playing = false;
+  showCTA();
+}
+
+function showCTA() {
+  document.getElementById('dialogueBox').style.opacity = '0';
+  setTimeout(()=>document.getElementById('ctaOverlay').classList.add('show'), 400);
+}
+
+function skipToEnd() {
+  aborted = true;
+  playing = false;
+  setTimeout(showCTA, 200);
+}
+
+function replayShort() {
+  if(currentShort) {
+    document.getElementById('ctaOverlay').classList.remove('show');
+    playShort(currentShort.id);
+  }
+}
+
+function closeCinema() {
+  aborted = true;
+  playing = false;
+  document.getElementById('cinema').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Tap dialogue box to advance (future: per-scene advance)
+document.getElementById('dialogueBox').addEventListener('click', ()=>{
+  if(!playing) showCTA();
+});
+
+renderReels();
+</script>
+<script id="nmn-glow">
+(function(){
+  var r=document.createElement('div');
+  r.id='pickaxe-glow';
+  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
+  document.body.appendChild(r);
+  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
+  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
+  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
+})();
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js', {scope:'/'})
+    .then(function(reg){ console.log('NMN SW registered'); })
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>

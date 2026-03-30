@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Outbreak From the Stars — Lord Oro | NMN</title>
+<meta name="description" content="They didn't come to destroy. They came to replace. A found-footage sci-fi horror novella by Lord Oro. 25,000+ words. Available on Amazon.">
+<link rel="stylesheet" href="nmn-theme.css">
+<!-- Monetag In-Page Push — Zone 10763810 -->
+<script>(function(s){s.dataset.zone='10763810',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+<style>
+body{padding-top:56px}
+.book-hero{
+  min-height:70vh;display:flex;align-items:center;justify-content:center;
+  padding:4rem 2rem;position:relative;overflow:hidden;
+  background:
+    radial-gradient(ellipse at 50% 20%,rgba(20,60,140,.25),transparent 55%),
+    radial-gradient(ellipse at 80% 80%,rgba(0,30,80,.3),transparent 45%),
+    radial-gradient(ellipse at 20% 60%,rgba(40,10,80,.2),transparent 40%),
+    linear-gradient(180deg,#020408,#040a12 50%,#06040a);
+}
+.hero-grid{display:grid;grid-template-columns:320px 1fr;gap:4rem;max-width:1000px;width:100%;align-items:center}
+@media(max-width:768px){.hero-grid{grid-template-columns:1fr;text-align:center}}
+
+/* BOOK COVER */
+.cover-frame{
+  width:100%;max-width:320px;aspect-ratio:2/3;
+  position:relative;margin:0 auto;
+  background:
+    radial-gradient(ellipse at 50% 20%,rgba(20,60,140,.6),transparent 50%),
+    radial-gradient(ellipse at 80% 80%,rgba(0,30,80,.7),transparent 45%),
+    radial-gradient(ellipse at 20% 60%,rgba(40,10,80,.4),transparent 40%),
+    linear-gradient(180deg,#020408,#040a12 50%,#06040a);
+  border:1px solid rgba(34,136,255,.2);
+  box-shadow:0 0 40px rgba(20,60,140,.4),0 0 80px rgba(20,60,140,.15),inset 0 0 30px rgba(0,0,0,.5);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.cover-texture{
+  position:absolute;inset:0;
+  background-image:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(0,0,0,.06) 3px,rgba(0,0,0,.06) 4px),
+    repeating-linear-gradient(-45deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);
+  pointer-events:none;
+}
+.cover-vignette{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 50%,transparent 30%,rgba(0,0,0,.6) 100%);
+  pointer-events:none;z-index:1;
+}
+.cover-stars{position:absolute;inset:0;z-index:0}
+.cover-icon-main{font-size:5rem;z-index:2;filter:drop-shadow(0 0 30px rgba(60,100,220,.9));animation:coverFloat 4s ease-in-out infinite}
+.cover-title-text{
+  z-index:2;text-align:center;padding:.5rem 1rem;
+  font-family:var(--font-display);font-size:.9rem;color:var(--cream);
+  text-shadow:0 0 20px rgba(60,100,220,.6);line-height:1.3;
+}
+.cover-title-text em{color:#88aaff;font-style:italic;display:block}
+.cover-author{
+  z-index:2;font-family:var(--font-pixel);font-size:.32rem;
+  color:rgba(136,170,255,.7);letter-spacing:.2em;margin-top:.5rem;
+}
+.cover-ribbon-main{
+  position:absolute;top:16px;left:0;z-index:3;
+  font-family:var(--font-pixel);font-size:.32rem;letter-spacing:.15em;
+  background:#88aaff;color:#020408;padding:3px 12px 3px 8px;
+  clip-path:polygon(0 0,100% 0,calc(100% - 6px) 100%,0 100%);
+}
+.cover-corner2{position:absolute;z-index:3;width:16px;height:16px;opacity:.4}
+.cover-corner2.tl{top:8px;left:8px;border-top:1px solid #88aaff;border-left:1px solid #88aaff}
+.cover-corner2.tr{top:8px;right:8px;border-top:1px solid #88aaff;border-right:1px solid #88aaff}
+.cover-corner2.bl{bottom:8px;left:8px;border-bottom:1px solid #88aaff;border-left:1px solid #88aaff}
+.cover-corner2.br{bottom:8px;right:8px;border-bottom:1px solid #88aaff;border-right:1px solid #88aaff}
+@keyframes coverFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* HERO INFO */
+.book-eyebrow{font-family:var(--font-pixel);font-size:.38rem;color:#4488cc;letter-spacing:.25em;margin-bottom:.75rem}
+.book-main-title{font-family:var(--font-display);font-size:clamp(1.8rem,5vw,3.5rem);color:var(--cream);margin-bottom:.25rem;line-height:1.1}
+.book-main-title em{color:#88aaff;font-style:italic;display:block}
+.book-tagline{font-family:var(--font-serif);font-style:italic;font-size:1.1rem;color:#88aaff;margin-bottom:1.5rem}
+.book-stats{display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
+@media(max-width:768px){.book-stats{justify-content:center}}
+.stat-pill{font-family:var(--font-pixel);font-size:.32rem;color:var(--muted);border:1px solid rgba(68,136,204,.2);padding:.3rem .7rem;letter-spacing:.1em}
+.book-desc{font-size:.75rem;color:var(--muted);line-height:2;max-width:480px;margin-bottom:2rem}
+.buy-stack{display:flex;flex-direction:column;gap:.75rem;max-width:320px}
+@media(max-width:768px){.buy-stack{align-items:center;margin:0 auto}}
+.buy-btn-main{
+  display:block;font-family:var(--font-pixel);font-size:.52rem;
+  background:linear-gradient(135deg,#1a3a8a,#2244aa);color:#fff;
+  border:1px solid #4488cc;padding:.9rem 1.5rem;text-decoration:none;
+  text-align:center;letter-spacing:.1em;transition:all .3s;
+  box-shadow:0 0 20px rgba(34,68,204,.3);
+}
+.buy-btn-main:hover{background:linear-gradient(135deg,#2244aa,#3355cc);box-shadow:0 0 35px rgba(34,68,204,.6);transform:translateY(-2px)}
+.support-btns{display:flex;gap:.5rem}
+.sbtn{flex:1;font-family:var(--font-pixel);font-size:.38rem;padding:.55rem;text-align:center;text-decoration:none;border:1px solid;transition:all .2s;letter-spacing:.05em}
+.sbtn-gfm{border-color:rgba(2,169,92,.4);color:#02a95c;background:rgba(2,169,92,.06)}
+.sbtn-gfm:hover{background:rgba(2,169,92,.15);border-color:#02a95c}
+.sbtn-ptr{border-color:rgba(255,66,77,.4);color:#ff424d;background:rgba(255,66,77,.06)}
+.sbtn-ptr:hover{background:rgba(255,66,77,.15);border-color:#ff424d}
+.amz-disclosure{font-family:var(--font-pixel);font-size:.26rem;color:var(--faint);margin-top:.5rem}
+
+/* EXCERPT */
+.excerpt-section{max-width:860px;margin:0 auto;padding:4rem 2rem}
+.excerpt-label{font-family:var(--font-pixel);font-size:.42rem;color:var(--gd);letter-spacing:.3em;margin-bottom:2rem;display:flex;align-items:center;gap:.75rem}
+.excerpt-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(68,136,204,.3),transparent)}
+.excerpt-box{
+  border:1px solid rgba(68,136,204,.15);background:rgba(2,4,8,.6);
+  padding:2rem;position:relative;margin-bottom:2rem;
+}
+.excerpt-box::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(68,136,204,.4),transparent)}
+.excerpt-box p{font-family:var(--font-serif);font-size:.95rem;color:var(--muted);line-height:2;margin-bottom:1rem}
+.excerpt-box p em{color:#88aaff;font-style:italic}
+.excerpt-fade{
+  position:absolute;bottom:0;left:0;right:0;height:80px;
+  background:linear-gradient(transparent,rgba(2,4,8,.95));
+  pointer-events:none;
+}
+.excerpt-cta{text-align:center;padding:1rem 0}
+.excerpt-cta p{font-family:var(--font-pixel);font-size:.38rem;color:var(--muted);margin-bottom:1rem;letter-spacing:.1em}
+
+/* ALSO BY */
+.also-by{max-width:860px;margin:0 auto;padding:2rem 2rem 4rem;border-top:1px solid rgba(255,215,0,.06)}
+.also-label{font-family:var(--font-pixel);font-size:.4rem;color:var(--gd);letter-spacing:.3em;margin-bottom:1.5rem}
+.also-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.also-card{
+  background:rgba(255,215,0,.02);border:1px solid rgba(255,215,0,.08);
+  padding:1rem;text-decoration:none;display:block;transition:all .2s;
+  display:flex;gap:.75rem;align-items:center;
+}
+.also-card:hover{border-color:rgba(255,215,0,.25);background:rgba(255,215,0,.04)}
+.also-icon{font-size:1.4rem;flex-shrink:0}
+.also-info{}
+.also-title{font-family:var(--font-pixel);font-size:.32rem;color:var(--cream);margin-bottom:.25rem;display:block}
+.also-price{font-family:var(--font-pixel);font-size:.28rem;color:var(--gd)}
+</style>
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+
+<div class="book-hero">
+  <div class="hero-grid">
+    <!-- COVER -->
+    <div class="cover-frame">
+      <div class="cover-texture"></div>
+      <div class="cover-vignette"></div>
+      <canvas class="cover-stars" id="starCanvas" width="320" height="480"></canvas>
+      <div class="cover-corner2 tl"></div><div class="cover-corner2 tr"></div>
+      <div class="cover-corner2 bl"></div><div class="cover-corner2 br"></div>
+      <span class="cover-ribbon-main">NEW RELEASE</span>
+      <span class="cover-icon-main">🌌</span>
+      <div class="cover-title-text">OUTBREAK FROM<em>THE STARS</em></div>
+      <div class="cover-author">LORD ORO</div>
+    </div>
+
+    <!-- INFO -->
+    <div>
+      <p class="book-eyebrow">FOUND-FOOTAGE SCI-FI HORROR</p>
+      <h1 class="book-main-title">Outbreak From<em>the Stars</em></h1>
+      <p class="book-tagline">"They didn't come to destroy. They came to replace."</p>
+      <div class="book-stats">
+        <span class="stat-pill">25,000+ WORDS</span>
+        <span class="stat-pill">NOVELLA</span>
+        <span class="stat-pill">SCI-FI HORROR</span>
+        <span class="stat-pill">AMAZON KDP</span>
+      </div>
+      <p class="book-desc">Told through found security footage, personal recordings, and fragmented dispatch logs, Outbreak From the Stars follows the forty-eight hours before first contact was confirmed — and the twelve hours after when everything humanity thought it knew collapsed. They didn't come with weapons. They came with patience. And they've been here longer than we realized.</p>
+      <div class="buy-stack">
+        <a href="https://www.amazon.com/s?k=Outbreak+From+the+Stars+Lord+Oro&tag=lordoro0c25-20" target="_blank" class="buy-btn-main">🌌 BUY ON AMAZON — $9.99</a>
+        <div class="support-btns">
+          <a href="https://gofund.me/e643a8283" target="_blank" class="sbtn sbtn-gfm">🙏 GOFUNDME</a>
+          <a href="https://patreon.com/lordoro" target="_blank" class="sbtn sbtn-ptr">⭐ PATREON</a>
+        </div>
+        <p class="amz-disclosure">As an Amazon Associate I earn from qualifying purchases.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EXCERPT -->
+<div class="excerpt-section">
+  <div class="excerpt-label">⛏ READ AN EXCERPT</div>
+  <div class="excerpt-box" style="position:relative">
+    <p><em>Day 1 — Security Feed 4B, 03:17 AM</em></p>
+    <p>The shape at the perimeter fence does not trigger motion detection. This is the first anomaly logged. It stands at the edge of the floodlight's reach — not in shadow, not in light — occupying the exact border between them as if it knows where the camera's threshold lives.</p>
+    <p>Dr. Reyes notes in her personal recording that it reminds her of something she read once. A paper about mimicry. How certain species learn to stand exactly as still as the things around them. How the goal isn't to be invisible. The goal is to be familiar.</p>
+    <p><em>She doesn't finish the recording. The timestamp ends at 03:19.</em></p>
+    <div class="excerpt-fade"></div>
+  </div>
+  <div class="excerpt-cta">
+    <p>⛏ THE FULL ACCOUNT IS ON AMAZON ⛏</p>
+    <a href="https://www.amazon.com/s?k=Outbreak+From+the+Stars+Lord+Oro&tag=lordoro0c25-20" target="_blank" class="buy-btn-main" style="display:inline-block;max-width:320px">READ THE FULL STORY →</a>
+  </div>
+</div>
+
+<!-- ALSO BY -->
+<div class="also-by">
+  <p class="also-label">⛏ MORE FROM LORD ORO</p>
+  <div class="also-grid">
+    <a href="juni-the-immortal.html" class="also-card">
+      <span class="also-icon">⚡</span>
+      <div class="also-info"><span class="also-title">JUNI THE IMMORTAL</span><span class="also-price">$9.99 — AMAZON</span></div>
+    </a>
+    <a href="https://www.amazon.com/dp/B0DX6N7QKM?tag=lordoro0c25-20" target="_blank" class="also-card">
+      <span class="also-icon">🔥</span>
+      <div class="also-info"><span class="also-title">PYRO & HELIOS</span><span class="also-price">$9.99 — AMAZON</span></div>
+    </a>
+    <a href="archives.html" class="also-card">
+      <span class="also-icon">🐱</span>
+      <div class="also-info"><span class="also-title">ALL TABBIES</span><span class="also-price">$9.99 — AMAZON</span></div>
+    </a>
+    <a href="archives.html" class="also-card">
+      <span class="also-icon">🦁</span>
+      <div class="also-info"><span class="also-title">NAYLA & FELIK</span><span class="also-price">COMING 2026</span></div>
+    </a>
+  </div>
+</div>
+
+<div style="text-align:center;padding:2rem;font-family:var(--font-pixel);font-size:.32rem;color:var(--faint)">
+  <a href="privacy.html" style="color:var(--faint);text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:var(--faint);text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="index.html" style="color:var(--faint);text-decoration:none;margin:0 .5rem">HOME</a>
+</div>
+
+<script>
+// Animated star field on cover
+const cv=document.getElementById('starCanvas');
+if(cv){
+  const ctx=cv.getContext('2d');
+  const stars=Array.from({length:80},()=>({
+    x:Math.random()*320,y:Math.random()*480,
+    r:Math.random()*.8+.2,
+    sp:Math.random()*.3+.1,
+    a:Math.random()
+  }));
+  function drawStars(){
+    ctx.clearRect(0,0,320,480);
+    const t=Date.now()*.001;
+    stars.forEach(s=>{
+      const pulse=.3+.7*Math.abs(Math.sin(t*s.sp+s.a));
+      ctx.fillStyle=`rgba(136,170,255,${pulse*.6})`;
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill();
+    });
+    requestAnimationFrame(drawStars);
+  }
+  drawStars();
+}
+</script>
+
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js',{scope:'/'})
+    .then(r=>console.log('SW ok')).catch(e=>console.log('SW err',e));
+}
+</script>
+</body>
+</html>

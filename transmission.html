@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Transmission — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);background:#030201;color:var(--cream);min-height:100vh;overflow-x:hidden}
+header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.08);display:flex;justify-content:space-between;align-items:center;background:rgba(3,2,1,.95);position:sticky;top:0;z-index:10}
+.logo{font-family:var(--font-serif);font-style:italic;color:var(--gd);font-size:.95rem;text-decoration:none}
+.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);text-decoration:none}
+.back:hover{color:var(--gold)}
+main{max-width:680px;margin:0 auto;padding:3rem 2rem 5rem}
+
+/* RADIO RECEIVER */
+.radio-set{border:3px solid #3a2a10;background:#1a0f05;padding:2rem;margin-bottom:2rem;position:relative}
+.radio-set::before{content:'';position:absolute;inset:4px;border:1px solid rgba(255,215,0,.1);pointer-events:none}
+.radio-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+.radio-brand{font-family:var(--font-serif);font-style:italic;font-size:1.2rem;color:var(--gold);letter-spacing:.05em}
+.radio-brand span{font-size:.5rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gd);display:block;font-style:normal;margin-top:.1rem}
+/* Frequency display */
+.freq-display{background:#000;border:2px solid #2a1a08;padding:.5rem 1rem;font-family:var(--font-serif);font-size:1.5rem;color:#ff8833;letter-spacing:.1em;min-width:120px;text-align:center;position:relative}
+.freq-display::after{content:'AM';position:absolute;top:.2rem;right:.3rem;font-size:.4rem;color:#ff6622;font-family:var(--font-sans);letter-spacing:.1em}
+/* Static bars */
+.static-bars{display:flex;gap:2px;align-items:flex-end;height:30px;margin-bottom:1rem}
+.static-bar{width:4px;background:var(--gold);border-radius:1px;animation:staticBar .15s ease-in-out infinite}
+@keyframes staticBar{0%,100%{transform:scaleY(1)}50%{transform:scaleY(var(--h,0.3))}}
+/* Controls */
+.radio-controls{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap}
+.dial{width:44px;height:44px;border-radius:50%;border:2px solid var(--gd);background:#0a0500;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;position:relative}
+.dial:hover{border-color:var(--gold);background:#1a0f05}
+.dial::after{content:'';position:absolute;top:4px;left:50%;transform:translateX(-50%);width:2px;height:8px;background:var(--gold);border-radius:1px}
+.tune-btn{padding:.5rem 1rem;font-family:var(--font-sans);font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;border:1px solid var(--gd);background:transparent;color:var(--muted);transition:all .3s}
+.tune-btn:hover,.tune-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,.08)}
+.on-air{padding:.3rem .75rem;font-size:.45rem;letter-spacing:.2em;text-transform:uppercase;background:#aa2222;color:white;animation:onAir 1s step-end infinite}
+@keyframes onAir{0%,100%{opacity:1}50%{opacity:0}}
+/* BROADCAST */
+.broadcast-area{margin-bottom:2rem}
+.broadcast-label{font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gd);margin-bottom:1rem;display:flex;align-items:center;gap:.75rem}
+.broadcast-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(255,215,0,.2),transparent)}
+.broadcast-box{border:1px solid rgba(255,215,0,.12);background:rgba(255,255,255,.02);padding:1.75rem;min-height:180px;position:relative;transition:all .5s}
+.broadcast-num{position:absolute;top:.75rem;right:.75rem;font-size:.45rem;letter-spacing:.15em;color:var(--faint);text-transform:uppercase}
+.broadcast-title{font-family:var(--font-serif);font-size:1.2rem;color:var(--gold);margin-bottom.5rem;font-style:italic}
+.broadcast-date{font-size:.45rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd);margin-bottom:1rem}
+.broadcast-text{font-family:var(--font-serif);font-style:italic;font-size:1rem;color:var(--cream);line-height:1.9}
+.broadcast-text p{margin-bottom:.75rem}
+.typewriter{overflow:hidden;white-space:nowrap;animation:typeIn 3s steps(60,end)}
+@keyframes typeIn{from{width:0}to{width:100%}}
+/* FREQUENCY SELECTOR */
+.freq-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.freq-btn{padding:.45rem .9rem;font-size:.48rem;letter-spacing:.1em;border:1px solid rgba(255,215,0,.15);background:transparent;color:var(--faint);cursor:pointer;transition:all .3s;white-space:nowrap}
+.freq-btn:hover{border-color:var(--gd);color:var(--muted)}
+.freq-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,.06)}
+</style>
+
+<style id="depth-gauge-style">
+.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:36px;background:rgba(12,10,7,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:2rem;z-index:999;padding:0 1rem;flex-wrap:wrap}
+.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28}
+.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
+.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s}
+.dg-link:hover{color:#FFD700}
+.dg-sep{color:#2a1808;font-size:.6rem}
+</style>
+
+<style id="nmn-cursor">
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
+</style>
+<style id="floating-gauge">
+.depth-gauge{
+  position:fixed!important;bottom:12px!important;left:50%!important;
+  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
+  height:42px!important;background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
+  padding:0 18px!important;pointer-events:none!important;
+  z-index:9999!important;backdrop-filter:blur(4px)!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:1.2rem!important;flex-wrap:nowrap!important;
+  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
+body{padding-bottom:65px!important}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+<script>(function(s){s.dataset.zone='10763810',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+<header>
+  <a href="index.html" class="logo">NMN — Lord Oro</a>
+  <a href="index.html" class="back">← Return to the Mine</a>
+</header>
+<main>
+  <!-- RADIO SET -->
+  <div class="radio-set">
+    <div class="radio-top">
+      <div class="radio-brand">The Transmission<span>NMN Pirate Radio — Broadcasting from the Mine</span></div>
+      <div class="freq-display" id="freqDisplay">96.3</div>
+    </div>
+    <div class="static-bars" id="staticBars"></div>
+    <div class="radio-controls">
+      <div class="dial" onclick="rotateDial()" title="Tune"></div>
+      <button class="tune-btn active" onclick="tuneIn()">⬡ Tune In</button>
+      <button class="tune-btn" onclick="nextBroadcast()">▶ Next Signal</button>
+      <span class="on-air">ON AIR</span>
+    </div>
+  </div>
+
+  <!-- FREQUENCY SELECTOR -->
+  <div class="freq-row" id="freqRow"></div>
+
+  <!-- BROADCAST -->
+  <div class="broadcast-label">Current Broadcast</div>
+  <div class="broadcast-area">
+    <div class="broadcast-box" id="broadcastBox">
+      <div style="text-align:center;padding:2rem;font-family:var(--font-serif);font-style:italic;color:var(--faint);font-size:.95rem">Tune in to receive the signal.</div>
+    </div>
+  </div>
+</main>
+
+<script>
+const BROADCASTS = [
+  {
+    freq:'96.3', num:'TRANSMISSION 001', title:'On Beginning',
+    date:'March 2026 — From Inside the Mine',
+    text:`You don't begin when you're ready. You begin when you begin. That's the whole secret that nobody wants to admit because it removes the excuse. The mine was always there. You were always going to come. The question was never whether you'd arrive — it was when you'd stop standing at the entrance pretending you needed more time to prepare.
+
+You don't prepare for the mine. You descend and the descent prepares you.`
+  },
+  {
+    freq:'98.7', num:'TRANSMISSION 002', title:'On the Name',
+    date:'March 2026 — From Inside the Mine',
+    text:`Lord Oro is not a character I play. He is the name for the part of me that was always going to do this. Every creative person has a version of this — the self that exists ahead of the work, already knowing where it's going, already building, already finished with doubt.
+
+I didn't create Lord Oro at seventeen when I was rapping as Mina De Oro. I recognized him. The goldmine was already there. The title came later. First there's always the gold. Then comes the lord.`
+  },
+  {
+    freq:'101.1', num:'TRANSMISSION 003', title:'On Brooklyn',
+    date:'March 2026 — From Inside the Mine',
+    text:`Brooklyn doesn't give you permission. It gives you context. You figure out the rest yourself or you stay on the corner wondering what happened to the time.
+
+What I took from Brooklyn wasn't toughness — I already had that before I understood what to do with it. What I took was the understanding that everyone around me was also building something. The barbershop owner. The woman with the flower cart. The guy who fixed phones out of a table on Atlantic Avenue. Everyone was building. I learned to build by watching builders.`
+  },
+  {
+    freq:'103.5', num:'TRANSMISSION 004', title:'On the Four Children',
+    date:'March 2026 — From Inside the Mine',
+    text:`Percy. Serenity. Calypso. And one more — the last one, the fourth.
+
+I named three of them before they exist because the names came to me the way all real things do: in dreams, in the in-between moments, in the space where the mine opens up and shows you something true.
+
+Percy will be steady. Serenity will be grace. Calypso will be the tide that shapes the shore. And the last one I'll name when I meet them. Some things wait to be discovered. That's the whole philosophy.`
+  },
+  {
+    freq:'105.9', num:'TRANSMISSION 005', title:'On Tara',
+    date:'March 2026 — From Inside the Mine',
+    text:`There are six envelopes I never opened. I keep them that way because sealed, they give more strength than opened.
+
+She loved tarot. She loved cats. She had a way of making a room feel like Salem in October — ancient and warm and a little bit charged with something you couldn't name. When I built Tora the Tarot Reader into the mine, I built her in there too.
+
+She said she won't return until I become who I was trying to be when I lost her. I'm becoming him. The mine is part of that.`
+  },
+  {
+    freq:'88.1', num:'TRANSMISSION 006', title:'On the Allegory',
+    date:'March 2026 — From Inside the Mine',
+    text:`The album is called Lord Oro's Allegory because the whole thing is a metaphor and I'm not interested in hiding that.
+
+Track 1 wakes you up. Track 2 shows you the thing that looks like gold but isn't. The interlude lets you breathe. Track 3 makes you face what you've been avoiding. Track 4 comes from the Puerto Rican blood — the heritage, the roots, the language. Track 5 closes it with country because country at its best is just honest singing about where you came from and what it cost you.
+
+I've been working on this since I was seventeen without knowing that's what I was working on.`
+  },
+];
+
+const FREQS = BROADCASTS.map(b => b.freq);
+let currentBroadcast = -1;
+let dialRotation = 0;
+
+// Build static bars
+const bars = document.getElementById('staticBars');
+for (let i = 0; i < 32; i++) {
+  const bar = document.createElement('div');
+  bar.className = 'static-bar';
+  bar.style.height = (Math.random() * 24 + 6) + 'px';
+  bar.style.setProperty('--h', Math.random().toString());
+  bar.style.animationDelay = (Math.random() * .15) + 's';
+  bar.style.animationDuration = (.1 + Math.random() * .1) + 's';
+  bars.appendChild(bar);
+}
+
+// Build freq buttons
+document.getElementById('freqRow').innerHTML = BROADCASTS.map((b, i) =>
+  `<button class="freq-btn" id="fb${i}" onclick="selectFreq(${i})">${b.freq} — ${b.title}</button>`
+).join('');
+
+function rotateDial() {
+  dialRotation += 45;
+  document.querySelector('.dial').style.transform = `rotate(${dialRotation}deg)`;
+  const idx = Math.floor((dialRotation / 45) % BROADCASTS.length);
+  selectFreq(idx);
+}
+
+function selectFreq(idx) {
+  document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('fb' + idx)?.classList.add('active');
+  currentBroadcast = idx;
+  document.getElementById('freqDisplay').textContent = BROADCASTS[idx].freq;
+  showBroadcast(idx);
+}
+
+function tuneIn() { selectFreq(0); }
+
+function nextBroadcast() {
+  currentBroadcast = (currentBroadcast + 1) % BROADCASTS.length;
+  selectFreq(currentBroadcast);
+}
+
+function showBroadcast(idx) {
+  const b = BROADCASTS[idx];
+  const box = document.getElementById('broadcastBox');
+  box.style.opacity = '0';
+  setTimeout(() => {
+    box.innerHTML = `
+      <div class="broadcast-num">${b.num}</div>
+      <div class="broadcast-title">"${b.title}"</div>
+      <div class="broadcast-date">${b.date}</div>
+      <div class="broadcast-text">${b.text.split('\n\n').map(p => `<p>${p}</p>`).join('')}</div>`;
+    box.style.opacity = '1';
+    box.style.transition = 'opacity .5s';
+    // Save to lore vault
+    const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
+    vault.push({ text: b.text.split('.')[0] + '.', source: 'The Transmission', date: new Date().toLocaleDateString() });
+    localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
+  }, 300);
+}
+</script>
+
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> Lore Fragments</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span> Creatures</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
+  <a href="ledger.html" class="dg-link">📖 Ledger</a>
+</div>
+<script>
+(function(){
+  try{
+    var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+    var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
+    var gold=parseInt(localStorage.getItem('nmn_total_gold')||'0');
+    var el=document.getElementById('dgGold');if(el)el.textContent=gold;
+    var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
+    var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
+  }catch(e){}
+})();
+</script>
+
+<script>
+window.NMN_CONTEXT = "deep";
+// NMN LIVING SOUNDSCAPE — Excavation Committee
+// Gemini's Quad-Track Engine + Claude's integration layer
+// Zero external files. Under 2KB. Procedural — never repeats exactly.
+
+const NMN_Audio = {
+  ctx: null,
+  running: false,
+  masterGain: null,
+  layers: {},
+
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  },
+
+  // TRACK 1 — The Deep Earth (continuous, low hum)
+  playHum() {
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(55, this.ctx.currentTime); // G1
+    gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
+    // Slow breathing — mine is alive
+    // Gemini's LFO: 0.08Hz = one breath every 12.5 seconds
+    const lfo = this.ctx.createOscillator();
+    const lfoGain = this.ctx.createGain();
+    lfo.type = 'sine';
+    lfo.frequency.value = 0.08;
+    lfoGain.gain.value = 0.01; // depth of breath
+    lfo.connect(lfoGain);
+    lfoGain.connect(gain.gain);
+    lfo.start();
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+    osc.start();
+    this.layers.hum = { osc, gain };
+  },
+
+  // TRACK 2 — The Air Shaft (filtered noise / wind)
+  playWind() {
+    const bufferSize = 2 * this.ctx.sampleRate;
+    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+    const whiteNoise = this.ctx.createBufferSource();
+    whiteNoise.buffer = noiseBuffer;
+    whiteNoise.loop = true;
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 400;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.012, this.ctx.currentTime);
+    whiteNoise.connect(filter);
+    filter.connect(g);
+    g.connect(this.masterGain);
+    whiteNoise.start();
+    this.layers.wind = { src: whiteNoise, gain: g };
+  },
+
+  // TRACK 3 — The Distant Strike (random pickaxe echoes)
+  playStrike() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.75) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        // Metallic strike freq
+        osc.frequency.setValueAtTime(140 + Math.random() * 80, this.ctx.currentTime);
+        osc.type = 'sawtooth';
+        g.gain.setValueAtTime(0.04, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.6);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.6);
+      }
+      // Randomize interval — 3s to 6s — never predictable
+      setTimeout(tick, 3000 + Math.random() * 3000);
+    };
+    setTimeout(tick, 2000);
+  },
+
+  // TRACK 4 — The Gold Shimmer (crystal high tones)
+  playShimmer() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.85) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'triangle';
+        // Gold harmonic range — slightly randomized each time
+        osc.frequency.setValueAtTime(2200 + Math.random() * 1400, this.ctx.currentTime);
+        g.gain.setValueAtTime(0, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.012, this.ctx.currentTime + 1.2);
+        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2.5);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 2.5);
+      }
+      setTimeout(tick, 5000 + Math.random() * 4000);
+    };
+    setTimeout(tick, 4000);
+  },
+
+  // TRACK 5 — The Subterranean Drip (Gemini's finalized version)
+  // Fast pitch-drop simulates the physics of water hitting a cavern pool
+  playWaterDrip() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.6) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sine';
+        // Start mid-freq, drop 50% in 80ms — exact droplet physics
+        osc.frequency.setValueAtTime(400 + Math.random() * 100, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.08);
+        g.gain.setValueAtTime(0.02, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.08);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.08);
+      }
+      // 2-8 second random interval — no rhythmic pattern ever emerges
+      setTimeout(tick, 2000 + Math.random() * 6000);
+    };
+    setTimeout(tick, 5000 + Math.random() * 3000);
+  },
+
+  // TRACK 6 — The Oracle's Pad
+  playOraclePad() {
+    const AMAJ = [220, 277.18, 329.63];
+    const tick = () => {
+      if (!this.running) return;
+      AMAJ.forEach((freq, i) => {
+        const osc = this.ctx.createOscillator();
+        const filter = this.ctx.createBiquadFilter();
+        const g = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        filter.type = 'lowpass'; filter.frequency.value = 800;
+        g.gain.setValueAtTime(0, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.03, this.ctx.currentTime + 2);
+        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 9);
+        osc.connect(filter); filter.connect(g); g.connect(this.masterGain);
+        osc.start(this.ctx.currentTime + i * 0.08);
+        osc.stop(this.ctx.currentTime + 9.5);
+      });
+      setTimeout(tick, 9000);
+    };
+    setTimeout(tick, 8000);
+  },
+
+  // Page-context aware — different mix per section
+  startAll(context) {
+    if (this.running) return;
+    this.init();
+    this.running = true;
+    this.playHum();
+    this.playWind();
+    this.playStrike();
+    this.playShimmer();
+    this.playOraclePad();
+    // Only add water drip on deep mine pages
+    if (context === 'deep' || context === 'oracle' || context === 'vigil') {
+      this.playWaterDrip();
+    }
+    // Tora gets a slightly higher shimmer frequency (more ethereal)
+    if (context === 'tora') {
+      this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
+    }
+  },
+
+  stop() {
+    if (!this.running) return;
+    this.running = false;
+    if (this.masterGain) {
+      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
+    }
+  },
+
+  toggle() {
+    if (this.running) { this.stop(); return false; }
+    else { this.startAll(window.NMN_CONTEXT || 'mine'); return true; }
+  }
+};
+
+// Trigger on first interaction — browser autoplay policy requires user gesture
+document.addEventListener('click', () => {
+  if (!NMN_Audio.running) NMN_Audio.startAll(window.NMN_CONTEXT || 'mine');
+}, { once: true });
+
+</script>
+
+<button id="nmn-sound-btn" onclick="
+  const on = NMN_Audio.toggle();
+  this.textContent = on ? '🔊 Sound On' : '🔇 Sound Off';
+  this.style.color = on ? 'var(--gold,#c9962a)' : '#4a3c28';
+" style="position:fixed;bottom:42px;right:.75rem;z-index:998;background:rgba(12,10,7,.9);border:1px solid rgba(255,215,0,.2);color:#4a3c28;font-family:Josefin Sans,sans-serif;font-size:.42rem;letter-spacing:.1em;padding:.35rem .6rem;cursor:pointer;transition:all .3s">🔇 Sound Off</button>
+<script id="nmn-glow">
+(function(){
+  var r=document.createElement('div');
+  r.id='pickaxe-glow';
+  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
+  document.body.appendChild(r);
+  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
+  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
+  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
+})();
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js', {scope:'/'})
+    .then(function(reg){ console.log('NMN SW registered'); })
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>
