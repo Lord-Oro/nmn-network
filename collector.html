@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>The Collector — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+<style>
+body{padding-top:56px;overflow:hidden}
+.game-wrap{max-width:900px;margin:0 auto;padding:.75rem 1rem}
+.hud{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding:.5rem .75rem;background:rgba(0,0,0,.5);border:1px solid rgba(255,215,0,.1);margin-bottom:8px}
+.hud-stat{font-family:var(--font-pixel);font-size:.48rem;color:var(--gold)}
+.hud-stat span{color:var(--cream)}
+.gem-row{display:flex;gap:4px}
+.gem-pip{width:14px;height:14px;border:1px solid rgba(255,215,0,.3);background:var(--stone2);font-size:7px;display:flex;align-items:center;justify-content:center;image-rendering:pixelated;transition:all .2s}
+.gem-pip.lit{border-color:var(--gold);background:#1a1500;box-shadow:0 0 6px var(--gold)}
+.canvas-wrap{position:relative;background:var(--coal);border:2px solid rgba(255,215,0,.2);box-shadow:inset 0 0 40px rgba(0,0,0,.8),0 0 20px rgba(255,215,0,.05)}
+canvas{display:block;width:100%;image-rendering:pixelated}
+.controls{display:flex;gap:6px;padding:.5rem .75rem;background:rgba(0,0,0,.4);border:1px solid rgba(255,215,0,.08);border-top:none;flex-wrap:wrap}
+.ctrl-btn{font-family:var(--font-pixel);font-size:.4rem;background:var(--stone2);color:var(--muted);border:1px solid rgba(255,215,0,.2);padding:5px 10px;letter-spacing:.05em;transition:all .2s}
+.ctrl-btn:hover{color:var(--gold);border-color:var(--gold);background:rgba(255,215,0,.06)}
+.ctrl-hint{font-family:var(--font-pixel);font-size:.32rem;color:var(--faint);align-self:center;margin-left:auto}
+/* OVERLAY */
+.overlay{position:absolute;inset:0;background:rgba(7,6,5,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;z-index:10}
+.overlay.hidden{display:none}
+.ov-title{font-family:var(--font-display);font-size:clamp(1.4rem,4vw,2.2rem);color:var(--gold);text-shadow:0 0 30px rgba(255,215,0,.4);text-align:center}
+.ov-sub{font-family:var(--font-pixel);font-size:.42rem;color:var(--muted);text-align:center;line-height:2;max-width:340px}
+.ov-btn{font-family:var(--font-pixel);font-size:.48rem;background:var(--gold);color:var(--coal);border:none;padding:.75rem 2rem;letter-spacing:.1em;transition:all .2s;margin-top:.5rem}
+.ov-btn:hover{background:#fff;box-shadow:0 0 25px rgba(255,215,0,.7)}
+.ov-stat{font-family:var(--font-pixel);font-size:.55rem;color:var(--cream);text-align:center}
+.ov-stat strong{color:var(--gold);font-size:.65rem}
+/* MOBILE CONTROLS */
+.mobile-ctrl{display:none;justify-content:space-between;padding:.5rem .75rem;gap:8px}
+@media(max-width:600px){.mobile-ctrl{display:flex}}
+.mob-btn{font-family:var(--font-pixel);font-size:.55rem;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);color:var(--gold);padding:.6rem 1.4rem;flex:1;text-align:center;transition:all .2s}
+.mob-btn:active{background:rgba(255,215,0,.25)}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+
+
+
+</head>
+<body>
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
+<script src="nmn-scene.js"></script>
+
+<div class="game-wrap">
+  <div class="hud">
+    <span class="hud-stat">SCORE <span id="h-score">0</span></span>
+    <span class="hud-stat">LVL <span id="h-level">1</span></span>
+    <span class="hud-stat">CYCLE <span id="h-cycle">1</span></span>
+    <span class="hud-stat">♥ <span id="h-lives">3</span></span>
+    <span class="hud-stat">COMBO <span id="h-combo">x1</span></span>
+    <div class="gem-row">
+      <div class="gem-pip" id="gp0">◆</div><div class="gem-pip" id="gp1">◆</div>
+      <div class="gem-pip" id="gp2">◆</div><div class="gem-pip" id="gp3">◆</div>
+      <div class="gem-pip" id="gp4">◆</div>
+    </div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="cv"></canvas>
+    <!-- START OVERLAY -->
+    <div class="overlay" id="ov-start">
+      <p class="ov-title">The Collector</p>
+      <p class="ov-sub">Catch falling ore with your lantern. Miss one and lose a life. Chain catches multiply your gold.</p>
+      <button class="ov-btn" onclick="startGame()">⛏ ENTER THE SHAFT</button>
+    </div>
+    <!-- GAMEOVER OVERLAY -->
+    <div class="overlay hidden" id="ov-over">
+      <p class="ov-title">Mine Collapsed</p>
+      <div class="ov-stat">SCORE <strong id="final-score">0</strong></div>
+      <div class="ov-stat">GOLD EARNED <strong id="final-gold">0</strong> 💎</div>
+      <button class="ov-btn" onclick="startGame()">⛏ DESCEND AGAIN</button>
+      <a href="gemshop.html" style="font-family:var(--font-pixel);font-size:.42rem;color:var(--muted);text-decoration:none;margin-top:.25rem">💎 SPEND YOUR GOLD →</a>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn" onclick="startGame()">▶ START</button>
+    <button class="ctrl-btn" onclick="NMNScene.toggle()">⏸ PAUSE</button>
+    <button class="ctrl-btn" onclick="NMNWallet.convertGems()">⚗ CONVERT</button>
+    <span class="ctrl-hint">← → / A D / TOUCH TO MOVE</span>
+  </div>
+
+  <div class="mobile-ctrl">
+    <button class="mob-btn" id="mob-left">◀ LEFT</button>
+    <button class="mob-btn" id="mob-right">RIGHT ▶</button>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════
+// THE COLLECTOR — Rebuilt
+// ════════════════════════════════════
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+
+// Responsive canvas
+function resize() {
+  const wrap = cv.parentElement;
+  const W = Math.min(wrap.clientWidth, 900);
+  cv.width = W; cv.height = Math.floor(W * 0.5);
+  cv.style.width = W + 'px'; cv.style.height = cv.height + 'px';
+}
+resize();
+window.addEventListener('resize', ()=>{ resize(); });
+
+// ── GAME STATE ──
+let G = null;
+let _locked = false; // Locked game state — prevents scroll double-init
+
+const METALS = [
+  { type:'copper', color:'#B87333', pts:5,  w:12, h:12 },
+  { type:'silver', color:'#C0C0C0', pts:10, w:10, h:10 },
+  { type:'gold',   color:'#FFD700', pts:25, w:14, h:14 },
+  { type:'mystic', color:'#CC44FF', pts:50, w:9,  h:9  },
+  { type:'bomb',   color:'#FF3333', pts:-1, w:13, h:13, isBomb:true },
+  { type:'star',   color:'#FFFFFF', pts:100,w:12, h:12, isStar:true },
+];
+
+function initState() {
+  return {
+    score:0, level:1, cycle:1, lives:3,
+    speed:2.2, combo:1, comboTimer:0,
+    gems:[], particles:[], explosions:[],
+    player:{ x:cv.width/2, y:cv.height-30, w:28, h:22, vx:0 },
+    running:false, paused:false,
+    sessionGold:0,
+  };
+}
+
+function startGame() {
+  if(_locked) return;
+  _locked = true;
+  NMNScene.destroy();
+  G = initState();
+  G.running = true;
+  document.getElementById('ov-start').classList.add('hidden');
+  document.getElementById('ov-over').classList.add('hidden');
+  // Spawn interval
+  NMNScene.interval(spawnGem, 700);
+  // Combo decay
+  NMNScene.interval(()=>{
+    if(!G||!G.running||G.paused)return;
+    if(G.comboTimer>0){ G.comboTimer--; if(G.comboTimer===0)G.combo=1; }
+  }, 100);
+  NMNScene.raf(loop);
+  _locked = false;
+}
+
+function spawnGem() {
+  if(!G||!G.running||G.paused)return;
+  // Increase bomb chance slightly per level
+  const roll = Math.random();
+  let type;
+  if(roll < 0.05 + G.level * 0.005) type = METALS[4]; // bomb
+  else if(roll < 0.07) type = METALS[5]; // star
+  else type = METALS[Math.floor(Math.random()*4)];
+  G.gems.push({
+    x: type.w/2 + Math.random()*(cv.width - type.w),
+    y: -type.h,
+    speed: G.speed + Math.random() * 0.8,
+    ...type
+  });
+}
+
+// ── INPUT ──
+const keys = {};
+NMNScene.on(document,'keydown', e=>{ keys[e.key]=true; });
+NMNScene.on(document,'keyup',   e=>{ delete keys[e.key]; });
+
+// Touch / mobile
+let touchX = null;
+NMNScene.on(cv,'touchstart', e=>{ e.preventDefault(); touchX=e.touches[0].clientX; });
+NMNScene.on(cv,'touchmove',  e=>{ e.preventDefault();
+  if(!G)return;
+  const dx = e.touches[0].clientX - touchX;
+  G.player.x = Math.max(G.player.w/2, Math.min(cv.width-G.player.w/2, G.player.x+dx));
+  touchX = e.touches[0].clientX;
+},{passive:false});
+
+const mobL = document.getElementById('mob-left');
+const mobR = document.getElementById('mob-right');
+if(mobL){ mobL.addEventListener('touchstart',e=>{e.preventDefault();keys['ArrowLeft']=true;},{passive:false}); mobL.addEventListener('touchend',e=>{delete keys['ArrowLeft'];}); }
+if(mobR){ mobR.addEventListener('touchstart',e=>{e.preventDefault();keys['ArrowRight']=true;},{passive:false}); mobR.addEventListener('touchend',e=>{delete keys['ArrowRight'];}); }
+
+// ── DRAW HELPERS ──
+function drawPixelPlayer(x, y, w, h) {
+  // Body
+  ctx.fillStyle='#8B6914'; ctx.fillRect(x-w/2,y-h+4,w,h-4);
+  // Head
+  ctx.fillStyle='#FFD700'; ctx.fillRect(x-w/2+3,y-h-4,w-6,10);
+  // Eyes
+  ctx.fillStyle='#fff'; ctx.fillRect(x-w/2+5,y-h,3,4); ctx.fillRect(x+1,y-h,3,4);
+  // Lantern arm
+  ctx.fillStyle='#8B6914'; ctx.fillRect(x+w/2-5,y-h+2,5,h-2);
+  ctx.fillStyle='#FFD700'; ctx.fillRect(x+w/2-3,y-h-2,6,6);
+  // Lantern glow
+  const gl=ctx.createRadialGradient(x+w/2,y-h+2,0,x+w/2,y-h+2,24);
+  gl.addColorStop(0,'rgba(255,215,0,.12)'); gl.addColorStop(1,'transparent');
+  ctx.fillStyle=gl; ctx.fillRect(x+w/2-24,y-h-22,48,48);
+}
+
+function drawGem(g) {
+  if(g.isBomb){
+    ctx.fillStyle='#FF3333'; ctx.fillRect(g.x-g.w/2,g.y,g.w,g.h);
+    ctx.fillStyle='#FF8888'; ctx.fillRect(g.x-g.w/2+2,g.y+2,4,4);
+    // Fuse
+    ctx.strokeStyle='#888'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(g.x,g.y); ctx.lineTo(g.x+4,g.y-6); ctx.stroke();
+    ctx.fillStyle='#FF8800'; ctx.beginPath(); ctx.arc(g.x+4,g.y-7,2,0,Math.PI*2); ctx.fill();
+  } else if(g.isStar){
+    ctx.fillStyle='#FFFFAA';
+    // 4-point star
+    const cx=g.x,cy=g.y+g.h/2,r=g.w/2;
+    ctx.beginPath();
+    for(let i=0;i<8;i++){const a=i*Math.PI/4,len=i%2===0?r:r*.4;ctx.lineTo(cx+Math.cos(a)*len,cy+Math.sin(a)*len);}
+    ctx.closePath(); ctx.fill();
+    const sg=ctx.createRadialGradient(cx,cy,0,cx,cy,r*2);sg.addColorStop(0,'rgba(255,255,200,.4)');sg.addColorStop(1,'transparent');
+    ctx.fillStyle=sg; ctx.beginPath(); ctx.arc(cx,cy,r*2,0,Math.PI*2); ctx.fill();
+  } else {
+    ctx.fillStyle=g.color; ctx.fillRect(g.x-g.w/2,g.y,g.w,g.h);
+    ctx.fillStyle='rgba(255,255,255,.35)'; ctx.fillRect(g.x-g.w/2+2,g.y+2,Math.floor(g.w*.4),Math.floor(g.w*.4));
+    const gg=ctx.createRadialGradient(g.x,g.y+g.h/2,0,g.x,g.y+g.h/2,g.w);
+    gg.addColorStop(0,g.color+'44'); gg.addColorStop(1,'transparent');
+    ctx.fillStyle=gg; ctx.fillRect(g.x-g.w,g.y-g.h,g.w*2,g.h*3);
+  }
+}
+
+function spawnParticles(x, y, color, count) {
+  for(let i=0;i<count;i++){
+    G.particles.push({x,y,vx:(Math.random()-.5)*5,vy:(Math.random()-1)*5,color,life:18+Math.floor(Math.random()*10)});
+  }
+}
+
+function spawnExplosion(x, y) {
+  G.explosions.push({x,y,r:0,maxR:40,life:20});
+  spawnParticles(x,y,'#FF3333',12);
+}
+
+// ── UPDATE ──
+function update() {
+  if(!G||!G.running||G.paused)return;
+  const W=cv.width,H=cv.height,p=G.player;
+
+  // Player movement
+  const spd=6+G.level*.2;
+  if(keys['ArrowLeft']||keys['a']) p.x=Math.max(p.w/2,p.x-spd);
+  if(keys['ArrowRight']||keys['d']) p.x=Math.min(W-p.w/2,p.x+spd);
+
+  // Gems
+  G.gems = G.gems.filter(g => {
+    g.y += g.speed;
+    // Catch check
+    if(g.y+g.h >= p.y-p.h && g.y <= p.y+4 && g.x >= p.x-p.w/2-4 && g.x <= p.x+p.w/2+4){
+      if(g.isBomb){
+        G.lives--;
+        spawnExplosion(g.x, g.y+g.h/2);
+        G.combo=1; G.comboTimer=0;
+        updateHUD();
+        if(G.lives<=0){ endGame(); }
+      } else {
+        const pts = g.pts * G.combo * G.cycle;
+        G.score += pts;
+        G.sessionGold += Math.ceil(pts/10);
+        G.comboTimer = 15; G.combo = Math.min(G.combo+1, 8);
+        spawnParticles(g.x,g.y,g.color,6);
+        NMNWallet.addXP(g.pts);
+        NMNWallet.addGem();
+        // Level up
+        if(G.score >= G.level * 400 * G.cycle){
+          G.level++;
+          G.speed = Math.min(G.speed * 1.12, 14);
+          if(G.level > 8){ G.level=1; G.cycle++; G.speed=2.2+G.cycle*.5; }
+        }
+        updateHUD();
+      }
+      return false;
+    }
+    // Missed
+    if(g.y > H && !g.isBomb){
+      G.lives--;
+      G.combo=1; G.comboTimer=0;
+      updateHUD();
+      if(G.lives<=0){ endGame(); return false; }
+    }
+    return g.y <= H;
+  });
+
+  // Particles
+  G.particles = G.particles.filter(p=>{
+    p.life--; p.x+=p.vx; p.y+=p.vy; p.vy+=.2;
+    return p.life>0;
+  });
+  G.explosions = G.explosions.filter(e=>{
+    e.life--; e.r+=3;
+    return e.life>0;
+  });
+}
+
+// ── DRAW ──
+function draw() {
+  const W=cv.width,H=cv.height;
+  // Background
+  ctx.fillStyle='#070605'; ctx.fillRect(0,0,W,H);
+  // Grid
+  ctx.strokeStyle='rgba(255,215,0,0.04)'; ctx.lineWidth=1;
+  for(let x=0;x<W;x+=32){ ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke(); }
+  for(let y=0;y<H;y+=32){ ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke(); }
+
+  // Explosions
+  G.explosions.forEach(e=>{
+    const eg=ctx.createRadialGradient(e.x,e.y,0,e.x,e.y,e.r);
+    eg.addColorStop(0,`rgba(255,80,0,${e.life/20*.6})`);
+    eg.addColorStop(1,'transparent');
+    ctx.fillStyle=eg; ctx.beginPath(); ctx.arc(e.x,e.y,e.r,0,Math.PI*2); ctx.fill();
+  });
+
+  // Gems
+  G.gems.forEach(drawGem);
+
+  // Particles
+  G.particles.forEach(p=>{
+    ctx.fillStyle=p.color+Math.floor(p.life/28*255).toString(16).padStart(2,'0');
+    ctx.fillRect(p.x-2,p.y-2,4,4);
+  });
+
+  // Player
+  if(G.running) drawPixelPlayer(G.player.x, G.player.y, G.player.w, G.player.h);
+
+  // Combo flash
+  if(G.combo>1){
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, G.combo*.15);
+    ctx.fillStyle='#FFD700';
+    ctx.font=`${Math.min(G.combo*3,14)}px "Press Start 2P"`;
+    ctx.textAlign='center';
+    ctx.fillText(`${G.combo}x COMBO`, W/2, 22);
+    ctx.restore();
+    ctx.textAlign='left';
+  }
+
+  // Speed indicator
+  ctx.fillStyle='rgba(255,215,0,.35)'; ctx.font='6px "Press Start 2P"';
+  ctx.fillText(`SPD ${G.speed.toFixed(1)}x`, 6, H-6);
+}
+
+function loop() {
+  if(!G) return;
+  update();
+  draw();
+  NMNScene.raf(loop);
+}
+
+function updateHUD() {
+  document.getElementById('h-score').textContent=G.score;
+  document.getElementById('h-level').textContent=G.level;
+  document.getElementById('h-cycle').textContent=G.cycle;
+  document.getElementById('h-lives').textContent=G.lives;
+  document.getElementById('h-combo').textContent='x'+G.combo;
+  const w=NMNWallet.get();
+  for(let i=0;i<5;i++){const p=document.getElementById('gp'+i);if(p)p.classList.toggle('lit',w.gems[i]);}
+}
+
+function endGame() {
+  G.running=false;
+  NMNWallet.addGold(G.sessionGold);
+  document.getElementById('final-score').textContent=G.score;
+  document.getElementById('final-gold').textContent=G.sessionGold;
+  document.getElementById('ov-over').classList.remove('hidden');
+  NMNScene.destroy();
+}
+
+// Initial draw
+ctx.fillStyle='#070605'; ctx.fillRect(0,0,cv.width,cv.height);
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>

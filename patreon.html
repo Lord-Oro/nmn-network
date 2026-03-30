@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Join the Vault — Lord Oro on Patreon | NMN</title>
+<meta name="description" content="Support Lord Oro on Patreon. Three tiers: Copper $5, Silver $10, Gold $25. Early access to books, ad-free games, exclusive lore, and your name etched in the mine forever.">
+<link rel="stylesheet" href="nmn-theme.css">
+<!-- Monetag In-Page Push — Zone 10763810 -->
+
+
+<style>
+body{padding-top:56px}
+
+/* ── HERO ── */
+.patreon-hero{
+  min-height:60vh;display:flex;align-items:center;justify-content:center;
+  padding:4rem 2rem;position:relative;overflow:hidden;text-align:center;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(255,215,0,.07),transparent 55%),
+    radial-gradient(ellipse at 20% 80%,rgba(139,105,20,.08),transparent 45%),
+    linear-gradient(180deg,var(--coal),var(--shaft) 60%,var(--rock));
+}
+.hero-eyes-small{display:flex;gap:36px;justify-content:center;margin-bottom:1.5rem}
+.hero-eye-sm{width:18px;height:13px;background:radial-gradient(ellipse at 40% 40%,#FFD700,#FF8C00);border-radius:50%;box-shadow:0 0 18px rgba(255,215,0,.9);animation:eyeBlink 5s infinite;position:relative}
+.hero-eye-sm::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:5px;height:5px;background:#000;border-radius:50%}
+@keyframes eyeBlink{0%,85%,100%{transform:scaleY(1)}90%{transform:scaleY(.05)}}
+.patreon-eyebrow{font-family:var(--font-pixel);font-size:.42rem;color:var(--gd);letter-spacing:.3em;margin-bottom:1rem}
+.patreon-title{font-family:var(--font-display);font-size:clamp(2rem,6vw,4rem);color:var(--cream);margin-bottom:.5rem;line-height:1.1}
+.patreon-title em{color:var(--gold);font-style:italic;display:block}
+.patreon-sub{font-family:var(--font-pixel);font-size:.42rem;color:var(--muted);line-height:2.4;max-width:520px;margin:1.5rem auto 2rem;padding:1rem 1.5rem;border:1px solid rgba(255,215,0,.08);background:rgba(255,215,0,.02)}
+.hero-cta-row{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+.hero-cta{font-family:var(--font-pixel);font-size:.48rem;padding:.75rem 1.8rem;text-decoration:none;transition:all .3s;letter-spacing:.1em}
+.hero-cta-gold{background:var(--gold);color:var(--coal);box-shadow:0 0 20px rgba(255,215,0,.4)}
+.hero-cta-gold:hover{background:#fff;box-shadow:0 0 35px rgba(255,215,0,.8);transform:translateY(-2px)}
+.hero-cta-outline{background:transparent;color:var(--gold);border:1px solid rgba(255,215,0,.3)}
+.hero-cta-outline:hover{border-color:var(--gold);background:rgba(255,215,0,.06)}
+
+/* ── MANIFESTO ── */
+.manifesto{max-width:720px;margin:0 auto;padding:4rem 2rem;text-align:center}
+.manifesto-quote{font-family:var(--font-serif);font-style:italic;font-size:clamp(1rem,2.5vw,1.4rem);color:var(--gold);line-height:1.8;margin-bottom:2rem;padding:1.5rem;border-left:2px solid rgba(255,215,0,.3);text-align:left}
+.manifesto-body{font-size:.75rem;color:var(--muted);line-height:2.2;margin-bottom:1rem}
+
+/* ── TIERS ── */
+.tiers-section{max-width:1000px;margin:0 auto;padding:2rem 2rem 4rem}
+.tiers-label{font-family:var(--font-pixel);font-size:.45rem;color:var(--gd);letter-spacing:.3em;text-align:center;margin-bottom:3rem;display:flex;align-items:center;gap:1rem;justify-content:center}
+.tiers-label::before,.tiers-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,rgba(255,215,0,.15));max-width:200px}
+.tiers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:768px){.tiers-grid{grid-template-columns:1fr;max-width:400px;margin:0 auto}}
+
+.tier-card{
+  padding:2rem 1.5rem;border:1px solid;
+  position:relative;overflow:hidden;transition:all .3s;
+  display:flex;flex-direction:column;
+}
+.tier-card::before{content:'';position:absolute;top:0;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,var(--tier-color),transparent);transform:scaleX(0);transition:transform .4s}
+.tier-card:hover{transform:translateY(-5px)}
+.tier-card:hover::before{transform:scaleX(1)}
+
+.tier-copper{--tier-color:#B87333;border-color:rgba(184,115,51,.25);background:rgba(15,8,0,.6)}
+.tier-copper:hover{border-color:rgba(184,115,51,.5);box-shadow:0 12px 35px rgba(0,0,0,.5),0 0 25px rgba(184,115,51,.08)}
+.tier-silver{--tier-color:#C0C0C0;border-color:rgba(192,192,192,.25);background:rgba(8,8,10,.6)}
+.tier-silver:hover{border-color:rgba(192,192,192,.5);box-shadow:0 12px 35px rgba(0,0,0,.5),0 0 25px rgba(192,192,192,.08)}
+.tier-gold{--tier-color:#FFD700;border-color:rgba(255,215,0,.3);background:rgba(12,10,0,.7)}
+.tier-gold:hover{border-color:rgba(255,215,0,.6);box-shadow:0 12px 35px rgba(0,0,0,.5),0 0 30px rgba(255,215,0,.1)}
+
+.tier-ore{font-size:2rem;margin-bottom:.75rem;display:block;filter:drop-shadow(0 0 10px var(--tier-color))}
+.tier-name{font-family:var(--font-pixel);font-size:.55rem;color:var(--tier-color);letter-spacing:.15em;margin-bottom:.25rem}
+.tier-price{font-family:var(--font-display);font-size:1.8rem;color:var(--cream);margin-bottom:.25rem}
+.tier-price span{font-family:var(--font-pixel);font-size:.38rem;color:var(--muted)}
+.tier-tagline{font-family:var(--font-serif);font-style:italic;font-size:.75rem;color:var(--muted);margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,.06)}
+.tier-perks{list-style:none;padding:0;margin-bottom:1.5rem;flex:1}
+.tier-perks li{font-family:var(--font-pixel);font-size:.34rem;color:var(--muted);padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.04);line-height:1.8;display:flex;gap:.5rem;align-items:flex-start}
+.tier-perks li::before{content:'⛏';color:var(--tier-color);flex-shrink:0}
+.tier-btn{
+  display:block;font-family:var(--font-pixel);font-size:.42rem;
+  text-align:center;text-decoration:none;padding:.7rem;
+  border:1px solid var(--tier-color);color:var(--tier-color);
+  background:transparent;transition:all .2s;letter-spacing:.1em;margin-top:auto;
+}
+.tier-btn:hover{background:rgba(255,255,255,.05)}
+.tier-gold .tier-btn{background:rgba(255,215,0,.08)}
+.tier-gold .tier-btn:hover{background:rgba(255,215,0,.18)}
+
+/* ── WHAT YOUR SUPPORT DOES ── */
+.impact-section{max-width:860px;margin:0 auto;padding:2rem 2rem 4rem;border-top:1px solid rgba(255,215,0,.06)}
+.impact-label{font-family:var(--font-pixel);font-size:.42rem;color:var(--gd);letter-spacing:.3em;margin-bottom:2rem}
+.impact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.impact-item{padding:1.2rem;border:1px solid rgba(255,215,0,.07);background:rgba(255,215,0,.02)}
+.impact-icon{font-size:1.4rem;margin-bottom:.5rem;display:block}
+.impact-title{font-family:var(--font-pixel);font-size:.38rem;color:var(--cream);margin-bottom:.35rem;display:block}
+.impact-desc{font-size:.65rem;color:var(--faint);line-height:1.8}
+
+/* ── ALSO SUPPORT ── */
+.also-support{max-width:860px;margin:0 auto;padding:2rem 2rem 3rem;text-align:center;border-top:1px solid rgba(255,215,0,.06)}
+.also-label{font-family:var(--font-pixel);font-size:.38rem;color:var(--gd);letter-spacing:.2em;margin-bottom:1.5rem}
+.also-row{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.also-btn{font-family:var(--font-pixel);font-size:.4rem;padding:.6rem 1.4rem;text-decoration:none;border:1px solid;transition:all .2s;letter-spacing:.08em}
+.also-btn-gfm{border-color:rgba(2,169,92,.35);color:#02a95c}
+.also-btn-gfm:hover{background:rgba(2,169,92,.1)}
+.also-btn-amazon{border-color:rgba(255,153,0,.35);color:#FF9900}
+.also-btn-amazon:hover{background:rgba(255,153,0,.08)}
+.also-btn-mine{border-color:rgba(255,215,0,.2);color:var(--gd)}
+.also-btn-mine:hover{background:rgba(255,215,0,.05)}
+
+/* ── VEIN BAR ── */
+.vein-section{max-width:600px;margin:0 auto;padding:1rem 2rem 3rem;text-align:center}
+.vein-label-sm{font-family:var(--font-pixel);font-size:.38rem;color:var(--gd);letter-spacing:.2em;margin-bottom:.5rem}
+.vein-bar{width:100%;height:20px;background:#050402;border:1px solid #2a1b0a;overflow:hidden;margin-bottom:.35rem}
+.vein-fill{height:100%;background:linear-gradient(90deg,#7a5a18,var(--gold),var(--gb));position:relative}
+.vein-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);animation:streak 2.5s infinite}
+@keyframes streak{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}
+.vein-sub-sm{font-family:var(--font-pixel);font-size:.3rem;color:var(--faint)}
+</style>
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+
+<!-- HERO -->
+<div class="patreon-hero">
+  <div>
+    <div class="hero-eyes-small"><div class="hero-eye-sm"></div><div class="hero-eye-sm"></div></div>
+    <p class="patreon-eyebrow">⬡ STAKE YOUR CLAIM IN THE MINE ⬡</p>
+    <h1 class="patreon-title">Join the<em>Vault.</em></h1>
+    <p class="patreon-sub">Every patron is a lantern in the mine. You keep the tunnels lit. In return — early access to everything Lord Oro builds, ad-free games, exclusive lore, and your name etched into the empire permanently.</p>
+    <div class="hero-cta-row">
+      <a href="https://patreon.com/lordoro" target="_blank" class="hero-cta hero-cta-gold">⛏ JOIN ON PATREON</a>
+      <a href="#tiers" class="hero-cta hero-cta-outline">SEE THE TIERS ↓</a>
+    </div>
+  </div>
+</div>
+
+<!-- MANIFESTO -->
+<div class="manifesto">
+  <div class="manifesto-quote">"A lord leads people to victory in their minds. His sword is his pen. His kingdom is the human interior world. The goldmine is within — and you found the entrance."</div>
+  <p class="manifesto-body">Lord Oro is a Brooklyn-born storyteller building a transmedia empire from the inside out. Four published books. Twelve games. An oracle, a sound shaft, a lore vault, and a concept album in progress. Every piece of it built independently — no label, no publisher, no investors. Just the mine and the people willing to descend into it.</p>
+  <p class="manifesto-body">Patreon is what keeps the lanterns burning. It funds new books, new games, new tunnels. When you join, you're not a subscriber — you're a stakeholder in the mine.</p>
+</div>
+
+<!-- TIERS -->
+<div class="tiers-section" id="tiers">
+  <div class="tiers-label">⛏ CHOOSE YOUR ORE ⛏</div>
+  <div class="tiers-grid">
+
+    <!-- COPPER -->
+    <div class="tier-card tier-copper">
+      <span class="tier-ore">🪨</span>
+      <span class="tier-name">COPPER TIER</span>
+      <div class="tier-price">$5<span>/month</span></div>
+      <p class="tier-tagline">You found the mine entrance. You belong here.</p>
+      <ul class="tier-perks">
+        <li>25+ Short Stories PDF — early access before Amazon</li>
+        <li>Raw lore fragments — unedited world-building notes</li>
+        <li>Mine entrance badge in your patron profile</li>
+        <li>Monthly update from inside the excavation</li>
+        <li>Name in the Patron Roll at the bottom of every NMN page</li>
+      </ul>
+      <a href="https://patreon.com/lordoro" target="_blank" class="tier-btn">⛏ JOIN COPPER</a>
+    </div>
+
+    <!-- SILVER -->
+    <div class="tier-card tier-silver">
+      <span class="tier-ore">🪙</span>
+      <span class="tier-name">SILVER TIER</span>
+      <div class="tier-price">$10<span>/month</span></div>
+      <p class="tier-tagline">You go deeper. The mine opens differently for you.</p>
+      <ul class="tier-perks">
+        <li>Everything in Copper</li>
+        <li>AD-FREE games across the entire Recreation Hall</li>
+        <li>Sizzle reels and Veo videos — early access before YouTube</li>
+        <li>New game pre-drop — play before public launch</li>
+        <li>Behind-the-scenes on book development</li>
+        <li>Lord Oro's Allegory — track previews as they're recorded</li>
+      </ul>
+      <a href="https://patreon.com/lordoro" target="_blank" class="tier-btn">⛏ JOIN SILVER</a>
+    </div>
+
+    <!-- GOLD -->
+    <div class="tier-card tier-gold">
+      <span class="tier-ore">🏅</span>
+      <span class="tier-name">GOLD TIER</span>
+      <div class="tier-price">$25<span>/month</span></div>
+      <p class="tier-tagline">You reached the motherlode. The mine remembers your name.</p>
+      <ul class="tier-perks">
+        <li>Everything in Silver</li>
+        <li>Full vault — every piece of content, ad-free, forever</li>
+        <li>High-res AI video downloads — all Veo productions</li>
+        <li>⭐ Star Map inscription — your name written in the stars</li>
+        <li>Your soul named in the Epic Fantasy — Nayla &amp; Felik</li>
+        <li>Direct line — monthly Q&amp;A with Lord Oro</li>
+        <li>First look at every book before it goes to Amazon</li>
+      </ul>
+      <a href="https://patreon.com/lordoro" target="_blank" class="tier-btn">🏅 JOIN GOLD</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- WHAT IT FUNDS -->
+<div class="impact-section">
+  <p class="impact-label">⛏ WHAT YOUR SUPPORT BUILDS</p>
+  <div class="impact-grid">
+    <div class="impact-item">
+      <span class="impact-icon">📖</span>
+      <span class="impact-title">NAYLA & FELIK</span>
+      <p class="impact-desc">The 18-year-in-the-making epic fantasy. Patron funding gets it written, edited, and published on Amazon in 2026.</p>
+    </div>
+    <div class="impact-item">
+      <span class="impact-icon">🎮</span>
+      <span class="impact-title">MORE GAMES</span>
+      <p class="impact-desc">The Recreation Hall currently has 12 games. Gold tier funding unlocks 4 more tunnels including Ivy's full life sim.</p>
+    </div>
+    <div class="impact-item">
+      <span class="impact-icon">🎵</span>
+      <span class="impact-title">LORD ORO'S ALLEGORY</span>
+      <p class="impact-desc">The concept album is in production. Patron support funds studio time, mixing, and a proper release on Spotify and Apple Music.</p>
+    </div>
+    <div class="impact-item">
+      <span class="impact-icon">🌕</span>
+      <span class="impact-title">NMN LLC</span>
+      <p class="impact-desc">Formation of Nonsense Media Network LLC in NJ — the legal foundation that protects every character, story, and game in the mine.</p>
+    </div>
+  </div>
+</div>
+
+<!-- GOFUNDME BAR -->
+<div class="vein-section">
+  <p class="vein-label-sm">EXPEDITION FUND — GOFUNDME</p>
+  <div class="vein-bar"><div class="vein-fill" style="width:12%"></div></div>
+  <p class="vein-sub-sm">12% of $3,000 goal · Every dollar digs deeper</p>
+</div>
+
+<!-- ALSO SUPPORT -->
+<div class="also-support">
+  <p class="also-label">⛏ OTHER WAYS TO SUPPORT THE MINE</p>
+  <div class="also-row">
+    <a href="https://gofund.me/e643a8283" target="_blank" class="also-btn also-btn-gfm">🙏 GOFUNDME — ONE-TIME</a>
+    <a href="https://www.amazon.com/s?k=Lord+Oro+books&tag=lordoro0c25-20" target="_blank" class="also-btn also-btn-amazon">📖 BUY A BOOK ON AMAZON</a>
+    <a href="games.html" class="also-btn also-btn-mine">⛏ PLAY THE GAMES</a>
+  </div>
+  <p style="font-family:var(--font-pixel);font-size:.28rem;color:var(--faint);margin-top:1rem">As an Amazon Associate I earn from qualifying purchases.</p>
+</div>
+
+<div style="text-align:center;padding:2rem;font-family:var(--font-pixel);font-size:.3rem;color:var(--faint)">
+  <a href="privacy.html" style="color:var(--faint);text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:var(--faint);text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="index.html" style="color:var(--faint);text-decoration:none;margin:0 .5rem">HOME</a> ·
+  <a href="archives.html" style="color:var(--faint);text-decoration:none;margin:0 .5rem">BOOKS</a>
+</div>
+
+<script>
+if('serviceWorker' in navigator){
+</script>
+</body>
+</html>

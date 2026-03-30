@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Vigil — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);background:#030201;color:var(--cream);min-height:100vh;overflow:hidden}
+header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.08);display:flex;justify-content:space-between;align-items:center;background:rgba(3,2,1,.95);position:relative;z-index:10}
+.logo{font-family:var(--font-serif);font-style:italic;color:var(--gd);font-size:.95rem;text-decoration:none}
+.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);text-decoration:none}
+.back:hover{color:var(--gold)}
+
+/* VIGIL ROOM */
+.vigil-room{position:fixed;inset:0;top:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
+
+/* CANDLE */
+.candle-area{position:relative;margin-bottom:2.5rem;display:flex;flex-direction:column;align-items:center}
+.candle-wrap{position:relative;width:80px}
+.flame{width:20px;height:36px;margin:0 auto;position:relative;animation:flameSway 2.5s ease-in-out infinite}
+.flame-outer{position:absolute;inset:0;background:linear-gradient(to bottom,#ffcc44,#ff8833,transparent);border-radius:50% 50% 40% 40%;animation:flameFlicker 1.5s ease-in-out infinite alternate}
+.flame-inner{position:absolute;inset:4px 6px 8px;background:linear-gradient(to bottom,#fff8a0,#ffcc44,transparent);border-radius:50% 50% 40% 40%}
+@keyframes flameSway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes flameFlicker{0%{transform:scaleY(1) scaleX(1)}100%{transform:scaleY(1.1) scaleX(.92)}}
+.candle-glow{position:absolute;top:-20px;left:50%;transform:translateX(-50%);width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.15) 0%,transparent 70%);animation:glowPulse 2.5s ease-in-out infinite}
+@keyframes glowPulse{0%,100%{opacity:.7}50%{opacity:1}}
+.candle-body{width:24px;height:70px;background:linear-gradient(to right,#e8d0a8,#f5e8c8,#c8b080);border-radius:3px 3px 0 0;margin:0 auto;position:relative}
+.candle-drip{position:absolute;width:6px;height:12px;background:#e8d0a8;border-radius:0 0 4px 4px;top:-5px}
+.candle-drip:nth-child(1){left:2px}
+.candle-drip:nth-child(2){right:4px;height:8px;top:-2px}
+.candle-holder{width:40px;height:12px;background:#3a2a10;border-radius:50%;margin:0 auto}
+
+/* SMOKE PARTICLES */
+.smoke-container{position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:60px;height:60px;pointer-events:none;overflow:visible}
+.smoke-particle{position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(255,215,0,.3);animation:smokeRise 3s ease-out forwards;opacity:0}
+@keyframes smokeRise{0%{transform:translateY(0) translateX(0) scale(0.5);opacity:.6}50%{opacity:.3}100%{transform:translateY(-80px) translateX(var(--dx)) scale(2);opacity:0}}
+
+/* BURDEN INPUT */
+.vigil-content{text-align:center;max-width:520px;width:100%}
+.vigil-eyebrow{font-size:.5rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gd);margin-bottom:.75rem}
+.vigil-title{font-family:var(--font-serif);font-size:clamp(1.5rem,3.5vw,2.5rem);color:var(--cream);margin-bottom:.4rem;line-height:1.2}
+.vigil-title em{color:var(--gold);font-style:italic}
+.vigil-sub{font-size:.68rem;color:var(--muted);line-height:1.9;margin-bottom:1.5rem;max-width:420px;margin-left:auto;margin-right:auto}
+.burden-input{width:100%;padding:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,215,0,.15);color:var(--cream);font-family:var(--font-serif);font-style:italic;font-size:1rem;resize:none;outline:none;height:80px;transition:border-color .3s;line-height:1.7}
+.burden-input:focus{border-color:rgba(255,215,0,.3)}
+.burden-input::placeholder{color:var(--faint);font-style:italic}
+.release-btn{display:block;width:100%;margin-top:.75rem;padding:.85rem;background:transparent;border:1px solid rgba(255,215,0,.2);color:var(--muted);font-family:var(--font-sans);font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.release-btn:hover{border-color:rgba(255,215,0,.5);color:var(--gold)}
+.vigil-response{font-family:var(--font-serif);font-style:italic;font-size:.95rem;color:var(--gd);margin-top:1rem;min-height:2rem;opacity:0;transition:opacity .8s;line-height:1.7}
+.vigil-response.show{opacity:1}
+.vigil-note{font-size:.5rem;color:var(--faint);margin-top:.75rem;line-height:1.8;letter-spacing:.05em}
+</style>
+
+<style id="depth-gauge-style">
+.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:36px;background:rgba(12,10,7,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:2rem;z-index:999;padding:0 1rem;flex-wrap:wrap}
+.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28}
+.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
+.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s}
+.dg-link:hover{color:#FFD700}
+.dg-sep{color:#2a1808;font-size:.6rem}
+</style>
+
+<style id="nmn-cursor">
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
+</style>
+<style id="floating-gauge">
+.depth-gauge{
+  position:fixed!important;bottom:12px!important;left:50%!important;
+  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
+  height:42px!important;background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
+  padding:0 18px!important;pointer-events:none!important;
+  z-index:9999!important;backdrop-filter:blur(4px)!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:1.2rem!important;flex-wrap:nowrap!important;
+  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
+body{padding-bottom:65px!important}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+
+
+
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+<header>
+  <a href="index.html" class="logo">NMN — Lord Oro</a>
+  <a href="index.html" class="back">← Return to the Mine</a>
+</header>
+
+<div class="vigil-room">
+  <div class="candle-area">
+    <div class="candle-wrap">
+      <div class="candle-glow"></div>
+      <div class="smoke-container" id="smokeContainer"></div>
+      <div class="flame">
+        <div class="flame-outer"></div>
+        <div class="flame-inner"></div>
+      </div>
+      <div class="candle-body">
+        <div class="candle-drip"></div>
+        <div class="candle-drip"></div>
+      </div>
+    </div>
+    <div class="candle-holder"></div>
+  </div>
+
+  <div class="vigil-content">
+    <div class="vigil-eyebrow">The Oracle's Chamber — The Vigil</div>
+    <h1 class="vigil-title">Leave it <em>here.</em></h1>
+    <p class="vigil-sub">The mine holds everything that enters it. Write what you're carrying. The burden doesn't have to be heavy to deserve a place in the dark. Release it to the smoke. It will not be saved. It will not be read. It will simply be acknowledged — and then it will rise.</p>
+    <textarea class="burden-input" id="burdenInput" placeholder="Write anything. A fear. A name. A question you haven't asked out loud. A thing you've been carrying too long. It goes into the mine."></textarea>
+    <button class="release-btn" onclick="releaseBurden()">⬡ Release to the Smoke</button>
+    <div class="vigil-response" id="vigilResponse"></div>
+    <div class="vigil-note">Nothing typed here is stored, sent, or saved anywhere. It exists only in this moment. When you close this page, it is gone. That is the point.</div>
+  </div>
+</div>
+
+<script>
+const RESPONSES = [
+  "The mine received it. You are lighter now.",
+  "It went into the smoke. It rose. It dissolved. You can breathe.",
+  "The candle witnessed it. That's enough.",
+  "The mine holds it now. You don't have to.",
+  "What you left here will not follow you back up the shaft.",
+  "Lord Oro acknowledges what you carried. It is recorded nowhere. It is known.",
+  "The burden is smoke. Smoke becomes air. Air becomes the next breath you take.",
+  "The vigil is over. You may descend now, or you may rest here. Both are permitted.",
+  "The flame saw it. The mine accepted it. You may move forward.",
+  "Some things need only to be named to lose their weight. You named it. Well done.",
+];
+
+function spawnSmoke(count=5) {
+  const container = document.getElementById('smokeContainer');
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const s = document.createElement('div');
+      s.className = 'smoke-particle';
+      const dx = (Math.random() - 0.5) * 40;
+      s.style.setProperty('--dx', dx + 'px');
+      s.style.left = (25 + Math.random() * 10) + 'px';
+      s.style.top = '0px';
+      s.style.animationDelay = (Math.random() * 0.5) + 's';
+      container.appendChild(s);
+      setTimeout(() => s.remove(), 3000);
+    }, i * 200);
+  }
+}
+
+function releaseBurden() {
+  const input = document.getElementById('burdenInput');
+  const text = input.value.trim();
+  if (!text) {
+    const resp = document.getElementById('vigilResponse');
+    resp.textContent = '"There is nothing wrong with having nothing to release. Come back when the mine calls you."';
+    resp.classList.add('show');
+    return;
+  }
+  // Spawn lots of smoke
+  for (let i = 0; i < 3; i++) setTimeout(() => spawnSmoke(6), i * 600);
+  // Clear input with animation
+  input.style.opacity = '0';
+  input.style.transition = 'opacity 1.5s';
+  setTimeout(() => {
+    input.value = '';
+    input.style.opacity = '0.3';
+  }, 1500);
+  // Show response
+  const resp = document.getElementById('vigilResponse');
+  resp.classList.remove('show');
+  setTimeout(() => {
+    resp.textContent = `"${RESPONSES[Math.floor(Math.random() * RESPONSES.length)]}"`;
+    resp.classList.add('show');
+  }, 1800);
+}
+
+// Ambient smoke
+setInterval(() => spawnSmoke(1), 4000);
+spawnSmoke(2);
+
+// Keyboard shortcut
+document.getElementById('burdenInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.ctrlKey) releaseBurden();
+});
+</script>
+
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> Lore Fragments</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span> Creatures</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
+  <a href="ledger.html" class="dg-link">📖 Ledger</a>
+</div>
+<script>
+(function(){
+  try{
+    var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+    var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
+    var gold=parseInt(localStorage.getItem('nmn_total_gold')||'0');
+    var el=document.getElementById('dgGold');if(el)el.textContent=gold;
+    var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
+    var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
+  }catch(e){}
+})();
+</script>
+
+<script>
+window.NMN_CONTEXT = "vigil";
+// NMN LIVING SOUNDSCAPE — Excavation Committee
+// Gemini's Quad-Track Engine + Claude's integration layer
+// Zero external files. Under 2KB. Procedural — never repeats exactly.
+
+const NMN_Audio = {
+  ctx: null,
+  running: false,
+  masterGain: null,
+  layers: {},
+
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  },
+
+  // TRACK 1 — The Deep Earth (continuous, low hum)
+  playHum() {
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(55, this.ctx.currentTime); // G1
+    gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
+    // Slow breathing — mine is alive
+    // Gemini's LFO: 0.08Hz = one breath every 12.5 seconds
+    const lfo = this.ctx.createOscillator();
+    const lfoGain = this.ctx.createGain();
+    lfo.type = 'sine';
+    lfo.frequency.value = 0.08;
+    lfoGain.gain.value = 0.01; // depth of breath
+    lfo.connect(lfoGain);
+    lfoGain.connect(gain.gain);
+    lfo.start();
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+    osc.start();
+    this.layers.hum = { osc, gain };
+  },
+
+  // TRACK 2 — The Air Shaft (filtered noise / wind)
+  playWind() {
+    const bufferSize = 2 * this.ctx.sampleRate;
+    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+    const whiteNoise = this.ctx.createBufferSource();
+    whiteNoise.buffer = noiseBuffer;
+    whiteNoise.loop = true;
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 400;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.012, this.ctx.currentTime);
+    whiteNoise.connect(filter);
+    filter.connect(g);
+    g.connect(this.masterGain);
+    whiteNoise.start();
+    this.layers.wind = { src: whiteNoise, gain: g };
+  },
+
+  // TRACK 3 — The Distant Strike (random pickaxe echoes)
+  playStrike() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.75) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        // Metallic strike freq
+        osc.frequency.setValueAtTime(140 + Math.random() * 80, this.ctx.currentTime);
+        osc.type = 'sawtooth';
+        g.gain.setValueAtTime(0.04, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.6);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.6);
+      }
+      // Randomize interval — 3s to 6s — never predictable
+      setTimeout(tick, 3000 + Math.random() * 3000);
+    };
+    setTimeout(tick, 2000);
+  },
+
+  // TRACK 4 — The Gold Shimmer (crystal high tones)
+  playShimmer() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.85) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'triangle';
+        // Gold harmonic range — slightly randomized each time
+        osc.frequency.setValueAtTime(2200 + Math.random() * 1400, this.ctx.currentTime);
+        g.gain.setValueAtTime(0, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.012, this.ctx.currentTime + 1.2);
+        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2.5);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 2.5);
+      }
+      setTimeout(tick, 5000 + Math.random() * 4000);
+    };
+    setTimeout(tick, 4000);
+  },
+
+  // TRACK 5 — The Subterranean Drip (Gemini's finalized version)
+  // Fast pitch-drop simulates the physics of water hitting a cavern pool
+  playWaterDrip() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.6) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sine';
+        // Start mid-freq, drop 50% in 80ms — exact droplet physics
+        osc.frequency.setValueAtTime(400 + Math.random() * 100, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.08);
+        g.gain.setValueAtTime(0.02, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.08);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.08);
+      }
+      // 2-8 second random interval — no rhythmic pattern ever emerges
+      setTimeout(tick, 2000 + Math.random() * 6000);
+    };
+    setTimeout(tick, 5000 + Math.random() * 3000);
+  },
+
+  // TRACK 6 — The Oracle's Pad
+  playOraclePad() {
+    const AMAJ = [220, 277.18, 329.63];
+    const tick = () => {
+      if (!this.running) return;
+      AMAJ.forEach((freq, i) => {
+        const osc = this.ctx.createOscillator();
+        const filter = this.ctx.createBiquadFilter();
+        const g = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        filter.type = 'lowpass'; filter.frequency.value = 800;
+        g.gain.setValueAtTime(0, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.03, this.ctx.currentTime + 2);
+        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 9);
+        osc.connect(filter); filter.connect(g); g.connect(this.masterGain);
+        osc.start(this.ctx.currentTime + i * 0.08);
+        osc.stop(this.ctx.currentTime + 9.5);
+      });
+      setTimeout(tick, 9000);
+    };
+    setTimeout(tick, 8000);
+  },
+
+  // Page-context aware — different mix per section
+  startAll(context) {
+    if (this.running) return;
+    this.init();
+    this.running = true;
+    this.playHum();
+    this.playWind();
+    this.playStrike();
+    this.playShimmer();
+    this.playOraclePad();
+    // Only add water drip on deep mine pages
+    if (context === 'deep' || context === 'oracle' || context === 'vigil') {
+      this.playWaterDrip();
+    }
+    // Tora gets a slightly higher shimmer frequency (more ethereal)
+    if (context === 'tora') {
+      this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
+    }
+  },
+
+  stop() {
+    if (!this.running) return;
+    this.running = false;
+    if (this.masterGain) {
+      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
+    }
+  },
+
+  toggle() {
+    if (this.running) { this.stop(); return false; }
+    else { this.startAll(window.NMN_CONTEXT || 'mine'); return true; }
+  }
+};
+
+// Trigger on first interaction — browser autoplay policy requires user gesture
+document.addEventListener('click', () => {
+  if (!NMN_Audio.running) NMN_Audio.startAll(window.NMN_CONTEXT || 'mine');
+}, { once: true });
+
+</script>
+
+<button id="nmn-sound-btn" onclick="
+  const on = NMN_Audio.toggle();
+  this.textContent = on ? '🔊 Sound On' : '🔇 Sound Off';
+  this.style.color = on ? 'var(--gold,#c9962a)' : '#4a3c28';
+" style="position:fixed;bottom:42px;right:.75rem;z-index:998;background:rgba(12,10,7,.9);border:1px solid rgba(255,215,0,.2);color:#4a3c28;font-family:Josefin Sans,sans-serif;font-size:.42rem;letter-spacing:.1em;padding:.35rem .6rem;cursor:pointer;transition:all .3s">🔇 Sound Off</button>
+<script id="nmn-glow">
+(function(){
+  var r=document.createElement('div');
+  r.id='pickaxe-glow';
+  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
+  document.body.appendChild(r);
+  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
+  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
+  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
+})();
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ore Flow — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+<style>
+body{padding-top:56px;background:var(--coal);display:flex;flex-direction:column;align-items:center;min-height:100vh}
+.game-header{text-align:center;padding:2rem 1rem 1rem}
+.game-header h1{font-family:var(--font-display);font-size:clamp(1.6rem,5vw,2.8rem);color:var(--gold);text-shadow:0 0 30px rgba(255,215,0,.4);margin-bottom:.5rem}
+.game-header p{font-family:var(--font-pixel);font-size:.34rem;color:var(--muted);letter-spacing:.14em;line-height:2.2}
+#gameCanvas{border:2px solid rgba(255,215,0,.4);box-shadow:0 0 30px rgba(255,215,0,.1),0 0 80px rgba(0,0,0,.8);display:block;image-rendering:pixelated;cursor:crosshair;max-width:95vw;touch-action:none}
+.hud{display:flex;gap:2rem;padding:.75rem 1.5rem;background:rgba(0,0,0,.6);border:1px solid rgba(255,215,0,.2);border-top:none;font-family:var(--font-pixel);font-size:.42rem;color:var(--gold);margin-bottom:.75rem;flex-wrap:wrap;justify-content:center}
+.hud span{display:flex;flex-direction:column;align-items:center;gap:3px}
+.hud .label{font-size:.28rem;color:var(--muted);letter-spacing:.12em}
+.level-select{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap;justify-content:center}
+.lvl-btn{font-family:var(--font-pixel);font-size:.3rem;padding:.4rem .8rem;background:transparent;border:1px solid rgba(255,215,0,.18);color:var(--muted);cursor:pointer;transition:all .2s;letter-spacing:.08em}
+.lvl-btn:hover,.lvl-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,.06)}
+.btn-row{display:flex;gap:.75rem;margin-bottom:2rem;flex-wrap:wrap;justify-content:center}
+.g-btn{font-family:var(--font-pixel);font-size:.42rem;padding:.6rem 1.5rem;letter-spacing:.1em;cursor:pointer;border:none;transition:all .2s}
+.g-btn.start{background:var(--gold);color:var(--coal)}
+.g-btn.start:hover{background:#fff;box-shadow:0 0 20px rgba(255,215,0,.6)}
+.g-btn.back{background:transparent;color:var(--muted);border:1px solid rgba(255,215,0,.2)}
+.g-btn.back:hover{border-color:var(--gold);color:var(--gold)}
+#winMsg{display:none;font-family:var(--font-pixel);font-size:.44rem;color:var(--gold);text-align:center;padding:1.5rem 2rem;border:2px solid rgba(255,215,0,.5);background:rgba(0,0,0,.92);margin-bottom:1rem;max-width:420px;line-height:2.6;letter-spacing:.06em;box-shadow:0 0 30px rgba(255,215,0,.15)}
+.controls{font-family:var(--font-pixel);font-size:.3rem;color:var(--faint);text-align:center;margin-bottom:.75rem;letter-spacing:.1em;line-height:2.2}
+</style>
+</head>
+<body>
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
+<div class="game-header">
+  <h1>&#9935; Ore Flow</h1>
+  <p>CONNECT THE ORE VEINS &mdash; FILL EVERY CELL &mdash; NO CROSSINGS</p>
+</div>
+<div id="winMsg">&#11041; VEIN COMPLETE &#11041;<br>All ore paths sealed.<br>The mine runs clean.<br><br>+25 GOLD EXTRACTED</div>
+<canvas id="gameCanvas"></canvas>
+<div class="hud">
+  <span><span id="hudMoves">0</span><span class="label">MOVES</span></span>
+  <span><span id="hudFill">0%</span><span class="label">FILLED</span></span>
+  <span><span id="hudPairs">0/0</span><span class="label">VEINS SEALED</span></span>
+</div>
+<div class="level-select" id="levelSelect"></div>
+<div class="btn-row">
+  <button class="g-btn start" onclick="resetLevel()">&#9935; RESET</button>
+  <button class="g-btn start" onclick="nextLevel()">NEXT LEVEL &rarr;</button>
+  <button class="g-btn back" onclick="location.href='games.html'">&larr; BACK TO MINE</button>
+</div>
+<div class="controls">CLICK + DRAG to draw ore veins &nbsp;|&nbsp; TOUCH + DRAG on mobile &nbsp;|&nbsp; Fill every cell to win</div>
+<script>
+const CELL=56;
+const COLORS=['#FFD700','#00BFFF','#9B59B6','#2ECC71','#E74C3C','#FF8C00','#E8F0F0','#FF69B4'];
+
+// [gridSize, [[r1,c1,r2,c2,colorIdx],...]]
+// These levels are designed so every cell can be covered
+const LEVELS=[
+  [5,[
+    [0,0,4,0,0],
+    [0,4,4,4,1],
+    [0,1,0,3,2],
+    [4,1,4,3,3]
+  ]],
+  [6,[
+    [0,0,5,0,0],
+    [0,5,5,5,1],
+    [0,2,5,2,2],
+    [0,3,5,3,3],
+    [2,1,2,4,4]
+  ]],
+  [7,[
+    [0,0,6,0,0],
+    [0,6,6,6,1],
+    [0,3,6,3,2],
+    [3,0,3,6,3],
+    [1,1,5,5,4],
+    [1,5,5,1,5]
+  ]],
+  [8,[
+    [0,0,7,0,0],
+    [0,7,7,7,1],
+    [0,3,7,4,2],
+    [3,0,4,7,3],
+    [1,1,6,6,4],
+    [1,6,6,1,5],
+    [0,5,7,2,6]
+  ]],
+  [9,[
+    [0,0,8,0,0],
+    [0,8,8,8,1],
+    [0,4,8,4,2],
+    [4,0,4,8,3],
+    [1,1,7,7,4],
+    [1,7,7,1,5],
+    [0,6,8,2,6]
+  ]]
+];
+
+let curLevel=0,N=0,grid=[],paths=[],completed=[],dots=[],drawing=false,activeColor=-1,activePath=[],moves=0;
+const canvas=document.getElementById('gameCanvas');
+const ctx=canvas.getContext('2d');
+
+function buildLevelSelect(){
+  const el=document.getElementById('levelSelect');el.innerHTML='';
+  LEVELS.forEach((_,i)=>{
+    const b=document.createElement('button');
+    b.className='lvl-btn'+(i===curLevel?' active':'');
+    b.textContent='VEIN '+(i+1);
+    b.onclick=()=>{curLevel=i;buildLevelSelect();loadLevel();};
+    el.appendChild(b);
+  });
+}
+
+function loadLevel(){
+  document.getElementById('winMsg').style.display='none';
+  const[n,pairs]=LEVELS[curLevel];N=n;
+  canvas.width=canvas.height=N*CELL;
+  grid=Array.from({length:N},()=>Array(N).fill(-1));
+  paths=pairs.map(()=>[]);
+  completed=pairs.map(()=>false);
+  dots=pairs.map(([r1,c1,r2,c2,ci])=>({r1,c1,r2,c2,ci}));
+  dots.forEach(({r1,c1,r2,c2,ci})=>{grid[r1][c1]=ci;grid[r2][c2]=ci;});
+  moves=0;drawing=false;activeColor=-1;activePath=[];
+  updateHUD();draw();
+}
+
+const isDot=(r,c)=>dots.some(d=>(d.r1===r&&d.c1===c)||(d.r2===r&&d.c2===c));
+const dotColorOf=(r,c)=>{const d=dots.find(d=>(d.r1===r&&d.c1===c)||(d.r2===r&&d.c2===c));return d?d.ci:-1;};
+
+function clearPath(ci){
+  if(paths[ci]){paths[ci].forEach(([r,c])=>{if(!isDot(r,c))grid[r][c]=-1;});}
+  paths[ci]=[];completed[ci]=false;
+}
+
+function cellAt(x,y){return[Math.floor(y/CELL),Math.floor(x/CELL)];}
+
+function startDraw(r,c){
+  if(r<0||r>=N||c<0||c>=N)return;
+  const ci=dotColorOf(r,c);
+  if(ci>=0){
+    clearPath(ci);
+    activeColor=ci;activePath=[[r,c]];
+    paths[ci]=[[r,c]];grid[r][c]=ci;
+    drawing=true;moves++;
+  } else if(grid[r][c]>=0){
+    const ci2=grid[r][c];
+    if(completed[ci2]) return; // don't resume a sealed path mid-cell
+    const idx=paths[ci2].findIndex(([pr,pc])=>pr===r&&pc===c);
+    if(idx>=0){
+      const removed=paths[ci2].splice(idx+1);
+      removed.forEach(([pr,pc])=>{if(!isDot(pr,pc))grid[pr][pc]=-1;});
+      completed[ci2]=false;
+      activeColor=ci2;activePath=[...paths[ci2]];
+      drawing=true;moves++;
+    }
+  }
+}
+
+function continueDraw(r,c){
+  if(!drawing||r<0||r>=N||c<0||c>=N)return;
+  const last=activePath[activePath.length-1];
+  if(last[0]===r&&last[1]===c)return;
+  if(Math.abs(r-last[0])+Math.abs(c-last[1])!==1)return;
+
+  // Backtrack
+  if(activePath.length>1){
+    const prev=activePath[activePath.length-2];
+    if(prev[0]===r&&prev[1]===c){
+      const[lr,lc]=activePath.pop();
+      paths[activeColor].pop();
+      if(!isDot(lr,lc))grid[lr][lc]=-1;
+      completed[activeColor]=false;
+      draw();return;
+    }
+  }
+
+  // Don't re-enter our own path (prevents loops)
+  if(grid[r][c]===activeColor) return;
+
+  // Clear another color that occupies the target cell
+  const existing=grid[r][c];
+  if(existing>=0&&existing!==activeColor) clearPath(existing);
+
+  activePath.push([r,c]);
+  paths[activeColor]=[...activePath];
+  grid[r][c]=activeColor;
+  draw();
+
+  // Detect if we've reached the OTHER endpoint
+  const d=dots[activeColor];
+  const[sr,sc]=activePath[0];
+  const otherR=(d.r1===sr&&d.c1===sc)?d.r2:d.r1;
+  const otherC=(d.r1===sr&&d.c1===sc)?d.c2:d.c1;
+
+  if(r===otherR&&c===otherC&&activePath.length>1){
+    completed[activeColor]=true;
+    drawing=false;
+    checkWin();
+  }
+}
+
+function checkWin(){
+  const allSealed=completed.every(Boolean);
+  const filledCells=grid.flat().filter(v=>v>=0).length;
+  if(allSealed&&filledCells===N*N){
+    document.getElementById('winMsg').style.display='block';
+  }
+  updateHUD();
+}
+
+function updateHUD(){
+  document.getElementById('hudMoves').textContent=moves;
+  const filled=grid.flat().filter(v=>v>=0).length;
+  document.getElementById('hudFill').textContent=Math.round(filled/(N*N)*100)+'%';
+  const conn=completed.filter(Boolean).length;
+  document.getElementById('hudPairs').textContent=conn+'/'+dots.length;
+}
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='#090807';ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.strokeStyle='rgba(255,215,0,0.065)';ctx.lineWidth=1;
+  for(let i=0;i<=N;i++){
+    ctx.beginPath();ctx.moveTo(i*CELL,0);ctx.lineTo(i*CELL,N*CELL);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(N*CELL,i*CELL);ctx.stroke();
+  }
+  paths.forEach((path,ci)=>{
+    if(path.length<2)return;
+    ctx.strokeStyle=COLORS[ci];ctx.lineWidth=CELL*.38;ctx.lineCap='round';ctx.lineJoin='round';
+    ctx.shadowColor=COLORS[ci];ctx.shadowBlur=10;
+    ctx.beginPath();
+    path.forEach(([r,c],i)=>{const x=c*CELL+CELL/2,y=r*CELL+CELL/2;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+    ctx.stroke();ctx.shadowBlur=0;
+  });
+  dots.forEach(({r1,c1,r2,c2,ci})=>{
+    [[r1,c1],[r2,c2]].forEach(([r,c])=>{
+      const x=c*CELL+CELL/2,y=r*CELL+CELL/2;
+      ctx.beginPath();ctx.arc(x,y,CELL*.34,0,Math.PI*2);
+      ctx.fillStyle=COLORS[ci];ctx.shadowColor=COLORS[ci];ctx.shadowBlur=14;ctx.fill();ctx.shadowBlur=0;
+      ctx.beginPath();ctx.arc(x,y,CELL*.16,0,Math.PI*2);ctx.fillStyle='rgba(0,0,0,.75)';ctx.fill();
+      ctx.fillStyle='rgba(255,255,255,.35)';ctx.fillRect(x-CELL*.11,y-CELL*.18,CELL*.1,CELL*.09);
+    });
+  });
+}
+
+function resetLevel(){loadLevel();}
+function nextLevel(){curLevel=(curLevel+1)%LEVELS.length;buildLevelSelect();loadLevel();}
+
+function getRC(e){
+  const r=canvas.getBoundingClientRect();
+  const cx=((e.clientX||(e.touches&&e.touches[0]?e.touches[0].clientX:0))||0)-r.left;
+  const cy=((e.clientY||(e.touches&&e.touches[0]?e.touches[0].clientY:0))||0)-r.top;
+  return cellAt(cx*(canvas.width/r.width),cy*(canvas.height/r.height));
+}
+
+canvas.addEventListener('mousedown',e=>{const[r,c]=getRC(e);startDraw(r,c);draw();});
+canvas.addEventListener('mousemove',e=>{if(drawing){const[r,c]=getRC(e);continueDraw(r,c);}});
+canvas.addEventListener('mouseup',()=>{drawing=false;updateHUD();});
+canvas.addEventListener('touchstart',e=>{e.preventDefault();const[r,c]=getRC(e);startDraw(r,c);draw();},{passive:false});
+canvas.addEventListener('touchmove',e=>{e.preventDefault();if(drawing){const[r,c]=getRC(e);continueDraw(r,c);}},{passive:false});
+canvas.addEventListener('touchend',()=>{drawing=false;updateHUD();});
+
+buildLevelSelect();loadLevel();
+</script>
+</body>
+</html>

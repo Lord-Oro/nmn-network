@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Depths of the Mine — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root{--gold:#FFD700;--gold-bright:#e8b84b;--gold-dim:#7a5a18;--coal:#070605;--shaft:#110e09;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);background:var(--coal);color:var(--cream);min-height:100vh;background-image:linear-gradient(45deg,#0c0a07 25%,#110e0a 25%,#110e0a 50%,#0c0a07 50%,#0c0a07 75%,#110e0a 75%,#110e0a 100%);background-size:4px 4px}
+header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(12,10,7,.95);position:sticky;top:0;z-index:10}
+.logo{font-family:var(--font-pixel);color:var(--gold);font-size:.95rem;text-decoration:none}
+.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.back:hover{color:var(--gold)}
+.status-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:rgba(255,215,0,.08);border-bottom:1px solid rgba(255,215,0,.08)}
+.status-cell{padding:.6rem .5rem;background:var(--coal);text-align:center}
+.status-val{font-family:var(--font-serif);font-size:1.2rem;color:var(--gold);line-height:1}
+.status-lab{font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+main{max-width:700px;margin:0 auto;padding:2rem 1.5rem 5rem}
+/* STORY BOX */
+.story-box{border:1px solid rgba(255,215,0,.2);background:rgba(255,215,0,.04);padding:1.25rem 1.5rem;margin-bottom:1.5rem;position:relative}
+.story-box::before{content:'▶';position:absolute;top:.8rem;left:.8rem;font-size:.6rem;color:var(--gold-dim)}
+.story-eyebrow{font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:.5rem;padding-left:1.2rem}
+.story-text{font-family:var(--font-pixel);font-size:1.05rem;color:var(--cream);line-height:1.8;padding-left:1.2rem}
+/* CARDS */
+.cards-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.25rem}
+.card{border:1px solid rgba(255,215,0,.15);background:var(--shaft);cursor:pointer;transition:all .25s;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.25rem .75rem;min-height:140px;position:relative;overflow:hidden}
+.card:hover:not(.revealed){border-color:rgba(255,215,0,.5);transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.card.revealed{cursor:default}
+.card-back-icon{font-size:2rem;opacity:.25;display:block;margin-bottom:.5rem}
+.card-back-label{font-size:.45rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+.card-front{display:none;flex-direction:column;align-items:center;gap:.4rem;text-align:center;width:100%}
+.card.revealed .card-back-icon,.card.revealed .card-back-label{display:none}
+.card.revealed .card-front{display:flex}
+.card-icon{font-size:2rem}
+.card-name{font-family:var(--font-serif);font-size:.95rem;color:var(--cream);line-height:1.2}
+.card-val{font-family:var(--font-serif);font-size:1.3rem;font-weight:600}
+.card-eff{font-size:.58rem;color:var(--muted);line-height:1.4}
+.card.t-gold{border-color:rgba(255,215,0,.4);background:rgba(255,215,0,.06)}.card.t-gold .card-val{color:var(--gold)}
+.card.t-weapon{border-color:rgba(42,122,42,.4);background:rgba(42,122,42,.05)}.card.t-weapon .card-val{color:#4aaa4a}
+.card.t-enemy{border-color:rgba(122,42,42,.4);background:rgba(122,42,42,.05)}.card.t-enemy .card-val{color:#aa4a4a}
+.card.t-trap{border-color:rgba(80,20,20,.5);background:rgba(80,20,20,.07)}.card.t-trap .card-val{color:#ff5555}
+.card.t-fuel{border-color:rgba(200,150,42,.3);background:rgba(200,150,42,.05)}.card.t-fuel .card-val{color:var(--gold-bright)}
+.card.t-lore{border-color:rgba(80,42,122,.4);background:rgba(80,42,122,.06)}.card.t-lore .card-val{color:#aa88ff}
+.card.t-oro{border-color:var(--gold);background:rgba(255,215,0,.1);animation:oroPulse 2s ease-in-out infinite}
+@keyframes oroPulse{0%,100%{box-shadow:0 0 8px rgba(255,215,0,.2)}50%{box-shadow:0 0 25px rgba(255,215,0,.5)}}
+/* LOG */
+.log-box{border:1px solid rgba(255,215,0,.1);margin-bottom:1.25rem}
+.log-head{padding:.5rem 1rem;background:rgba(255,215,0,.05);border-bottom:1px solid rgba(255,215,0,.08);font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-dim)}
+.log-body{padding:.75rem 1rem;max-height:100px;overflow-y:auto;display:flex;flex-direction:column-reverse;gap:.3rem}
+.log-entry{font-size:.7rem;color:var(--muted);line-height:1.5}
+.log-entry.good{color:#4aaa4a}.log-entry.bad{color:#aa4a4a}.log-entry.special{color:var(--gold);font-style:italic;font-family:var(--font-serif);font-size:.9rem}
+/* CONTINUE */
+.continue-row{display:flex;gap:.75rem;justify-content:center;margin-top:1rem;flex-wrap:wrap}
+.btn{padding:.75rem 1.75rem;font-family:var(--font-sans);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;border:none;transition:all .3s;display:inline-block;text-decoration:none}
+.btn-gold{background:var(--gold);color:var(--coal)}.btn-gold:hover{background:var(--gold-bright)}
+.btn-outline{background:transparent;color:var(--gold);border:1px solid rgba(255,215,0,.4)}.btn-outline:hover{background:rgba(255,215,0,.08)}
+/* OVERLAYS */
+.overlay{display:none;position:fixed;inset:0;background:rgba(12,10,7,.96);z-index:50;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
+.overlay.active{display:flex}
+.ov-icon{font-size:3rem;margin-bottom:1rem}
+.ov-title{font-family:var(--font-serif);font-size:clamp(1.8rem,4vw,3rem);color:var(--gold);margin-bottom:.5rem}
+.ov-title em{font-style:italic}
+.ov-sub{font-size:.75rem;color:var(--muted);max-width:420px;line-height:1.9;margin-bottom:1.5rem}
+.ov-lore{font-family:var(--font-pixel);color:var(--gold-dim);max-width:420px;line-height:1.7;padding:1rem;border:1px solid rgba(255,215,0,.15);margin-bottom:1.5rem;font-size:1rem}
+/* CLASS SELECT */
+.class-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;max-width:560px;width:100%;margin-bottom:1.5rem}
+.class-card{padding:1.5rem 1rem;border:1px solid rgba(255,215,0,.15);background:rgba(255,255,255,.02);cursor:pointer;transition:all .3s;text-align:center}
+.class-card:hover,.class-card.sel{border-color:var(--gold);background:rgba(255,215,0,.1)}
+.class-icon{font-size:2.5rem;display:block;margin-bottom:.75rem}
+.class-name{font-family:var(--font-serif);font-size:1.1rem;color:var(--cream);margin-bottom:.4rem}
+.class-stat{font-size:.58rem;color:var(--muted);line-height:1.7}
+.class-bonus{font-size:.55rem;color:var(--gold-dim);margin-top:.4rem;letter-spacing:.05em}
+/* INV */
+.inv-row{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem;min-height:24px}
+.inv-item{padding:.2rem .6rem;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);font-size:.6rem;color:var(--muted)}
+@media(max-width:500px){.cards-row{grid-template-columns:repeat(3,1fr);gap:.4rem}.class-grid{grid-template-columns:1fr}}
+
+/* LORE TOAST — non-disruptive, corner notification */
+.lore-toast{position:fixed;bottom:50px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(12,10,7,.92);border:1px solid rgba(255,215,0,.3);border-left:3px solid var(--gold,#c9962a);padding:.6rem 1rem;max-width:280px;width:90%;z-index:500;opacity:0;transition:opacity .4s,transform .4s;pointer-events:none;font-family:var(--font-sans)}
+.lore-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.lore-toast-label{font-size:.38rem;letter-spacing:.2em;text-transform:uppercase;color:#7a5a18;margin-bottom:.25rem}
+.lore-toast-text{font-size:.58rem;color:#f0e6cc;line-height:1.5;font-style:italic}
+</style>
+
+<style id="depth-gauge-style">
+.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:36px;background:rgba(12,10,7,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:2rem;z-index:999;padding:0 1rem;flex-wrap:wrap}
+.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28}
+.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
+.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s}
+.dg-link:hover{color:#FFD700}
+.dg-sep{color:#2a1808;font-size:.6rem}
+</style>
+
+<style id="nmn-cursor">
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
+</style>
+<style id="gemini-viewport">
+.mining-frame{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-height:85vh;margin:0 auto;overflow:hidden}
+canvas{max-width:95%;height:auto!important}
+.active-glow{animation:pulseGold 2s infinite;color:#fff!important;text-shadow:0 0 10px #c9962a}
+@keyframes pulseGold{0%{opacity:.7}50%{opacity:1}100%{opacity:.7}}
+</style>
+<style id="floating-gauge">
+.depth-gauge{
+  position:fixed!important;bottom:12px!important;left:50%!important;
+  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
+  height:42px!important;background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
+  padding:0 18px!important;pointer-events:none!important;
+  z-index:9999!important;backdrop-filter:blur(4px)!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:1.2rem!important;flex-wrap:nowrap!important;
+  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
+body{padding-bottom:65px!important}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+
+
+
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+<script src="nmn-scene.js"></script>
+<header>
+  <a href="index.html" class="logo">NMN — Lord Oro</a>
+  <a href="games.html" class="back">← Recreation Hall</a>
+</header>
+<div class="status-bar">
+  <div class="status-cell"><div class="status-val" id="hpVal">20</div><div class="status-lab">❤️ HP</div></div>
+  <div class="status-cell"><div class="status-val" id="goldVal">0</div><div class="status-lab">⬡ Gold</div></div>
+  <div class="status-cell"><div class="status-val" id="depthVal">0</div><div class="status-lab">📍 Depth</div></div>
+  <div class="status-cell"><div class="status-val" id="atkVal">5</div><div class="status-lab">⚔️ Atk</div></div>
+  <div class="status-cell"><div class="status-val" id="classVal">—</div><div class="status-lab">🧑 Class</div></div>
+</div>
+<main>
+  <div class="story-box" id="storyBox">
+    <div class="story-eyebrow" id="storyEyebrow">Depth 0 — Surface</div>
+    <div class="story-text" id="storyText">The mine stretches before you. Your lantern flickers. Three paths wait in the dark.</div>
+  </div>
+  <div class="inv-row" id="invRow"></div>
+  <div class="cards-row" id="cardsRow"></div>
+  <div class="log-box">
+    <div class="log-head">Mine Log</div>
+    <div class="log-body" id="logBody"></div>
+  </div>
+  <div class="continue-row" id="continueRow" style="display:none">
+    <button class="btn btn-gold" onclick="nextRoom()">Descend Deeper ↓</button>
+    <a href="games.html" class="btn btn-outline">Leave the Mine</a>
+  </div>
+</main>
+
+<!-- CLASS SELECT -->
+<div class="overlay active" id="classOv">
+  <div class="ov-title">Choose Your <em>Class</em></div>
+  <p class="ov-sub">Every miner enters the same mine. Not every miner survives the same way.</p>
+  <div class="class-grid">
+    <div class="class-card" onclick="selectClass('warrior')">
+      <span class="class-icon">⚔️</span>
+      <div class="class-name">Warrior</div>
+      <div class="class-stat">HP: 30 / ATK: 8<br>The one who hits first</div>
+      <div class="class-bonus">Takes less damage from enemies</div>
+    </div>
+    <div class="class-card" onclick="selectClass('bowman')">
+      <span class="class-icon">🏹</span>
+      <div class="class-name">Bowman</div>
+      <div class="class-stat">HP: 20 / ATK: 6<br>Fast. Precise. Quiet.</div>
+      <div class="class-bonus">Finds more gold. Dodges traps often</div>
+    </div>
+    <div class="class-card" onclick="selectClass('mage')">
+      <span class="class-icon">🔮</span>
+      <div class="class-name">Mage</div>
+      <div class="class-stat">HP: 15 / ATK: 12<br>High risk. High gold.</div>
+      <div class="class-bonus">Lore cards grant double gold</div>
+    </div>
+  </div>
+  <a href="games.html" class="btn btn-outline">Return to Hall</a>
+</div>
+
+<!-- GAME OVER -->
+<div class="overlay" id="gameOverOv">
+  <div class="ov-title" id="goTitle">The Mine <em>Claimed You</em></div>
+  <p class="ov-sub" id="goStats"></p>
+  <div class="ov-lore" id="goLore"></div>
+  <button class="btn btn-outline" onclick="shareScore(score, 'Depths of the Mine')" style="margin-right:.5rem">⬡ Share Score</button>
+<button class="btn btn-gold" onclick="resetGame()">Descend Again</button>
+  <a href="games.html" class="btn btn-outline">Return to Hall</a>
+</div>
+
+<!-- ORO OVERLAY -->
+<div class="overlay" id="oroOv">
+  <div class="ov-icon">👁️</div>
+  <div class="ov-title">Lord Oro <em>Appears</em></div>
+  <div class="ov-lore" id="oroLore"></div>
+  <p class="ov-sub" style="color:var(--gold-dim);font-size:.65rem">He watches. He does not speak again. He vanishes into the dark.</p>
+  <button class="btn btn-gold" onclick="closeOro()">Continue Mining</button>
+</div>
+
+
+<script id="nmn-bridge">
+(function(){
+  try{
+    if(!localStorage.getItem('nmn_collector_v2'))
+      localStorage.setItem('nmn_collector_v2',JSON.stringify({G:{team:[],grimoire:{},starter:null,activeIdx:0,gold:0,clearedZones:['surface'],battles:0}}));
+    if(!localStorage.getItem('nmn_total_gold'))
+      localStorage.setItem('nmn_total_gold','0');
+  }catch(e){}
+})();
+</script>
+<script>
+const LORE=[
+  "The gold was never in the ground. It was in the hands that dug for it.",
+  "Nayla ran through the dark, her eyes reflecting what no human eye should see.",
+  "Juni had lived long enough to forget what dying felt like. That was the problem.",
+  "My sword is my pen. My kingdom is the human interior world.",
+  "The goldmine is within. Everything you seek, you carry.",
+  "Outbreak from the stars — they didn't come to destroy. They came to replace.",
+  "I never starve again. Substance in my words.",
+  "The man with two souls stood at the crossroads and chose both paths.",
+];
+
+// STORY SEQUENCES — encounter narratives before each card flip
+const SEQUENCES=[
+  {eyebrow:"Depth {d} — The Entrance Shaft",text:"Dust and silence. Your lantern catches the glint of something ahead. Three paths split before you. What does the mine hold?"},
+  {eyebrow:"Depth {d} — The First Vein",text:"Gold threads run through the wall like veins. Something stirs in the dark to your left. You hold still and choose."},
+  {eyebrow:"Depth {d} — The Collapsed Tunnel",text:"Beams have fallen. The path is narrow. You squeeze through and find three things waiting. The mine offers no guarantees."},
+  {eyebrow:"Depth {d} — The Underground Lake",text:"Black water reflects your lantern back at you. The surface ripples with no wind. Something beneath it stirs. Choose carefully."},
+  {eyebrow:"Depth {d} — The Bone Chamber",text:"Someone was here before you. Their lantern is cold. Their equipment is scattered. Three of their discoveries remain. Take what you will."},
+  {eyebrow:"Depth {d} — The Gold Seam",text:"The richest vein you have ever seen runs floor to ceiling. But the air smells of something ancient. The mine is watching. Choose."},
+  {eyebrow:"Depth {d} — The Shadow Crossing",text:"Something moves between the walls. It follows your lantern. It does not attack. It waits to see what you choose next."},
+  {eyebrow:"Depth {d} — The Deep Forge",text:"Ancient mining equipment. Someone built things here long ago. Their tools remain. Some are useful. Some are not what they appear."},
+  {eyebrow:"Depth {d} — The Final Chamber",text:"The air is different here. Older. You are very deep now. Most miners never reach this far. Three choices. This is what they all led to."},
+  {eyebrow:"Depth {d} — The Mythic Core",text:"No miner has returned from this far. The mine breathes. The walls pulse faintly gold. Lord Oro's territory. Choose."},
+];
+
+// CLASS DEFINITIONS
+const CLASSES={
+  warrior:{name:'Warrior',icon:'⚔️',hp:30,atk:8,bonus:'warrior'},
+  bowman:{name:'Bowman',icon:'🏹',hp:20,atk:6,bonus:'bowman'},
+  mage:{name:'Mage',icon:'🔮',hp:15,atk:12,bonus:'mage'},
+};
+
+// CARD POOL
+const CARDS=[
+  {type:'gold',icon:'⬡',name:'Gold Nugget',val:'+15 Gold',eff:'Raw ore from the vein.',fn:(s)=>{const g=s.cls==='bowman'?20:15;s.gold+=g;log(`Found ${g} gold.`,'good')}},
+  {type:'gold',icon:'💰',name:'Hidden Cache',val:'+35 Gold',eff:'Someone buried this and never came back.',fn:(s)=>{s.gold+=35;log('Hidden cache! +35 gold','good')}},
+  {type:'fuel',icon:'🪔',name:'Lantern Oil',val:'+8 HP',eff:'Your lantern breathes again.',fn:(s)=>{s.hp=Math.min(s.maxHp,s.hp+8);log('Lantern refueled. +8 HP','good')}},
+  {type:'fuel',icon:'🍖',name:'Ration Pack',val:'+12 HP',eff:'Old but edible. You eat without thinking.',fn:(s)=>{s.hp=Math.min(s.maxHp,s.hp+12);log('Ate a ration pack. +12 HP','good')}},
+  {type:'weapon',icon:'⚔️',name:'Iron Pickaxe',val:'ATK +3',eff:'A better tool. It hits with intention.',fn:(s)=>{s.atk+=3;s.inv.push('Iron Pickaxe');log('Equipped Iron Pickaxe. ATK +3','good')}},
+  {type:'weapon',icon:'🏹',name:'Ore Bow',val:'ATK +5',eff:'Strike from a distance. The mine respects precision.',fn:(s)=>{s.atk+=5;s.inv.push('Ore Bow');log('Found Ore Bow. ATK +5','good')}},
+  {type:'weapon',icon:'💎',name:'Diamond Shard',val:'ATK +8',eff:'Cuts through anything. Even shadow.',fn:(s)=>{s.atk+=8;s.inv.push('Diamond Shard');log('Diamond Shard equipped. ATK +8','good')}},
+  {type:'enemy',icon:'🦇',name:'Cave Bat',val:'Enemy',eff:'It lunges from the ceiling at your face.',fn:(s)=>{const dmg=Math.max(1,s.cls==='warrior'?3:6-Math.floor(s.atk/3));s.hp-=dmg;log(`Cave Bat attacks! -${dmg} HP`,'bad')}},
+  {type:'enemy',icon:'🐉',name:'Ore Dragon',val:'Enemy',eff:'Ancient. Massive. It has been waiting.',fn:(s)=>{const dmg=Math.max(3,s.cls==='warrior'?8:15-Math.floor(s.atk/2));s.hp-=dmg;log(`Ore Dragon strikes! -${dmg} HP`,'bad')}},
+  {type:'enemy',icon:'👻',name:'Shadow Beast',val:'Enemy',eff:'It passes through your weapon. Only lore stops it.',fn:(s)=>{const dmg=s.cls==='mage'?4:10;s.hp-=dmg;log(`Shadow Beast drains you. -${dmg} HP`,'bad')}},
+  {type:'enemy',icon:'🕷️',name:'Void Crawler',val:'Enemy',eff:'From the Outbreak. They came to replace.',fn:(s)=>{const dmg=Math.max(2,8-Math.floor(s.atk/3));s.hp-=dmg;log(`Void Crawler emerges! -${dmg} HP`,'bad')}},
+  {type:'trap',icon:'💀',name:'Deadfall Trap',val:'-12 HP',eff:'Rocks collapse from above. No warning.',fn:(s)=>{const dmg=s.cls==='bowman'&&Math.random()>.4?0:12;s.hp-=dmg;dmg?log('Deadfall trap! -12 HP','bad'):log('Bowman reflex — dodged the deadfall!','good')}},
+  {type:'trap',icon:'⚡',name:'Spark Trap',val:'-6 HP',eff:'Ancient mining charge. Still live.',fn:(s)=>{s.hp-=6;log('Spark trap! -6 HP','bad')}},
+  {type:'lore',icon:'📜',name:'Lore Fragment',val:'Whisper',eff:'The mine speaks.',fn:(s)=>{const g=s.cls==='mage'?40:20;s.gold+=g;const l=LORE[Math.floor(Math.random()*LORE.length)];log(`"${l}"`,'special')}},
+  {type:'oro',icon:'👁️',name:'Lord Oro',val:'Witnessed',eff:'He was here. He is always here.',fn:(s)=>{s.oroSeen++;s.gold+=60;showOro();log('Lord Oro appeared. +60 gold. He watches.','special')}},
+];
+
+let state={};
+
+function selectClass(cls){
+  document.getElementById('classOv').classList.remove('active');
+  const c=CLASSES[cls];
+  state={hp:c.hp,maxHp:c.hp,gold:0,depth:0,atk:c.atk,cls,clsName:c.name,clsIcon:c.icon,inv:[],oroSeen:0,roomsCleared:0,cards:[]};
+  updateStatus();
+  renderRoom();
+}
+
+function resetGame(){
+  document.getElementById('gameOverOv').classList.remove('active');
+  document.getElementById('classOv').classList.add('active');
+}
+
+function closeOro(){document.getElementById('oroOv').classList.remove('active')}
+
+function showOro(){
+  document.getElementById('oroLore').textContent=`"${LORE[Math.floor(Math.random()*LORE.length)]}"`;
+  document.getElementById('oroOv').classList.add('active');
+}
+
+function log(msg,cls=''){
+  const b=document.getElementById('logBody');
+  const e=document.createElement('div');
+  e.className=`log-entry ${cls}`;e.textContent=msg;
+  b.prepend(e);
+}
+
+function updateStatus(){
+  document.getElementById('hpVal').textContent=Math.max(0,state.hp);
+  document.getElementById('goldVal').textContent=state.gold;
+  document.getElementById('depthVal').textContent=state.depth;
+  document.getElementById('atkVal').textContent=state.atk;
+  document.getElementById('classVal').textContent=state.clsIcon||'—';
+  const inv=document.getElementById('invRow');
+  inv.innerHTML=state.inv.map(i=>`<div class="inv-item">${i}</div>`).join('');
+}
+
+function renderRoom(){
+  // Story sequence
+  const seq=SEQUENCES[Math.min(state.depth,SEQUENCES.length-1)];
+  document.getElementById('storyEyebrow').textContent=seq.eyebrow.replace('{d}',state.depth);
+  document.getElementById('storyText').textContent=seq.text;
+  document.getElementById('continueRow').style.display='none';
+
+  // Pick cards based on path choice
+  const numCards=state.pathCards!==undefined?state.pathCards:3;
+  state.pathCards=undefined;
+  let pool=[...CARDS];
+  const oroChance=state.depth>=5&&Math.random()<0.07;
+  if(!oroChance)pool=pool.filter(c=>c.type!=='oro');
+  if(state.depth<3)pool=pool.filter(c=>c.type!=='enemy'||c.name==='Cave Bat');
+  state.cards=Array.from({length:numCards},()=>pool[Math.floor(Math.random()*pool.length)]);
+  state.revealed=0;
+
+  const row=document.getElementById('cardsRow');
+  row.innerHTML=numCards===0?'<div style="text-align:center;padding:2rem;font-family:Cormorant Garamond,serif;font-style:italic;color:#7a5a18">The path is bare. Press Continue to move on.</div>':state.cards.map((_,i)=>`
+    <div class="card" id="c${i}" onclick="flipCard(${i})">
+      <span class="card-back-icon">⬡</span>
+      <div class="card-back-label">Tap to reveal</div>
+      <div class="card-front"></div>
+    </div>`).join('');
+}
+
+function flipCard(i){
+  const el=document.getElementById(`c${i}`);
+  if(el.classList.contains('revealed'))return;
+  const card=state.cards[i];
+  el.classList.add('revealed',`t-${card.type}`);
+  el.querySelector('.card-front').innerHTML=`
+    <div class="card-icon">${card.icon}</div>
+    <div class="card-name">${card.name}</div>
+    <div class="card-val">${card.val}</div>
+    <div class="card-eff">${card.eff}</div>`;
+  card.fn(state);
+  state.revealed++;
+  updateStatus();
+  if(state.hp<=0){setTimeout(gameOver,700);return}
+  // Show continue after ANY card flip — player can advance freely
+  document.getElementById('continueRow').style.display='flex';
+}
+
+function nextRoom(){
+  state.depth++;
+  state.roomsCleared++;
+  showPathChoice();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+const PATHS=[
+  {icon:'🏔️',label:'Large Chamber',desc:'A massive cavern. More cards — higher risk, higher reward.',bonus:'3 cards, harder enemies',cards:3,mod:1.3},
+  {icon:'🕳️',label:'Crawl Tunnel',desc:'A tight squeeze through the rock. Slower but safer.',bonus:'2 cards, less danger',cards:2,mod:0.7},
+  {icon:'⛏️',label:'Mine Cart Rails',desc:'Ride the old cart tracks down fast. Skip a level but miss loot.',bonus:'Skip 1 depth, keep gold',cards:0,skip:true},
+  {icon:'🪜',label:'The Staircase',desc:'Carved stone steps. Methodical descent. Restore 2 HP.',bonus:'+2 HP on arrival',cards:3,mod:1.0,heal:2},
+  {icon:'💧',label:'Underground River',desc:'Follow the water. It always leads deeper. Chance of rare card.',bonus:'Possible rare loot',cards:3,mod:1.1,rare:true},
+];
+
+function showPathChoice(){
+  const eyebrow=document.getElementById('storyEyebrow');
+  const txt=document.getElementById('storyText');
+  const cardsRow=document.getElementById('cardsRow');
+  const cont=document.getElementById('continueRow');
+  eyebrow.textContent=`Depth ${state.depth} — Choose Your Path`;
+  txt.textContent='The mine branches here. Every path leads deeper. Not every path leads the same way.';
+  cont.style.display='none';
+  // Pick 3 random paths
+  const shuffled=[...PATHS].sort(()=>Math.random()-.5).slice(0,3);
+  cardsRow.innerHTML=`<div style="display:flex;flex-direction:column;gap:.75rem;width:100%">`+
+    shuffled.map((p,i)=>`
+      <div onclick="choosePath(${i})" style="border:1px solid rgba(255,215,0,.2);background:rgba(255,215,0,.04);padding:1rem 1.25rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:1rem" onmouseover="this.style.borderColor='rgba(255,215,0,.5)'" onmouseout="this.style.borderColor='rgba(255,215,0,.2)'">
+        <span style="font-size:1.8rem;flex-shrink:0">${p.icon}</span>
+        <div>
+          <div style="font-family:var(--font-serif);font-size:1rem;color:#f0e6cc;margin-bottom:.2rem">${p.label}</div>
+          <div style="font-size:.65rem;color:#8a7654;line-height:1.6">${p.desc}</div>
+          <div style="font-size:.52rem;letter-spacing:.15em;text-transform:uppercase;color:#7a5a18;margin-top:.3rem">${p.bonus}</div>
+        </div>
+      </div>`).join('')+`</div>`;
+  // Store current path options
+  state.currentPaths=shuffled;
+}
+
+function choosePath(i){
+  const path=state.currentPaths[i];
+  let msg=`You took ${path.label}.`;
+  if(path.heal){state.hp=Math.min(state.maxHp||20,state.hp+path.heal);msg+=` +${path.heal} HP.`}
+  if(path.skip){state.depth++;msg+=' Skipped a level — saved time, lost loot.'}
+  if(path.rare){state.rareBonus=true;msg+=' The water hid something valuable...'}
+  state.pathCards=path.cards;
+  state.pathMod=path.mod||1;
+  log(msg);
+  updateStatus();
+  renderRoom();
+}
+
+function gameOver(){
+  document.getElementById('goTitle').innerHTML=state.depth>=8?'You Reached the <em>Deep Core</em>':'The Mine <em>Claimed You</em>';
+  document.getElementById('goStats').textContent=`${state.clsIcon} ${state.clsName} — Depth: ${state.depth} — Gold: ${state.gold} — Rooms: ${state.roomsCleared} — Lord Oro sightings: ${state.oroSeen}`;
+  document.getElementById('goLore').textContent=`"${LORE[Math.floor(Math.random()*LORE.length)]}"`;
+  document.getElementById('gameOverOv').classList.add('active');
+}
+</script>
+
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> Lore Fragments</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span> Creatures</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
+  <a href="ledger.html" class="dg-link">📖 Ledger</a>
+</div>
+<script>
+(function(){
+  try{
+    var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+    var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
+    var gold=parseInt(localStorage.getItem('nmn_total_gold')||'0');
+    var el=document.getElementById('dgGold');if(el)el.textContent=gold;
+    var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
+    var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
+  }catch(e){}
+})();
+
+function shareScore(score, game, extra) {
+  const text = extra || `I just scored ${score} in ${game} on Lord Oro's mine! 🏔️ nonsensemedianetwork.com`;
+  const url = 'https://nonsensemedianetwork.com';
+  
+  // Native share sheet on mobile (iOS/Android)
+  if(navigator.share) {
+    navigator.share({ title: game + ' — NMN', text: text, url: url })
+      .catch(()=>{});
+    return;
+  }
+  
+  // Desktop fallback — show share panel
+  const panel = document.getElementById('sharePanel');
+  if(panel) { panel.style.display='flex'; return; }
+  
+  const p = document.createElement('div');
+  p.id = 'sharePanel';
+  p.style.cssText = 'position:fixed;inset:0;background:rgba(3,2,1,.92);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem';
+  p.innerHTML = `
+    <div style="background:#1a1208;border:1px solid rgba(255,215,0,.3);padding:2rem;max-width:400px;width:100%;text-align:center">
+      <div style="font-family:Cormorant Garamond,serif;font-style:italic;font-size:1.3rem;color:#e8b84b;margin-bottom:.5rem">${game}</div>
+      <div style="font-size:.65rem;color:#8a7654;margin-bottom:1.5rem;line-height:1.8">${text}</div>
+      <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem">
+        <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}" target="_blank"
+           style="padding:.65rem;background:#1da1f2;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
+          𝕏 Share on X / Twitter
+        </a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}" target="_blank"
+           style="padding:.65rem;background:#1877f2;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
+          Share on Facebook
+        </a>
+        <a href="https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}" target="_blank"
+           style="padding:.65rem;background:#ff4500;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
+          Post to Reddit
+        </a>
+        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(text+' '+url)}" target="_blank"
+           style="padding:.65rem;background:#25d366;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
+          Send on WhatsApp
+        </a>
+        <button onclick="navigator.clipboard.writeText('${text.replace(/'/g,"\'")} ${url}').then(()=>this.textContent='✓ Copied!')"
+           style="padding:.65rem;background:transparent;border:1px solid rgba(255,215,0,.3);color:#FFD700;font-family:Josefin Sans,sans-serif;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer">
+          Copy Link
+        </button>
+      </div>
+      <button onclick="document.getElementById('sharePanel').style.display='none'"
+        style="font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:#4a3c28;background:transparent;border:none;cursor:pointer;padding:.5rem">
+        Close
+      </button>
+    </div>`;
+  document.body.appendChild(p);
+}
+</script>
+
+<script>
+window.NMN_CONTEXT = "deep";
+// NMN LIVING SOUNDSCAPE — Excavation Committee
+// Gemini's Quad-Track Engine + Claude's integration layer
+// Zero external files. Under 2KB. Procedural — never repeats exactly.
+
+const NMN_Audio = {
+  ctx: null,
+  running: false,
+  masterGain: null,
+  layers: {},
+
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  },
+
+  // TRACK 1 — The Deep Earth (continuous, low hum)
+  playHum() {
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(55, this.ctx.currentTime); // G1
+    gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
+    // Slow breathing — mine is alive
+    // Gemini's LFO: 0.08Hz = one breath every 12.5 seconds
+    const lfo = this.ctx.createOscillator();
+    const lfoGain = this.ctx.createGain();
+    lfo.type = 'sine';
+    lfo.frequency.value = 0.08;
+    lfoGain.gain.value = 0.01; // depth of breath
+    lfo.connect(lfoGain);
+    lfoGain.connect(gain.gain);
+    lfo.start();
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+    osc.start();
+    this.layers.hum = { osc, gain };
+  },
+
+  // TRACK 2 — The Air Shaft (filtered noise / wind)
+  playWind() {
+    const bufferSize = 2 * this.ctx.sampleRate;
+    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+    const whiteNoise = this.ctx.createBufferSource();
+    whiteNoise.buffer = noiseBuffer;
+    whiteNoise.loop = true;
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 400;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.012, this.ctx.currentTime);
+    whiteNoise.connect(filter);
+    filter.connect(g);
+    g.connect(this.masterGain);
+    whiteNoise.start();
+    this.layers.wind = { src: whiteNoise, gain: g };
+  },
+
+  // TRACK 3 — The Distant Strike (random pickaxe echoes)
+  playStrike() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.75) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        // Metallic strike freq
+        osc.frequency.setValueAtTime(140 + Math.random() * 80, this.ctx.currentTime);
+        osc.type = 'sawtooth';
+        g.gain.setValueAtTime(0.04, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.6);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.6);
+      }
+      // Randomize interval — 3s to 6s — never predictable
+      setTimeout(tick, 3000 + Math.random() * 3000);
+    };
+    setTimeout(tick, 2000);
+  },
+
+  // TRACK 4 — The Gold Shimmer (crystal high tones)
+  playShimmer() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.85) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'triangle';
+        // Gold harmonic range — slightly randomized each time
+        osc.frequency.setValueAtTime(2200 + Math.random() * 1400, this.ctx.currentTime);
+        g.gain.setValueAtTime(0, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.012, this.ctx.currentTime + 1.2);
+        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2.5);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 2.5);
+      }
+      setTimeout(tick, 5000 + Math.random() * 4000);
+    };
+    setTimeout(tick, 4000);
+  },
+
+  // TRACK 5 — The Subterranean Drip (Gemini's finalized version)
+  // Fast pitch-drop simulates the physics of water hitting a cavern pool
+  playWaterDrip() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.6) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sine';
+        // Start mid-freq, drop 50% in 80ms — exact droplet physics
+        osc.frequency.setValueAtTime(400 + Math.random() * 100, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.08);
+        g.gain.setValueAtTime(0.02, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.08);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.08);
+      }
+      // 2-8 second random interval — no rhythmic pattern ever emerges
+      setTimeout(tick, 2000 + Math.random() * 6000);
+    };
+    setTimeout(tick, 5000 + Math.random() * 3000);
+  },
+
+  // TRACK 6 — The Oracle's Pad
+  playOraclePad() {
+    const AMAJ = [220, 277.18, 329.63];
+    const tick = () => {
+      if (!this.running) return;
+      AMAJ.forEach((freq, i) => {
+        const osc = this.ctx.createOscillator();
+        const filter = this.ctx.createBiquadFilter();
+        const g = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        filter.type = 'lowpass'; filter.frequency.value = 800;
+        g.gain.setValueAtTime(0, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.03, this.ctx.currentTime + 2);
+        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 9);
+        osc.connect(filter); filter.connect(g); g.connect(this.masterGain);
+        osc.start(this.ctx.currentTime + i * 0.08);
+        osc.stop(this.ctx.currentTime + 9.5);
+      });
+      setTimeout(tick, 9000);
+    };
+    setTimeout(tick, 8000);
+  },
+
+  // Page-context aware — different mix per section
+  startAll(context) {
+    if (this.running) return;
+    this.init();
+    this.running = true;
+    this.playHum();
+    this.playWind();
+    this.playStrike();
+    this.playShimmer();
+    this.playOraclePad();
+    // Only add water drip on deep mine pages
+    if (context === 'deep' || context === 'oracle' || context === 'vigil') {
+      this.playWaterDrip();
+    }
+    // Tora gets a slightly higher shimmer frequency (more ethereal)
+    if (context === 'tora') {
+      this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
+    }
+  },
+
+  stop() {
+    if (!this.running) return;
+    this.running = false;
+    if (this.masterGain) {
+      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
+    }
+  },
+
+  toggle() {
+    if (this.running) { this.stop(); return false; }
+    else { this.startAll(window.NMN_CONTEXT || 'mine'); return true; }
+  }
+};
+
+// Trigger on first interaction — browser autoplay policy requires user gesture
+document.addEventListener('click', () => {
+  if (!NMN_Audio.running) NMN_Audio.startAll(window.NMN_CONTEXT || 'mine');
+}, { once: true });
+
+</script>
+
+<button id="nmn-sound-btn" onclick="
+  const on = NMN_Audio.toggle();
+  this.textContent = on ? '🔊 Sound On' : '🔇 Sound Off';
+  this.style.color = on ? 'var(--gold,#c9962a)' : '#4a3c28';
+" style="position:fixed;bottom:42px;right:.75rem;z-index:998;background:rgba(12,10,7,.9);border:1px solid rgba(255,215,0,.2);color:#4a3c28;font-family:Josefin Sans,sans-serif;font-size:.42rem;letter-spacing:.1em;padding:.35rem .6rem;cursor:pointer;transition:all .3s">🔇 Sound Off</button>
+
+<div class="lore-toast" id="loreToast">
+  <div class="lore-toast-label">⬡ Lore Fragment</div>
+  <div class="lore-toast-text" id="loreToastText"></div>
+</div>
+<script id="nmn-glow">
+(function(){
+  var r=document.createElement('div');
+  r.id='pickaxe-glow';
+  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
+  document.body.appendChild(r);
+  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
+  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
+  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
+})();
+</script>
+<script id="gemini-init">
+window.addEventListener('load',function(){
+  if(!localStorage.getItem('nmn_total_gold')) localStorage.setItem('nmn_total_gold','0');
+  document.querySelectorAll('canvas').forEach(function(g){
+    if(g.parentElement&&!g.parentElement.classList.contains('mining-frame'))
+      g.parentElement.classList.add('mining-frame');
+  });
+});
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>

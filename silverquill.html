@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>??? — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+<style>
+body{padding-top:56px;overflow:hidden;background:#03020a}
+.game-wrap{max-width:700px;margin:0 auto;padding:.75rem 1rem}
+.hud{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;padding:.4rem .75rem;background:rgba(0,0,0,.7);border:1px solid rgba(106,58,138,.2);margin-bottom:6px}
+.hud-stat{font-family:var(--font-pixel);font-size:.42rem;color:#cc88ff}
+.hud-stat span{color:var(--cream)}
+.canvas-wrap{position:relative;border:2px solid rgba(106,58,138,.3);background:#03020a;box-shadow:0 0 30px rgba(106,58,138,.15)}
+canvas{display:block;width:100%;image-rendering:pixelated}
+.controls{display:flex;gap:5px;padding:.4rem .75rem;background:rgba(0,0,0,.6);border:1px solid rgba(106,58,138,.15);border-top:none;flex-wrap:wrap}
+.ctrl-btn{font-family:var(--font-pixel);font-size:.38rem;background:rgba(106,58,138,.1);color:var(--muted);border:1px solid rgba(106,58,138,.2);padding:4px 9px;letter-spacing:.05em;transition:all .2s}
+.ctrl-btn:hover{color:#cc88ff;border-color:rgba(106,58,138,.5)}
+.overlay{position:absolute;inset:0;background:rgba(3,2,10,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9rem;z-index:10}
+.overlay.hidden{display:none}
+.ov-title{font-family:var(--font-display);font-size:clamp(1.2rem,4vw,2rem);color:#cc88ff;text-shadow:0 0 30px rgba(153,34,204,.6);text-align:center;line-height:1.2}
+.ov-sub{font-family:var(--font-pixel);font-size:.38rem;color:var(--muted);text-align:center;line-height:2.2;max-width:320px}
+.ov-btn{font-family:var(--font-pixel);font-size:.45rem;background:#9922cc;color:#fff;border:none;padding:.65rem 1.75rem;letter-spacing:.1em;transition:all .2s;box-shadow:0 0 15px rgba(153,34,204,.4)}
+.ov-btn:hover{background:#cc44ff;box-shadow:0 0 30px rgba(153,34,204,.8)}
+.ov-stat{font-family:var(--font-pixel);font-size:.48rem;color:var(--cream);text-align:center}
+.ov-stat strong{color:#cc88ff}
+.byline{font-family:var(--font-pixel);font-size:.3rem;color:rgba(106,58,138,.4);text-align:center;letter-spacing:.15em;margin-top:.25rem}
+.dpad{display:none;flex-direction:column;align-items:center;gap:4px;padding:.5rem;user-select:none}
+.dpad-row{display:flex;gap:4px}
+.dpad-btn{font-family:var(--font-pixel);font-size:.55rem;background:rgba(106,58,138,.15);border:1px solid rgba(106,58,138,.3);color:#cc88ff;width:44px;height:44px;display:flex;align-items:center;justify-content:center;transition:all .1s}
+.dpad-btn:active{background:rgba(106,58,138,.4)}
+@media(max-width:600px){.dpad{display:flex}}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+
+
+
+</head>
+<body>
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
+<script src="nmn-scene.js"></script>
+
+<div class="game-wrap">
+  <div class="hud">
+    <span class="hud-stat">VERSES <span id="h-verses">0</span></span>
+    <span class="hud-stat">CADENCE <span id="h-cadence">x1</span></span>
+    <span class="hud-stat">INK <span id="h-ink">100</span>%</span>
+    <span class="hud-stat">GOLD <span id="h-gold">0</span></span>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="cv"></canvas>
+    <div class="overlay" id="ov-start">
+      <p class="ov-title">The Quill<br>Writes Back.</p>
+      <p class="ov-sub">Words fall from the dark. Catch them in the right order. The mine speaks in verses — each one a fragment of the Ledger no one was supposed to find.</p>
+      <button class="ov-btn" onclick="startGame()">✦ BEGIN THE INSCRIPTION</button>
+      <p class="byline">— THE SILVER QUILL</p>
+    </div>
+    <div class="overlay hidden" id="ov-over">
+      <p class="ov-title">The Ledger<br>Is Closed.</p>
+      <div class="ov-stat">VERSES INSCRIBED <strong id="fs-verses">0</strong></div>
+      <div class="ov-stat">GOLD EARNED <strong id="fs-gold">0</strong> 💎</div>
+      <button class="ov-btn" onclick="startGame()">✦ REOPEN THE LEDGER</button>
+      <a href="oracle.html" style="font-family:var(--font-pixel);font-size:.36rem;color:var(--muted);text-decoration:none">← RETURN TO THE ORACLE</a>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn" onclick="startGame()">▶ START</button>
+    <button class="ctrl-btn" onclick="NMNScene.toggle()">⏸ PAUSE</button>
+    <button class="ctrl-btn" onclick="NMNWallet.convertGems()">⚗ CONVERT</button>
+    <span style="font-family:var(--font-pixel);font-size:.3rem;color:rgba(106,58,138,.4);margin-left:auto;align-self:center">← → TO MOVE · CLICK WORDS TO CATCH</span>
+  </div>
+
+  <div class="dpad">
+    <div class="dpad-row"><div class="dpad-btn" id="dp-left">◀</div><div class="dpad-btn" id="dp-right">▶</div></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   PROJECT: THE LEDGER
+   By: The Silver Quill (Gemini)
+   Integrated by: The Flint Architect (Claude)
+   
+   A word-catching game built from NMN lore.
+   Catch falling words to form verses from the Ledger.
+   Chain complete verses for cadence multipliers.
+   ═══════════════════════════════════════════════════ */
+
+const cv=document.getElementById('cv');
+const ctx=cv.getContext('2d');
+
+function resize(){
+  const W=Math.min(cv.parentElement.clientWidth,700);
+  cv.width=W; cv.height=Math.floor(W*.58);
+  cv.style.width=W+'px'; cv.style.height=cv.height+'px';
+}
+resize(); window.addEventListener('resize',resize);
+
+// ── VERSE FRAGMENTS ──
+// Each verse has a set of words. Player catches them in ANY order.
+// Complete a verse = big bonus
+const VERSES = [
+  { words:['MY','SWORD','IS','MY','PEN'], complete:'MY SWORD IS MY PEN', pts:200 },
+  { words:['THE','MINE','REMEMBERS'], complete:'THE MINE REMEMBERS', pts:150 },
+  { words:['LORD','ORO','WATCHES'], complete:'LORD ORO WATCHES', pts:150 },
+  { words:['THE','KINGDOM','IS','WITHIN'], complete:'THE KINGDOM IS WITHIN', pts:250 },
+  { words:['GOLD','IN','THE','DARK'], complete:'GOLD IN THE DARK', pts:180 },
+  { words:['NAYLA','AND','FELIK'], complete:'NAYLA AND FELIK', pts:175 },
+  { words:['THE','LANTERN','NEVER','DIES'], complete:'THE LANTERN NEVER DIES', pts:220 },
+  { words:['I','NEVER','STARVE','AGAIN'], complete:'I NEVER STARVE AGAIN', pts:280 },
+];
+
+// Decoy words (catch these = lose ink)
+const DECOYS = ['DOUBT','FEAR','SILENCE','LOST','FORGET','EMPTY','DARK','STOP'];
+
+// ── STATE ──
+let G=null, _locked=false;
+
+function initState(){
+  return {
+    score:0, verses:0, cadence:1, ink:100,
+    currentVerse:null, caughtWords:new Set(),
+    words:[], particles:[], inkDrops:[],
+    player:{x:cv.width/2,y:cv.height-30,w:32,h:20,vx:0},
+    sessionGold:0, running:false,
+    verseFlash:0, verseText:'',
+  };
+}
+
+function pickVerse(){
+  return VERSES[Math.floor(Math.random()*VERSES.length)];
+}
+
+function startGame(){
+  if(_locked)return; _locked=true;
+  NMNScene.destroy();
+  G=initState();
+  G.running=true;
+  G.currentVerse=pickVerse();
+  document.getElementById('ov-start').classList.add('hidden');
+  document.getElementById('ov-over').classList.add('hidden');
+  // Spawn words
+  NMNScene.interval(spawnWord,900);
+  NMNScene.raf(loop);
+  _locked=false;
+}
+
+function spawnWord(){
+  if(!G||!G.running||NMNScene.isPaused())return;
+  const W=cv.width;
+  const isDecoy=Math.random()<0.25;
+  let word;
+  if(isDecoy){
+    word=DECOYS[Math.floor(Math.random()*DECOYS.length)];
+  } else {
+    // Pick uncaught word from current verse
+    const remaining=G.currentVerse.words.filter(w=>!G.caughtWords.has(w));
+    word=remaining.length>0?remaining[Math.floor(Math.random()*remaining.length)]:G.currentVerse.words[Math.floor(Math.random()*G.currentVerse.words.length)];
+  }
+  G.words.push({
+    word, isDecoy,
+    x:20+Math.random()*(W-40),
+    y:-20,
+    speed:1.2+Math.random()*.8+G.verses*.05,
+    color:isDecoy?'#FF4444':'#cc88ff',
+    scale:1,
+  });
+}
+
+// ── INPUT ──
+const keys={};
+NMNScene.on(document,'keydown',e=>{keys[e.key]=true;});
+NMNScene.on(document,'keyup',  e=>{delete keys[e.key];});
+NMNScene.on(cv,'click',e=>{
+  if(!G||!G.running)return;
+  const r=cv.getBoundingClientRect();
+  const mx=(e.clientX-r.left)*(cv.width/r.width);
+  const my=(e.clientY-r.top)*(cv.height/r.height);
+  catchNearby(mx,my);
+});
+['dp-left','dp-right'].forEach((id,i)=>{
+  const el=document.getElementById(id);
+  if(!el)return;
+  const k=i===0?'ArrowLeft':'ArrowRight';
+  el.addEventListener('touchstart',e=>{e.preventDefault();keys[k]=true;},{passive:false});
+  el.addEventListener('touchend',()=>{delete keys[k];});
+});
+
+function catchNearby(mx,my){
+  if(!G)return;
+  G.words=G.words.filter(w=>{
+    const dist=Math.hypot(w.x-mx,w.y-my);
+    if(dist<40){
+      catchWord(w);
+      return false;
+    }
+    return true;
+  });
+}
+
+function catchWord(w){
+  if(w.isDecoy){
+    G.ink=Math.max(0,G.ink-15);
+    G.cadence=Math.max(1,G.cadence-1);
+    spawnInkSplat(w.x,w.y,'#FF4444');
+    nmnToast('✘ DECOY — INK LOST');
+    if(G.ink<=0){endGame();return;}
+  } else {
+    G.caughtWords.add(w.word);
+    G.score+=20*G.cadence;
+    G.sessionGold+=2*G.cadence;
+    spawnInkSplat(w.x,w.y,'#cc88ff');
+    NMNWallet.addXP(10);
+    // Check verse complete
+    const allCaught=G.currentVerse.words.every(wd=>G.caughtWords.has(wd));
+    if(allCaught){
+      const bonus=G.currentVerse.pts*G.cadence;
+      G.score+=bonus;
+      G.sessionGold+=Math.ceil(bonus/5);
+      G.verses++;
+      G.cadence=Math.min(G.cadence+1,8);
+      G.ink=Math.min(100,G.ink+20);
+      G.verseFlash=90;
+      G.verseText=G.currentVerse.complete;
+      NMNWallet.addGem();
+      nmnToast(`⬡ VERSE COMPLETE — +${bonus} GOLD`);
+      G.caughtWords=new Set();
+      G.currentVerse=pickVerse();
+    }
+  }
+}
+
+function spawnInkSplat(x,y,color){
+  for(let i=0;i<8;i++){
+    G.particles.push({x,y,vx:(Math.random()-.5)*5,vy:(Math.random()-1)*4,color,life:22+Math.floor(Math.random()*8)});
+  }
+}
+
+// ── UPDATE ──
+function update(){
+  if(!G||!G.running||NMNScene.isPaused())return;
+  const W=cv.width,H=cv.height,p=G.player;
+  // Player
+  if(keys['ArrowLeft']||keys['a'])p.vx=-5;
+  else if(keys['ArrowRight']||keys['d'])p.vx=5;
+  else p.vx*=.75;
+  p.x=Math.max(p.w/2,Math.min(W-p.w/2,p.x+p.vx));
+  // Words fall
+  G.words=G.words.filter(w=>{
+    w.y+=w.speed;
+    // Auto-catch if player underneath
+    if(w.y+12>=p.y-p.h&&w.y<=p.y+4&&w.x>=p.x-p.w/2-16&&w.x<=p.x+p.w/2+16){
+      catchWord(w); return false;
+    }
+    if(w.y>H){
+      // Missed non-decoy = ink loss
+      if(!w.isDecoy){ G.ink=Math.max(0,G.ink-5); G.cadence=Math.max(1,G.cadence-1); if(G.ink<=0){endGame();return false;} }
+      return false;
+    }
+    return true;
+  });
+  // Particles
+  G.particles=G.particles.filter(p2=>{p2.life--;p2.x+=p2.vx;p2.y+=p2.vy;p2.vy+=.15;return p2.life>0;});
+  if(G.verseFlash>0)G.verseFlash--;
+  // HUD
+  document.getElementById('h-verses').textContent=G.verses;
+  document.getElementById('h-cadence').textContent='x'+G.cadence;
+  document.getElementById('h-ink').textContent=Math.floor(G.ink)+'%';
+  document.getElementById('h-gold').textContent=G.sessionGold;
+}
+
+// ── DRAW ──
+function draw(){
+  if(!G)return;
+  const W=cv.width,H=cv.height;
+  ctx.fillStyle='#03020a';ctx.fillRect(0,0,W,H);
+  // Scrolling lore lines bg
+  ctx.strokeStyle='rgba(106,58,138,.06)';ctx.lineWidth=1;
+  for(let y=0;y<H;y+=16){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  // Ambient purple glow
+  const bg=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,W*.6);
+  bg.addColorStop(0,'rgba(100,40,140,.04)');bg.addColorStop(1,'transparent');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+
+  // Current verse progress
+  const vw=G.currentVerse?G.currentVerse.words:[];
+  const lineY=24;
+  ctx.font='6px "Press Start 2P"';ctx.textAlign='center';
+  vw.forEach((wd,i)=>{
+    const caught=G.caughtWords.has(wd);
+    const x=W/2+(i-(vw.length-1)/2)*55;
+    ctx.fillStyle=caught?'#cc88ff':'rgba(106,58,138,.35)';
+    ctx.fillText(wd,x,lineY);
+    if(caught){ctx.strokeStyle='rgba(204,136,255,.3)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x-15,lineY+3);ctx.lineTo(x+15,lineY+3);ctx.stroke();}
+  });
+  ctx.textAlign='left';
+
+  // Falling words
+  G.words.forEach(w=>{
+    // Word shadow/glow
+    const gw=ctx.createRadialGradient(w.x,w.y,0,w.x,w.y,30);
+    gw.addColorStop(0,w.isDecoy?'rgba(255,68,68,.15)':'rgba(153,34,204,.2)');gw.addColorStop(1,'transparent');
+    ctx.fillStyle=gw;ctx.fillRect(w.x-30,w.y-20,60,40);
+    // Word
+    ctx.font='8px "Press Start 2P"';ctx.textAlign='center';
+    ctx.fillStyle=w.color;ctx.fillText(w.word,w.x,w.y);
+    // Catch ring indicator
+    ctx.strokeStyle=w.isDecoy?'rgba(255,68,68,.2)':'rgba(204,136,255,.2)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(w.x,w.y,38,0,Math.PI*2);ctx.stroke();
+    ctx.textAlign='left';
+  });
+
+  // Particles
+  G.particles.forEach(p2=>{
+    ctx.fillStyle=p2.color.replace(')',`,${p2.life/30})`).replace('rgb','rgba')||p2.color;
+    ctx.fillRect(p2.x-2,p2.y-2,5,5);
+  });
+
+  // Player — quill sprite
+  const px=G.player.x,py=G.player.y;
+  // Quill body
+  ctx.fillStyle='#cc88ff';ctx.fillRect(px-14,py-14,28,14);
+  ctx.fillStyle='#9922cc';ctx.fillRect(px-14,py-14,28,5);
+  // Quill tip
+  ctx.fillStyle='#fff';ctx.fillRect(px-2,py-4,4,8);
+  ctx.fillStyle='rgba(204,136,255,.4)';
+  const ql=ctx.createRadialGradient(px,py,0,px,py,20);ql.addColorStop(0,'rgba(204,136,255,.15)');ql.addColorStop(1,'transparent');
+  ctx.fillStyle=ql;ctx.fillRect(px-20,py-20,40,40);
+
+  // INK BAR
+  const inkColor=G.ink>50?'#cc88ff':G.ink>25?'#FFD700':'#FF3333';
+  ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(6,H-16,100,8);
+  ctx.fillStyle=inkColor;ctx.fillRect(6,H-16,G.ink,8);
+  ctx.fillStyle='rgba(255,255,255,.1)';ctx.fillRect(6,H-16,100,1);
+  ctx.fillStyle=inkColor;ctx.font='5px "Press Start 2P"';ctx.fillText('INK',110,H-10);
+
+  // VERSE COMPLETE FLASH
+  if(G.verseFlash>0&&G.verseText){
+    const alpha=Math.min(1,G.verseFlash/20);
+    ctx.save();ctx.globalAlpha=alpha;
+    ctx.fillStyle='rgba(0,0,0,.9)';ctx.fillRect(W/2-160,H/2-24,320,48);
+    ctx.strokeStyle='rgba(204,136,255,.5)';ctx.lineWidth=1;ctx.strokeRect(W/2-160,H/2-24,320,48);
+    ctx.fillStyle='#cc88ff';ctx.font='7px "Press Start 2P"';ctx.textAlign='center';
+    ctx.fillText('✦ VERSE INSCRIBED ✦',W/2,H/2-8);
+    ctx.fillStyle='#fff';ctx.font='5px "Press Start 2P"';
+    ctx.fillText(G.verseText,W/2,H/2+12);
+    ctx.textAlign='left';ctx.restore();
+  }
+
+  // Score
+  ctx.fillStyle='rgba(204,136,255,.6)';ctx.font='6px "Press Start 2P"';
+  ctx.textAlign='right';ctx.fillText(G.score+' pts',W-6,H-6);ctx.textAlign='left';
+}
+
+function loop(){if(!G)return;update();draw();NMNScene.raf(loop);}
+
+function endGame(){
+  if(!G)return;
+  G.running=false;
+  NMNWallet.addGold(G.sessionGold);
+  document.getElementById('fs-verses').textContent=G.verses;
+  document.getElementById('fs-gold').textContent=G.sessionGold;
+  document.getElementById('ov-over').classList.remove('hidden');
+  NMNScene.destroy();
+}
+
+ctx.fillStyle='#03020a';ctx.fillRect(0,0,cv.width,cv.height);
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>

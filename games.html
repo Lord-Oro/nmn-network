@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recreation Hall — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+<style>
+body{padding-top:56px;background:var(--coal)}
+
+/* ── HALL HERO ── */
+.hall-hero{
+  text-align:center;padding:3rem 2rem 1.5rem;
+  position:relative;overflow:hidden;
+  border-bottom:1px solid rgba(255,215,0,.06);
+}
+.hall-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(255,215,0,.06),transparent 55%);pointer-events:none}
+.hall-eyes{display:flex;gap:44px;justify-content:center;margin-bottom:1.2rem}
+.hall-eye{width:20px;height:14px;background:radial-gradient(ellipse at 40% 40%,#FFD700,#FF8C00);border-radius:50%;box-shadow:0 0 18px rgba(255,215,0,.8);animation:eyeBlink 5s infinite;position:relative}
+.hall-eye::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6px;height:6px;background:#000;border-radius:50%}
+@keyframes eyeBlink{0%,85%,100%{transform:scaleY(1)}90%{transform:scaleY(.05)}}
+.hall-title{font-family:var(--font-display);font-size:clamp(1.8rem,5vw,3rem);color:var(--gold);text-shadow:0 0 30px rgba(255,215,0,.35);margin-bottom:.4rem}
+.hall-sub{font-family:var(--font-pixel);font-size:.38rem;color:var(--muted);letter-spacing:.2em}
+
+/* ── WALLET BAR ── */
+.wallet-bar{
+  display:flex;align-items:center;justify-content:center;gap:1.5rem;
+  padding:.65rem 2rem;background:rgba(0,0,0,.45);
+  border-bottom:1px solid rgba(255,215,0,.07);flex-wrap:wrap;
+}
+.w-item{text-align:center}
+.w-val{font-family:var(--font-pixel);font-size:.52rem;color:var(--gold);text-shadow:0 0 8px rgba(255,215,0,.4);display:block}
+.w-lbl{font-family:var(--font-pixel);font-size:.28rem;color:var(--muted);letter-spacing:.1em}
+.gem-row{display:flex;gap:4px}
+.gem-pip{width:14px;height:14px;border:1px solid rgba(255,215,0,.25);background:var(--stone2);font-size:7px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.gem-pip.lit{border-color:var(--gold);background:#1a1500;box-shadow:0 0 5px var(--gold)}
+.convert-btn{font-family:var(--font-pixel);font-size:.38rem;background:transparent;border:1px solid rgba(255,215,0,.25);color:var(--gold);padding:.4rem 1rem;letter-spacing:.08em;transition:all .2s}
+.convert-btn:hover{background:rgba(255,215,0,.06);border-color:var(--gold)}
+
+/* ── MAIN LAYOUT ── */
+.hall-layout{display:grid;grid-template-columns:1fr 260px;gap:0;max-width:1200px;margin:0 auto}
+@media(max-width:900px){.hall-layout{grid-template-columns:1fr}}
+
+/* ── SPIRAL MINE SHAFT ── */
+.mine-shaft{padding:2rem 1.5rem}
+.shaft-label{font-family:var(--font-pixel);font-size:.42rem;color:var(--gd);letter-spacing:.3em;text-transform:uppercase;margin-bottom:2rem;display:flex;align-items:center;gap:.75rem}
+.shaft-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(255,215,0,.15),transparent)}
+
+/* THE SPIRAL — nuggets dug from the wall */
+.gold-spiral{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+  position:relative;
+}
+.gold-spiral::before{
+  content:'';
+  position:absolute;
+  left:50%;top:0;bottom:0;
+  width:1px;
+  background:linear-gradient(to bottom,transparent,rgba(255,215,0,.08) 20%,rgba(255,215,0,.08) 80%,transparent);
+  transform:translateX(-50%);
+  pointer-events:none;
+}
+
+/* NUGGET GAME CARD — rounded, gold-stuck */
+.nugget{
+  background:var(--stone);
+  border:1px solid rgba(255,215,0,.12);
+  border-radius:12px;
+  overflow:hidden;
+  text-decoration:none;
+  display:flex;flex-direction:column;
+  position:relative;
+  transition:all .35s cubic-bezier(.4,0,.2,1);
+  /* Gold nugget feel — slight rotation per card */
+}
+.nugget:nth-child(odd){transform:rotate(-.4deg)}
+.nugget:nth-child(even){transform:rotate(.4deg)}
+.nugget:hover{
+  transform:rotate(0) translateY(-6px) scale(1.02) !important;
+  border-color:rgba(255,215,0,.5);
+  box-shadow:0 12px 40px rgba(0,0,0,.6),0 0 25px rgba(255,215,0,.12),inset 0 1px 0 rgba(255,215,0,.15);
+}
+/* Gold seam top */
+.nugget::before{
+  content:'';position:absolute;top:0;left:10%;right:10%;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(255,215,0,.6),transparent);
+  border-radius:0 0 2px 2px;
+  transform:scaleX(0);transition:transform .3s;
+}
+.nugget:hover::before{transform:scaleX(1)}
+/* Gold dust corner */
+.nugget::after{
+  content:'';position:absolute;bottom:8px;right:8px;
+  width:8px;height:8px;border-radius:50%;
+  background:rgba(255,215,0,.15);
+  box-shadow:0 0 6px rgba(255,215,0,.2);
+}
+
+.nugget-canvas{width:100%;height:90px;display:block;image-rendering:pixelated;background:var(--coal);border-bottom:1px solid rgba(255,215,0,.06)}
+.nugget-body{padding:.75rem .8rem .8rem}
+.nugget-name{font-family:var(--font-pixel);font-size:.42rem;color:var(--cream);display:block;margin-bottom:.3rem;letter-spacing:.04em}
+.nugget-desc{font-family:var(--font-pixel);font-size:.3rem;color:var(--muted);line-height:2;margin-bottom:.5rem}
+.nugget-tags{display:flex;gap:3px;flex-wrap:wrap}
+.ntag{font-family:var(--font-pixel);font-size:.26rem;padding:2px 5px;border-radius:2px}
+.ntag-arc{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.18);color:var(--gold)}
+.ntag-rpg{background:rgba(153,34,204,.1);border:1px solid rgba(153,34,204,.25);color:#cc88ff}
+.ntag-pzl{background:rgba(34,136,255,.1);border:1px solid rgba(34,136,255,.25);color:#88aaff}
+.ntag-idl{background:rgba(34,204,68,.1);border:1px solid rgba(34,204,68,.25);color:#88ffaa}
+.ntag-new{background:var(--gold);color:var(--coal)}
+.ntag-cls{background:rgba(255,215,0,.04);border:1px solid rgba(255,215,0,.08);color:rgba(255,215,0,.3)}
+
+/* Classified nugget */
+.nugget.classified{opacity:.55;pointer-events:none}
+.nugget.classified .nugget-name{color:rgba(255,215,0,.3)}
+
+/* ── SIDEBAR ── */
+.hall-sidebar{
+  border-left:1px solid rgba(255,215,0,.06);
+  padding:1.5rem 1rem;
+  display:flex;flex-direction:column;gap:1.5rem;
+  background:rgba(0,0,0,.2);
+}
+@media(max-width:900px){.hall-sidebar{border-left:none;border-top:1px solid rgba(255,215,0,.06)}}
+
+/* ── RETRO TV ── */
+.tv-module{}
+.tv-module-label{font-family:var(--font-pixel);font-size:.38rem;color:var(--gd);letter-spacing:.25em;margin-bottom:.75rem;display:block}
+.retro-tv{
+  background:#1a1208;
+  border:3px solid var(--gd);
+  border-radius:8px;padding:10px;
+  box-shadow:0 0 20px rgba(139,105,20,.3),inset 0 0 15px rgba(0,0,0,.5);
+}
+.tv-ants{display:flex;justify-content:space-between;padding:0 8px;margin-bottom:6px}
+.ant-rod{width:3px;height:16px;background:var(--gd);transform-origin:bottom center}
+.ant-rod:first-child{transform:rotate(-22deg)}
+.ant-rod:last-child{transform:rotate(22deg)}
+.ant-ball{width:5px;height:5px;border-radius:50%;background:var(--gold);margin:0 auto;box-shadow:0 0 5px var(--gold);animation:antP 2s infinite}
+@keyframes antP{0%,100%{opacity:1}50%{opacity:.3}}
+.tv-bezel{background:#100c04;border:3px solid #2a1a08;border-radius:3px;padding:3px;margin-bottom:6px;position:relative}
+#tv-screen{display:block;width:100%;height:140px;image-rendering:pixelated}
+#tv-screen.glitch{animation:glitch .15s steps(2) forwards}
+@keyframes glitch{0%{filter:brightness(3) saturate(0);transform:translateX(-3px)}50%{filter:brightness(.2) saturate(5);transform:translateX(3px)}100%{filter:none;transform:none}}
+.tv-scanlines{position:absolute;inset:3px;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.2) 3px,rgba(0,0,0,.2) 4px);pointer-events:none;border-radius:2px}
+.tv-glare{position:absolute;top:6px;left:6px;width:24px;height:14px;background:linear-gradient(135deg,rgba(255,255,255,.07),transparent);border-radius:2px;pointer-events:none}
+.tv-chbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.tv-chlbl{font-family:var(--font-pixel);font-size:.3rem;color:var(--muted)}
+.tv-chname{font-family:var(--font-pixel);font-size:.3rem;color:var(--gold);text-align:right}
+.tv-controls{display:flex;align-items:center;gap:5px;margin-bottom:6px}
+.ch-btn{
+  flex:1;font-family:var(--font-pixel);font-size:.32rem;
+  background:linear-gradient(180deg,#3a2808,#1a0f04);
+  border-top:2px solid #8B6914;border-left:2px solid #8B6914;
+  border-right:2px solid #2a1000;border-bottom:2px solid #0a0400;
+  color:var(--gold);padding:4px 6px;cursor:none;
+  box-shadow:1px 1px 0 #050200;transition:all .1s;text-align:center;letter-spacing:.05em;
+}
+.ch-btn:hover{background:linear-gradient(180deg,#4a3810,#2a1f08);box-shadow:1px 1px 0 #050200,0 0 8px rgba(255,215,0,.3)}
+.ch-btn:active{border-top-color:#1a0800;border-left-color:#1a0800;border-right-color:#8B6914;border-bottom-color:#8B6914;transform:translate(1px,1px)}
+.ch-display{background:#030200;border:1px solid #2a1a08;color:var(--gold);font-family:var(--font-pixel);font-size:.4rem;padding:3px 6px;min-width:44px;text-align:center;box-shadow:inset 0 0 5px rgba(255,215,0,.1);text-shadow:0 0 6px var(--gold)}
+.tv-knobs{display:flex;justify-content:space-between;align-items:center;padding:0 4px;margin-bottom:6px}
+.knob{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#5a4a28,#2a1a08);border:2px solid var(--gd)}
+.knob.pwr{background:radial-gradient(circle at 35% 35%,#3a2808,#1a0f04);border-color:var(--copper,#B87333)}
+.tv-brand{font-family:var(--font-pixel);font-size:.28rem;color:var(--gd)}
+.tv-stand{background:#100c04;border:2px solid #2a1a08;border-top:none;border-radius:0 0 5px 5px;padding:6px 8px;text-align:center}
+.stand-lbl{color:var(--gold);font-family:var(--font-pixel);font-size:.3rem;letter-spacing:.1em;margin-bottom:4px;display:flex;align-items:center;justify-content:center;gap:4px}
+.stand-lbl::before,.stand-lbl::after{content:'';flex:1;height:1px;background:var(--gd)}
+.ad-slot{
+  min-height:90px;background:#050300;border:1px dashed rgba(139,105,20,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-pixel);color:rgba(139,105,20,.4);font-size:.28rem;
+  text-align:center;line-height:2;padding:4px;
+}
+.tv-legs{display:flex;justify-content:space-around;padding:0 18px;margin-top:4px}
+.tv-leg{width:5px;height:8px;background:var(--gd);border-radius:0 0 3px 3px}
+#real-video{display:none}
+
+/* ── PATREON TIERS ── */
+.tiers-module{}
+.tiers-module-label{font-family:var(--font-pixel);font-size:.38rem;color:var(--gd);letter-spacing:.25em;margin-bottom:.75rem;display:block}
+.tier-mini{
+  padding:10px 12px;margin-bottom:8px;border:1px solid;
+  border-radius:4px;font-size:.28rem;line-height:1.9;
+  transition:all .2s;text-decoration:none;display:block;
+}
+.tier-mini:hover{transform:translateX(3px)}
+.tier-mini.copper{border-color:var(--copper,#B87333);color:var(--copper,#B87333);background:rgba(15,8,0,.6)}
+.tier-mini.silver{border-color:#aaa;color:#ccc;background:rgba(10,10,10,.6)}
+.tier-mini.gold-t{border-color:var(--gold);color:var(--gold);background:rgba(15,14,0,.6);box-shadow:0 0 10px rgba(255,215,0,.06)}
+.tier-name-mini{font-family:var(--font-pixel);font-size:.38rem;margin-bottom:3px;display:block}
+
+/* ── GEMSHOP QUICK ── */
+.shop-module{}
+.shop-module-label{font-family:var(--font-pixel);font-size:.38rem;color:var(--gd);letter-spacing:.25em;margin-bottom:.75rem;display:block}
+.shop-mini-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 8px;border-bottom:1px solid rgba(255,215,0,.05);
+  transition:background .2s;
+}
+.shop-mini-item:hover{background:rgba(255,215,0,.03)}
+.shop-mini-name{font-family:var(--font-pixel);font-size:.3rem;color:var(--muted)}
+.shop-mini-cost{font-family:var(--font-pixel);font-size:.32rem;color:var(--gold)}
+.shop-mini-btn{font-family:var(--font-pixel);font-size:.28rem;background:var(--gd);color:var(--obsidian,#070605);border:none;padding:2px 7px;transition:all .2s}
+.shop-mini-btn:hover{background:var(--gold)}
+
+/* ── FOOTER ── */
+.hall-footer{max-width:1200px;margin:0 auto}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+
+
+
+</head>
+<body>
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
+<script src="nmn-scene.js"></script>
+<video id="real-video" muted playsinline loop crossorigin="anonymous"></video>
+
+<!-- HERO -->
+<div class="hall-hero">
+  <div class="hall-eyes"><div class="hall-eye"></div><div class="hall-eye"></div></div>
+  <p class="hall-title">Recreation Hall</p>
+  <p class="hall-sub">⛏ EVERY GAME IS A TUNNEL · EVERY TUNNEL LEADS DEEPER ⛏</p>
+</div>
+
+<!-- WALLET -->
+<div class="wallet-bar">
+  <div class="w-item"><span class="w-val" id="gold-disp">0</span><span class="w-lbl">GOLD</span></div>
+  <div class="w-item"><span class="w-val">LVL <span id="lvl-disp">1</span></span><span class="w-lbl">RANK</span></div>
+  <div class="w-item"><span class="w-val" id="xp-disp">0</span><span class="w-lbl">XP</span></div>
+  <div class="w-item">
+    <div class="gem-row">
+      <div class="gem-pip" id="gp0">◆</div><div class="gem-pip" id="gp1">◆</div>
+      <div class="gem-pip" id="gp2">◆</div><div class="gem-pip" id="gp3">◆</div>
+      <div class="gem-pip" id="gp4">◆</div>
+    </div>
+    <span class="w-lbl" style="display:block;margin-top:3px">GEMS</span>
+  </div>
+  <button class="convert-btn" onclick="NMNWallet.convertGems()">⚗ CONVERT GEMS</button>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="hall-layout">
+
+  <!-- MINE SHAFT / SPIRAL -->
+  <div class="mine-shaft">
+
+    <div class="shaft-label">⛏ THE ARCADE VEIN — PROVEN ORE</div>
+    <div class="gold-spiral" id="spiral-arcade">
+
+      <a href="collector.html" class="nugget">
+        <canvas class="nugget-canvas" id="nc-collector" width="200" height="90"></canvas>
+        <div class="nugget-body">
+          <span class="nugget-name">THE COLLECTOR</span>
+          <p class="nugget-desc">Catch falling ore. Bombs drop alongside gold. Chain combos.</p>
+          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span><span class="ntag ntag-new">REBUILT</span></div>
+        </div>
+      </a>
+
+      <a href="orebreaker.html" class="nugget">
+        <canvas class="nugget-canvas" id="nc-orebreaker" width="200" height="90"></canvas>
+        <div class="nugget-body">
+          <span class="nugget-name">ORE BREAKER</span>
+          <p class="nugget-desc">Brick-breaker in the mine shaft. Break the veins. Don't lose the pick.</p>
+          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
+        </div>
+      </a>
+
+      <a href="descent.html" class="nugget">
+        <canvas class="nugget-canvas" id="nc-descent" width="200" height="90"></canvas>
+        <div class="nugget-body">
+          <span class="nugget-name">THE DESCENT</span>
+          <p class="nugget-desc">Pilot your miner down the shaft. Dodge the walls. Survive.</p>
+          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span><span class="ntag ntag-new">REBUILT</span></div>
+        </div>
+      </a>
+
+      <a href="digger.html" class="nugget">
+        <canvas class="nugget-canvas" id="nc-digger" width="200" height="90"></canvas>
+        <div class="nugget-body">
+          <span class="nugget-name">THE DIGGER</span>
+          <p class="nugget-desc">Drill through pixel rock. Find rare ore. Avoid cave-ins.</p>
+          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span><span class="ntag ntag-new">REBUILT</span></div>
+        </div>
+      </a>
+
+      <a href="battle.html" class="nugget">
+        <canvas class="nugget-canvas" id="nc-battle" width="200" height="90"></canvas>
+        <div class="nugget-body">
+          <span class="nugget-name">MINE SIEGE</span>
+          <p class="nugget-desc">Pixel artillery. Angle your shot. Destroy the enemy miner.</p>
+          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span><span class="ntag ntag-new">REBUILT</span></div>
+        </div>
+      </a>
+
+      <a href="labyrinth.html" class="nugget">
+        <canvas class="nugget-canvas" id="nc-labyrinth" width="200" height="90"></canvas>
+        <div class="nugget-body">
+          <span class="nugget-name">LORD ORO'S LABYRINTH</span>
+          <p class="nugget-desc">Navigate the endless mine maze. Collect lore. Find the exit.</p>
+          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
+        </div>
+      </a>
+
+    </div>
+
+    <div class="shaft-label" style="margin-top:2.5rem">🔮 THE DEEP VEIN — STRATEGY & LORE</div>
+    <div class="gold-spiral">
+
+      <a href="depths.html" class="nugget">
+        <canvas class="nugget-canvas" id="nc-depths" width="200" height="90"></canvas>
+        <div class="nugget-body">
+          <span class="nugget-name">DEPTHS OF THE MINE</span>
+          <p class="nugget-desc">Card dungeon. Build your deck. Face what lives below.</p>
+          <div class="nugget-tags"><span class="ntag ntag-rpg">RPG</span></div>
+        </div>
+      </a>
+
+      <a href="loom.html" class="nugget">
+        <canvas class="nugget-canvas" id="nc-loom" width="200" height="90"></canvas>
+        <div class="nugget-body">
+          <span class="nugget-name">WEAVER'S LOOM</span>
+          <p class="nugget-desc">Match ore veins. Chain combos. 6 distinct colors.</p>
+          <div class="nugget-tags"><span class="ntag ntag-pzl">PUZZLE</span><span class="ntag ntag-new">REBUILT</span></div>
+        </div>
+      </a>
+
+      <a href="motherlode.html" class="nugget">
+        <canvas class="nugget-canvas" id="nc-motherlode" width="200" height="90"></canvas>
+        <div class="nugget-body">
+          <span class="nugget-name">THE MOTHERLODE</span>
+          <p class="nugget-desc">Idle miner. Buy upgrades. Let the gold flow.</p>
+          <div class="nugget-tags"><span class="ntag ntag-idl">IDLE</span></div>
+        </div>
+      </a>
+
+      <a href="gemslots.html" class="nugget">
+        <canvas class="nugget-canvas" id="nc-gemslots" width="200" height="90"></canvas>
+        <div class="nugget-body">
+          <span class="nugget-name">GEM SLOTS</span>
+          <p class="nugget-desc">Spin the ore reels. Lord Oro's Eye = 500x. Bet smart.</p>
+          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span><span class="ntag ntag-new">REBUILT</span></div>
+        </div>
+      </a>
+
+      <a href="gemshop.html" class="nugget">
+        <canvas class="nugget-canvas" id="nc-gemshop" width="200" height="90"></canvas>
+        <div class="nugget-body">
+          <span class="nugget-name">IVY'S GEMSHOP</span>
+          <p class="nugget-desc">Spend your gold. Unlock stories, lore, and star map names.</p>
+          <div class="nugget-tags"><span class="ntag ntag-idl">SHOP</span></div>
+        </div>
+      </a>
+
+      <a href="ivysmine.html" class="nugget">
+        <canvas class="nugget-canvas" id="nc-ivysmine" width="200" height="90"></canvas>
+        <div class="nugget-body">
+          <span class="nugget-name">IVY'S MINE</span>
+          <p class="nugget-desc">Ivy's corner of the shaft. Her rules. Her vibes.</p>
+          <div class="nugget-tags"><span class="ntag ntag-idl">LIFE SIM</span></div>
+        </div>
+      </a>
+
+    </div>
+
+    <div class="shaft-label" style="margin-top:2.5rem">👁 CLASSIFIED — THE BOARD'S TUNNELS</div>
+    <div class="gold-spiral">
+      <div class="nugget classified">
+        <canvas class="nugget-canvas" id="nc-cipher" width="200" height="90"></canvas>
+        <div class="nugget-body">
+          <span class="nugget-name" style="color:rgba(255,215,0,.3)">??? — FLINT ARCHITECT</span>
+          <p class="nugget-desc" style="color:rgba(139,105,20,.4)">The mine goes deeper than the maps show.</p>
+          <div class="nugget-tags"><span class="ntag ntag-cls">CLASSIFIED</span></div>
+        </div>
+      </div>
+      <div class="nugget classified">
+        <canvas class="nugget-canvas" id="nc-quill" width="200" height="90"></canvas>
+        <div class="nugget-body">
+          <span class="nugget-name" style="color:rgba(204,136,255,.3)">??? — SILVER QUILL</span>
+          <p class="nugget-desc" style="color:rgba(106,58,138,.4)">The Ledger has pages no one was supposed to find.</p>
+          <div class="nugget-tags"><span class="ntag ntag-cls">CLASSIFIED</span></div>
+        </div>
+      </div>
+      <div style="grid-column:3;display:flex;align-items:center;justify-content:center;padding:1rem">
+        <p style="font-family:var(--font-pixel);font-size:.3rem;color:rgba(139,105,20,.25);text-align:center;line-height:2.2;letter-spacing:.1em">⬡ FIND THE<br>TRIGGER IN<br>THE ORACLE ⬡</p>
+      </div>
+    </div>
+
+  </div><!-- /mine-shaft -->
+
+  <!-- SIDEBAR -->
+  <div class="hall-sidebar">
+
+    <!-- RETRO TV -->
+    <div class="tv-module">
+      <span class="tv-module-label">📡 NMN BROADCAST</span>
+      <div class="retro-tv">
+        <div class="tv-ants">
+          <div><div class="ant-rod"></div><div class="ant-ball"></div></div>
+          <div style="text-align:center"><div class="ant-ball" style="margin-bottom:2px"></div></div>
+          <div><div class="ant-rod"></div><div class="ant-ball"></div></div>
+        </div>
+        <div class="tv-bezel">
+          <canvas id="tv-screen" width="220" height="140"></canvas>
+          <div class="tv-scanlines"></div>
+          <div class="tv-glare"></div>
+        </div>
+        <div class="tv-chbar">
+          <span class="tv-chlbl" id="tv-chlbl">◈ CH.01</span>
+          <span class="tv-chname" id="tv-chname">MINE ENTRANCE</span>
+        </div>
+        <div class="tv-controls">
+          <button class="ch-btn" onclick="changeChannel(-1)">◀ PREV</button>
+          <div class="ch-display">CH <span id="ch-num">01</span></div>
+          <button class="ch-btn" onclick="changeChannel(1)">NEXT ▶</button>
+        </div>
+        <div class="tv-knobs">
+          <div class="knob pwr"></div>
+          <div class="tv-brand">NMN-TV</div>
+          <div class="knob"></div>
+          <div class="knob"></div>
+        </div>
+        <div class="tv-stand">
+          <div class="stand-lbl">SPONSORED SIGNAL</div>
+          <div class="ad-slot" id="adsense-slot">
+            <!-- PASTE ADSENSE TAG HERE WHEN APPROVED -->
+            <!-- <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="XXXXXXXXXX"
+                 data-ad-format="auto"></ins> -->
+            📡 ADSENSE<br>UNIT HERE
+          </div>
+        </div>
+        <div class="tv-legs"><div class="tv-leg"></div><div class="tv-leg"></div></div>
+      </div>
+    </div>
+
+    <!-- PATREON TIERS -->
+    <div class="tiers-module">
+      <span class="tiers-module-label">🚪 THE VAULT</span>
+      <a href="https://patreon.com/lordoro" target="_blank" class="tier-mini copper">
+        <span class="tier-name-mini">🪨 COPPER — $5/mo</span>
+        25+ Stories · Lore Stickers
+      </a>
+      <a href="https://patreon.com/lordoro" target="_blank" class="tier-mini silver">
+        <span class="tier-name-mini">🪙 SILVER — $10/mo</span>
+        AD-FREE · Sizzle Reels · Pre-Drop
+      </a>
+      <a href="https://patreon.com/lordoro" target="_blank" class="tier-mini gold-t">
+        <span class="tier-name-mini">🏅 GOLD — $25/mo</span>
+        Full Vault · ⭐ Star Map Soul
+      </a>
+      <a href="https://gofund.me/e643a8283" target="_blank" style="display:block;margin-top:8px;font-family:var(--font-pixel);font-size:.32rem;color:rgba(34,204,68,.7);text-align:center;border:1px solid rgba(34,204,68,.2);padding:6px;text-decoration:none;transition:all .2s">
+        🙏 SUPPORT ON GOFUNDME →
+      </a>
+    </div>
+
+    <!-- GEMSHOP QUICK -->
+    <div class="shop-module">
+      <span class="shop-module-label">💎 GEMSHOP</span>
+      <div class="shop-mini-item"><span class="shop-mini-name">📖 SHORT STORY</span><span class="shop-mini-cost">50💎</span><button class="shop-mini-btn" onclick="NMNWallet.get().gold>=50?window.location.href='gemshop.html':nmnToast('NOT ENOUGH GOLD')">BUY</button></div>
+      <div class="shop-mini-item"><span class="shop-mini-name">📜 LORE FRAGMENT</span><span class="shop-mini-cost">120💎</span><button class="shop-mini-btn" onclick="window.location.href='gemshop.html'">BUY</button></div>
+      <div class="shop-mini-item"><span class="shop-mini-name">⭐ STAR MAP</span><span class="shop-mini-cost">500💎</span><button class="shop-mini-btn" onclick="window.location.href='gemshop.html'">BUY</button></div>
+      <a href="gemshop.html" style="display:block;margin-top:8px;font-family:var(--font-pixel);font-size:.3rem;color:var(--gd);text-align:center;text-decoration:none;letter-spacing:.1em">ALL ITEMS IN THE GEMSHOP →</a>
+    </div>
+
+  </div><!-- /sidebar -->
+
+</div><!-- /hall-layout -->
+
+<div class="nmn-footer hall-footer" style="padding:2rem 1.5rem">
+  <p class="nmn-footer-brand">Recreation Hall</p>
+  <div class="nmn-footer-links">
+    <a href="index.html" class="nmn-footer-link">HOME</a>
+    <a href="oracle.html" class="nmn-footer-link">ORACLE</a>
+    <a href="archives.html" class="nmn-footer-link">BOOKS</a>
+    <a href="gemshop.html" class="nmn-footer-link">GEMSHOP</a>
+    <a href="privacy.html" class="nmn-footer-link">PRIVACY</a>
+    <a href="terms.html" class="nmn-footer-link">TERMS</a>
+  </div>
+  <p class="nmn-footer-copy">⛏ © 2026 NONSENSE MEDIA NETWORK · LORD ORO · ALL RIGHTS RESERVED ⛏</p>
+</div>
+
+<script>
+// ════════════ TV ════════════
+const CHANNELS=[
+  {name:'MINE ENTRANCE',      file:'assets/videos/Videos_Are_Ready_To_View.mp4',       ch:'CH.01'},
+  {name:'VEO GENERATION',     file:'assets/videos/McDonald_s_Laptop_Video_Generation.mp4',ch:'CH.02'},
+  {name:'VIDEO CREATION',     file:'assets/videos/McDonald_s_Laptop_Video_Creation.mp4', ch:'CH.03'},
+  {name:'VIDEOS READY',       file:'assets/videos/Videos_Are_Ready.mp4',               ch:'CH.04'},
+  {name:'VIDEOS READY II',    file:'assets/videos/Videos_Are_Ready__1_.mp4',           ch:'CH.05'},
+  {name:'PIVOT AVOIDED',      file:'assets/videos/Video_Generation_Successful_Pivot_Avoided.mp4',ch:'CH.06'},
+  {name:'JOIN THE VAULT',     file:'__ch07_patreon__',                                  ch:'CH.07'},
+];
+const TVC=document.getElementById('tv-screen'),TVCTX=TVC.getContext('2d');
+const VEL=document.getElementById('real-video');
+let curCh=0,tvAF=null,tvVid=false;
+
+function changeChannel(dir){
+  TVC.classList.add('glitch');
+  if(tvAF){cancelAnimationFrame(tvAF);tvAF=null;}
+  VEL.pause();
+  curCh=(curCh+dir+CHANNELS.length)%CHANNELS.length;
+  setTimeout(()=>{
+    TVC.classList.remove('glitch');
+    loadCh(curCh);
+    try{(window.adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
+  },150);
+}
+
+function loadCh(idx){
+  const ch=CHANNELS[idx];
+  document.getElementById('ch-num').textContent=(idx+1).toString().padStart(2,'0');
+  document.getElementById('tv-chlbl').textContent='◈ '+ch.ch;
+  document.getElementById('tv-chname').textContent=ch.name;
+  if(ch.file==='__ch07_patreon__'){tvVid=false;startPatreonSignal();return;}
+  VEL.src=ch.file;VEL.load();
+  VEL.play().then(()=>{tvVid=true;startVidDraw();}).catch(()=>{tvVid=false;startFallback(idx);});
+}
+
+function startVidDraw(){
+  if(tvAF){cancelAnimationFrame(tvAF);tvAF=null;}
+  const W=TVC.width,H=TVC.height;
+  const f=()=>{
+    if(VEL.readyState>=2){
+      TVCTX.drawImage(VEL,0,0,W,H);
+      const v=TVCTX.createRadialGradient(W/2,H/2,H*.3,W/2,H/2,H*.8);v.addColorStop(0,'transparent');v.addColorStop(1,'rgba(10,8,0,.45)');TVCTX.fillStyle=v;TVCTX.fillRect(0,0,W,H);
+    }
+    tvAF=requestAnimationFrame(f);
+  };tvAF=requestAnimationFrame(f);
+}
+
+function startFallback(idx){
+  if(tvAF){cancelAnimationFrame(tvAF);tvAF=null;}
+  const W=TVC.width,H=TVC.height;
+  const scenes=[fbEyes,fbStampede,fbLedger,fbMine,fbNausicaa,fbArchive];
+  const sc=scenes[idx%scenes.length];
+  const f=()=>{sc(W,H);tvAF=requestAnimationFrame(f);};tvAF=requestAnimationFrame(f);
+}
+
+function startPatreonSignal(){
+  if(tvAF){cancelAnimationFrame(tvAF);tvAF=null;}
+  const W=TVC.width,H=TVC.height;
+  const MSGS=['...SIGNAL LOST...','UPGRADE YOUR FEED','GO AD-FREE','JOIN THE MINE','PATREON MEMBERS','GET FULL ACCESS'];
+  let phase='static',timer=0,msgIdx=0;
+  const DUR={static:16,message:90,glitch:8};
+  const f=()=>{
+    timer++;
+    if(phase==='static'){
+      const id=TVCTX.createImageData(W,H);const d=id.data;
+      for(let i=0;i<d.length;i+=4){const v=Math.random()>.55?Math.floor(Math.random()*160+30):8;d[i]=v;d[i+1]=v*.8;d[i+2]=v*.25;d[i+3]=255;}
+      TVCTX.putImageData(id,0,0);
+      if(timer>=DUR.static){timer=0;phase='message';}
+    } else if(phase==='message'){
+      const p=timer/DUR.message;
+      TVCTX.fillStyle='#040300';TVCTX.fillRect(0,0,W,H);
+      const b=.5+.5*Math.sin(Date.now()*.0015);
+      const fa=Math.min(1,p*3);
+      TVCTX.fillStyle=`rgba(255,215,0,${fa})`;TVCTX.font='8px "Press Start 2P"';TVCTX.textAlign='center';
+      TVCTX.fillText(MSGS[msgIdx],W/2,H/2+10);
+      TVCTX.fillStyle=`rgba(184,115,51,${fa*.8})`;TVCTX.font='5px "Press Start 2P"';
+      TVCTX.fillText('PATREON.COM/NMN',W/2,H/2+28);
+      TVCTX.fillStyle=`rgba(139,105,20,${fa*.6})`;TVCTX.font='4px "Press Start 2P"';
+      TVCTX.fillText('$5 · $10 · $25 / MONTH',W/2,H/2+44);
+      TVCTX.textAlign='left';
+      if(timer>=DUR.message){timer=0;phase='glitch';}
+    } else {
+      const sh=(Math.random()-.5)*14;TVCTX.save();TVCTX.drawImage(TVC,sh,0);TVCTX.restore();
+      if(timer>=DUR.glitch){timer=0;phase='static';msgIdx=(msgIdx+1)%MSGS.length;}
+    }
+    tvAF=requestAnimationFrame(f);
+  };tvAF=requestAnimationFrame(f);
+}
+
+function fbEyes(W,H){
+  TVCTX.fillStyle='#050400';TVCTX.fillRect(0,0,W,H);
+  const b=.5+.5*Math.sin(Date.now()*.002);
+  const blink=(Date.now()%5000)<200;
+  [-20,20].forEach(ox=>{const ex=W/2+ox,ey=H/2+6;if(!blink){const g=TVCTX.createRadialGradient(ex,ey,0,ex,ey,14);g.addColorStop(0,`rgba(255,215,0,${.5+b*.3})`);g.addColorStop(1,'transparent');TVCTX.fillStyle=g;TVCTX.beginPath();TVCTX.arc(ex,ey,14,0,Math.PI*2);TVCTX.fill();TVCTX.fillStyle=`rgba(255,${160+Math.floor(b*55)},0,.95)`;TVCTX.beginPath();TVCTX.ellipse(ex,ey,9,6,0,0,Math.PI*2);TVCTX.fill();TVCTX.fillStyle='#000';TVCTX.beginPath();TVCTX.arc(ex,ey,3,0,Math.PI*2);TVCTX.fill();}else{TVCTX.strokeStyle='#FFD700';TVCTX.lineWidth=2;TVCTX.beginPath();TVCTX.moveTo(ex-9,ey);TVCTX.lineTo(ex+9,ey);TVCTX.stroke();}});
+  TVCTX.fillStyle=`rgba(139,105,20,${.25+b*.2})`;TVCTX.font='4px "Press Start 2P"';TVCTX.textAlign='center';TVCTX.fillText('LORD ORO',W/2,H-10);TVCTX.textAlign='left';
+}
+function fbStampede(W,H){const t=Date.now()*.001;const sk=TVCTX.createLinearGradient(0,0,0,H);sk.addColorStop(0,'#050a14');sk.addColorStop(1,'#0a1a0f');TVCTX.fillStyle=sk;TVCTX.fillRect(0,0,W,H);for(let i=0;i<7;i++){const tx=((i*30+t*25)%(W+28)-14);TVCTX.fillStyle=['#0a3a0a','#0f4a10','#1a6020'][i%3];TVCTX.fillRect(tx,H-40+i%2*8,16,40);TVCTX.fillStyle='#22CC44';TVCTX.fillRect(tx-5,H-52+i%2*8,26,16);}TVCTX.fillStyle='#0a1a08';TVCTX.fillRect(0,H-16,W,16);[[40,'#FF4422'],[65,'#FFD700']].forEach(([ox,col],fi)=>{const fx=(ox+t*35)%W;const bob=Math.sin(t*6+fi)*2;TVCTX.fillStyle=col;TVCTX.fillRect(fx,H-35+bob,9,12);TVCTX.fillStyle='#fff';TVCTX.fillRect(fx+1,H-41+bob,6,7);});}
+function fbLedger(W,H){const t=Date.now()*.001;TVCTX.fillStyle='#0a0600';TVCTX.fillRect(0,0,W,H);TVCTX.strokeStyle='rgba(180,120,30,.15)';TVCTX.lineWidth=1;for(let y=16;y<H;y+=12){TVCTX.beginPath();TVCTX.moveTo(12,y);TVCTX.lineTo(W-12,y);TVCTX.stroke();}const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789⛏💎';TVCTX.font='4px "Press Start 2P"';TVCTX.fillStyle='rgba(255,200,80,.55)';for(let r=0;r<6;r++){let line='';const ll=Math.floor((t*3+r*2)%18);for(let c=0;c<ll;c++)line+=chars[Math.floor((r*18+c+t*4)%chars.length)];TVCTX.fillText(line,10,20+r*13);}const sa=.3+Math.sin(t)*.18;TVCTX.strokeStyle=`rgba(255,215,0,${sa})`;TVCTX.lineWidth=1;TVCTX.beginPath();TVCTX.arc(W/2,H-22,12,0,Math.PI*2);TVCTX.stroke();TVCTX.font='8px serif';TVCTX.textAlign='center';TVCTX.fillStyle=`rgba(255,215,0,${sa})`;TVCTX.fillText('👁',W/2,H-17);TVCTX.textAlign='left';}
+function fbMine(W,H){const t=Date.now()*.001;TVCTX.fillStyle='#050400';TVCTX.fillRect(0,0,W,H);const ws=Math.sin(t*.5)*3;TVCTX.fillStyle='#1a1a10';TVCTX.beginPath();TVCTX.moveTo(0,0);TVCTX.lineTo(W*.36+ws,0);TVCTX.lineTo(W*.42+ws,H);TVCTX.lineTo(0,H);TVCTX.fill();TVCTX.beginPath();TVCTX.moveTo(W,0);TVCTX.lineTo(W*.64-ws,0);TVCTX.lineTo(W*.58-ws,H);TVCTX.lineTo(W,H);TVCTX.fill();const lg=TVCTX.createRadialGradient(W/2,H/2,0,W/2,H/2,40);const p=.1+Math.sin(t*1.5)*.04;lg.addColorStop(0,`rgba(255,200,50,${p})`);lg.addColorStop(1,'transparent');TVCTX.fillStyle=lg;TVCTX.fillRect(0,0,W,H);const ea=.35+Math.sin(t*.8)*.25;[-9,9].forEach(ox=>{const eg=TVCTX.createRadialGradient(W/2+ox,H/2,0,W/2+ox,H/2,8);eg.addColorStop(0,`rgba(255,215,0,${ea})`);eg.addColorStop(1,'transparent');TVCTX.fillStyle=eg;TVCTX.beginPath();TVCTX.arc(W/2+ox,H/2,8,0,Math.PI*2);TVCTX.fill();});}
+function fbNausicaa(W,H){const t=Date.now()*.001;const sk=TVCTX.createLinearGradient(0,0,0,H);sk.addColorStop(0,'#050a0e');sk.addColorStop(1,'#0a1a0f');TVCTX.fillStyle=sk;TVCTX.fillRect(0,0,W,H);TVCTX.fillStyle='#0f2015';TVCTX.fillRect(0,H-20,W,20);for(let i=0;i<7;i++){const px2=((i*25+t*4)%W);const col=['#FFD700','#88FFCC','#DDAAFF'][i%3];TVCTX.fillStyle=col;TVCTX.beginPath();TVCTX.arc(px2,H-32+Math.sin(t+i)*3,4+i%3*2,0,Math.PI*2);TVCTX.fill();}}
+function fbArchive(W,H){const t=Date.now()*.001;TVCTX.fillStyle='#050408';TVCTX.fillRect(0,0,W,H);for(let i=0;i<9;i++){const a=.15+Math.sin(t+i)*.2;TVCTX.fillStyle=`rgba(255,215,0,${a})`;TVCTX.beginPath();TVCTX.arc((i*W/9+W/18),(i%3*H/4+H/8),2,0,Math.PI*2);TVCTX.fill();TVCTX.strokeStyle=`rgba(255,215,0,${a*.25})`;TVCTX.lineWidth=1;TVCTX.beginPath();TVCTX.moveTo(i*W/9+W/18,i%3*H/4+H/8);TVCTX.lineTo(W/2,H/2);TVCTX.stroke();}TVCTX.font='4px "Press Start 2P"';TVCTX.fillStyle='rgba(255,215,0,.45)';TVCTX.textAlign='center';TVCTX.fillText('STAR MAP',W/2,H-8);TVCTX.textAlign='left';}
+
+// Start TV idle
+setTimeout(()=>startFallback(0),1000);
+
+// ════════════ NUGGET PREVIEWS ════════════
+const T=()=>Date.now()*.001;
+function mkPrev(id,fn){
+  const cv2=document.getElementById(id);if(!cv2)return;
+  const ctx2=cv2.getContext('2d');let af2=null;
+  function loop(){fn(ctx2,cv2.width,cv2.height);af2=requestAnimationFrame(loop);}
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(!e.isIntersecting&&af2){cancelAnimationFrame(af2);af2=null;}else if(e.isIntersecting&&!af2)loop();});});
+  obs.observe(cv2);loop();
+}
+
+mkPrev('nc-collector',(c,W,H)=>{c.fillStyle='#070605';c.fillRect(0,0,W,H);for(let x=0;x<W;x+=18){c.strokeStyle='rgba(255,215,0,.04)';c.lineWidth=1;c.beginPath();c.moveTo(x,0);c.lineTo(x,H);c.stroke();}[{x:25,s:1.1,col:'#B87333'},{x:70,s:1.7,col:'#C0C0C0'},{x:120,s:.9,col:'#FFD700'},{x:170,s:1.4,col:'#CC44FF'}].forEach((g,i)=>{const y=((T()*50*g.s+i*25)%(H+18))-9;c.fillStyle=g.col;c.fillRect(g.x-4,y,9,9);c.fillStyle='rgba(255,255,255,.3)';c.fillRect(g.x-2,y+1,3,3);});const px=W/2+Math.sin(T()*2)*38;c.fillStyle='#FFD700';c.fillRect(px-10,H-14,20,10);c.fillStyle='#8B6914';c.fillRect(px-10,H-14,20,4);});
+mkPrev('nc-orebreaker',(c,W,H)=>{c.fillStyle='#070605';c.fillRect(0,0,W,H);const cols=['#B87333','#C0C0C0','#FFD700','#2288ff','#cc22ff'];for(let r=0;r<3;r++)for(let cc2=0;cc2<8;cc2++){const alive=((r*8+cc2)*7919+Math.floor(T()*.3))%7>1;if(!alive)continue;c.fillStyle=cols[(r*cc2+r)%5];c.fillRect(cc2*25+1,r*16+8,22,12);c.fillStyle='rgba(255,255,255,.2)';c.fillRect(cc2*25+2,r*16+9,8,4);}const bx=W/2+Math.sin(T()*3)*55,by=H-18;c.fillStyle='#FFD700';c.fillRect(bx-15,by,30,6);const bpx=W/2+Math.sin(T()*2.5)*40,bpy=H-28-Math.abs(Math.sin(T()*2.5))*30;c.fillStyle='#FFD700';c.beginPath();c.arc(bpx,bpy,5,0,Math.PI*2);c.fill();const eg=c.createRadialGradient(bpx,bpy,0,bpx,bpy,8);eg.addColorStop(0,'rgba(255,215,0,.4)');eg.addColorStop(1,'transparent');c.fillStyle=eg;c.beginPath();c.arc(bpx,bpy,8,0,Math.PI*2);c.fill();});
+mkPrev('nc-descent',(c,W,H)=>{c.fillStyle='#070605';c.fillRect(0,0,W,H);const sc=(T()*30)%14;c.strokeStyle='rgba(139,105,20,.1)';c.lineWidth=1;for(let y=-14;y<H+14;y+=14){c.beginPath();c.moveTo(0,y+sc);c.lineTo(W,y+sc+2);c.stroke();}c.fillStyle='#1a1510';c.fillRect(0,0,24,H);c.fillRect(W-24,0,24,H);const mx=W/2+Math.sin(T()*1.5)*18,my=H/2;c.fillStyle='#FFD700';c.fillRect(mx-6,my-8,12,14);c.fillStyle='#8B6914';c.fillRect(mx-6,my-8,12,4);const fl=c.createRadialGradient(mx,my+8,0,mx,my+8,8);fl.addColorStop(0,'rgba(255,100,0,.4)');fl.addColorStop(1,'transparent');c.fillStyle=fl;c.beginPath();c.arc(mx,my+8,8,0,Math.PI*2);c.fill();});
+mkPrev('nc-digger',(c,W,H)=>{c.fillStyle='#070605';c.fillRect(0,0,W,H);const cols2=['#3a2e1c','#5a4a38','#B87333','#C0C0C0','#FFD700'];for(let r=0;r<4;r++)for(let cc2=0;cc2<10;cc2++){c.fillStyle=cols2[(r*cc2+r+cc2*3)%5];c.fillRect(cc2*20,r*20+14,18,18);c.strokeStyle='rgba(0,0,0,.3)';c.lineWidth=1;c.strokeRect(cc2*20,r*20+14,18,18);}c.fillStyle='#FFD700';c.fillRect(W/2-6,6,12,12);c.fillStyle='#8B6914';c.fillRect(W/2-6,6,12,4);});
+mkPrev('nc-battle',(c,W,H)=>{c.fillStyle='#070605';c.fillRect(0,0,W,H);c.fillStyle='#1a1510';c.fillRect(0,H-16,W,16);c.fillStyle='#B87333';c.fillRect(10,H-35,18,20);c.fillStyle='#FFD700';c.fillRect(14,H-42,10,8);c.fillStyle='#4488cc';c.fillRect(W-28,H-35,18,20);c.fillStyle='#88aaff';c.fillRect(W-24,H-42,10,8);const p=(T()%2)/2;const bx=30+p*(W-60),by=H-32-Math.sin(p*Math.PI)*38;c.fillStyle='#FFD700';c.beginPath();c.arc(bx,by,4,0,Math.PI*2);c.fill();const eg=c.createRadialGradient(bx,by,0,bx,by,7);eg.addColorStop(0,'rgba(255,215,0,.4)');eg.addColorStop(1,'transparent');c.fillStyle=eg;c.beginPath();c.arc(bx,by,7,0,Math.PI*2);c.fill();});
+mkPrev('nc-labyrinth',(c,W,H)=>{c.fillStyle='#070605';c.fillRect(0,0,W,H);const MAZE_S=14;for(let r=0;r<6;r++)for(let cc2=0;cc2<14;cc2++){const wall=((r*14+cc2)*31337)%7<3;if(wall){c.fillStyle='#1a1a10';c.fillRect(cc2*MAZE_S,r*MAZE_S,MAZE_S,MAZE_S);}}const t2=T();const mpx=W/2+Math.sin(t2)*20,mpy=H/2+Math.cos(t2*.7)*15;c.fillStyle='#FFD700';c.fillRect(mpx-4,mpy-4,8,8);const gl=c.createRadialGradient(mpx,mpy,0,mpx,mpy,20);gl.addColorStop(0,'rgba(255,215,0,.12)');gl.addColorStop(1,'transparent');c.fillStyle=gl;c.fillRect(mpx-20,mpy-20,40,40);});
+mkPrev('nc-depths',(c,W,H)=>{c.fillStyle='#07060a';c.fillRect(0,0,W,H);[{x:6,cc:'#2a1a3a'},{x:57,cc:'#1a2a1a'},{x:108,cc:'#2a1a1a'},{x:159,cc:'#1a1a2a'}].forEach((cd,i)=>{c.fillStyle=cd.cc;c.fillRect(cd.x,16,46,58);c.strokeStyle='rgba(255,215,0,.12)';c.lineWidth=1;c.strokeRect(cd.x,16,46,58);c.font='16px serif';c.textAlign='center';c.fillText(['⚔','🛡','💎','✨'][i],cd.x+23,52);});c.textAlign='left';const b=.4+.4*Math.sin(T()*2);[-16,16].forEach(ox=>{const ex=W/2+ox,ey=H-12;const eg=c.createRadialGradient(ex,ey,0,ex,ey,8);eg.addColorStop(0,`rgba(255,215,0,${.4+b*.25})`);eg.addColorStop(1,'transparent');c.fillStyle=eg;c.beginPath();c.arc(ex,ey,8,0,Math.PI*2);c.fill();});});
+mkPrev('nc-loom',(c,W,H)=>{c.fillStyle='#070605';c.fillRect(0,0,W,H);const C=['#FF2020','#1E90FF','#FFD700','#20D050','#CC22FF','#FF8C00'],S=16;for(let r=0;r<5;r++)for(let cc2=0;cc2<12;cc2++){c.fillStyle=C[(r*3+cc2*2+Math.floor(T()*.35))%6];c.fillRect(cc2*S+1,r*S+4,S-2,S-2);c.fillStyle='rgba(255,255,255,.18)';c.fillRect(cc2*S+2,r*S+5,4,4);}const sc=Math.floor(T())%12,sr=Math.floor(T()*.7)%5;c.strokeStyle='#fff';c.lineWidth=2;c.strokeRect(sc*S+1,sr*S+4,S-2,S-2);});
+mkPrev('nc-motherlode',(c,W,H)=>{c.fillStyle='#070605';c.fillRect(0,0,W,H);c.fillStyle='#2a2a18';c.beginPath();c.arc(W/2,H/2,28,0,Math.PI*2);c.fill();c.strokeStyle='rgba(255,215,0,.22)';c.lineWidth=2;c.beginPath();c.arc(W/2,H/2,28,0,Math.PI*2);c.stroke();c.strokeStyle='rgba(255,215,0,.4)';c.lineWidth=1;c.beginPath();c.moveTo(W/2-10,H/2-6);c.lineTo(W/2+7,H/2+10);c.stroke();for(let i=0;i<4;i++){const py2=((T()*24+i*16)%(H+6))*-1+H,px2=W/2+Math.sin(T()+i)*18;c.fillStyle=`rgba(255,215,0,${.25+Math.sin(T()+i)*.18})`;c.fillRect(px2-2,py2-2,4,4);}c.fillStyle='rgba(255,215,0,.6)';c.font='5px "Press Start 2P"';c.textAlign='center';c.fillText('+'+Math.floor(T()%100)+'G',W/2,H-6);c.textAlign='left';});
+mkPrev('nc-gemslots',(c,W,H)=>{c.fillStyle='#070605';c.fillRect(0,0,W,H);const SYMS=['💎','⛏','🪙','🏅','👁'];for(let r=0;r<3;r++){const x=16+r*60,y=H/2-25;c.fillStyle='#1a1510';c.fillRect(x,y,52,50);c.strokeStyle='rgba(255,215,0,.22)';c.lineWidth=1;c.strokeRect(x,y,52,50);const si=Math.floor((T()*2*(r+1))%5);c.font='20px serif';c.textAlign='center';c.fillText(SYMS[si],x+26,y+34);}c.textAlign='left';c.strokeStyle='rgba(255,215,0,.35)';c.lineWidth=1;c.beginPath();c.moveTo(10,H/2);c.lineTo(W-10,H/2);c.stroke();});
+mkPrev('nc-gemshop',(c,W,H)=>{c.fillStyle='#070605';c.fillRect(0,0,W,H);const items=['💎 50G','📜 120G','⭐ 500G','👁 1000G'];items.forEach((item,i)=>{const x=6+i*46,y=20;c.fillStyle='#1a1510';c.fillRect(x,y,42,H-30);c.strokeStyle=`rgba(255,215,0,${.1+i*.05})`;c.lineWidth=1;c.strokeRect(x,y,42,H-30);c.font='14px serif';c.textAlign='center';c.fillText(item.split(' ')[0],x+21,y+28);c.fillStyle='rgba(255,215,0,.5)';c.font='4px "Press Start 2P"';c.fillText(item.split(' ')[1],x+21,H-14);});c.textAlign='left';});
+mkPrev('nc-ivysmine',(c,W,H)=>{c.fillStyle='#050a05';c.fillRect(0,0,W,H);const gl=c.createRadialGradient(W/2,H/2,0,W/2,H/2,60);gl.addColorStop(0,'rgba(34,180,60,.08)');gl.addColorStop(1,'transparent');c.fillStyle=gl;c.fillRect(0,0,W,H);c.fillStyle='#0f2015';c.fillRect(0,H-20,W,20);for(let i=0;i<8;i++){const px2=((i*23+T()*3)%W),py2=H-32+Math.sin(T()+i)*4;c.fillStyle=['#22cc44','#88ffcc','#44aa66'][i%3];c.beginPath();c.arc(px2,py2,4+i%3*2,0,Math.PI*2);c.fill();}c.fillStyle='rgba(100,200,100,.5)';c.font='5px "Press Start 2P"';c.textAlign='center';c.fillText("IVY'S MINE",W/2,12);c.textAlign='left';});
+mkPrev('nc-cipher',(c,W,H)=>{c.fillStyle='#000';c.fillRect(0,0,W,H);for(let r=0;r<5;r++)for(let cc2=0;cc2<12;cc2++){const v=((r*cc2+r)%7);c.fillStyle=['#000','#080806','#0d0c08','#1a1510','#111108','#070605','#050403'][v];c.fillRect(cc2*17,r*17,16,16);}const gg=c.createRadialGradient(W*.6,H*.45,0,W*.6,H*.45,16);gg.addColorStop(0,'rgba(255,215,0,.4)');gg.addColorStop(1,'transparent');c.fillStyle=gg;c.fillRect(W*.6-16,H*.45-16,32,32);c.fillStyle='rgba(255,215,0,.7)';c.fillRect(W*.6-3,H*.45-3,6,6);const b=.3+.3*Math.sin(T()*.8);[-10,10].forEach(ox=>{const ex=W/2+ox,ey=H-15;const eg=c.createRadialGradient(ex,ey,0,ex,ey,7);eg.addColorStop(0,`rgba(255,215,0,${b})`);eg.addColorStop(1,'transparent');c.fillStyle=eg;c.beginPath();c.arc(ex,ey,7,0,Math.PI*2);c.fill();});c.fillStyle='rgba(255,215,0,.12)';c.font='6px "Press Start 2P"';c.textAlign='center';c.fillText('???',W/2,H/2);c.textAlign='left';});
+mkPrev('nc-quill',(c,W,H)=>{c.fillStyle='#03020a';c.fillRect(0,0,W,H);const words=['MY','SWORD','IS','MY'];words.forEach((w,i)=>{const x=14+i*46,y=((T()*18*(i+1)+i*20)%(H+18))-9;c.fillStyle=`rgba(204,136,255,${.35+Math.sin(T()+i)*.18})`;c.font='5px "Press Start 2P"';c.fillText(w,x,y);});const pg=c.createRadialGradient(W/2,H/2,0,W/2,H/2,50);pg.addColorStop(0,'rgba(100,40,140,.1)');pg.addColorStop(1,'transparent');c.fillStyle=pg;c.fillRect(0,0,W,H);c.fillStyle='rgba(153,34,204,.2)';c.font='6px "Press Start 2P"';c.textAlign='center';c.fillText('???',W/2,H-8);c.textAlign='left';});
+
+// ════════════ WALLET SYNC ════════════
+function syncWallet(){
+  const w=NMNWallet.get();
+  document.getElementById('gold-disp').textContent=w.gold;
+  document.getElementById('lvl-disp').textContent=w.level;
+  document.getElementById('xp-disp').textContent=w.xp;
+  for(let i=0;i<5;i++){const p=document.getElementById('gp'+i);if(p)p.classList.toggle('lit',w.gems[i]);}
+}
+syncWallet();
+setInterval(syncWallet,2000);
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+</body>
+</html>

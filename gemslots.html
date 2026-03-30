@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Gem Slots — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+<style>
+body{padding-top:56px}
+.game-wrap{max-width:600px;margin:0 auto;padding:1.5rem 1rem}
+.slot-header{text-align:center;margin-bottom:1.5rem}
+.slot-title{font-family:var(--font-display);font-size:clamp(1.4rem,4vw,2rem);color:var(--gold);text-shadow:0 0 20px rgba(255,215,0,.3);margin-bottom:.4rem}
+.slot-sub{font-family:var(--font-pixel);font-size:.38rem;color:var(--muted);letter-spacing:.2em}
+.wallet-strip{display:flex;justify-content:center;gap:2rem;padding:.6rem;background:rgba(0,0,0,.4);border:1px solid rgba(255,215,0,.1);margin-bottom:1.2rem}
+.ws-item{text-align:center}
+.ws-val{font-family:var(--font-pixel);font-size:.55rem;color:var(--gold);text-shadow:0 0 8px rgba(255,215,0,.4);display:block}
+.ws-lbl{font-family:var(--font-pixel);font-size:.3rem;color:var(--muted)}
+/* MACHINE */
+.machine{background:#1a1208;border:3px solid var(--gd);padding:1.2rem;position:relative;box-shadow:0 0 30px rgba(255,215,0,.1),inset 0 0 20px rgba(0,0,0,.5)}
+.machine::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.machine-top{font-family:var(--font-pixel);font-size:.42rem;color:var(--gd);text-align:center;letter-spacing:.3em;margin-bottom:1rem}
+.reels-wrap{display:flex;gap:8px;justify-content:center;margin-bottom:1.2rem}
+.reel{width:90px;height:90px;background:#0a0807;border:2px solid rgba(255,215,0,.2);overflow:hidden;position:relative;box-shadow:inset 0 0 12px rgba(0,0,0,.8)}
+.reel-inner{position:absolute;width:100%;transition:transform 0s}
+.reel-inner.spinning{animation:reelSpin .08s linear infinite}
+@keyframes reelSpin{from{transform:translateY(0)}to{transform:translateY(-90px)}}
+.reel-sym{width:90px;height:90px;display:flex;align-items:center;justify-content:center;font-size:40px;image-rendering:pixelated}
+/* Center line */
+.reel::after{content:'';position:absolute;top:50%;left:0;right:0;height:2px;background:rgba(255,215,0,.3);transform:translateY(-50%);pointer-events:none}
+/* BET CONTROLS */
+.bet-row{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-bottom:.9rem;flex-wrap:wrap}
+.bet-btn{font-family:var(--font-pixel);font-size:.4rem;background:var(--stone2);color:var(--muted);border:1px solid rgba(255,215,0,.2);padding:5px 10px;transition:all .2s}
+.bet-btn:hover,.bet-btn.active{color:var(--gold);border-color:var(--gold);background:rgba(255,215,0,.06)}
+.bet-display{font-family:var(--font-pixel);font-size:.55rem;color:var(--gold);padding:5px 16px;border:1px solid rgba(255,215,0,.3);background:rgba(0,0,0,.4)}
+/* SPIN BUTTON */
+.spin-btn{display:block;width:100%;font-family:var(--font-pixel);font-size:.6rem;background:var(--gold);color:var(--coal);border:none;padding:.9rem;letter-spacing:.15em;transition:all .2s;box-shadow:0 0 20px rgba(255,215,0,.3)}
+.spin-btn:hover:not(:disabled){background:#fff;box-shadow:0 0 35px rgba(255,215,0,.7)}
+.spin-btn:disabled{opacity:.5;background:var(--stone2);color:var(--muted);box-shadow:none}
+/* RESULT */
+.result-panel{margin-top:1rem;padding:.75rem;border:1px solid rgba(255,215,0,.1);background:rgba(0,0,0,.3);min-height:50px;text-align:center}
+.result-msg{font-family:var(--font-pixel);font-size:.55rem;color:var(--gold);text-shadow:0 0 10px rgba(255,215,0,.4)}
+.result-sub{font-family:var(--font-pixel);font-size:.38rem;color:var(--muted);margin-top:.4rem}
+/* PAYTABLE */
+.paytable{margin-top:1.2rem;border:1px solid rgba(255,215,0,.1)}
+.pt-header{font-family:var(--font-pixel);font-size:.38rem;color:var(--gd);letter-spacing:.2em;padding:.4rem .6rem;border-bottom:1px solid rgba(255,215,0,.08);background:rgba(0,0,0,.3)}
+.pt-row{display:flex;justify-content:space-between;align-items:center;padding:.3rem .6rem;border-bottom:1px solid rgba(255,215,0,.05)}
+.pt-sym{font-size:18px;display:flex;gap:2px}
+.pt-prize{font-family:var(--font-pixel);font-size:.38rem;color:var(--gold)}
+.pt-label{font-family:var(--font-pixel);font-size:.32rem;color:var(--muted)}
+.gem-row{display:flex;gap:4px;justify-content:center;margin-top:.8rem}
+.gem-pip{width:14px;height:14px;border:1px solid rgba(255,215,0,.3);background:var(--stone2);font-size:7px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.gem-pip.lit{border-color:var(--gold);background:#1a1500;box-shadow:0 0 6px var(--gold)}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+
+
+
+</head>
+<body>
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
+<script src="nmn-scene.js"></script>
+
+<div class="game-wrap">
+  <div class="slot-header">
+    <p class="slot-title">Gem Slots</p>
+    <p class="slot-sub">⛏ SPIN THE ORE REELS · THREE IN A ROW HITS THE MOTHERLODE ⛏</p>
+  </div>
+
+  <div class="wallet-strip">
+    <div class="ws-item"><span class="ws-val" id="ws-gold">0</span><span class="ws-lbl">GOLD</span></div>
+    <div class="ws-item"><span class="ws-val" id="ws-spins">0</span><span class="ws-lbl">TOTAL SPINS</span></div>
+    <div class="ws-item"><span class="ws-val" id="ws-wins">0</span><span class="ws-lbl">WINS</span></div>
+  </div>
+
+  <div class="machine">
+    <div class="machine-top">◈ NMN ORE SLOTS — PULL THE SHAFT ◈</div>
+
+    <div class="reels-wrap">
+      <div class="reel" id="reel-0"><div class="reel-inner" id="ri-0"><div class="reel-sym" id="rs-0">💎</div></div></div>
+      <div class="reel" id="reel-1"><div class="reel-inner" id="ri-1"><div class="reel-sym" id="rs-1">⛏</div></div></div>
+      <div class="reel" id="reel-2"><div class="reel-inner" id="ri-2"><div class="reel-sym" id="rs-2">🪙</div></div></div>
+    </div>
+
+    <div class="bet-row">
+      <span style="font-family:var(--font-pixel);font-size:.38rem;color:var(--muted)">BET:</span>
+      <button class="bet-btn" onclick="setBet(5)">5</button>
+      <button class="bet-btn active" onclick="setBet(10)">10</button>
+      <button class="bet-btn" onclick="setBet(25)">25</button>
+      <button class="bet-btn" onclick="setBet(50)">50</button>
+      <div class="bet-display" id="bet-display">10 💎</div>
+    </div>
+
+    <button class="spin-btn" id="spin-btn" onclick="spin()">⛏ SPIN THE REELS</button>
+
+    <div class="result-panel">
+      <div class="result-msg" id="result-msg">Place your bet and pull the shaft.</div>
+      <div class="result-sub" id="result-sub"></div>
+    </div>
+
+    <div class="gem-row">
+      <div class="gem-pip" id="gp0">◆</div><div class="gem-pip" id="gp1">◆</div>
+      <div class="gem-pip" id="gp2">◆</div><div class="gem-pip" id="gp3">◆</div>
+      <div class="gem-pip" id="gp4">◆</div>
+    </div>
+  </div>
+
+  <div class="paytable">
+    <div class="pt-header">◈ PAYTABLE — MULTIPLIERS ON BET ◈</div>
+    <div class="pt-row"><div class="pt-sym">👁👁👁</div><div><div class="pt-prize">500x</div><div class="pt-label">LORD ORO'S EYE</div></div></div>
+    <div class="pt-row"><div class="pt-sym">💎💎💎</div><div><div class="pt-prize">100x</div><div class="pt-label">GOLDMINE</div></div></div>
+    <div class="pt-row"><div class="pt-sym">🏅🏅🏅</div><div><div class="pt-prize">50x</div><div class="pt-label">GOLD MEDAL</div></div></div>
+    <div class="pt-row"><div class="pt-sym">⭐⭐⭐</div><div><div class="pt-prize">30x</div><div class="pt-label">STAR MAP</div></div></div>
+    <div class="pt-row"><div class="pt-sym">🪙🪙🪙</div><div><div class="pt-prize">15x</div><div class="pt-label">SILVER VEIN</div></div></div>
+    <div class="pt-row"><div class="pt-sym">⛏⛏⛏</div><div><div class="pt-prize">10x</div><div class="pt-label">MINER'S TRIPLE</div></div></div>
+    <div class="pt-row"><div class="pt-sym">💎💎✦</div><div><div class="pt-prize">5x</div><div class="pt-label">TWO GEMS</div></div></div>
+    <div class="pt-row"><div class="pt-sym">ANY ANY 👁</div><div><div class="pt-prize">3x</div><div class="pt-label">LORD ORO WATCHES</div></div></div>
+  </div>
+</div>
+
+<script>
+const SYMS = ['💎','⛏','🪙','🏅','⭐','👁'];
+// Weight table — rarer symbols appear less
+const POOL = [
+  '💎','💎','💎',
+  '⛏','⛏','⛏','⛏',
+  '🪙','🪙','🪙',
+  '🏅','🏅',
+  '⭐','⭐',
+  '👁'
+];
+
+let bet=10, totalSpins=0, wins=0, spinning=false;
+
+function setBet(n){
+  bet=n;
+  document.getElementById('bet-display').textContent=n+' 💎';
+  document.querySelectorAll('.bet-btn').forEach(b=>{b.classList.toggle('active',parseInt(b.textContent)===n)});
+}
+
+function spin(){
+  const w=NMNWallet.get();
+  if(w.gold<bet){ setResult('NOT ENOUGH GOLD','Mine deeper first.',false); return; }
+  if(spinning) return;
+  spinning=true;
+
+  NMNWallet.addGold(-bet);
+  totalSpins++;
+  document.getElementById('ws-spins').textContent=totalSpins;
+  document.getElementById('spin-btn').disabled=true;
+  document.getElementById('result-msg').textContent='◈ REELS SPINNING ◈';
+  document.getElementById('result-sub').textContent='';
+  syncWallet();
+
+  // Start spin animations
+  [0,1,2].forEach(i=>{
+    document.getElementById('ri-'+i).classList.add('spinning');
+  });
+
+  // Stop reels staggered
+  const results=[];
+  [0,1,2].forEach((i,idx)=>{
+    setTimeout(()=>{
+      const sym=POOL[Math.floor(Math.random()*POOL.length)];
+      results[i]=sym;
+      document.getElementById('ri-'+i).classList.remove('spinning');
+      document.getElementById('rs-'+i).textContent=sym;
+      if(idx===2){
+        setTimeout(()=>evaluate(results),200);
+      }
+    }, 600+idx*400);
+  });
+}
+
+function evaluate(r){
+  const [a,b,c]=r;
+  let mult=0, msg='', sub='';
+
+  if(a===b&&b===c){
+    // Three of a kind
+    if(a==='👁'){mult=500;msg='👁 LORD ORO SEES YOU 👁';sub='THE MINE IS YOURS'}
+    else if(a==='💎'){mult=100;msg='💎 GOLDMINE HIT 💎';sub='THREE GEMS — MAXIMUM YIELD'}
+    else if(a==='🏅'){mult=50;msg='🏅 GOLD MEDAL 🏅';sub='THE VAULT IS OPEN'}
+    else if(a==='⭐'){mult=30;msg='⭐ STAR MAP ALIGNED ⭐';sub='YOUR NAME IN THE STARS'}
+    else if(a==='🪙'){mult=15;msg='🪙 SILVER VEIN 🪙';sub='NOT BAD MINER'}
+    else if(a==='⛏'){mult=10;msg='⛏ MINER\'S TRIPLE ⛏';sub='KEEP DIGGING'}
+  } else if(a===b||b===c||a===c){
+    if(r.includes('💎')){mult=5;msg='💎 TWO GEMS';sub='PARTIAL HIT'}
+    else{mult=2;msg='◈ TWO OF A KIND';sub='SMALL WIN'}
+  } else if(r.includes('👁')){
+    mult=3;msg='👁 LORD ORO WATCHES';sub='HE SEES POTENTIAL IN YOU';
+  }
+
+  const won=mult>0;
+  if(won){
+    const prize=Math.ceil(bet*mult);
+    NMNWallet.addGold(prize);
+    NMNWallet.addXP(prize);
+    if(mult>=10) NMNWallet.addGem();
+    wins++;
+    document.getElementById('ws-wins').textContent=wins;
+    setResult(msg,sub+' — +'+prize+' GOLD',true);
+    syncWallet();
+    if(mult>=50) bigWinFlash();
+  } else {
+    setResult('◈ NO MATCH','The ore veins didn\'t align. Try again.',false);
+  }
+
+  spinning=false;
+  document.getElementById('spin-btn').disabled=false;
+  syncWallet();
+}
+
+function bigWinFlash(){
+  const machine=document.querySelector('.machine');
+  let flashes=0;
+  const iv=setInterval(()=>{
+    machine.style.boxShadow=flashes%2===0?'0 0 60px rgba(255,215,0,.8),inset 0 0 30px rgba(255,215,0,.2)':'0 0 30px rgba(255,215,0,.1),inset 0 0 20px rgba(0,0,0,.5)';
+    flashes++;if(flashes>8){clearInterval(iv);machine.style.boxShadow='';}
+  },150);
+}
+
+function setResult(msg,sub,win){
+  const el=document.getElementById('result-msg');
+  const sub2=document.getElementById('result-sub');
+  el.textContent=msg;
+  el.style.color=win?'#FFD700':'#a0905a';
+  sub2.textContent=sub;
+}
+
+function syncWallet(){
+  const w=NMNWallet.get();
+  document.getElementById('ws-gold').textContent=w.gold;
+  for(let i=0;i<5;i++){const p=document.getElementById('gp'+i);if(p)p.classList.toggle('lit',w.gems[i]);}
+}
+syncWallet();
+setInterval(syncWallet,2000);
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>

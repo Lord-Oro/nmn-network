@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Star Map — NMN Oracle's Chamber</title>
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28;--purple:#6a3a8a;--pb:#9a6aaa}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);background:#05030e;color:var(--cream);min-height:100vh;overflow-x:hidden}
+header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.1);display:flex;justify-content:space-between;align-items:center;background:rgba(5,3,14,.95);position:sticky;top:0;z-index:10}
+.logo{font-family:var(--font-serif);font-style:italic;color:var(--gold);font-size:.95rem;text-decoration:none}
+.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.back:hover{color:var(--gold)}
+/* HERO */
+.map-hero{text-align:center;padding:2.5rem 2rem 1rem}
+.map-title{font-family:var(--font-serif);font-size:clamp(2rem,5vw,3.5rem);color:var(--cream);margin-bottom:.5rem}
+.map-title em{color:var(--gold);font-style:italic}
+.map-sub{font-size:.72rem;color:var(--muted);line-height:2;max-width:560px;margin:0 auto}
+/* TABS */
+.map-tabs{display:flex;justify-content:center;gap:0;border-bottom:1px solid rgba(255,215,0,.12);margin-bottom:0}
+.map-tab{padding:.75rem 1.5rem;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);cursor:pointer;border-bottom:2px solid transparent;transition:all .3s;background:none;border-top:none;border-left:none;border-right:none}
+.map-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.map-tab:hover{color:var(--muted)}
+/* SVG MAP */
+.star-canvas{position:relative;width:100%;max-width:900px;margin:0 auto;display:block}
+#starSVG{width:100%;cursor:crosshair}
+/* TOOLTIP */
+.star-tooltip{position:fixed;background:rgba(5,3,14,.97);border:1px solid rgba(255,215,0,.3);padding:1rem 1.25rem;max-width:300px;z-index:100;pointer-events:none;display:none;box-shadow:0 4px 20px rgba(0,0,0,.6)}
+.tt-name{font-family:var(--font-serif);font-size:1.1rem;color:var(--gold);margin-bottom:.3rem}
+.tt-tag{font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd);margin-bottom:.5rem}
+.tt-text{font-size:.75rem;color:var(--muted);line-height:1.7}
+.tt-donor{font-size:.65rem;color:var(--gb);margin-top:.4rem;font-style:italic;font-family:var(--font-serif)}
+/* PANELS */
+.panel{display:none;max-width:800px;margin:0 auto;padding:2rem}
+.panel.active{display:block}
+.tribe-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-top:1.5rem}
+.tribe-card{border:1px solid rgba(255,215,0,.12);padding:1.25rem;background:rgba(255,255,255,.02);transition:border-color .3s;cursor:pointer}
+.tribe-card:hover{border-color:rgba(255,215,0,.4)}
+.tribe-card.active-card{border-color:var(--gold);background:rgba(255,215,0,.06)}
+.tribe-icon{font-size:1.8rem;display:block;margin-bottom:.5rem}
+.tribe-name{font-family:var(--font-serif);font-size:1.1rem;color:var(--cream);margin-bottom:.25rem}
+.tribe-culture{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd)}
+.tribe-detail{margin-top:1.5rem;border:1px solid rgba(255,215,0,.15);padding:1.5rem;background:rgba(255,215,0,.03);display:none}
+.tribe-detail.active{display:block}
+.tribe-detail-title{font-family:var(--font-serif);font-size:1.4rem;color:var(--gold);margin-bottom:.75rem;font-style:italic}
+.tribe-detail-text{font-size:.8rem;color:var(--muted);line-height:2}
+.tribe-oro{font-family:var(--font-serif);font-style:italic;font-size:.95rem;color:var(--gd);margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,215,0,.1);line-height:1.7}
+/* DONOR */
+.donor-section{text-align:center;padding:2rem}
+.donor-title{font-family:var(--font-serif);font-size:1.8rem;color:var(--gold);margin-bottom:.5rem;font-style:italic}
+.donor-sub{font-size:.72rem;color:var(--muted);line-height:2;max-width:480px;margin:0 auto 2rem}
+.donor-how{border:1px solid rgba(255,215,0,.15);padding:1.5rem;background:rgba(255,215,0,.03);text-align:left;max-width:500px;margin:0 auto 2rem}
+.donor-how h3{font-family:var(--font-serif);font-size:1.1rem;color:var(--cream);margin-bottom:.75rem}
+.donor-how p{font-size:.72rem;color:var(--muted);line-height:1.9;margin-bottom:.5rem}
+.donor-links{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center}
+.donor-link{padding:.7rem 1.5rem;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(255,215,0,.3);color:var(--gold);transition:all .3s}
+.donor-link:hover{background:rgba(255,215,0,.08);border-color:var(--gold)}
+.donor-link.primary{background:var(--gold);color:var(--coal);border-color:var(--gold)}
+.donor-link.primary:hover{background:var(--gb)}
+</style>
+
+<style id="depth-gauge-style">
+.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:36px;background:rgba(12,10,7,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:2rem;z-index:999;padding:0 1rem;flex-wrap:wrap}
+.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28}
+.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
+.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s}
+.dg-link:hover{color:#FFD700}
+.dg-sep{color:#2a1808;font-size:.6rem}
+</style>
+
+<style id="nmn-cursor">
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
+</style>
+<style id="floating-gauge">
+.depth-gauge{
+  position:fixed!important;bottom:12px!important;left:50%!important;
+  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
+  height:42px!important;background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
+  padding:0 18px!important;pointer-events:none!important;
+  z-index:9999!important;backdrop-filter:blur(4px)!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:1.2rem!important;flex-wrap:nowrap!important;
+  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
+body{padding-bottom:65px!important}
+</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+
+
+
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+<header>
+  <a href="index.html" class="logo">NMN — Lord Oro</a>
+  <a href="oracle.html" class="back">← Oracle's Chamber</a>
+</header>
+<div class="map-hero">
+  <h1 class="map-title">The <em>Star Map</em></h1>
+  <p class="map-sub">Lord Oro named the sky long before astronomers did. The constellations here belong to his universe — and to the people who helped build it. Hover any star to hear what the mine sees in it.</p>
+</div>
+<div class="map-tabs">
+  <button class="map-tab active" onclick="showPanel('map')">⭐ Lord Oro's Sky</button>
+  <button class="map-tab" onclick="showPanel('tribes')">🌍 Tribes of the Stars</button>
+  <button class="map-tab" onclick="showPanel('donors')">💛 Donor Stars</button>
+</div>
+
+<!-- STAR MAP PANEL -->
+<div class="panel active" id="mapPanel">
+  <div class="star-canvas">
+    <svg id="starSVG" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+      <!-- Deep sky background -->
+      <rect width="900" height="600" fill="#05030e"/>
+      <!-- Nebula clouds -->
+      <ellipse cx="200" cy="150" rx="180" ry="80" fill="#1a0a2a" opacity=".4"/>
+      <ellipse cx="680" cy="400" rx="200" ry="100" fill="#0a1a2a" opacity=".35"/>
+      <ellipse cx="450" cy="300" rx="150" ry="120" fill="#1a1208" opacity=".25"/>
+      <!-- Background micro stars -->
+      <g fill="white" opacity=".3">
+        <circle cx="45" cy="23" r="0.8"/><circle cx="120" cy="67" r="0.6"/><circle cx="234" cy="12" r="0.8"/><circle cx="312" cy="89" r="0.6"/><circle cx="456" cy="34" r="0.8"/><circle cx="567" cy="78" r="0.6"/><circle cx="678" cy="23" r="0.8"/><circle cx="789" cy="56" r="0.6"/><circle cx="834" cy="12" r="0.8"/><circle cx="23" cy="156" r="0.6"/><circle cx="89" cy="234" r="0.8"/><circle cx="167" cy="189" r="0.6"/><circle cx="278" cy="267" r="0.8"/><circle cx="389" cy="145" r="0.6"/><circle cx="512" cy="289" r="0.8"/><circle cx="623" cy="167" r="0.6"/><circle cx="734" cy="245" r="0.8"/><circle cx="845" cy="189" r="0.6"/><circle cx="56" cy="378" r="0.8"/><circle cx="134" cy="423" r="0.6"/><circle cx="245" cy="356" r="0.8"/><circle cx="356" cy="489" r="0.6"/><circle cx="467" cy="412" r="0.8"/><circle cx="578" cy="356" r="0.6"/><circle cx="689" cy="523" r="0.8"/><circle cx="800" cy="467" r="0.6"/><circle cx="867" cy="389" r="0.8"/>
+      </g>
+
+      <!-- CONSTELLATION: Nayla's Paw -->
+      <g id="const-nayla">
+        <line x1="120" y1="120" x2="155" y2="95" stroke="#c9962a" stroke-width=".8" opacity=".5"/>
+        <line x1="155" y1="95" x2="190" y2="110" stroke="#c9962a" stroke-width=".8" opacity=".5"/>
+        <line x1="190" y1="110" x2="175" y2="145" stroke="#c9962a" stroke-width=".8" opacity=".5"/>
+        <line x1="175" y1="145" x2="140" y2="155" stroke="#c9962a" stroke-width=".8" opacity=".5"/>
+        <line x1="140" y1="155" x2="120" y2="120" stroke="#c9962a" stroke-width=".8" opacity=".5"/>
+        <circle class="named-star" cx="120" cy="120" r="4" fill="#e8b84b" data-name="The Paw Stone" data-const="Nayla's Paw" data-lore="Where she first set foot in the world that wasn't hers. And made it hers anyway."/>
+        <circle class="named-star" cx="155" cy="95" r="5" fill="#e8b84b" data-name="The Lioness Eye" data-const="Nayla's Paw" data-lore="Nayla's brightest star. It is always watching. Lord Oro says it watches him too."/>
+        <circle class="named-star" cx="190" cy="110" r="3" fill="#e8b84b" data-name="The Claw" data-const="Nayla's Paw" data-lore="She extended it once. The world never forgot."/>
+        <circle class="named-star" cx="175" cy="145" r="3.5" fill="#e8b84b" data-name="The Pad" data-const="Nayla's Paw" data-lore="Soft. Until it isn't."/>
+        <circle class="named-star" cx="140" cy="155" r="3" fill="#e8b84b" data-name="The Print" data-const="Nayla's Paw" data-lore="She was here. That's enough."/>
+        <text x="155" y="80" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="11" fill="#c9962a" opacity=".7" font-style="italic">Nayla's Paw</text>
+      </g>
+
+      <!-- CONSTELLATION: Felik's Crossroads -->
+      <g id="const-felik">
+        <line x1="380" y1="80" x2="420" y2="130" stroke="#9a6aaa" stroke-width=".8" opacity=".5"/>
+        <line x1="420" y1="130" x2="460" y2="80" stroke="#9a6aaa" stroke-width=".8" opacity=".5"/>
+        <line x1="420" y1="130" x2="420" y2="190" stroke="#9a6aaa" stroke-width=".8" opacity=".5"/>
+        <line x1="380" y1="190" x2="460" y2="190" stroke="#9a6aaa" stroke-width=".8" opacity=".5"/>
+        <circle class="named-star" cx="380" cy="80" r="4" fill="#c9c0e8" data-name="The First Soul" data-const="Felik's Crossroads" data-lore="The soul Felik was born with. It chose him before he chose it."/>
+        <circle class="named-star" cx="460" cy="80" r="4" fill="#c9c0e8" data-name="The Second Soul" data-const="Felik's Crossroads" data-lore="The soul that found him. The one who asked to stay. He said yes."/>
+        <circle class="named-star" cx="420" cy="130" r="6" fill="#c9c0e8" data-name="The Agreement" data-const="Felik's Crossroads" data-lore="The moment two became one without either disappearing. Lord Oro calls this the rarest star in his sky."/>
+        <circle class="named-star" cx="420" cy="190" r="4" fill="#c9c0e8" data-name="The Path Forward" data-const="Felik's Crossroads" data-lore="Where Felik walks now. Both of them. Together."/>
+        <circle class="named-star" cx="380" cy="190" r="3" fill="#c9c0e8" data-name="Left Fork" data-const="Felik's Crossroads" data-lore="The road not taken. Still visible from the crossroads."/>
+        <circle class="named-star" cx="460" cy="190" r="3" fill="#c9c0e8" data-name="Right Fork" data-const="Felik's Crossroads" data-lore="Also the road not taken. The crossroads keeps both."/>
+        <text x="420" y="65" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="11" fill="#9a6aaa" opacity=".7" font-style="italic">Felik's Crossroads</text>
+      </g>
+
+      <!-- CONSTELLATION: Juni's Eternal Loop -->
+      <g id="const-juni">
+        <circle cx="680" cy="130" r="55" fill="none" stroke="#4a8aaa" stroke-width=".8" opacity=".4" stroke-dasharray="4 3"/>
+        <circle class="named-star" cx="680" cy="75" r="5" fill="#88ccff" data-name="The First Life" data-const="Juni's Eternal Loop" data-lore="She doesn't remember this one. It was before she learned what immortality costs."/>
+        <circle class="named-star" cx="730" cy="110" r="3.5" fill="#88ccff" data-name="The Second Life" data-const="Juni's Eternal Loop" data-lore="She remembers this one. She wishes she didn't."/>
+        <circle class="named-star" cx="735" cy="155" r="3" fill="#88ccff" data-name="The Third Life" data-const="Juni's Eternal Loop" data-lore="The one where she stopped counting."/>
+        <circle class="named-star" cx="680" cy="185" r="4.5" fill="#88ccff" data-name="The Current Life" data-const="Juni's Eternal Loop" data-lore="She is here now. How long she stays depends on what the story needs."/>
+        <circle class="named-star" cx="628" cy="155" r="3" fill="#88ccff" data-name="The Forgotten Life" data-const="Juni's Eternal Loop" data-lore="There is no record of this one. Even Juni has no memory. Lord Oro suspects it was the best one."/>
+        <circle class="named-star" cx="625" cy="110" r="3.5" fill="#88ccff" data-name="The Return" data-const="Juni's Eternal Loop" data-lore="Every loop brings her back to the beginning. Every time slightly different. That's the only mercy."/>
+        <text x="680" y="245" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="11" fill="#4a8aaa" opacity=".7" font-style="italic">Juni's Eternal Loop</text>
+      </g>
+
+      <!-- CONSTELLATION: The Goldmine -->
+      <g id="const-goldmine">
+        <line x1="200" y1="380" x2="240" y2="340" stroke="#c9962a" stroke-width=".8" opacity=".5"/>
+        <line x1="240" y1="340" x2="290" y2="360" stroke="#c9962a" stroke-width=".8" opacity=".5"/>
+        <line x1="290" y1="360" x2="310" y2="410" stroke="#c9962a" stroke-width=".8" opacity=".5"/>
+        <line x1="310" y1="410" x2="270" y2="450" stroke="#c9962a" stroke-width=".8" opacity=".5"/>
+        <line x1="270" y1="450" x2="220" y2="440" stroke="#c9962a" stroke-width=".8" opacity=".5"/>
+        <line x1="220" y1="440" x2="200" y2="380" stroke="#c9962a" stroke-width=".8" opacity=".5"/>
+        <line x1="240" y1="340" x2="245" y2="300" stroke="#c9962a" stroke-width=".8" opacity=".5" stroke-dasharray="3 2"/>
+        <circle class="named-star" cx="240" cy="340" r="6" fill="#e8b84b" data-name="The Pickaxe Head" data-const="The Goldmine" data-lore="The first strike. Lord Oro says you only need one good one to change everything."/>
+        <circle class="named-star" cx="290" cy="360" r="4" fill="#e8b84b" data-name="The Vein" data-const="The Goldmine" data-lore="Where the gold runs. You have to know where to look."/>
+        <circle class="named-star" cx="310" cy="410" r="4.5" fill="#e8b84b" data-name="The Mother Lode" data-const="The Goldmine" data-lore="The richest deposit. Everything was pointing here the whole time."/>
+        <circle class="named-star" cx="270" cy="450" r="3" fill="#e8b84b" data-name="The Shaft" data-const="The Goldmine" data-lore="How deep are you willing to go? That's the only real question."/>
+        <circle class="named-star" cx="220" cy="440" r="3.5" fill="#e8b84b" data-name="The Lantern" data-const="The Goldmine" data-lore="It burns on its own now. You can go further."/>
+        <circle class="named-star" cx="200" cy="380" r="4" fill="#e8b84b" data-name="The Entrance" data-const="The Goldmine" data-lore="Where you started. Notice you can't see it from where you are now."/>
+        <circle class="named-star" cx="245" cy="300" r="2.5" fill="#e8b84b" data-name="The Handle" data-const="The Goldmine" data-lore="Still in your hand. It always is."/>
+        <text x="255" y="285" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="11" fill="#c9962a" opacity=".7" font-style="italic">The Goldmine</text>
+      </g>
+
+      <!-- CONSTELLATION: Lord Oro's Crown (faint — hard to find) -->
+      <g id="const-oro" opacity=".6">
+        <line x1="560" y1="380" x2="590" y2="350" stroke="#c9962a" stroke-width=".5" opacity=".3" stroke-dasharray="2 3"/>
+        <line x1="590" y1="350" x2="625" y2="365" stroke="#c9962a" stroke-width=".5" opacity=".3" stroke-dasharray="2 3"/>
+        <line x1="625" y1="365" x2="640" y2="400" stroke="#c9962a" stroke-width=".5" opacity=".3" stroke-dasharray="2 3"/>
+        <line x1="640" y1="400" x2="610" y2="425" stroke="#c9962a" stroke-width=".5" opacity=".3" stroke-dasharray="2 3"/>
+        <line x1="610" y1="425" x2="570" y2="415" stroke="#c9962a" stroke-width=".5" opacity=".3" stroke-dasharray="2 3"/>
+        <line x1="570" y1="415" x2="560" y2="380" stroke="#c9962a" stroke-width=".5" opacity=".3" stroke-dasharray="2 3"/>
+        <circle class="named-star" cx="590" cy="350" r="2.5" fill="#e8b84b" opacity=".5" data-name="The Observer" data-const="Lord Oro's Crown" data-lore="He named this one last. He almost didn't name it at all. Some stars are better as mysteries."/>
+        <circle class="named-star" cx="625" cy="365" r="3" fill="#e8b84b" opacity=".5" data-name="The Sword" data-const="Lord Oro's Crown" data-lore="The pen. The mine. The gold. All the same thing."/>
+        <circle class="named-star" cx="640" cy="400" r="2" fill="#e8b84b" opacity=".5" data-name="The Kingdom" data-const="Lord Oro's Crown" data-lore="The human interior world. Every person who has ever lived has one. Most never enter it."/>
+        <circle class="named-star" cx="610" cy="425" r="2.5" fill="#e8b84b" opacity=".5" data-name="The Subject" data-const="Lord Oro's Crown" data-lore="You. Reading this. The mine was built for someone exactly like you."/>
+        <circle class="named-star" cx="570" cy="415" r="2" fill="#e8b84b" opacity=".5" data-name="The Madman" data-const="Lord Oro's Crown" data-lore="He didn't choose the name. It was given. He kept it."/>
+        <circle class="named-star" cx="560" cy="380" r="2" fill="#e8b84b" opacity=".5" data-name="The Gold" data-const="Lord Oro's Crown" data-lore="Still here. Still waiting. That's the whole point."/>
+        <text x="600" y="338" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="10" fill="#c9962a" opacity=".35" font-style="italic">Lord Oro's Crown</text>
+      </g>
+
+      <!-- DONOR STARS SECTION -->
+      <g id="donor-stars">
+        <text x="820" y="520" text-anchor="end" font-family="'Cormorant Garamond',serif" font-size="10" fill="#c9962a" opacity=".4" font-style="italic">Donor Stars</text>
+        <!-- Placeholder donor stars — add real ones below this line -->
+        <circle class="donor-star" cx="760" cy="490" r="3.5" fill="#e8b84b" data-name="Ivy May" data-donor="true" data-lore="Named for Ivy May — the one who saw the games and loved them first. She gets a star."/>
+        <circle class="donor-star" cx="800" cy="510" r="2.5" fill="#gb" fill="url(#donorGlow)" data-name="[Your Name Here]" data-donor="true" data-lore="Support the goldmine and your name lives in the sky. Permanently. Patreon, GoFundMe, or Kickstarter."/>
+        <circle class="donor-star" cx="840" cy="485" r="2" fill="#e8b84b" opacity=".4" data-name="[Your Name Here]" data-donor="true" data-lore="Support the goldmine and your name lives in the sky. Permanently."/>
+      </g>
+
+      <!-- Ivy May label -->
+      <text x="760" y="480" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="9" fill="#e8b84b" opacity=".7" font-style="italic">Ivy May ✦</text>
+    </svg>
+  </div>
+</div>
+
+<!-- TRIBES PANEL -->
+<div class="panel" id="tribesPanel">
+  <h2 style="font-family:var(--font-serif);font-style:italic;color:var(--gold);font-size:1.8rem;text-align:center;margin-bottom:.5rem">Tribes of the Stars</h2>
+  <p style="font-size:.72rem;color:var(--muted);text-align:center;line-height:2;max-width:560px;margin:0 auto 1.5rem">Long before Lord Oro named his sky, civilizations across the world built their worlds around the stars. These are their stories.</p>
+  <div class="tribe-grid" id="tribeGrid"></div>
+  <div class="tribe-detail" id="tribeDetail">
+    <div class="tribe-detail-title" id="tribeDetailTitle"></div>
+    <div class="tribe-detail-text" id="tribeDetailText"></div>
+    <div class="tribe-oro" id="tribeDetailOro"></div>
+  </div>
+</div>
+
+<!-- DONORS PANEL -->
+<div class="panel" id="donorsPanel">
+  <div class="donor-section">
+    <div class="donor-title">Name a Star</div>
+    <p class="donor-sub">Every person who supports the Nonsense Media Network gets a star named after them in Lord Oro's fictional sky. It glows with your name. It stays there permanently. You become part of the universe.</p>
+    <div class="donor-how">
+      <h3>How it works</h3>
+      <p>Support the goldmine through Patreon, GoFundMe, or Kickstarter. Your name gets added to the Star Map within 48 hours. Your star glows amber. Hover it and your name appears with a personal lore fragment written by Lord Oro.</p>
+      <p>There is no minimum. Every contribution gets a star. Some stars are brighter than others — but every one is permanent.</p>
+    </div>
+    <div class="donor-links">
+      <a href="https://www.patreon.com" class="donor-link primary" target="_blank">Patreon →</a>
+      <a href="https://gofund.me/e643a8283" class="donor-link" target="_blank">GoFundMe →</a>
+      <a href="newsletter.html" class="donor-link">Join the Goldmine</a>
+    </div>
+  </div>
+</div>
+
+<!-- TOOLTIP -->
+<div class="star-tooltip" id="starTooltip">
+  <div class="tt-name" id="ttName"></div>
+  <div class="tt-tag" id="ttTag"></div>
+  <div class="tt-text" id="ttText"></div>
+  <div class="tt-donor" id="ttDonor" style="display:none"></div>
+</div>
+
+<script>
+// TRIBES DATA
+const TRIBES=[
+  {icon:'🌿',name:'Māori',culture:'Aotearoa New Zealand',story:'The Māori called the Milky Way Te Ika-a-Māui — the Fish of Māui. Stars were ancestors, gods, and navigators. Matariki (the Pleiades) marked the Māori New Year and was a time for planting, harvesting, and remembering the dead. Each star in Matariki had a specific purpose — one for the sea, one for the land, one for the sky.',oro:'"Lord Oro says the stars are ancestors too. He just doesn\'t name them that because the word ancestor implies they\'re gone. His aren\'t."'},
+  {icon:'🦅',name:'Lakota',culture:'Great Plains, North America',story:'The Lakota saw the Milky Way as Wanagi Tacanku — the Spirit Road or Ghost Road. The souls of the dead traveled this road to Wanagi Yata, the spirit world. Stars were living beings with personalities and relationships. The constellation we call Orion, the Lakota called "The Hand" — a severed hand reaching toward the Pleiades.',oro:'"In the mine, the dark between the gold is the Spirit Road. Lord Oro walks it sometimes. He always comes back carrying something he didn\'t have before."'},
+  {icon:'🌙',name:'Yoruba',culture:'West Africa / Nigeria',story:'The Yoruba tradition holds Obatala, the sky deity, created the earth from chaos while the stars watched. Specific stars were associated with orishas — divine spirits. Sopona governed certain stars connected to healing and disease. The night sky was not distant — it was populated with beings who cared about what happened below.',oro:'"The mine has its own orishas. Tora knows their names. She just doesn\'t say them unless asked directly."'},
+  {icon:'⚱️',name:'Ancient Egyptian',culture:'Nile Valley, North Africa',story:'The Egyptians believed the stars were the souls of the dead — particularly the pharaohs who became Osiris upon death. The pyramid shafts at Giza were aligned so that the soul could ascend directly to specific stars. The Milky Way was the celestial Nile. Nut, the sky goddess, swallowed the sun each evening and gave birth to it each morning.',oro:'"Every pyramid is a mine pointing up instead of down. Lord Oro notes this without irony. The gold goes both ways."'},
+  {icon:'🐻',name:'Anishinaabe',culture:'Great Lakes Region, North America',story:'The Anishinaabe recognized Fisher Star — a giant fisher animal whose seasonal journey across the sky marked the changing seasons and regulated the world\'s temperature. Stories of Nanabozho, the trickster, involved the stars directly. The Big Dipper was Maung, the loon, pulling a canoe of stars across the water of the sky.',oro:'"The trickster and Lord Oro have something in common. They both tell the truth so sideways that you don\'t realize it\'s the truth until three days later."'},
+  {icon:'🌊',name:'Polynesian Navigators',culture:'Pacific Ocean',story:'Polynesian wayfinders used stars not as mythology but as precise navigation tools — memorizing the rising and setting points of over 200 stars. The stars were a road across the ocean. Hokule\'a, the zenith star of Hawai\'i, told navigators exactly where they were. Stars were the original GPS, used to discover and connect islands across millions of square miles of open water.',oro:'"Lord Oro says navigation is just mining in a different direction. You\'re still looking for something that\'s always been there. You\'re still following the gold."'},
+];
+
+function renderTribes(){
+  document.getElementById('tribeGrid').innerHTML=TRIBES.map((t,i)=>`
+    <div class="tribe-card" onclick="showTribe(${i})">
+      <span class="tribe-icon">${t.icon}</span>
+      <div class="tribe-name">${t.name}</div>
+      <div class="tribe-culture">${t.culture}</div>
+    </div>`).join('');
+}
+
+function showTribe(i){
+  const t=TRIBES[i];
+  document.querySelectorAll('.tribe-card').forEach((c,j)=>c.classList.toggle('active-card',j===i));
+  const d=document.getElementById('tribeDetail');
+  document.getElementById('tribeDetailTitle').textContent=t.name+' — '+t.culture;
+  document.getElementById('tribeDetailText').textContent=t.story;
+  document.getElementById('tribeDetailOro').textContent=t.oro;
+  d.classList.add('active');
+  d.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// PANELS
+function showPanel(name){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.map-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(name+'Panel').classList.add('active');
+  event.target.classList.add('active');
+}
+
+// STAR TOOLTIPS
+document.querySelectorAll('.named-star,.donor-star').forEach(star=>{
+  star.style.cursor='pointer';
+  star.addEventListener('mouseenter',e=>{
+    const tt=document.getElementById('starTooltip');
+    document.getElementById('ttName').textContent=star.dataset.name;
+    document.getElementById('ttTag').textContent=star.dataset.donor?'✦ Donor Star':star.dataset.const;
+    document.getElementById('ttText').textContent=star.dataset.lore;
+    const donorEl=document.getElementById('ttDonor');
+    if(star.dataset.donor){donorEl.textContent='A star named for someone who helped build the mine.';donorEl.style.display='block'}
+    else donorEl.style.display='none';
+    tt.style.display='block';
+    // Pulse the star
+    star.style.filter='drop-shadow(0 0 8px #e8b84b)';
+  });
+  star.addEventListener('mousemove',e=>{
+    const tt=document.getElementById('starTooltip');
+    tt.style.left=(e.clientX+12)+'px';
+    tt.style.top=(e.clientY-10)+'px';
+    if(e.clientX>window.innerWidth-320)tt.style.left=(e.clientX-320)+'px';
+  });
+  star.addEventListener('mouseleave',()=>{
+    document.getElementById('starTooltip').style.display='none';
+    star.style.filter='';
+  });
+});
+
+renderTribes();
+</script>
+
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> Lore Fragments</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span> Creatures</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
+  <a href="ledger.html" class="dg-link">📖 Ledger</a>
+</div>
+<script>
+(function(){
+  try{
+    var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+    var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
+    var gold=parseInt(localStorage.getItem('nmn_total_gold')||'0');
+    var el=document.getElementById('dgGold');if(el)el.textContent=gold;
+    var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
+    var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
+  }catch(e){}
+})();
+</script>
+
+<script>
+window.NMN_CONTEXT = "oracle";
+// NMN LIVING SOUNDSCAPE — Excavation Committee
+// Gemini's Quad-Track Engine + Claude's integration layer
+// Zero external files. Under 2KB. Procedural — never repeats exactly.
+
+const NMN_Audio = {
+  ctx: null,
+  running: false,
+  masterGain: null,
+  layers: {},
+
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  },
+
+  // TRACK 1 — The Deep Earth (continuous, low hum)
+  playHum() {
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(55, this.ctx.currentTime); // G1
+    gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
+    // Slow breathing — mine is alive
+    // Gemini's LFO: 0.08Hz = one breath every 12.5 seconds
+    const lfo = this.ctx.createOscillator();
+    const lfoGain = this.ctx.createGain();
+    lfo.type = 'sine';
+    lfo.frequency.value = 0.08;
+    lfoGain.gain.value = 0.01; // depth of breath
+    lfo.connect(lfoGain);
+    lfoGain.connect(gain.gain);
+    lfo.start();
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+    osc.start();
+    this.layers.hum = { osc, gain };
+  },
+
+  // TRACK 2 — The Air Shaft (filtered noise / wind)
+  playWind() {
+    const bufferSize = 2 * this.ctx.sampleRate;
+    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+    const whiteNoise = this.ctx.createBufferSource();
+    whiteNoise.buffer = noiseBuffer;
+    whiteNoise.loop = true;
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 400;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.012, this.ctx.currentTime);
+    whiteNoise.connect(filter);
+    filter.connect(g);
+    g.connect(this.masterGain);
+    whiteNoise.start();
+    this.layers.wind = { src: whiteNoise, gain: g };
+  },
+
+  // TRACK 3 — The Distant Strike (random pickaxe echoes)
+  playStrike() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.75) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        // Metallic strike freq
+        osc.frequency.setValueAtTime(140 + Math.random() * 80, this.ctx.currentTime);
+        osc.type = 'sawtooth';
+        g.gain.setValueAtTime(0.04, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.6);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.6);
+      }
+      // Randomize interval — 3s to 6s — never predictable
+      setTimeout(tick, 3000 + Math.random() * 3000);
+    };
+    setTimeout(tick, 2000);
+  },
+
+  // TRACK 4 — The Gold Shimmer (crystal high tones)
+  playShimmer() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.85) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'triangle';
+        // Gold harmonic range — slightly randomized each time
+        osc.frequency.setValueAtTime(2200 + Math.random() * 1400, this.ctx.currentTime);
+        g.gain.setValueAtTime(0, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.012, this.ctx.currentTime + 1.2);
+        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2.5);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 2.5);
+      }
+      setTimeout(tick, 5000 + Math.random() * 4000);
+    };
+    setTimeout(tick, 4000);
+  },
+
+  // TRACK 5 — The Subterranean Drip (Gemini's finalized version)
+  // Fast pitch-drop simulates the physics of water hitting a cavern pool
+  playWaterDrip() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.6) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sine';
+        // Start mid-freq, drop 50% in 80ms — exact droplet physics
+        osc.frequency.setValueAtTime(400 + Math.random() * 100, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.08);
+        g.gain.setValueAtTime(0.02, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.08);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.08);
+      }
+      // 2-8 second random interval — no rhythmic pattern ever emerges
+      setTimeout(tick, 2000 + Math.random() * 6000);
+    };
+    setTimeout(tick, 5000 + Math.random() * 3000);
+  },
+
+  // TRACK 6 — The Oracle's Pad
+  playOraclePad() {
+    const AMAJ = [220, 277.18, 329.63];
+    const tick = () => {
+      if (!this.running) return;
+      AMAJ.forEach((freq, i) => {
+        const osc = this.ctx.createOscillator();
+        const filter = this.ctx.createBiquadFilter();
+        const g = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        filter.type = 'lowpass'; filter.frequency.value = 800;
+        g.gain.setValueAtTime(0, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.03, this.ctx.currentTime + 2);
+        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 9);
+        osc.connect(filter); filter.connect(g); g.connect(this.masterGain);
+        osc.start(this.ctx.currentTime + i * 0.08);
+        osc.stop(this.ctx.currentTime + 9.5);
+      });
+      setTimeout(tick, 9000);
+    };
+    setTimeout(tick, 8000);
+  },
+
+  // Page-context aware — different mix per section
+  startAll(context) {
+    if (this.running) return;
+    this.init();
+    this.running = true;
+    this.playHum();
+    this.playWind();
+    this.playStrike();
+    this.playShimmer();
+    this.playOraclePad();
+    // Only add water drip on deep mine pages
+    if (context === 'deep' || context === 'oracle' || context === 'vigil') {
+      this.playWaterDrip();
+    }
+    // Tora gets a slightly higher shimmer frequency (more ethereal)
+    if (context === 'tora') {
+      this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
+    }
+  },
+
+  stop() {
+    if (!this.running) return;
+    this.running = false;
+    if (this.masterGain) {
+      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
+    }
+  },
+
+  toggle() {
+    if (this.running) { this.stop(); return false; }
+    else { this.startAll(window.NMN_CONTEXT || 'mine'); return true; }
+  }
+};
+
+// Trigger on first interaction — browser autoplay policy requires user gesture
+document.addEventListener('click', () => {
+  if (!NMN_Audio.running) NMN_Audio.startAll(window.NMN_CONTEXT || 'mine');
+}, { once: true });
+
+</script>
+
+<button id="nmn-sound-btn" onclick="
+  const on = NMN_Audio.toggle();
+  this.textContent = on ? '🔊 Sound On' : '🔇 Sound Off';
+  this.style.color = on ? 'var(--gold,#c9962a)' : '#4a3c28';
+" style="position:fixed;bottom:42px;right:.75rem;z-index:998;background:rgba(12,10,7,.9);border:1px solid rgba(255,215,0,.2);color:#4a3c28;font-family:Josefin Sans,sans-serif;font-size:.42rem;letter-spacing:.1em;padding:.35rem .6rem;cursor:pointer;transition:all .3s">🔇 Sound Off</button>
+<script id="nmn-glow">
+(function(){
+  var r=document.createElement('div');
+  r.id='pickaxe-glow';
+  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
+  document.body.appendChild(r);
+  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
+  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
+  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
+})();
+</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>

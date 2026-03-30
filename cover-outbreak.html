@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Outbreak From the Stars — Cover</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#111; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; font-family:sans-serif; gap:20px; padding:20px; }
+  .label { color:#666; font-size:12px; letter-spacing:2px; text-transform:uppercase; }
+  .cover-wrap { position:relative; }
+  canvas { display:block; cursor:pointer; }
+  .hint { color:#444; font-size:11px; text-align:center; }
+  .dl-btn { background:#1a3a8a; color:#88aaff; border:1px solid #4488cc; padding:8px 20px; font-size:12px; letter-spacing:2px; cursor:pointer; transition:all .2s; font-family:monospace; }
+  .dl-btn:hover { background:#2244aa; }
+</style>
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+<div class="label">Outbreak From the Stars — Book Cover Preview</div>
+
+<div class="cover-wrap">
+  <canvas id="cover" width="540" height="810"></canvas>
+</div>
+
+<button class="dl-btn" onclick="downloadCover()">⬇ DOWNLOAD COVER (PNG)</button>
+<div class="hint">540×810px preview · Scale to 1800×2700 for KDP print (300dpi @ 6×9in)</div>
+
+<script>
+const cv = document.getElementById('cover');
+const ctx = cv.getContext('2d');
+const W = cv.width, H = cv.height;
+
+// ── STAR FIELD ──
+const stars = Array.from({length:200}, () => ({
+  x: Math.random()*W, y: Math.random()*H,
+  r: Math.random()*1.2+.2,
+  a: Math.random(),
+  sp: Math.random()*.4+.1,
+  color: Math.random() > .85 ? '#88aaff' : Math.random() > .7 ? '#aaccff' : '#ffffff'
+}));
+
+// ── NEBULA COLORS ──
+function drawNebula() {
+  // Deep void base
+  ctx.fillStyle = '#010208';
+  ctx.fillRect(0,0,W,H);
+
+  // Main nebula — cold blue void
+  const n1 = ctx.createRadialGradient(W*.5, H*.35, 0, W*.5, H*.35, W*.65);
+  n1.addColorStop(0, 'rgba(10,30,100,.45)');
+  n1.addColorStop(.4, 'rgba(5,15,60,.3)');
+  n1.addColorStop(1, 'transparent');
+  ctx.fillStyle = n1; ctx.fillRect(0,0,W,H);
+
+  // Purple shadow lower left
+  const n2 = ctx.createRadialGradient(W*.15, H*.7, 0, W*.15, H*.7, W*.5);
+  n2.addColorStop(0, 'rgba(40,10,80,.35)');
+  n2.addColorStop(1, 'transparent');
+  ctx.fillStyle = n2; ctx.fillRect(0,0,W,H);
+
+  // Cold highlight upper right
+  const n3 = ctx.createRadialGradient(W*.8, H*.2, 0, W*.8, H*.2, W*.4);
+  n3.addColorStop(0, 'rgba(20,60,140,.25)');
+  n3.addColorStop(1, 'transparent');
+  ctx.fillStyle = n3; ctx.fillRect(0,0,W,H);
+}
+
+function drawStars() {
+  const t = Date.now() * .001;
+  stars.forEach(s => {
+    const pulse = .25 + .75 * Math.abs(Math.sin(t * s.sp + s.a));
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    ctx.fillStyle = s.color.replace(')', `,${pulse})`).replace('rgb','rgba').replace('#','');
+    // Just use the color directly with alpha
+    ctx.globalAlpha = pulse * .8;
+    ctx.fillStyle = s.color;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    // Rare bright stars get a cross glow
+    if (s.r > 1.1) {
+      ctx.strokeStyle = `rgba(136,170,255,${pulse*.2})`;
+      ctx.lineWidth = .5;
+      ctx.beginPath(); ctx.moveTo(s.x-4,s.y); ctx.lineTo(s.x+4,s.y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(s.x,s.y-4); ctx.lineTo(s.x,s.y+4); ctx.stroke();
+    }
+  });
+}
+
+// ── SECURITY CAMERA GRID OVERLAY ──
+function drawScanlines() {
+  // Horizontal scanlines — found footage feel
+  ctx.fillStyle = 'rgba(0,0,0,.12)';
+  for(let y=0; y<H; y+=3) {
+    ctx.fillRect(0, y, W, 1);
+  }
+  // Vignette
+  const vig = ctx.createRadialGradient(W/2, H/2, H*.2, W/2, H/2, H*.75);
+  vig.addColorStop(0, 'transparent');
+  vig.addColorStop(1, 'rgba(0,0,6,.75)');
+  ctx.fillStyle = vig; ctx.fillRect(0,0,W,H);
+}
+
+// ── THE ENTITY — barely visible silhouette ──
+function drawEntity(t) {
+  const ex = W*.5, ey = H*.42;
+  const breathe = Math.sin(t*.3) * .02;
+  
+  ctx.save();
+  ctx.globalAlpha = .06 + Math.abs(Math.sin(t*.15)) * .04;
+  
+  // Blurred humanoid shape — wrong proportions
+  const bodyGrad = ctx.createRadialGradient(ex, ey, 0, ex, ey, 90);
+  bodyGrad.addColorStop(0, 'rgba(150,180,255,.8)');
+  bodyGrad.addColorStop(.3, 'rgba(80,120,220,.4)');
+  bodyGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = bodyGrad;
+  
+  // Head — slightly too large
+  ctx.beginPath();
+  ctx.ellipse(ex, ey-70*(1+breathe), 35, 42, 0, 0, Math.PI*2);
+  ctx.fill();
+  
+  // Body
+  ctx.beginPath();
+  ctx.ellipse(ex, ey+20, 28, 80, 0, 0, Math.PI*2);
+  ctx.fill();
+  
+  // Eyes — the only thing in focus
+  ctx.globalAlpha = .3 + Math.abs(Math.sin(t*.4)) * .2;
+  const eyeGlow = ctx.createRadialGradient(ex-12, ey-72, 0, ex-12, ey-72, 10);
+  eyeGlow.addColorStop(0, 'rgba(180,220,255,.9)');
+  eyeGlow.addColorStop(1, 'transparent');
+  ctx.fillStyle = eyeGlow;
+  ctx.beginPath(); ctx.arc(ex-12, ey-72, 4, 0, Math.PI*2); ctx.fill();
+  
+  const eyeGlow2 = ctx.createRadialGradient(ex+12, ey-72, 0, ex+12, ey-72, 10);
+  eyeGlow2.addColorStop(0, 'rgba(180,220,255,.9)');
+  eyeGlow2.addColorStop(1, 'transparent');
+  ctx.fillStyle = eyeGlow2;
+  ctx.beginPath(); ctx.arc(ex+12, ey-72, 4, 0, Math.PI*2); ctx.fill();
+  
+  ctx.restore();
+}
+
+// ── SECURITY CAMERA HUD ──
+function drawHUD(t) {
+  const blink = Math.sin(t*2) > 0;
+  
+  ctx.font = '10px "Courier New", monospace';
+  ctx.fillStyle = 'rgba(100,200,100,.6)';
+  
+  // REC indicator
+  if(blink) {
+    ctx.beginPath();
+    ctx.arc(22, 22, 5, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,60,60,.8)';
+    ctx.fill();
+  }
+  ctx.fillStyle = 'rgba(200,200,200,.5)';
+  ctx.font = '9px "Courier New"';
+  ctx.fillText('REC', 32, 26);
+  ctx.fillText('CAM 04-B', W-70, 22);
+  ctx.fillText(`${String(Math.floor(t/3600)).padStart(2,'0')}:${String(Math.floor(t/60)%60).padStart(2,'0')}:${String(Math.floor(t)%60).padStart(2,'0')}`, 16, H-18);
+  ctx.fillText('NO SIGNAL LOSS', W-100, H-18);
+}
+
+// ── GLITCH ──
+function drawGlitch(t) {
+  if(Math.sin(t*7.3) > .92) {
+    const glitchY = Math.random()*H*.6+H*.1;
+    const glitchH = Math.random()*20+4;
+    const slice = ctx.getImageData(0, glitchY, W, glitchH);
+    ctx.putImageData(slice, (Math.random()-.5)*15, glitchY);
+    // Color channel shift
+    ctx.globalAlpha = .15;
+    ctx.fillStyle = 'rgba(0,100,255,1)';
+    ctx.fillRect(0, glitchY, W, 2);
+    ctx.globalAlpha = 1;
+  }
+}
+
+// ── TITLE TYPOGRAPHY ──
+function drawTitle() {
+  // Top label
+  ctx.font = 'bold 11px "Courier New", monospace';
+  ctx.fillStyle = 'rgba(136,170,255,.5)';
+  ctx.letterSpacing = '4px';
+  ctx.textAlign = 'center';
+  ctx.fillText('LORD ORO', W/2, 52);
+  
+  // Thin line under author
+  ctx.strokeStyle = 'rgba(68,136,204,.25)';
+  ctx.lineWidth = .5;
+  ctx.beginPath(); ctx.moveTo(W*.2, 60); ctx.lineTo(W*.8, 60); ctx.stroke();
+
+  // MAIN TITLE — stacked
+  ctx.font = `bold ${Math.floor(W*.11)}px "Georgia", serif`;
+  ctx.fillStyle = 'rgba(220,230,255,.92)';
+  ctx.shadowColor = 'rgba(68,136,255,.4)';
+  ctx.shadowBlur = 20;
+  ctx.fillText('OUTBREAK', W/2, H*.18);
+  
+  ctx.font = `italic ${Math.floor(W*.075)}px "Georgia", serif`;
+  ctx.fillStyle = 'rgba(136,170,255,.7)';
+  ctx.shadowBlur = 12;
+  ctx.fillText('from the', W/2, H*.245);
+  
+  ctx.font = `bold ${Math.floor(W*.14)}px "Georgia", serif`;
+  ctx.fillStyle = 'rgba(200,220,255,.95)';
+  ctx.shadowBlur = 25;
+  ctx.fillText('STARS', W/2, H*.315);
+  
+  ctx.shadowBlur = 0;
+  
+  // Subtitle strip
+  ctx.fillStyle = 'rgba(20,40,100,.7)';
+  ctx.fillRect(W*.1, H*.335, W*.8, 22);
+  ctx.strokeStyle = 'rgba(68,136,204,.3)';
+  ctx.lineWidth = .5;
+  ctx.strokeRect(W*.1, H*.335, W*.8, 22);
+  ctx.font = '9px "Courier New", monospace';
+  ctx.fillStyle = 'rgba(136,170,255,.8)';
+  ctx.fillText('FOUND-FOOTAGE SCI-FI HORROR · 25,000+ WORDS', W/2, H*.335+14);
+  
+  // Bottom tagline
+  ctx.font = `italic ${Math.floor(W*.032)}px "Georgia", serif`;
+  ctx.fillStyle = 'rgba(136,170,255,.55)';
+  ctx.fillText('"They didn\'t come to destroy.', W/2, H*.86);
+  ctx.fillText('They came to replace."', W/2, H*.88);
+  
+  // Bottom divider
+  ctx.strokeStyle = 'rgba(68,136,204,.2)';
+  ctx.lineWidth = .5;
+  ctx.beginPath(); ctx.moveTo(W*.2, H*.91); ctx.lineTo(W*.8, H*.91); ctx.stroke();
+  
+  // NMN brand
+  ctx.font = '9px "Courier New", monospace';
+  ctx.fillStyle = 'rgba(68,136,204,.4)';
+  ctx.fillText('NONSENSE MEDIA NETWORK', W/2, H*.945);
+
+  ctx.textAlign = 'left';
+}
+
+// ── MAIN LOOP ──
+let startTime = Date.now();
+function render() {
+  const t = (Date.now() - startTime) * .001;
+  
+  drawNebula();
+  drawStars();
+  drawEntity(t);
+  drawScanlines();
+  drawGlitch(t);
+  drawTitle();
+  drawHUD(t);
+  
+  requestAnimationFrame(render);
+}
+render();
+
+// ── DOWNLOAD ──
+function downloadCover() {
+  // Render one clean frame to a higher-res canvas
+  const printCV = document.createElement('canvas');
+  printCV.width = 1800; printCV.height = 2700;
+  const pCtx = printCV.getContext('2d');
+  const scale = 1800/540;
+  pCtx.scale(scale, scale);
+  
+  // Draw current frame scaled
+  pCtx.drawImage(cv, 0, 0);
+  
+  const link = document.createElement('a');
+  link.download = 'outbreak-from-the-stars-cover.png';
+  link.href = printCV.toDataURL('image/png');
+  link.click();
+}
+</script>
+</body>
+</html>

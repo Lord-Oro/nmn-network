@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grand Library — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+body{padding-top:56px;background:var(--coal);min-height:100vh;overflow-x:hidden}
+
+/* ── LIBRARY HERO ── */
+.lib-hero{
+  text-align:center;
+  padding:3rem 2rem 2rem;
+  position:relative;
+  overflow:hidden;
+}
+.lib-hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(255,215,0,.07),transparent 55%);
+  pointer-events:none;
+}
+.lib-eyes{display:flex;gap:44px;justify-content:center;margin-bottom:1.2rem}
+.lib-eye{
+  width:20px;height:14px;
+  background:radial-gradient(ellipse at 40% 40%,#FFD700,#FF8C00);
+  border-radius:50%;
+  box-shadow:0 0 18px rgba(255,215,0,.8);
+  animation:eyeBlink 5s infinite;
+  position:relative;
+}
+.lib-eye::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6px;height:6px;background:#000;border-radius:50%}
+@keyframes eyeBlink{0%,85%,100%{transform:scaleY(1)}90%{transform:scaleY(.05)}}
+.lib-title{
+  font-family:var(--font-display);
+  font-size:clamp(2rem,6vw,4rem);
+  color:var(--gold);
+  text-shadow:0 0 30px rgba(255,215,0,.35);
+  margin-bottom:.5rem;
+}
+.lib-sub{
+  font-family:var(--font-pixel);
+  font-size:.38rem;
+  color:var(--muted);
+  letter-spacing:.2em;
+  margin-bottom:2rem;
+}
+
+/* ── LIBRARY ROOM ── */
+.library-room{
+  position:relative;
+  max-width:1100px;
+  margin:0 auto;
+  padding:0 2rem 4rem;
+}
+
+/* Underground library perspective */
+.room-floor{
+  background:linear-gradient(180deg,#0d0c08 0%,#1a1510 60%,#0a0906 100%);
+  border:1px solid rgba(255,215,0,.08);
+  border-radius:4px;
+  padding:2rem 2rem 3rem;
+  position:relative;
+}
+/* Stone ceiling */
+.room-floor::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;height:8px;
+  background:repeating-linear-gradient(90deg,#1a1510 0,#1a1510 60px,#0f0c08 60px,#0f0c08 62px);
+  border-bottom:2px solid rgba(255,215,0,.15);
+}
+/* Floor boards */
+.room-floor::after{
+  content:'';
+  position:absolute;
+  bottom:0;left:0;right:0;height:12px;
+  background:repeating-linear-gradient(90deg,#2a1a08 0,#2a1a08 80px,#1a1008 80px,#1a1008 82px);
+  border-top:1px solid rgba(139,105,20,.3);
+}
+
+/* Shelf section */
+.shelf-section{
+  margin-bottom:3rem;
+}
+.shelf-label{
+  font-family:var(--font-pixel);
+  font-size:.42rem;
+  color:var(--gd);
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  margin-bottom:1rem;
+  display:flex;align-items:center;gap:.75rem;
+}
+.shelf-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(255,215,0,.2),transparent)}
+
+/* THE SHELF */
+.bookshelf{
+  position:relative;
+  padding:1rem 1rem 0;
+  background:linear-gradient(180deg,#1a1208 0%,#120e06 100%);
+  border:1px solid rgba(139,105,20,.3);
+  border-radius:2px;
+  margin-bottom:.5rem;
+}
+/* Shelf board */
+.bookshelf::after{
+  content:'';
+  position:absolute;
+  bottom:-10px;left:-4px;right:-4px;
+  height:10px;
+  background:linear-gradient(180deg,#5a3a10,#3a2008);
+  border-radius:0 0 2px 2px;
+  box-shadow:0 4px 12px rgba(0,0,0,.6);
+}
+/* Ambient light from above */
+.bookshelf::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent 0%,rgba(255,215,0,.15) 30%,rgba(255,215,0,.25) 50%,rgba(255,215,0,.15) 70%,transparent 100%);
+}
+
+.books-row{
+  display:flex;
+  gap:8px;
+  align-items:flex-end;
+  padding-bottom:1rem;
+  flex-wrap:wrap;
+}
+
+/* BOOK SPINE */
+.book-spine{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-between;
+  width:68px;
+  min-height:140px;
+  padding:8px 4px;
+  text-decoration:none;
+  position:relative;
+  transition:transform .3s cubic-bezier(.4,0,.2,1), box-shadow .3s;
+  cursor:pointer;
+  border-radius:1px;
+}
+.book-spine:hover{
+  transform:translateY(-16px) rotate(1deg);
+  z-index:10;
+}
+.book-spine:hover .book-glow{opacity:1}
+
+/* Book body */
+.book-body{
+  position:absolute;inset:0;
+  border-radius:1px 3px 3px 1px;
+  border-left:3px solid rgba(0,0,0,.4);
+}
+/* Book texture lines */
+.book-body::after{
+  content:'';
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent 0,transparent 8px,
+    rgba(0,0,0,.08) 8px,rgba(0,0,0,.08) 9px
+  );
+  border-radius:inherit;
+}
+
+/* Glow under book when hovered */
+.book-glow{
+  position:absolute;
+  bottom:-8px;left:50%;transform:translateX(-50%);
+  width:50px;height:8px;
+  border-radius:50%;
+  opacity:0;
+  transition:opacity .3s;
+  filter:blur(4px);
+}
+
+/* Spine text — rotated */
+.spine-title{
+  font-family:var(--font-pixel);
+  font-size:.22rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+  transform:rotate(180deg);
+  color:rgba(255,255,255,.85);
+  text-shadow:0 0 4px rgba(0,0,0,.8);
+  z-index:2;
+  position:relative;
+  line-height:1.4;
+  max-height:90px;
+  overflow:hidden;
+}
+.spine-author{
+  font-family:var(--font-serif);
+  font-size:.45rem;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  color:rgba(255,255,255,.5);
+  z-index:2;
+  position:relative;
+}
+.spine-icon{
+  font-size:1.1rem;
+  z-index:2;
+  position:relative;
+  filter:drop-shadow(0 0 4px rgba(0,0,0,.8));
+  margin-bottom:4px;
+}
+
+/* Status tag */
+.spine-tag{
+  position:absolute;
+  top:-8px;left:50%;transform:translateX(-50%);
+  font-family:var(--font-pixel);
+  font-size:.22rem;
+  letter-spacing:.1em;
+  padding:2px 5px;
+  white-space:nowrap;
+  z-index:5;
+}
+.tag-live{background:var(--gold);color:var(--coal)}
+.tag-review{background:rgba(255,215,0,.2);color:var(--gold);border:1px solid rgba(255,215,0,.4)}
+.tag-soon{background:rgba(139,105,20,.2);color:var(--gd);border:1px solid rgba(139,105,20,.3)}
+
+/* Book color themes */
+.book-pyro .book-body{background:linear-gradient(180deg,#8B2000,#5a1000,#3a0800)}
+.book-pyro .book-glow{background:rgba(255,80,0,.6)}
+.book-tabbies .book-body{background:linear-gradient(180deg,#5a4a20,#3a2e10,#2a2008)}
+.book-tabbies .book-glow{background:rgba(180,140,60,.5)}
+.book-outbreak .book-body{background:linear-gradient(180deg,#0a1a3a,#060d20,#030810)}
+.book-outbreak .book-glow{background:rgba(40,80,200,.5)}
+.book-juni .book-body{background:linear-gradient(180deg,#1a1a2a,#0e0e1e,#080816)}
+.book-juni .book-glow{background:rgba(120,120,200,.4)}
+.book-nayla .book-body{background:linear-gradient(180deg,#3a2800,#201800,#100c00)}
+.book-nayla .book-glow{background:rgba(255,215,0,.5)}
+.book-stories .book-body{background:linear-gradient(180deg,#2a1a00,#1a1000,#0e0800)}
+.book-stories .book-glow{background:rgba(200,140,0,.4)}
+.book-coming .book-body{background:linear-gradient(180deg,#1a1a1a,#0f0f0f,#080808);opacity:.5}
+
+/* BOOK CARD — expanded view on hover (tooltip style) */
+.book-card-tooltip{
+  position:absolute;
+  bottom:calc(100% + 15px);
+  left:50%;
+  transform:translateX(-50%);
+  width:200px;
+  background:rgba(7,6,5,.98);
+  border:1px solid rgba(255,215,0,.3);
+  padding:1rem;
+  z-index:100;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .2s;
+  box-shadow:0 8px 24px rgba(0,0,0,.8);
+  text-align:left;
+}
+.book-spine:hover .book-card-tooltip{opacity:1}
+.tooltip-title{font-family:var(--font-serif);font-size:.9rem;color:var(--cream);margin-bottom:.3rem;line-height:1.3}
+.tooltip-type{font-family:var(--font-pixel);font-size:.28rem;color:var(--gd);letter-spacing:.2em;margin-bottom:.4rem}
+.tooltip-desc{font-size:.62rem;color:var(--faint);line-height:1.7;margin-bottom:.6rem}
+.tooltip-price{font-family:var(--font-pixel);font-size:.32rem;color:var(--gold)}
+.tooltip-arrow{
+  position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);
+  width:10px;height:6px;
+  background:rgba(255,215,0,.3);
+  clip-path:polygon(0 0,100% 0,50% 100%);
+}
+
+/* COMING SOON SHELF */
+.coming-shelf .book-spine{pointer-events:none;opacity:.6}
+
+/* Decorative lantern */
+.shelf-lantern{
+  position:absolute;
+  right:1.5rem;top:-20px;
+  font-size:1.5rem;
+  filter:drop-shadow(0 0 12px rgba(255,215,0,.5));
+  animation:lanternSway 4s ease-in-out infinite;
+}
+@keyframes lanternSway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+
+/* MOVIE SECTION */
+.movie-section{
+  margin-top:3rem;
+  padding:2rem;
+  background:rgba(0,0,0,.3);
+  border:1px solid rgba(255,215,0,.06);
+  border-radius:2px;
+  text-align:center;
+}
+.movie-coming{
+  font-family:var(--font-pixel);
+  font-size:.42rem;
+  color:var(--gd);
+  letter-spacing:.2em;
+  margin-bottom:1rem;
+}
+.movie-sub{
+  font-family:var(--font-serif);
+  font-style:italic;
+  font-size:.85rem;
+  color:var(--faint);
+  line-height:2;
+}
+.projector-icon{font-size:3rem;display:block;margin:1rem auto;opacity:.3;animation:projFlicker 3s ease-in-out infinite}
+@keyframes projFlicker{0%,100%{opacity:.3}50%{opacity:.5}80%{opacity:.2}}
+</style>
+</head>
+<body>
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
+
+<!-- HERO -->
+<div class="lib-hero">
+  <div class="lib-eyes">
+    <div class="lib-eye"></div>
+    <div class="lib-eye"></div>
+  </div>
+  <h1 class="lib-title">Grand Library</h1>
+  <p class="lib-sub">⛏ THE WRITTEN UNIVERSE — EVERY TUNNEL LEADS HERE</p>
+</div>
+
+<div class="library-room">
+  <div class="room-floor">
+    <span class="shelf-lantern">🕯️</span>
+
+    <!-- SHELF 1: LIVE NOW -->
+    <div class="shelf-section">
+      <div class="shelf-label">📖 Live Extractions — On Amazon Now</div>
+      <div class="bookshelf">
+        <div class="books-row">
+
+          <!-- PYRO & HELIOS -->
+          <a href="https://www.amazon.com/dp/B0DX6N7QKM?tag=lordoro0c25-20" target="_blank" class="book-spine book-pyro">
+            <span class="spine-tag tag-live">LIVE</span>
+            <div class="book-body"></div>
+            <div class="book-glow"></div>
+            <span class="spine-icon">🔥</span>
+            <span class="spine-title">Pyro & Helios</span>
+            <span class="spine-author">Lord Oro</span>
+            <div class="book-card-tooltip">
+              <div class="tooltip-type">Short Story</div>
+              <div class="tooltip-title">Pyro and Helios: A Journey Home</div>
+              <div class="tooltip-desc">A story of fire, identity, and the long road back to where you belong.</div>
+              <div class="tooltip-price">$9.99 — Buy on Amazon →</div>
+              <div class="tooltip-arrow"></div>
+            </div>
+          </a>
+
+          <!-- ALL TABBIES -->
+          <a href="https://www.amazon.com/dp/B0TABBIES?tag=lordoro0c25-20" target="_blank" class="book-spine book-tabbies">
+            <span class="spine-tag tag-live">LIVE</span>
+            <div class="book-body"></div>
+            <div class="book-glow"></div>
+            <span class="spine-icon">🐱</span>
+            <span class="spine-title">All Tabbies Have a Place Too</span>
+            <span class="spine-author">Lord Oro</span>
+            <div class="book-card-tooltip">
+              <div class="tooltip-type">Fantasy Novel</div>
+              <div class="tooltip-title">All Tabbies Have a Place Too</div>
+              <div class="tooltip-desc">A story about belonging, found in the unlikeliest of places.</div>
+              <div class="tooltip-price">$9.99 — Buy on Amazon →</div>
+              <div class="tooltip-arrow"></div>
+            </div>
+          </a>
+
+          <!-- OUTBREAK -->
+          <a href="https://www.amazon.com/dp/B0OUTBREAK?tag=lordoro0c25-20" target="_blank" class="book-spine book-outbreak">
+            <span class="spine-tag tag-live">NEW</span>
+            <div class="book-body"></div>
+            <div class="book-glow"></div>
+            <span class="spine-icon">🌌</span>
+            <span class="spine-title">Outbreak From the Stars</span>
+            <span class="spine-author">Lord Oro</span>
+            <div class="book-card-tooltip">
+              <div class="tooltip-type">Cosmic Horror Novella — 22,000+ words</div>
+              <div class="tooltip-title">Outbreak From the Stars</div>
+              <div class="tooltip-desc">They didn't come to destroy. They came to open a door. Found-footage horror.</div>
+              <div class="tooltip-price">$9.99 — Buy on Amazon →</div>
+              <div class="tooltip-arrow"></div>
+            </div>
+          </a>
+
+          <!-- JUNI -->
+          <a href="juni-the-immortal.html" class="book-spine book-juni">
+            <span class="spine-tag tag-review">REVIEW</span>
+            <div class="book-body"></div>
+            <div class="book-glow"></div>
+            <span class="spine-icon">⚡</span>
+            <span class="spine-title">Juni the Immortal</span>
+            <span class="spine-author">Lord Oro</span>
+            <div class="book-card-tooltip">
+              <div class="tooltip-type">Archaeological Thriller — 25,000+ words</div>
+              <div class="tooltip-title">Juni the Immortal</div>
+              <div class="tooltip-desc">Seven gates. A labyrinth under the Sahara. A liquid sealed for three thousand years.</div>
+              <div class="tooltip-price">$9.99 — Live Within 72 Hours</div>
+              <div class="tooltip-arrow"></div>
+            </div>
+          </a>
+
+          <!-- Spacer books (decorative) -->
+          <div class="book-spine book-coming" style="min-height:100px;pointer-events:none">
+            <div class="book-body" style="background:linear-gradient(180deg,#2a2010,#1a1408)"></div>
+          </div>
+          <div class="book-spine book-coming" style="min-height:120px;pointer-events:none">
+            <div class="book-body" style="background:linear-gradient(180deg,#1a2030,#0e1420)"></div>
+          </div>
+          <div class="book-spine book-coming" style="min-height:90px;pointer-events:none">
+            <div class="book-body" style="background:linear-gradient(180deg,#201a10,#14100a)"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- SHELF 2: COMING SOON -->
+    <div class="shelf-section" style="margin-top:2.5rem">
+      <div class="shelf-label">🔮 Coming Extractions — In The Tank</div>
+      <div class="bookshelf coming-shelf">
+        <div class="books-row">
+
+          <div class="book-spine book-stories">
+            <span class="spine-tag tag-soon">2026</span>
+            <div class="book-body"></div>
+            <div class="book-glow"></div>
+            <span class="spine-icon">📜</span>
+            <span class="spine-title">25 Short Stories Vol. 1</span>
+            <span class="spine-author">Lord Oro</span>
+          </div>
+
+          <div class="book-spine book-nayla" style="min-height:160px">
+            <span class="spine-tag tag-soon">2026</span>
+            <div class="book-body"></div>
+            <div class="book-glow"></div>
+            <span class="spine-icon">🦁</span>
+            <span class="spine-title">Nayla the Lioness & Felik</span>
+            <span class="spine-author">Lord Oro</span>
+          </div>
+
+          <!-- Mystery books -->
+          <div class="book-spine book-coming" style="min-height:130px;pointer-events:none">
+            <span class="spine-tag tag-soon">???</span>
+            <div class="book-body" style="background:linear-gradient(180deg,#1a1a1a,#0a0a0a)"></div>
+            <span class="spine-title" style="color:rgba(255,215,0,.2)">CLASSIFIED</span>
+          </div>
+          <div class="book-spine book-coming" style="min-height:150px;pointer-events:none">
+            <span class="spine-tag tag-soon">???</span>
+            <div class="book-body" style="background:linear-gradient(180deg,#1a1a1a,#0a0a0a)"></div>
+            <span class="spine-title" style="color:rgba(255,215,0,.2)">CLASSIFIED</span>
+          </div>
+          <div class="book-spine book-coming" style="min-height:110px;pointer-events:none">
+            <span class="spine-tag tag-soon">???</span>
+            <div class="book-body" style="background:linear-gradient(180deg,#1a1a1a,#0a0a0a)"></div>
+            <span class="spine-title" style="color:rgba(255,215,0,.2)">CLASSIFIED</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTION ROOM PLACEHOLDER -->
+    <div class="movie-section">
+      <p class="movie-coming">🎬 Projection Room — Coming Soon</p>
+      <span class="projector-icon">📽️</span>
+      <p class="movie-sub">
+        Trailers, short films, and visual transmissions from the mine.<br>
+        The projector is being calibrated.
+      </p>
+      <a href="shorts.html" style="font-family:var(--font-pixel);font-size:.38rem;color:var(--gold);text-decoration:none;letter-spacing:.15em;border:1px solid rgba(255,215,0,.3);padding:.5rem 1rem;display:inline-block;margin-top:1rem;transition:all .2s">
+        ENTER PROJECTION ROOM →
+      </a>
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+// Particle dust in library
+const body = document.body;
+for(let i=0;i<15;i++){
+  const p = document.createElement('div');
+  p.style.cssText = `position:fixed;width:1px;height:1px;background:#c9962a;border-radius:50%;opacity:0;pointer-events:none;z-index:0;left:${Math.random()*100}%;animation:driftUp ${12+Math.random()*10}s linear ${Math.random()*12}s infinite`;
+  body.appendChild(p);
+}
+</script>
+
+</body>
+</html>

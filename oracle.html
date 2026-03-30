@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Oracle's Chamber — NMN</title>
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28;--pu:#6a3a8a;--lpu:#9a6aaa;--dp:#3a1a5a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);background:#05030a;color:var(--cream);min-height:100vh;background-image:linear-gradient(45deg,#05030a 25%,#080512 25%,#080512 50%,#05030a 50%,#05030a 75%,#080512 75%,#080512 100%);background-size:4px 4px;padding-bottom:70px}
+
+header{padding:.8rem 2rem;border-bottom:1px solid rgba(106,58,138,.2);display:flex;justify-content:space-between;align-items:center;background:rgba(5,3,10,.97);position:sticky;top:0;z-index:10}
+.logo{font-family:var(--font-serif);font-style:italic;color:var(--lpu);font-size:1rem;text-decoration:none}
+.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.back:hover{color:var(--lpu)}
+
+/* HERO */
+.oracle-hero{text-align:center;padding:3rem 2rem 2rem;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(106,58,138,.12),transparent 70%);position:relative}
+.oracle-crystal{font-size:3rem;display:block;margin-bottom:.75rem;animation:crystalFloat 4s ease-in-out infinite}
+@keyframes crystalFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
+.oracle-eyebrow{font-family:var(--font-pixel);font-size:.42rem;letter-spacing:.3em;text-transform:uppercase;color:var(--dp);margin-bottom:.75rem}
+.oracle-title{font-family:var(--font-display);font-size:clamp(1.8rem,5vw,3rem);color:var(--cream);margin-bottom:.3rem;line-height:1}
+.oracle-title em{color:var(--lpu);font-style:italic;display:block}
+.oracle-sub{font-family:var(--font-serif);font-style:italic;font-size:.9rem;color:var(--muted);max-width:500px;margin:.75rem auto;line-height:1.8}
+.tora-link-banner{display:inline-block;margin-top:.5rem;padding:.4rem 1.2rem;border:1px solid rgba(106,58,138,.2);font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--lpu);text-decoration:none;transition:all .3s}
+.tora-link-banner:hover{background:rgba(106,58,138,.08);border-color:var(--lpu)}
+
+/* SECTION LABELS */
+main{max-width:960px;margin:0 auto;padding:2rem 1.5rem}
+.sec-label{font-family:var(--font-pixel);font-size:.4rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dp);margin-bottom:1.25rem;margin-top:2rem;display:flex;align-items:center;gap:.75rem}
+.sec-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(106,58,138,.2),transparent)}
+.sec-label:first-child{margin-top:0}
+
+/* EXPERIENCE GRID */
+.exp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:rgba(106,58,138,.08);border:1px solid rgba(106,58,138,.1);margin-bottom:.5rem}
+.exp-card{border:none;background:#05030a;padding:1.75rem 1.5rem;text-decoration:none;display:block;transition:all .3s;position:relative;overflow:hidden;color:inherit}
+.exp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--lpu),transparent);transform:scaleX(0);transition:transform .4s}
+.exp-card:hover{background:rgba(106,58,138,.08);transform:translateY(-2px)}
+.exp-card:hover::before{transform:scaleX(1)}
+.exp-icon{font-size:2rem;display:block;margin-bottom:.85rem}
+.exp-type{font-family:var(--font-pixel);font-size:.36rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dp);margin-bottom:.4rem}
+.exp-name{font-family:var(--font-display);font-size:1rem;color:var(--cream);margin-bottom:.5rem;line-height:1.2}
+.exp-name em{color:var(--lpu);font-style:italic}
+.exp-desc{font-size:.68rem;color:var(--muted);line-height:1.8;margin-bottom:.75rem}
+.exp-cta{font-family:var(--font-pixel);font-size:.38rem;letter-spacing:.1em;text-transform:uppercase;color:var(--lpu)}
+
+/* TORA'S DOMAIN BANNER */
+.domain-banner{border:1px solid rgba(106,58,138,.15);background:rgba(58,26,90,.06);padding:1.25rem 1.5rem;text-align:center;margin-bottom:1.5rem}
+.domain-banner p{font-family:var(--font-serif);font-style:italic;color:var(--muted);font-size:.88rem;line-height:1.8}
+.domain-banner a{color:var(--lpu);text-decoration:none;border-bottom:1px solid rgba(106,58,138,.3)}
+.domain-banner a:hover{border-color:var(--lpu)}
+
+/* FLOATING GAUGE */
+.depth-gauge{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);width:auto;max-width:92%;height:44px;background:rgba(5,3,10,.88);border:1px solid rgba(106,58,138,.3);border-radius:25px;padding:0 20px;pointer-events:none;z-index:9999;display:flex;align-items:center;gap:1.2rem;justify-content:center;backdrop-filter:blur(5px)}
+.dg-stat{font-size:.4rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);pointer-events:auto}
+.dg-val{font-family:var(--font-serif);font-size:.8rem;color:var(--lpu)}
+.dg-sep{color:var(--faint)}
+.dg-link{font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-decoration:none;pointer-events:auto}
+.dg-link:hover{color:var(--lpu)}
+</style>
+<style id="nmn-cursor">body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}</style>
+
+<!-- Monetag In-Page Push — Zone 10763810 -->
+
+
+
+</head>
+<body>
+<script src="nmn-nav.js"></script>
+<header>
+  <a href="index.html" class="logo">NMN — Lord Oro</a>
+  <a href="index.html" class="back">← Return to the Mine</a>
+</header>
+
+<div class="oracle-hero">
+  <span class="oracle-crystal">🔮</span>
+  <div class="oracle-eyebrow">Nonsense Media Network — The Oracle's Chamber</div>
+  <h1 class="oracle-title">The Oracle's<em>Chamber</em></h1>
+  <p class="oracle-sub">This is where the mine stops being a place and becomes a presence. The readings, the relics, the rituals, the archives. Tora is somewhere in here. You won't find her. She finds you.</p>
+  <a href="toradomain.html" class="tora-link-banner">🌕 Enter Tora's Domain →</a>
+</div>
+
+<main>
+
+  <div class="sec-label">🔮 Tora's Readings</div>
+  <div class="exp-grid">
+    <a href="tora.html" class="exp-card">
+      <span class="exp-icon">🔮</span>
+      <div class="exp-type">Tarot & Numerology</div>
+      <div class="exp-name">Tora the Tarot <em>Reader</em></div>
+      <div class="exp-desc">Enter your birthday. Tora reads your Life Path and daily card. Freyja's energy, Lord Oro's world. She reads the mine, not the cards.</div>
+      <span class="exp-cta">Enter the Reading →</span>
+    </a>
+    <a href="well.html" class="exp-card">
+      <span class="exp-icon">🌀</span>
+      <div class="exp-type">Echo & Reflection</div>
+      <div class="exp-name">The Echoing <em>Well</em></div>
+      <div class="exp-desc">Speak into the well. The mine answers. Not immediately. Not always. But when it does, you'll know.</div>
+      <span class="exp-cta">Approach the Well →</span>
+    </a>
+    <a href="starmap.html" class="exp-card">
+      <span class="exp-icon">🌌</span>
+      <div class="exp-type">Celestial Navigation</div>
+      <div class="exp-name">The Star <em>Map</em></div>
+      <div class="exp-desc">Map the stars above the mine shaft. Name them. They've been waiting. Lord Oro says each one is a name the mine gave to something it couldn't keep.</div>
+      <span class="exp-cta">Chart the Stars →</span>
+    </a>
+  </div>
+
+  <div class="sec-label">🐾 Eskanar's Archives</div>
+  <div class="exp-grid">
+    <a href="grimoire.html" class="exp-card">
+      <span class="exp-icon">🐾</span>
+      <div class="exp-type">Sacred Archive — 14 Chapters</div>
+      <div class="exp-name">Eskanar's <em>Grimoire</em></div>
+      <div class="exp-desc">A record of fourteen cats who changed history. Lord Oro's poems. Tora's margin notes. Two chapters are earned. One blank page at the end belongs to you. Named for Eskanar.</div>
+      <span class="exp-cta">Open the Grimoire →</span>
+    </a>
+    <a href="dualsouls.html" class="exp-card">
+      <span class="exp-icon">⚡</span>
+      <div class="exp-type">Character Study</div>
+      <div class="exp-name">Chamber of <em>Dual Souls</em></div>
+      <div class="exp-desc">Felik carries two souls. This chamber holds both. Enter with your dominant hand. Leave knowing which side of yourself you fed today.</div>
+      <span class="exp-cta">Enter the Chamber →</span>
+    </a>
+    <a href="mirror.html" class="exp-card">
+      <span class="exp-icon">◈</span>
+      <div class="exp-type">Self-Reflection</div>
+      <div class="exp-name">The Mirror <em>Room</em></div>
+      <div class="exp-desc">Lord Oro asks you five real questions. Your answers stay local — never saved. He reflects one line back. Look closer.</div>
+      <span class="exp-cta">Look Into the Mirror →</span>
+    </a>
+  </div>
+
+  <div class="sec-label">🎗️ The New Wings — Live Now</div>
+  <div class="exp-grid">
+    <a href="reliquary.html" class="exp-card">
+      <span class="exp-icon">🎗️</span>
+      <div class="exp-type">3D Character Artifacts</div>
+      <div class="exp-name">The <em>Reliquary</em></div>
+      <div class="exp-desc">Felik's Blade. Juni's Locket. Nayla's Ribbon. Pip's First Circuit. Each artifact rotates in 3D. Touch one — it speaks in that character's voice about what the object means. The objects remember being held.</div>
+      <span class="exp-cta">Enter the Reliquary →</span>
+    </a>
+    <a href="loom.html" class="exp-card">
+      <span class="exp-icon">🧵</span>
+      <div class="exp-type">Interactive Star Lore</div>
+      <div class="exp-name">The Weaver's <em>Loom</em></div>
+      <div class="exp-desc">An 8×6 thread grid. Five traditions — Māori, Lakota, Yoruba, Norse, Lord Oro. Touch any thread and it glows with its tradition's star lore and plays a pitched note. The loom has been waiting since before the mine was dug.</div>
+      <span class="exp-cta">Touch the Threads →</span>
+    </a>
+    <a href="canary.html" class="exp-card">
+      <span class="exp-icon">🐦</span>
+      <div class="exp-type">Audio Memory Game</div>
+      <div class="exp-name">The Canary's <em>Song</em></div>
+      <div class="exp-desc">The mine speaks in four notes — Strike, Drip, Wind, Shimmer. Listen to the sequence. Repeat it. The sequence grows each round. The silence is heavier than the stone. Repeat the song or the air grows thin.</div>
+      <span class="exp-cta">Listen to the Mine →</span>
+    </a>
+  </div>
+
+  <div class="sec-label">🌀 The Deep Passages</div>
+  <div class="exp-grid">
+    <a href="lorevault.html" class="exp-card">
+      <span class="exp-icon">📜</span>
+      <div class="exp-type">Collected Fragments</div>
+      <div class="exp-name">The Lore <em>Vault</em></div>
+      <div class="exp-desc">Every fragment you've uncovered across the mine lives here. The Grimoire entries. The Apothecary prescriptions. The game discoveries. Your personal archive.</div>
+      <span class="exp-cta">Open the Vault →</span>
+    </a>
+    <a href="apothecary.html" class="exp-card">
+      <span class="exp-icon">🌿</span>
+      <div class="exp-type">Gem Healing</div>
+      <div class="exp-name">Ivy's <em>Apothecary</em></div>
+      <div class="exp-desc">Tell the mine how you're feeling. One word. The mine finds the gemstone that matches what you're carrying — its healing property, how to use it, what Lord Oro and Ivy would say.</div>
+      <span class="exp-cta">Ask the Apothecary →</span>
+    </a>
+  </div>
+
+  <div class="domain-banner">
+    <p>Nausicaa's Garden, The Völva's Watch, Eskanar's Spellbook, and Freyja's Loom live in <a href="toradomain.html">Tora's Domain</a> — the Völva's Quarter. You don't find Tora. She finds you.</p>
+  </div>
+
+  <!-- SECRET TRIGGER — hidden in plain sight -->
+  <div id="secret-mirror" onclick="handleMirrorClick()" style="position:absolute;width:1px;height:1px;opacity:0;bottom:0;right:0"></div>
+
+</main>
+
+<div class="depth-gauge">
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span>&nbsp;Lore</div>
+  <span class="dg-sep">🔮</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <span class="dg-sep">⬡</span>
+  <a href="index.html" class="dg-link">⛏ Mine</a>
+</div>
+
+<script>
+try{document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length}catch(e){}
+
+// ── SECRET TUNNEL TRIGGERS ──
+// The Flint Architect: Triple-click the Mirror card
+// The Silver Quill: Triple-click the Well card
+let _mirrorClicks=0,_wellClicks=0,_mirrorTimer=null,_wellTimer=null;
+
+// Bind to mirror and well cards
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.exp-card').forEach(card=>{
+    const name=card.querySelector('.exp-name');
+    if(!name)return;
+    if(name.textContent.includes('Mirror')){
+      card.addEventListener('click',e=>{
+        _mirrorClicks++;
+        clearTimeout(_mirrorTimer);
+        _mirrorTimer=setTimeout(()=>{_mirrorClicks=0;},800);
+        if(_mirrorClicks>=3){
+          e.preventDefault();
+          _mirrorClicks=0;
+          window.location.href='cipher.html';
+        }
+      });
+    }
+    if(name.textContent.includes('Well')){
+      card.addEventListener('click',e=>{
+        _wellClicks++;
+        clearTimeout(_wellTimer);
+        _wellTimer=setTimeout(()=>{_wellClicks=0;},800);
+        if(_wellClicks>=3){
+          e.preventDefault();
+          _wellClicks=0;
+          window.location.href='silverquill.html';
+        }
+      });
+    }
+  });
+});
+
+function handleMirrorClick(){
+  _mirrorClicks++;
+  if(_mirrorClicks>=3){_mirrorClicks=0;window.location.href='cipher.html';}
+}
+</script>
+</script>
+<script id="nmn-glow">(function(){var r=document.createElement('div');r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';document.body.appendChild(r);document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});})();</script>
+
+<!-- Monetag Service Worker Registration -->
+<script>
+if('serviceWorker' in navigator){
+    .catch(function(err){ console.log('NMN SW error:', err); });
+}
+</script>
+
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+</body>
+</html>
