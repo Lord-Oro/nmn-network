@@ -1,117 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-P5WL9XNDY8');</script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NMN Brawler | The Forge Beta</title>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
-        body { margin: 0; background: #070605; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        #game-container { border: 2px solid #FFD700; box-shadow: 0 0 20px rgba(255,215,0,0.2); }
+        body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        canvas { border: 2px solid #FFD700; }
     </style>
 </head>
 <body>
-    <div id="game-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
 <script>
-let player, enemy, cursors, spaceKey, keyX, keyC;
-let pHealth = 100, eHealth = 100, pBar, eBar;
-let gameState = 'TITLE';
-
 const config = {
     type: Phaser.AUTO,
-    parent: 'game-container',
     width: 800,
     height: 400,
-    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    physics: { default: 'arcade', arcade: { gravity: { y: 1200 } } },
+    physics: { default: 'arcade', arcade: { gravity: { y: 1000 } } },
     scene: { preload: preload, create: create, update: update }
 };
 
 const game = new Phaser.Game(config);
+let player, enemy, cursors, space, keyX, keyC;
 
 function preload() {
     this.load.image('bg', 'forest_bg.jpg');
-    this.load.spritesheet('hero', 'hero-sheet.png', { frameWidth: 28, frameHeight: 52 });
-    // Loading your specific uploaded portraits for the UI
-    this.load.image('pyro_ui', 'Pyro elephant beta.jpg');
-    this.load.image('juni_ui', 'Juni elephant beta.jpg');
+    this.load.spritesheet('elephants', 'hero-sheet.png', { frameWidth: 28, frameHeight: 52 });
 }
 
 function create() {
     this.add.image(400, 200, 'bg').setDisplaySize(800, 400);
-    const ground = this.add.rectangle(400, 390, 800, 20, 0x1a1510);
+    let ground = this.add.rectangle(400, 390, 800, 20, 0x000).setAlpha(0.1);
     this.physics.add.existing(ground, true);
 
-    this.projectiles = this.physics.add.group();
-
-    // UI Texts
-    this.txt = this.add.text(400, 200, 'NONSENSE BRAWLER\n[PLACEHOLDER BUILD]\n\nPRESS SPACE', { font: '24px Courier', fill: '#FFD700', align: 'center' }).setOrigin(0.5);
-
-    // Sprites
-    player = this.physics.add.sprite(150, 300, 'hero', 0).setScale(2.5).setVisible(false);
-    enemy = this.physics.add.sprite(650, 300, 'hero', 20).setScale(2.5).setVisible(false).setFlipX(true);
+    player = this.physics.add.sprite(100, 300, 'elephants', 0).setScale(2.5).setCollideWorldBounds(true);
+    enemy = this.physics.add.sprite(700, 300, 'elephants', 20).setScale(2.5).setCollideWorldBounds(true).setFlipX(true);
     
-    player.setCollideWorldBounds(true);
-    enemy.setCollideWorldBounds(true);
     this.physics.add.collider(player, ground);
     this.physics.add.collider(enemy, ground);
 
-    // Health Bars
-    pBar = this.add.rectangle(20, 30, 200, 10, 0x00ff00).setOrigin(0).setVisible(false);
-    eBar = this.add.rectangle(580, 30, 200, 10, 0x00ff00).setOrigin(0).setVisible(false);
-
     cursors = this.input.keyboard.createCursorKeys();
-    spaceKey = this.input.keyboard.addKey('SPACE');
-    keyX = this.input.keyboard.addKey('X'); // Long Range
-    keyC = this.input.keyboard.addKey('C'); // Short Range
-
-    this.physics.add.overlap(this.projectiles, enemy, (en, pr) => { pr.destroy(); eHealth -= 10; en.setTint(0xff0000); this.time.delayedCall(100,()=>en.clearTint()); });
+    space = this.input.keyboard.addKey('SPACE');
+    keyX = this.input.keyboard.addKey('X');
+    keyC = this.input.keyboard.addKey('C');
 }
 
 function update() {
-    if (gameState === 'TITLE' && Phaser.Input.Keyboard.JustDown(spaceKey)) {
-        gameState = 'BATTLE';
-        this.txt.destroy();
-        player.setVisible(true); enemy.setVisible(true); pBar.setVisible(true); eBar.setVisible(true);
-    }
-    if (gameState !== 'BATTLE') return;
-
-    // Movement
     if (cursors.left.isDown) player.setVelocityX(-200);
     else if (cursors.right.isDown) player.setVelocityX(200);
     else player.setVelocityX(0);
 
-    if (cursors.up.isDown && player.body.touching.down) player.setVelocityY(-500);
+    if (Phaser.Input.Keyboard.JustDown(space) && player.body.touching.down) player.setVelocityY(-500);
 
-    // X = Long Range (Fires a yellow bolt)
     if (Phaser.Input.Keyboard.JustDown(keyX)) {
         let b = this.add.rectangle(player.x, player.y, 20, 10, 0xFFD700);
-        this.projectiles.add(b);
         this.physics.add.existing(b);
-        b.body.setAllowGravity(false);
         b.body.setVelocityX(player.flipX ? -600 : 600);
-    }
-
-    // C = Short Range (Melee)
-    if (Phaser.Input.Keyboard.JustDown(keyC)) {
-        if (Phaser.Math.Distance.Between(player.x, player.y, enemy.x, enemy.y) < 70) {
-            eHealth -= 15;
-            enemy.setTint(0xffffff);
-            this.time.delayedCall(100, () => enemy.clearTint());
-        }
-    }
-
-    // AI logic
-    if (enemy.x > player.x + 80) enemy.setVelocityX(-80);
-    else if (enemy.x < player.x - 80) enemy.setVelocityX(80);
-
-    pBar.width = pHealth * 2;
-    eBar.width = eHealth * 2;
-    if (eHealth <= 0 || pHealth <= 0) {
-        gameState = 'WIN';
-        this.add.text(400, 200, 'FORGE COMPLETE', { font: '40px Courier', fill: '#FFD700' }).setOrigin(0.5);
     }
 }
 </script>
