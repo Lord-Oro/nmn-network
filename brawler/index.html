@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>NMN Brawler | Phase 1 Movement</title>
+    <title>NMN Brawler | Elephant Beta</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
         body { margin: 0; background: #070605; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
@@ -15,189 +15,154 @@ const config = {
     type: Phaser.AUTO,
     width: 800,
     height: 400,
-    parent: 'game-container',
     physics: { default: 'arcade', arcade: { gravity: { y: 1200 } } },
     scene: { preload: preload, create: create, update: update }
 };
 
 const game = new Phaser.Game(config);
-let player;
-let cursors;
-let spaceKey;
-let enemy;
-let p1Health = 100;
-let e1Health = 100;
-let p1HealthBar;
-let e1HealthBar;
+let player, enemy, cursors, spaceKey;
+let p1Health = 100, e1Health = 100;
+let p1HealthBar, e1HealthBar;
+
 function preload() {
     this.load.spritesheet('elephant', 'hero-sheet.png', { 
-        frameWidth: 28,  // Narrower to hide the 'line' from the next frame
-        frameHeight: 52, // Standard height for this sprite
-        margin: 1,       // Tiny offset for the start of the sheet
-        spacing: 2       // Tells Phaser there is a gap between characters
+        frameWidth: 28, 
+        frameHeight: 52, 
+        margin: 1, 
+        spacing: 2 
     });
 }
 
 function create() {
-
-    // Add this line at the bottom of your create() function
-this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-this.projectiles = this.physics.add.group(); // Group to hold all flares
-    
-    // Change setScale(2.5) to something smaller like 1.5 since the frame is now bigger
-player = this.physics.add.sprite(100, 300, 'elephant', 0).setScale(1.5);
-    // The "Obsidian" Ground
+    // 1. The World
+    this.add.rectangle(400, 200, 800, 400, 0x070605); // Simple Background
     const ground = this.add.rectangle(400, 390, 800, 20, 0x1a1510);
     this.physics.add.existing(ground, true);
 
-    // 2. Add the Elephant (Frame 0 is usually idle)
+    // 2. Groups
+    this.projectiles = this.physics.add.group();
+    this.enemyProjectiles = this.physics.add.group();
+
+    // 3. Characters
     player = this.physics.add.sprite(100, 300, 'elephant', 0).setScale(2.5);
     player.setCollideWorldBounds(true);
     this.physics.add.collider(player, ground);
 
-    // 3. Animations (Walking cycle)
+    enemy = this.physics.add.sprite(700, 300, 'elephant', 20).setScale(2.5);
+    enemy.setCollideWorldBounds(true);
+    this.physics.add.collider(enemy, ground);
+    enemy.flipX = true;
+
+    // 4. HUD
+    this.add.text(10, 10, 'PYRO (P1)', { font: '14px Courier', fill: '#FFD700' });
+    p1HealthBar = this.add.rectangle(10, 30, 150, 10, 0x00FF00).setOrigin(0);
+    
+    this.add.text(640, 10, 'JUNI (AI)', { font: '14px Courier', fill: '#c084fc' });
+    e1HealthBar = this.add.rectangle(640, 30, 150, 10, 0x00FF00).setOrigin(0);
+
+    // 5. Animations
     this.anims.create({
-        key: 'walk',
+        key: 'p1_walk',
         frames: this.anims.generateFrameNumbers('elephant', { start: 1, end: 4 }),
         frameRate: 8,
         repeat: -1
     });
 
     this.anims.create({
-        key: 'idle',
-        frames: [{ key: 'elephant', frame: 0 }],
-        frameRate: 10
+        key: 'e1_walk',
+        frames: this.anims.generateFrameNumbers('elephant', { start: 21, end: 24 }),
+        frameRate: 8,
+        repeat: -1
+    });
+
+    // 6. Hit Detection
+    this.physics.add.overlap(this.projectiles, enemy, (en, flare) => {
+        flare.destroy();
+        e1Health -= 10;
+        en.setTint(0xff0000);
+        this.time.delayedCall(100, () => en.clearTint());
+    });
+
+    this.physics.add.overlap(this.enemyProjectiles, player, (pl, bolt) => {
+        bolt.destroy();
+        p1Health -= 5;
+        pl.setTint(0xff0000);
+        this.time.delayedCall(100, () => pl.clearTint());
     });
 
     cursors = this.input.keyboard.createCursorKeys();
     spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-
-    this.add.text(10, 10, 'NMN BRAWLER: ELEPHANT STAGE (BETA)', { 
-        font: '14px "Press Start 2P"', 
-        fill: '#FFD700' 
- // Hit Detection: Flare hits Enemy
-this.physics.add.overlap(this.projectiles, this.enemy, (en, flare) => {
-    flare.destroy();
-    e1Health -= 10;
-    // Simple knockback effect
-    en.setTint(0xff0000); // Flash red
-    this.time.delayedCall(100, () => { en.clearTint(); });
-}, null, this);
-
-// Hit Detection: Lightning hits Player
-this.physics.add.overlap(this.enemyProjectiles, player, (pl, bolt) => {
-    bolt.destroy();
-    p1Health -= 5;
-    pl.setTint(0xff0000);
-    this.time.delayedCall(100, () => { pl.clearTint(); });
-}, null, this);
-    });
 }
 
 function update() {
-    // PLAYER 1 (PYRO) MOVEMENT
-    if (this.cursors.left.isDown) {
+    // Player Move
+    if (cursors.left.isDown) {
         player.setVelocityX(-180);
         player.flipX = true;
         player.anims.play('p1_walk', true);
-    } else if (this.cursors.right.isDown) {
+    } else if (cursors.right.isDown) {
         player.setVelocityX(180);
         player.flipX = false;
         player.anims.play('p1_walk', true);
     } else {
         player.setVelocityX(0);
-        player.stop(); // Use the first frame as 'idle'
+        player.anims.stop();
     }
 
-    if (this.cursors.up.isDown && player.body.touching.down) {
+    if (cursors.up.isDown && player.body.touching.down) {
         player.setVelocityY(-550);
     }
 
-    // PLAYER 1 COMBAT (SOLAR FLARE)
-    if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
-        this.shootFlare(this);
+    // Player Attack
+    if (Phaser.Input.Keyboard.JustDown(spaceKey)) {
+        shootFlare(this);
     }
 
-    // ENEMY AI (JUNI) MOVEMENT
-    // Extremely simple: Move toward the player
-    if (this.enemy.x > player.x) {
-        this.enemy.setVelocityX(-100);
-        this.enemy.flipX = true;
-        this.enemy.anims.play('e1_walk', true);
-    } else {
-        this.enemy.setVelocityX(100);
-        this.enemy.flipX = false;
-        this.enemy.anims.play('e1_walk', true);
-    }
+    // Enemy AI Simple
+    if (enemy.active) {
+        if (enemy.x > player.x + 50) {
+            enemy.setVelocityX(-80);
+            enemy.flipX = true;
+            enemy.anims.play('e1_walk', true);
+        } else if (enemy.x < player.x - 50) {
+            enemy.setVelocityX(80);
+            enemy.flipX = false;
+            enemy.anims.play('e1_walk', true);
+        } else {
+            enemy.setVelocityX(0);
+        }
 
-    // ENEMY AI COMBAT (BLUE LIGHTNING)
-    // Shoots every 1.5 seconds if player is in range
-    if (this.enemy.active && Phaser.Math.Distance.Between(player.x, player.y, this.enemy.x, this.enemy.y) < 300) {
-        if (!this.enemy.lastAttack || (this.time.now - this.enemy.lastAttack > 1500)) {
-            this.shootLightning(this);
-            this.enemy.lastAttack = this.time.now;
+        // Enemy Attack
+        if (Phaser.Math.Distance.Between(player.x, player.y, enemy.x, enemy.y) < 300) {
+            if (!enemy.lastAttack || (this.time.now - enemy.lastAttack > 2000)) {
+                shootLightning(this);
+                enemy.lastAttack = this.time.now;
+            }
         }
     }
 
-    // Update HUD Bars
-    this.p1HealthBar.width = player.health * 1.5;
-    this.e1HealthBar.width = this.enemy.health * 1.5;
+    // Update Health
+    p1HealthBar.width = Math.max(0, p1Health * 1.5);
+    e1HealthBar.width = Math.max(0, e1Health * 1.5);
 }
-function shootFlare(scene) {
-    let flare = scene.add.rectangle(player.x + (player.flipX ? -30 : 30), player.y, 20, 10, 0xFFD700);
-    scene.physics.add.existing(flare);
-    flare.body.setAllowGravity(false);
-    flare.body.setVelocityX(player.flipX ? -500 : 500);
-    
-    // Aesthetic flare glow
-    scene.tweens.add({
-        targets: flare,
-        alpha: 0,
-        duration: 800,
-        onComplete: () => flare.destroy()
-    });
-}
-// Add these functions below the update() function, outside of it.
 
-this.shootFlare = function(scene) {
-    let flare = scene.add.rectangle(player.x, player.y, 30, 12, 0xFFD700);
+function shootFlare(scene) {
+    let flare = scene.add.rectangle(player.x, player.y, 30, 10, 0xFFD700);
     scene.projectiles.add(flare);
     scene.physics.add.existing(flare);
     flare.body.setAllowGravity(false);
-    
-    // Add the pulse tween
-    scene.tweens.add({
-        targets: flare, alpha: 0.5, scaleY: 1.5,
-        duration: 50, yoyo: true, repeat: -1
-    });
-
-    let speed = player.flipX ? -600 : 600;
-    flare.body.setVelocityX(speed);
-    
-    // Cleanup
-    scene.time.delayedCall(1000, () => { flare.destroy(); });
+    flare.body.setVelocityX(player.flipX ? -600 : 600);
+    scene.time.delayedCall(1000, () => flare.destroy());
 }
 
-this.shootLightning = function(scene) {
-    // Blue Lightning is thin and horizontal
-    let bolt = scene.add.rectangle(scene.enemy.x, scene.enemy.y, 40, 5, 0x00BFFF);
+function shootLightning(scene) {
+    let bolt = scene.add.rectangle(enemy.x, enemy.y, 40, 5, 0x00BFFF);
     scene.enemyProjectiles.add(bolt);
     scene.physics.add.existing(bolt);
     bolt.body.setAllowGravity(false);
-
-    // Make it flicker
-    scene.tweens.add({
-        targets: bolt, alpha: 0.2, scaleY: 2,
-        duration: 30, yoyo: true, repeat: -1
-    });
-
-    let speed = scene.enemy.flipX ? -600 : 600;
-    bolt.body.setVelocityX(speed);
-
-    // Cleanup
-    scene.time.delayedCall(800, () => { bolt.destroy(); });
+    bolt.body.setVelocityX(enemy.flipX ? -500 : 500);
+    scene.time.delayedCall(1000, () => bolt.destroy());
 }
-
 </script>
 </body>
 </html>
