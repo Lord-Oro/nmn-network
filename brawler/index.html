@@ -35,6 +35,11 @@ function preload() {
 }
 
 function create() {
+
+    // Add this line at the bottom of your create() function
+this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+this.projectiles = this.physics.add.group(); // Group to hold all flares
+    
     // Change setScale(2.5) to something smaller like 1.5 since the frame is now bigger
 player = this.physics.add.sprite(100, 300, 'elephant', 0).setScale(1.5);
     // The "Obsidian" Ground
@@ -70,6 +75,21 @@ player = this.physics.add.sprite(100, 300, 'elephant', 0).setScale(1.5);
 }
 
 function update() {
+
+    // Add this inside your update() function
+if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
+    let flare = this.add.rectangle(player.x, player.y, 30, 10, 0xFFD700);
+    this.projectiles.add(flare);
+    this.physics.add.existing(flare);
+    flare.body.setAllowGravity(false);
+    
+    // Shoot in the direction the player is facing
+    let speed = player.flipX ? -600 : 600;
+    flare.body.setVelocityX(speed);
+    
+    // Self-destruct flare after 1 second to save memory
+    this.time.delayedCall(1000, () => { flare.destroy(); });
+}
     // Movement Logic
     if (cursors.left.isDown) {
         player.setVelocityX(-180);
