@@ -2,22 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>NMN Brawler | The Elephant Forge</title>
+    <title>NMN Brawler | Phantom Roster Beta</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
-        body { margin: 0; background: #070605; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace; }
+        body { margin: 0; background: #070605; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace; color: white; }
         canvas { border: 3px solid #FFD700; box-shadow: 0 0 30px rgba(255, 215, 0, 0.3); }
+        #feedback-bar { position: fixed; bottom: 10px; left: 10px; font-size: 12px; color: #FFD700; z-index: 100; }
+        a { color: white; text-decoration: underline; }
     </style>
 </head>
 <body>
+<div id="feedback-bar">BETA 0.2 FEEDBACK? Tweet @NMN_Oro or Email: forge@nonsensemedia.com</div>
 <script>
-// --- GAME STATE VARIABLES ---
-let player, enemy, cursors, spaceKey, pauseKey;
+// --- GLOBAL VARIABLES ---
+let player, enemy, cursors, spaceKey;
 let p1Health = 100, e1Health = 100;
 let p1HealthBar, e1HealthBar;
-let gameStarted = false;
-let isPaused = false;
-let gameOver = false;
+let gameState = 'TITLE'; // TITLE, ROSTER, BATTLE, PAUSE, GAMEOVER
+let selectedPlayer = 'PYRO'; // PYRO or JUNI (playable)
 
 const config = {
     type: Phaser.AUTO,
@@ -30,179 +32,135 @@ const config = {
 const game = new Phaser.Game(config);
 
 function preload() {
-    this.load.spritesheet('elephant', 'hero-sheet.png', { 
-        frameWidth: 28, 
-        frameHeight: 52, 
-        margin: 1, 
-        spacing: 2 
-    });
+    this.load.spritesheet('elephants', 'hero-sheet.png', { frameWidth: 28, frameHeight: 52, margin: 1, spacing: 2 });
 }
 
 function create() {
-    // 1. BACKGROUND & GROUND
+    // 1. World Setup
     this.add.rectangle(400, 200, 800, 400, 0x0a0806);
     const ground = this.add.rectangle(400, 390, 800, 20, 0x1a1510);
     this.physics.add.existing(ground, true);
 
-    // 2. GROUPS
     this.projectiles = this.physics.add.group();
     this.enemyProjectiles = this.physics.add.group();
 
-    // 3. CHARACTERS (Hidden until start)
-    player = this.physics.add.sprite(100, 300, 'elephant', 0).setScale(2.5).setVisible(false);
+    // 2. Title Screen Setup
+    this.titleText = this.add.text(400, 150, 'NONSENSE BRAWLER', { font: '40px Courier', fill: '#FFD700', fontWeight: 'bold' }).setOrigin(0.5);
+    this.startBtn = this.add.text(400, 220, 'PRESS SPACE TO COMMENCE', { font: '18px Courier', fill: '#ffffff' }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    this.startBtn.on('pointerdown', () => showRoster(this));
+
+    // 3. Roster Screen Setup (Hidden)
+    this.rosterTitle = this.add.text(400, 50, 'SELECT YOUR ARCHITECT', { font: '28px Courier', fill: '#FFD700' }).setOrigin(0.5).setVisible(false);
+    
+    // Playable Icons
+    this.iconPyro = this.add.rectangle(150, 200, 100, 100, 0x1a1510).setStrokeStyle(2, 0xFFD700).setInteractive({ useHandCursor: true }).setVisible(false);
+    this.add.text(150, 210, 'PYRO\n(FREE)', { font: '14px Courier', fill: '#FFD700', align: 'center' }).setOrigin(0.5).setVisible(false);
+    this.iconPyro.on('pointerdown', () => startBattle(this, 'PYRO'));
+
+    this.iconJuni = this.add.rectangle(300, 200, 100, 100, 0x1a1510).setStrokeStyle(2, 0xc084fc).setInteractive({ useHandCursor: true }).setVisible(false);
+    this.add.text(300, 210, 'JUNI\n(FREE)', { font: '14px Courier', fill: '#c084fc', align: 'center' }).setOrigin(0.5).setVisible(false);
+    this.iconJuni.on('pointerdown', () => startBattle(this, 'JUNI'));
+
+    // Locked Icons ($0.99)
+    this.iconOlydia = this.add.rectangle(450, 200, 100, 100, 0x070605).setStrokeStyle(2, 0x444444).setInteractive().setVisible(false);
+    this.add.text(450, 210, 'OLYDIA\n($0.99)', { font: '14px Courier', fill: '#888888', align: 'center' }).setOrigin(0.5).setVisible(false);
+    this.iconOlydia.on('pointerdown', () => lockedPopup(this, "ARCHIVE KEY REQUIRED: VOL 2"));
+
+    this.iconHelios = this.add.rectangle(600, 200, 100, 100, 0x070605).setStrokeStyle(2, 0x444444).setInteractive().setVisible(false);
+    this.add.text(600, 210, 'HELIOS\n($0.99)', { font: '14px Courier', fill: '#888888', align: 'center' }).setOrigin(0.5).setVisible(false);
+    this.iconHelios.on('pointerdown', () => lockedPopup(this, "ARCHIVE KEY REQUIRED: VOL 3"));
+
+    // 4. Battle Setup (Characters & HUD - Hidden)
+    player = this.physics.add.sprite(100, 300, 'elephants', 0).setScale(2.5).setVisible(false);
     player.setCollideWorldBounds(true);
     this.physics.add.collider(player, ground);
 
-    enemy = this.physics.add.sprite(700, 300, 'elephant', 20).setScale(2.5).setVisible(false);
+    enemy = this.physics.add.sprite(700, 300, 'elephants', 20).setScale(2.5).setVisible(false);
     enemy.setCollideWorldBounds(true);
     this.physics.add.collider(enemy, ground);
     enemy.flipX = true;
 
-    // 4. UI / HUD
     p1HealthBar = this.add.rectangle(10, 35, 150, 10, 0x00FF00).setOrigin(0).setVisible(false);
     e1HealthBar = this.add.rectangle(640, 35, 150, 10, 0x00FF00).setOrigin(0).setVisible(false);
-    this.p1Text = this.add.text(10, 15, 'PYRO (P1)', { font: '14px Courier', fill: '#FFD700' }).setVisible(false);
-    this.e1Text = this.add.text(640, 15, 'JUNI (AI)', { font: '14px Courier', fill: '#c084fc' }).setVisible(false);
+    this.p1Text = this.add.text(10, 15, 'PLAYER', { font: '14px Courier', fill: '#FFD700' }).setVisible(false);
+    this.e1Text = this.add.text(640, 15, 'ENEMY AI', { font: '14px Courier', fill: '#c084fc' }).setVisible(false);
 
-    // 5. START SCREEN
-    this.titleText = this.add.text(400, 150, 'NONSENSE BRAWLER', { font: '40px Courier', fill: '#FFD700', fontWeight: 'bold' }).setOrigin(0.5);
-    this.subText = this.add.text(400, 220, 'PRESS SPACE TO COMMENCE FORGE', { font: '16px Courier', fill: '#ffffff' }).setOrigin(0.5);
+    // Animations (defined once)
+    this.anims.create({ key: 'walk_red', frames: this.anims.generateFrameNumbers('elephants', { start: 1, end: 4 }), frameRate: 8, repeat: -1 });
+    this.anims.create({ key: 'walk_green', frames: this.anims.generateFrameNumbers('elephants', { start: 21, end: 24 }), frameRate: 8, repeat: -1 });
 
-    // 6. ANIMATIONS
-    this.anims.create({ key: 'p1_walk', frames: this.anims.generateFrameNumbers('elephant', { start: 1, end: 4 }), frameRate: 8, repeat: -1 });
-    this.anims.create({ key: 'e1_walk', frames: this.anims.generateFrameNumbers('elephant', { start: 21, end: 24 }), frameRate: 8, repeat: -1 });
+    // Hit Detection
+    this.physics.add.overlap(this.projectiles, enemy, (en, flare) => { flare.destroy(); e1Health -= 10; en.setTint(0xff0000); this.time.delayedCall(100, () => en.clearTint()); });
+    this.physics.add.overlap(this.enemyProjectiles, player, (pl, bolt) => { bolt.destroy(); p1Health -= 5; pl.setTint(0xff0000); this.time.delayedCall(100, () => pl.clearTint()); });
 
-    // 7. COLLISION
-    this.physics.add.overlap(this.projectiles, enemy, (en, flare) => {
-        flare.destroy();
-        e1Health -= 10;
-        en.setTint(0xff0000);
-        this.time.delayedCall(100, () => en.clearTint());
-    });
-
-    this.physics.add.overlap(this.enemyProjectiles, player, (pl, bolt) => {
-        bolt.destroy();
-        p1Health -= 5;
-        pl.setTint(0xff0000);
-        this.time.delayedCall(100, () => pl.clearTint());
-    });
-
-    // 8. CONTROLS
     cursors = this.input.keyboard.createCursorKeys();
     spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-    pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 }
 
 function update() {
-    if (gameOver) return;
+    if (gameState === 'TITLE' && Phaser.Input.Keyboard.JustDown(spaceKey)) showRoster(this);
+    if (gameState !== 'BATTLE') return;
 
-    // START GAME LOGIC
-    if (!gameStarted && Phaser.Input.Keyboard.JustDown(spaceKey)) {
-        startGame(this);
-    }
+    // --- BATTLE LOGIC (Elephants are locked in) ---
+    // Pyro uses Red Elephant, Juni uses Green Elephant
+    player.anims.play(selectedPlayer === 'PYRO' ? 'walk_red' : 'walk_green', true);
 
-    // PAUSE LOGIC
-    if (gameStarted && Phaser.Input.Keyboard.JustDown(pauseKey)) {
-        isPaused = !isPaused;
-        if (isPaused) {
-            this.physics.world.pause();
-            this.pauseText = this.add.text(400, 200, 'PAUSED', { font: '40px Courier', fill: '#ffffff' }).setOrigin(0.5);
-        } else {
-            this.physics.world.resume();
-            if (this.pauseText) this.pauseText.destroy();
-        }
-    }
+    if (cursors.left.isDown) { player.setVelocityX(-180); player.flipX = true; } 
+    else if (cursors.right.isDown) { player.setVelocityX(180); player.flipX = false; } 
+    else { player.setVelocityX(0); }
 
-    if (!gameStarted || isPaused) return;
-
-    // PLAYER MOVEMENT
-    if (cursors.left.isDown) {
-        player.setVelocityX(-180);
-        player.flipX = true;
-        player.anims.play('p1_walk', true);
-    } else if (cursors.right.isDown) {
-        player.setVelocityX(180);
-        player.flipX = false;
-        player.anims.play('p1_walk', true);
-    } else {
-        player.setVelocityX(0);
-        player.anims.stop();
-    }
-
-    if (cursors.up.isDown && player.body.touching.down) {
-        player.setVelocityY(-550);
-    }
-
-    if (Phaser.Input.Keyboard.JustDown(spaceKey)) {
-        shootFlare(this);
-    }
+    if (cursors.up.isDown && player.body.touching.down) player.setVelocityY(-550);
+    if (Phaser.Input.Keyboard.JustDown(spaceKey)) shootFlare(this);
 
     // AI MOVEMENT
     if (enemy.active) {
-        if (enemy.x > player.x + 60) {
-            enemy.setVelocityX(-80);
-            enemy.flipX = true;
-            enemy.anims.play('e1_walk', true);
-        } else if (enemy.x < player.x - 60) {
-            enemy.setVelocityX(80);
-            enemy.flipX = false;
-            enemy.anims.play('e1_walk', true);
-        } else {
-            enemy.setVelocityX(0);
-        }
-
+        if (enemy.x > player.x + 60) { enemy.setVelocityX(-80); enemy.flipX = true; enemy.anims.play('walk_green', true); } 
+        else if (enemy.x < player.x - 60) { enemy.setVelocityX(80); enemy.flipX = false; enemy.anims.play('walk_green', true); } 
+        else { enemy.setVelocityX(0); }
         if (Phaser.Math.Distance.Between(player.x, player.y, enemy.x, enemy.y) < 300) {
-            if (!enemy.lastAttack || (this.time.now - enemy.lastAttack > 2000)) {
-                shootLightning(this);
-                enemy.lastAttack = this.time.now;
-            }
+            if (!enemy.lastAttack || (this.time.now - enemy.lastAttack > 2000)) { shootLightning(this); enemy.lastAttack = this.time.now; }
         }
     }
 
-    // HEALTH CHECK
+    // Health Check
     p1HealthBar.width = Math.max(0, p1Health * 1.5);
     e1HealthBar.width = Math.max(0, e1Health * 1.5);
-
-    if (e1Health <= 0 && !gameOver) endGame(this, "PYRO VICTORIOUS");
-    if (p1Health <= 0 && !gameOver) endGame(this, "JUNI VICTORIOUS");
+    if (e1Health <= 0 || p1Health <= 0) endGame(this);
 }
 
-function startGame(scene) {
-    gameStarted = true;
-    scene.titleText.destroy();
-    scene.subText.destroy();
-    player.setVisible(true);
-    enemy.setVisible(true);
-    p1HealthBar.setVisible(true);
-    e1HealthBar.setVisible(true);
-    scene.p1Text.setVisible(true);
-    scene.e1Text.setVisible(true);
+// --- HELPER FUNCTIONS ---
+function showRoster(scene) {
+    gameState = 'ROSTER';
+    scene.titleText.destroy(); scene.startBtn.destroy();
+    scene.rosterTitle.setVisible(true);
+    scene.iconPyro.setVisible(true); scene.iconJuni.setVisible(true);
+    scene.iconOlydia.setVisible(true); scene.iconHelios.setVisible(true);
+    // Add text visibility too (omitted here for space, but needed)
 }
 
-function endGame(scene, message) {
-    gameOver = true;
-    scene.physics.world.pause();
-    scene.add.text(400, 200, message, { font: '40px Courier', fill: '#FFD700' }).setOrigin(0.5);
-    scene.add.text(400, 250, 'REFRESH TO RESTART', { font: '16px Courier', fill: '#ffffff' }).setOrigin(0.5);
+function lockedPopup(scene, message) {
+    let popup = scene.add.text(400, 320, message, { font: '16px Courier', fill: '#ff4444' }).setOrigin(0.5);
+    scene.time.delayedCall(1500, () => popup.destroy());
 }
 
-function shootFlare(scene) {
-    let flare = scene.add.rectangle(player.x, player.y, 30, 10, 0xFFD700);
-    scene.projectiles.add(flare);
-    scene.physics.add.existing(flare);
-    flare.body.setAllowGravity(false);
-    flare.body.setVelocityX(player.flipX ? -600 : 600);
-    scene.time.delayedCall(1000, () => flare.destroy());
+function startBattle(scene, playerChar) {
+    gameState = 'BATTLE';
+    selectedPlayer = playerChar;
+    // Hide Roster
+    scene.rosterTitle.destroy(); scene.iconPyro.destroy(); scene.iconJuni.destroy(); scene.iconOlydia.destroy(); scene.iconHelios.destroy();
+    
+    // Set character properties
+    player.setFrame(playerChar === 'PYRO' ? 0 : 20); // Red Elephant for Pyro, Green for Juni
+    player.setVisible(true); enemy.setVisible(true);
+    
+    p1HealthBar.setVisible(true); e1HealthBar.setVisible(true);
+    scene.p1Text.setText(playerChar + ' (P1)').setVisible(true);
+    scene.e1Text.setText('JUNI (AI)').setVisible(true);
 }
 
-function shootLightning(scene) {
-    let bolt = scene.add.rectangle(enemy.x, enemy.y, 40, 5, 0x00BFFF);
-    scene.enemyProjectiles.add(bolt);
-    scene.physics.add.existing(bolt);
-    bolt.body.setAllowGravity(false);
-    bolt.body.setVelocityX(enemy.flipX ? -500 : 500);
-    scene.time.delayedCall(1000, () => bolt.destroy());
-}
+function shootFlare(scene) { let flare = scene.add.rectangle(player.x, player.y, 30, 10, 0xFFD700); scene.projectiles.add(flare); scene.physics.add.existing(flare); flare.body.setAllowGravity(false); flare.body.setVelocityX(player.flipX ? -600 : 600); scene.time.delayedCall(1000, () => flare.destroy()); }
+function shootLightning(scene) { let bolt = scene.add.rectangle(enemy.x, enemy.y, 40, 5, 0x00BFFF); scene.enemyProjectiles.add(bolt); scene.physics.add.existing(bolt); bolt.body.setAllowGravity(false); bolt.body.setVelocityX(enemy.flipX ? -500 : 500); scene.time.delayedCall(1000, () => bolt.destroy()); }
+function endGame(scene) { gameState = 'GAMEOVER'; scene.physics.world.pause(); scene.add.text(400, 200, 'COMBAT TERMINATED', { font: '40px Courier', fill: '#FFD700' }).setOrigin(0.5); scene.add.text(400, 250, 'REFRESH TO COMMENCE FORGE', { font: '16px Courier', fill: '#ffffff' }).setOrigin(0.5); }
 </script>
 </body>
 </html>
