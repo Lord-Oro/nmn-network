@@ -1,7 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id<!DOCTYPE html>
+<html lang="en">
+<head>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-P5WL9XNDY8');</script>
+    <style>body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: 'Courier New', monospace; color: #FFD700; }</style>
+</head>
+<body>
+<div id="game-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
+<script>
+const config = {
+    type: Phaser.AUTO,
+    width: 800, height: 400,
+    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    physics: { default: 'arcade', arcade: { gravity: { y: 1200 } } },
+    scene: { preload: preload, create: create, update: update }
+};
+
+const game = new Phaser.Game(config);
+let player, enemy, cursors, space, keyX, pHealth=100, eHealth=100, pBar, eBar;
+let gameState = 'TITLE', selectedFrame = 0;
+
+function preload() {
+    // PATH CORRECTION: Added 'brawler/' prefix to match your GitHub folders
+    this.load.image('bg', 'brawler/forest_bg.jpg');
+    this.load.spritesheet('elephants', 'brawler/hero-sheet.png', { frameWidth: 28, frameHeight: 52 });
+    this.load.image('p_pyro', 'brawler/Pyro elephant beta.jpg');
+    this.load.image('p_juni', 'brawler/Juni elephant beta.jpg');
+}
+
+function create() {
+    // Fallback: If image fails, show a dark rectangle so it doesn't crash
+    this.add.rectangle(400, 200, 800, 400, 0x1a1510);
+    this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.6);
+    
+    this.titleTxt = this.add.text(400, 200, 'NMN: THE FORGE\n\n[ CLICK TO ENTER TEST ]', { font: '24px Courier', fill: '#FFD700', align: 'center' }).setOrigin(0.5).setInteractive();
+
+    this.roster = this.add.group();
+    let r1 = this.add.image(300, 200, 'p_pyro').setDisplaySize(80, 80).setInteractive().on('pointerdown', () => { selectedFrame=0; startBattle(this); });
+    let r2 = this.add.image(500, 200, 'p_juni').setDisplaySize(80, 80).setInteractive().on('pointerdown', () => { selectedFrame=20; startBattle(this); });
+    
+    this.roster.addMultiple([r1, r2]);
+    this.roster.setVisible(false);
+
+    let ground = this.add.rectangle(400, 390, 800, 20, 0x000).setAlpha(0.3);
+    this.physics.add.existing(ground, true);
+    player = this.physics.add.sprite(150, 300, 'elephants', 0).setScale(2.5).setVisible(false).setCollideWorldBounds(true);
+    enemy = this.physics.add.sprite(650, 300, 'elephants', 20).setScale(2.5).setVisible(false).setFlipX(true).setCollideWorldBounds(true);
+    this.physics.add.collider(player, ground);
+    this.physics.add.collider(enemy, ground);
+
+    pBar = this.add.rectangle(20, 30, 200, 10, 0x00ff00).setOrigin(0).setVisible(false);
+    eBar = this.add.rectangle(580, 30, 200, 10, 0x00ff00).setOrigin(0).setVisible(false);
+
+    this.projectiles = this.physics.add.group();
+    this.physics.add.overlap(this.projectiles, enemy, (en, pr) => { pr.destroy(); eHealth -= 10; en.setTint(0xff0000); this.time.delayedCall(100, ()=>en.clearTint()); });
+
+    cursors = this.input.keyboard.createCursorKeys();
+    space = this.input.keyboard.addKey('SPACE');
+
+    this.titleTxt.on('pointerdown', () => {
+        this.titleTxt.setVisible(false);
+        this.roster.setVisible(true);
+    });
+}
+
+function startBattle(scene) {
+    gameState = 'BATTLE';
+    scene.roster.setVisible(false);
+    player.setFrame(selectedFrame).setVisible(true);
+    enemy.setVisible(true); pBar.setVisible(true); eBar.setVisible(true);
+}
+
+function update() {
+    if (gameState !== 'BATTLE') return;
+    if (cursors.left.isDown) { player.setVelocityX(-220); player.setFlipX(true); }
+    else if (cursors.right.isDown) { player.setVelocityX(220); player.setFlipX(false); }
+    else player.setVelocityX(0);
+
+    if (Phaser.Input.Keyboard.JustDown(cursors.up) && player.body.touching.down) { player.setVelocityY(-520); }
+
+    if (Phaser.Input.Keyboard.JustDown(space)) {
+        let b = this.add.rectangle(player.x, player.y, 20, 10, 0xFFD700);
+        this.projectiles.add(b); this.physics.add.existing(b);
+        b.body.setAllowGravity(false); b.body.setVelocityX(player.flipX ? -600 : 600);
+    }
+
+    pBar.width = Math.max(0, pHealth * 2);
+    eBar.width = Math.max(0, eHealth * 2);
+}
+</script>
+</body>
+</html>=G-P5WL9XNDY8"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-P5WL9XNDY8');</script>
     <style>
         body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: 'Courier New', monospace; }
