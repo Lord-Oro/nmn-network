@@ -2,15 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>NMN Brawler | Elephant Beta</title>
+    <title>NMN Brawler | The Elephant Forge</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
-        body { margin: 0; background: #070605; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        canvas { border: 2px solid #FFD700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+        body { margin: 0; background: #070605; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace; }
+        canvas { border: 3px solid #FFD700; box-shadow: 0 0 30px rgba(255, 215, 0, 0.3); }
     </style>
 </head>
 <body>
 <script>
+// --- GAME STATE VARIABLES ---
+let player, enemy, cursors, spaceKey, pauseKey;
+let p1Health = 100, e1Health = 100;
+let p1HealthBar, e1HealthBar;
+let gameStarted = false;
+let isPaused = false;
+let gameOver = false;
+
 const config = {
     type: Phaser.AUTO,
     width: 800,
@@ -20,9 +28,6 @@ const config = {
 };
 
 const game = new Phaser.Game(config);
-let player, enemy, cursors, spaceKey;
-let p1Health = 100, e1Health = 100;
-let p1HealthBar, e1HealthBar;
 
 function preload() {
     this.load.spritesheet('elephant', 'hero-sheet.png', { 
@@ -34,48 +39,40 @@ function preload() {
 }
 
 function create() {
-    // 1. The World
-    this.add.rectangle(400, 200, 800, 400, 0x070605); // Simple Background
+    // 1. BACKGROUND & GROUND
+    this.add.rectangle(400, 200, 800, 400, 0x0a0806);
     const ground = this.add.rectangle(400, 390, 800, 20, 0x1a1510);
     this.physics.add.existing(ground, true);
 
-    // 2. Groups
+    // 2. GROUPS
     this.projectiles = this.physics.add.group();
     this.enemyProjectiles = this.physics.add.group();
 
-    // 3. Characters
-    player = this.physics.add.sprite(100, 300, 'elephant', 0).setScale(2.5);
+    // 3. CHARACTERS (Hidden until start)
+    player = this.physics.add.sprite(100, 300, 'elephant', 0).setScale(2.5).setVisible(false);
     player.setCollideWorldBounds(true);
     this.physics.add.collider(player, ground);
 
-    enemy = this.physics.add.sprite(700, 300, 'elephant', 20).setScale(2.5);
+    enemy = this.physics.add.sprite(700, 300, 'elephant', 20).setScale(2.5).setVisible(false);
     enemy.setCollideWorldBounds(true);
     this.physics.add.collider(enemy, ground);
     enemy.flipX = true;
 
-    // 4. HUD
-    this.add.text(10, 10, 'PYRO (P1)', { font: '14px Courier', fill: '#FFD700' });
-    p1HealthBar = this.add.rectangle(10, 30, 150, 10, 0x00FF00).setOrigin(0);
-    
-    this.add.text(640, 10, 'JUNI (AI)', { font: '14px Courier', fill: '#c084fc' });
-    e1HealthBar = this.add.rectangle(640, 30, 150, 10, 0x00FF00).setOrigin(0);
+    // 4. UI / HUD
+    p1HealthBar = this.add.rectangle(10, 35, 150, 10, 0x00FF00).setOrigin(0).setVisible(false);
+    e1HealthBar = this.add.rectangle(640, 35, 150, 10, 0x00FF00).setOrigin(0).setVisible(false);
+    this.p1Text = this.add.text(10, 15, 'PYRO (P1)', { font: '14px Courier', fill: '#FFD700' }).setVisible(false);
+    this.e1Text = this.add.text(640, 15, 'JUNI (AI)', { font: '14px Courier', fill: '#c084fc' }).setVisible(false);
 
-    // 5. Animations
-    this.anims.create({
-        key: 'p1_walk',
-        frames: this.anims.generateFrameNumbers('elephant', { start: 1, end: 4 }),
-        frameRate: 8,
-        repeat: -1
-    });
+    // 5. START SCREEN
+    this.titleText = this.add.text(400, 150, 'NONSENSE BRAWLER', { font: '40px Courier', fill: '#FFD700', fontWeight: 'bold' }).setOrigin(0.5);
+    this.subText = this.add.text(400, 220, 'PRESS SPACE TO COMMENCE FORGE', { font: '16px Courier', fill: '#ffffff' }).setOrigin(0.5);
 
-    this.anims.create({
-        key: 'e1_walk',
-        frames: this.anims.generateFrameNumbers('elephant', { start: 21, end: 24 }),
-        frameRate: 8,
-        repeat: -1
-    });
+    // 6. ANIMATIONS
+    this.anims.create({ key: 'p1_walk', frames: this.anims.generateFrameNumbers('elephant', { start: 1, end: 4 }), frameRate: 8, repeat: -1 });
+    this.anims.create({ key: 'e1_walk', frames: this.anims.generateFrameNumbers('elephant', { start: 21, end: 24 }), frameRate: 8, repeat: -1 });
 
-    // 6. Hit Detection
+    // 7. COLLISION
     this.physics.add.overlap(this.projectiles, enemy, (en, flare) => {
         flare.destroy();
         e1Health -= 10;
@@ -90,12 +87,35 @@ function create() {
         this.time.delayedCall(100, () => pl.clearTint());
     });
 
+    // 8. CONTROLS
     cursors = this.input.keyboard.createCursorKeys();
     spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 }
 
 function update() {
-    // Player Move
+    if (gameOver) return;
+
+    // START GAME LOGIC
+    if (!gameStarted && Phaser.Input.Keyboard.JustDown(spaceKey)) {
+        startGame(this);
+    }
+
+    // PAUSE LOGIC
+    if (gameStarted && Phaser.Input.Keyboard.JustDown(pauseKey)) {
+        isPaused = !isPaused;
+        if (isPaused) {
+            this.physics.world.pause();
+            this.pauseText = this.add.text(400, 200, 'PAUSED', { font: '40px Courier', fill: '#ffffff' }).setOrigin(0.5);
+        } else {
+            this.physics.world.resume();
+            if (this.pauseText) this.pauseText.destroy();
+        }
+    }
+
+    if (!gameStarted || isPaused) return;
+
+    // PLAYER MOVEMENT
     if (cursors.left.isDown) {
         player.setVelocityX(-180);
         player.flipX = true;
@@ -113,18 +133,17 @@ function update() {
         player.setVelocityY(-550);
     }
 
-    // Player Attack
     if (Phaser.Input.Keyboard.JustDown(spaceKey)) {
         shootFlare(this);
     }
 
-    // Enemy AI Simple
+    // AI MOVEMENT
     if (enemy.active) {
-        if (enemy.x > player.x + 50) {
+        if (enemy.x > player.x + 60) {
             enemy.setVelocityX(-80);
             enemy.flipX = true;
             enemy.anims.play('e1_walk', true);
-        } else if (enemy.x < player.x - 50) {
+        } else if (enemy.x < player.x - 60) {
             enemy.setVelocityX(80);
             enemy.flipX = false;
             enemy.anims.play('e1_walk', true);
@@ -132,7 +151,6 @@ function update() {
             enemy.setVelocityX(0);
         }
 
-        // Enemy Attack
         if (Phaser.Math.Distance.Between(player.x, player.y, enemy.x, enemy.y) < 300) {
             if (!enemy.lastAttack || (this.time.now - enemy.lastAttack > 2000)) {
                 shootLightning(this);
@@ -141,9 +159,31 @@ function update() {
         }
     }
 
-    // Update Health
+    // HEALTH CHECK
     p1HealthBar.width = Math.max(0, p1Health * 1.5);
     e1HealthBar.width = Math.max(0, e1Health * 1.5);
+
+    if (e1Health <= 0 && !gameOver) endGame(this, "PYRO VICTORIOUS");
+    if (p1Health <= 0 && !gameOver) endGame(this, "JUNI VICTORIOUS");
+}
+
+function startGame(scene) {
+    gameStarted = true;
+    scene.titleText.destroy();
+    scene.subText.destroy();
+    player.setVisible(true);
+    enemy.setVisible(true);
+    p1HealthBar.setVisible(true);
+    e1HealthBar.setVisible(true);
+    scene.p1Text.setVisible(true);
+    scene.e1Text.setVisible(true);
+}
+
+function endGame(scene, message) {
+    gameOver = true;
+    scene.physics.world.pause();
+    scene.add.text(400, 200, message, { font: '40px Courier', fill: '#FFD700' }).setOrigin(0.5);
+    scene.add.text(400, 250, 'REFRESH TO RESTART', { font: '16px Courier', fill: '#ffffff' }).setOrigin(0.5);
 }
 
 function shootFlare(scene) {
