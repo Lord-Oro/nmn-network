@@ -23,8 +23,8 @@ let player, enemy, cursors, space, keyX, pHealth=100, eHealth=100, pBar, eBar, j
 let gameState = 'TITLE', selectedFrame = 0;
 
 function preload() {
-    // Assets linked with new underscore naming
-    this.load.image('bg', 'forest_bg.jpg');
+    // UPDATED PATHS TO MATCH YOUR REPOSITORY
+    this.load.image('bg', 'brawler/forest_bg.jpg'); 
     this.load.spritesheet('elephants', 'brawler/hero-sheet.png', { frameWidth: 28, frameHeight: 52 });
     
     this.load.image('p_pyro', 'brawler/pyro_beta.jpg');
@@ -36,30 +36,24 @@ function preload() {
 }
 
 function create() {
-    this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.5);
-    
-    this.infoBox = this.add.rectangle(400, 45, 500, 30, 0x000).setStrokeStyle(1, 0xFFD700).setVisible(false);
-    this.infoTxt = this.add.text(400, 45, '', { font: '12px Courier', fill: '#FFD700' }).setOrigin(0.5).setVisible(false);
-
+    this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.6);
     this.titleTxt = this.add.text(400, 200, 'NMN: THE FORGE\n\n[ CLICK TO START ]', { font: '24px Courier', fill: '#FFD700', align: 'center' }).setOrigin(0.5).setInteractive();
 
     this.roster = this.add.group();
     const rosterData = [
-        { key: 'p_pyro', x: 100, f: 0, label: 'PYRO', info: 'PYRO: FREE' },
-        { key: 'p_juni', x: 220, f: 20, label: 'JUNI', info: 'JUNI: FREE' },
-        { key: 'p_olydia', x: 340, f: 40, label: 'OLYDIA', info: 'OLYDIA: $1.99' },
-        { key: 'p_helios', x: 460, f: 60, label: 'HELIOS', info: 'HELIOS: $0.99' },
-        { key: 'p_wanderer', x: 580, f: 80, label: 'WANDERER', info: 'NEWSLETTER EXCLUSIVE' },
-        { key: 'p_orid', x: 700, f: 100, label: 'ORID', info: 'PATREON EXCLUSIVE' }
+        { key: 'p_pyro', x: 100, f: 0, label: 'PYRO' },
+        { key: 'p_juni', x: 220, f: 20, label: 'JUNI' },
+        { key: 'p_olydia', x: 340, f: 40, label: 'OLYDIA' },
+        { key: 'p_helios', x: 460, f: 60, label: 'HELIOS' },
+        { key: 'p_wanderer', x: 580, f: 80, label: 'WANDERER' },
+        { key: 'p_orid', x: 700, f: 100, label: 'ORID' }
     ];
 
     rosterData.forEach(data => {
         let img = this.add.image(data.x, 200, data.key).setDisplaySize(90, 90).setInteractive();
-        let txt = this.add.text(data.x, 260, data.label, {font:'10px Courier'}).setOrigin(0.5);
-        
-        img.on('pointerover', () => { this.infoBox.setVisible(true); this.infoTxt.setVisible(true).setText(data.info); });
+        this.add.text(data.x, 260, data.label, {font:'10px Courier'}).setOrigin(0.5);
         img.on('pointerdown', () => { if(data.f <= 20) { selectedFrame = data.f; startBattle(this); } });
-        this.roster.addMultiple([img, txt]);
+        this.roster.add(img);
     });
     this.roster.setVisible(false);
 
@@ -78,15 +72,14 @@ function create() {
 
     cursors = this.input.keyboard.createCursorKeys();
     space = this.input.keyboard.addKey('SPACE');
-    keyX = this.input.keyboard.addKey('X');
-
     this.titleTxt.on('pointerdown', () => { this.titleTxt.setVisible(false); this.roster.setVisible(true); });
 }
 
 function startBattle(scene) {
     gameState = 'BATTLE';
-    scene.roster.setVisible(false); scene.infoBox.setVisible(false); scene.infoTxt.setVisible(false);
-    player.setFrame(selectedFrame).setVisible(true); enemy.setVisible(true); pBar.setVisible(true); eBar.setVisible(true);
+    scene.roster.setVisible(false);
+    player.setFrame(selectedFrame).setVisible(true);
+    enemy.setVisible(true); pBar.setVisible(true); eBar.setVisible(true);
 }
 
 function update() {
@@ -103,11 +96,6 @@ function update() {
         this.projectiles.add(b); this.physics.add.existing(b);
         b.body.setAllowGravity(false); b.body.setVelocityX(player.flipX ? -600 : 600);
     }
-    if (Phaser.Input.Keyboard.JustDown(keyX)) {
-        if (Phaser.Math.Distance.Between(player.x, player.y, enemy.x, enemy.y) < 70) { eHealth -= 15; enemy.setTint(0xffffff); this.time.delayedCall(100, () => enemy.clearTint()); }
-    }
-    pBar.width = Math.max(0, pHealth * 2); eBar.width = Math.max(0, eHealth * 2);
-    if (eHealth <= 0 || pHealth <= 0) { gameState='END'; this.add.text(400, 200, 'FORGE SUCCESS', { font: '40px Courier', fill: '#FFD700' }).setOrigin(0.5); }
 }
 </script>
 </body>
