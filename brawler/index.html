@@ -24,11 +24,15 @@ const game = new Phaser.Game(config);
 let player;
 let cursors;
 let spaceKey;
-
+let enemy;
+let p1Health = 100;
+let e1Health = 100;
+let p1HealthBar;
+let e1HealthBar;
 function preload() {
     this.load.spritesheet('elephant', 'hero-sheet.png', { 
         frameWidth: 28,  // Narrower to hide the 'line' from the next frame
-        frameHeight: 60, // Standard height for this sprite
+        frameHeight: 52, // Standard height for this sprite
         margin: 1,       // Tiny offset for the start of the sheet
         spacing: 2       // Tells Phaser there is a gap between characters
     });
@@ -71,49 +75,74 @@ player = this.physics.add.sprite(100, 300, 'elephant', 0).setScale(1.5);
     this.add.text(10, 10, 'NMN BRAWLER: ELEPHANT STAGE (BETA)', { 
         font: '14px "Press Start 2P"', 
         fill: '#FFD700' 
+ // Hit Detection: Flare hits Enemy
+this.physics.add.overlap(this.projectiles, this.enemy, (en, flare) => {
+    flare.destroy();
+    e1Health -= 10;
+    // Simple knockback effect
+    en.setTint(0xff0000); // Flash red
+    this.time.delayedCall(100, () => { en.clearTint(); });
+}, null, this);
+
+// Hit Detection: Lightning hits Player
+this.physics.add.overlap(this.enemyProjectiles, player, (pl, bolt) => {
+    bolt.destroy();
+    p1Health -= 5;
+    pl.setTint(0xff0000);
+    this.time.delayedCall(100, () => { pl.clearTint(); });
+}, null, this);
     });
 }
 
 function update() {
-
-    // Add this inside your update() function
-if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
-    let flare = this.add.rectangle(player.x, player.y, 30, 10, 0xFFD700);
-    this.projectiles.add(flare);
-    this.physics.add.existing(flare);
-    flare.body.setAllowGravity(false);
-    
-    // Shoot in the direction the player is facing
-    let speed = player.flipX ? -600 : 600;
-    flare.body.setVelocityX(speed);
-    
-    // Self-destruct flare after 1 second to save memory
-    this.time.delayedCall(1000, () => { flare.destroy(); });
-}
-    // Movement Logic
-    if (cursors.left.isDown) {
+    // PLAYER 1 (PYRO) MOVEMENT
+    if (this.cursors.left.isDown) {
         player.setVelocityX(-180);
         player.flipX = true;
-        player.anims.play('walk', true);
-    } else if (cursors.right.isDown) {
+        player.anims.play('p1_walk', true);
+    } else if (this.cursors.right.isDown) {
         player.setVelocityX(180);
         player.flipX = false;
-        player.anims.play('walk', true);
+        player.anims.play('p1_walk', true);
     } else {
         player.setVelocityX(0);
-        player.anims.play('idle');
+        player.stop(); // Use the first frame as 'idle'
     }
 
-    if (cursors.up.isDown && player.body.touching.down) {
+    if (this.cursors.up.isDown && player.body.touching.down) {
         player.setVelocityY(-550);
     }
 
-    // THE SOLAR FLARE (The Combat Placeholder)
-    if (Phaser.Input.Keyboard.JustDown(spaceKey)) {
-        shootFlare(this);
+    // PLAYER 1 COMBAT (SOLAR FLARE)
+    if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
+        this.shootFlare(this);
     }
-}
 
+    // ENEMY AI (JUNI) MOVEMENT
+    // Extremely simple: Move toward the player
+    if (this.enemy.x > player.x) {
+        this.enemy.setVelocityX(-100);
+        this.enemy.flipX = true;
+        this.enemy.anims.play('e1_walk', true);
+    } else {
+        this.enemy.setVelocityX(100);
+        this.enemy.flipX = false;
+        this.enemy.anims.play('e1_walk', true);
+    }
+
+    // ENEMY AI COMBAT (BLUE LIGHTNING)
+    // Shoots every 1.5 seconds if player is in range
+    if (this.enemy.active && Phaser.Math.Distance.Between(player.x, player.y, this.enemy.x, this.enemy.y) < 300) {
+        if (!this.enemy.lastAttack || (this.time.now - this.enemy.lastAttack > 1500)) {
+            this.shootLightning(this);
+            this.enemy.lastAttack = this.time.now;
+        }
+    }
+
+    // Update HUD Bars
+    this.p1HealthBar.width = player.health * 1.5;
+    this.e1HealthBar.width = this.enemy.health * 1.5;
+}
 function shootFlare(scene) {
     let flare = scene.add.rectangle(player.x + (player.flipX ? -30 : 30), player.y, 20, 10, 0xFFD700);
     scene.physics.add.existing(flare);
@@ -128,6 +157,47 @@ function shootFlare(scene) {
         onComplete: () => flare.destroy()
     });
 }
+// Add these functions below the update() function, outside of it.
+
+this.shootFlare = function(scene) {
+    let flare = scene.add.rectangle(player.x, player.y, 30, 12, 0xFFD700);
+    scene.projectiles.add(flare);
+    scene.physics.add.existing(flare);
+    flare.body.setAllowGravity(false);
+    
+    // Add the pulse tween
+    scene.tweens.add({
+        targets: flare, alpha: 0.5, scaleY: 1.5,
+        duration: 50, yoyo: true, repeat: -1
+    });
+
+    let speed = player.flipX ? -600 : 600;
+    flare.body.setVelocityX(speed);
+    
+    // Cleanup
+    scene.time.delayedCall(1000, () => { flare.destroy(); });
+}
+
+this.shootLightning = function(scene) {
+    // Blue Lightning is thin and horizontal
+    let bolt = scene.add.rectangle(scene.enemy.x, scene.enemy.y, 40, 5, 0x00BFFF);
+    scene.enemyProjectiles.add(bolt);
+    scene.physics.add.existing(bolt);
+    bolt.body.setAllowGravity(false);
+
+    // Make it flicker
+    scene.tweens.add({
+        targets: bolt, alpha: 0.2, scaleY: 2,
+        duration: 30, yoyo: true, repeat: -1
+    });
+
+    let speed = scene.enemy.flipX ? -600 : 600;
+    bolt.body.setVelocityX(speed);
+
+    // Cleanup
+    scene.time.delayedCall(800, () => { bolt.destroy(); });
+}
+
 </script>
 </body>
 </html>
