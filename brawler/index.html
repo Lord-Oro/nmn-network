@@ -26,8 +26,12 @@ let cursors;
 let spaceKey;
 
 function preload() {
-    // 1. Load the Elephant Sheet from your folder
-    this.load.spritesheet('elephant', 'hero-sheet.png', { frameWidth: 32, frameHeight: 58 });
+    this.load.spritesheet('elephant', 'hero-sheet.png', { 
+        frameWidth: 30,  // Tighten the width to 30 to cut off the 'chasing' frame
+        frameHeight: 56, // Height at 56 usually captures the hat to the feet
+        margin: 2,       // Skips the 2-pixel border on the left/top
+        spacing: 4       // Skips 4 pixels between each elephant
+    });
 }
 
 function create() {
