@@ -27,10 +27,12 @@ let spaceKey;
 
 function preload() {
     // 1. Load the Elephant Sheet from your folder
-    this.load.spritesheet('elephant', 'hero-sheet.png', { frameWidth: 32, frameHeight: 32 });
+    this.load.spritesheet('elephant', 'hero-sheet.png', { frameWidth: 64, frameHeight: 64 });
 }
 
 function create() {
+    // Change setScale(2.5) to something smaller like 1.5 since the frame is now bigger
+player = this.physics.add.sprite(100, 300, 'elephant', 0).setScale(1.5);
     // The "Obsidian" Ground
     const ground = this.add.rectangle(400, 390, 800, 20, 0x1a1510);
     this.physics.add.existing(ground, true);
