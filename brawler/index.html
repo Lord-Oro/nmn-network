@@ -26,8 +26,14 @@ let player, enemy, cursors, space, keyX, pHealth=100, eHealth=100, pBar, eBar, j
 let gameState = 'TITLE', selectedFrame = 0;
 
 function preload() {
+    // 1. Background is in the ROOT (main folder)
     this.load.image('bg', 'forest_bg.jpg');
-    this.load.spritesheet('elephants', 'brawler/hero-sheet.png', { frameWidth: 28, frameHeight: 52 });
+    
+    // 2. Spritesheet is in the 'brawler' folder
+    this.load.spritesheet('elephants', 'brawler/hero-sheet.png', { frameWidth: 28, frameHeight: 48 });
+    
+    // 3. Portraits are in the 'brawler' folder
+    // Note: GitHub is case-sensitive. These must match your upload exactly.
     this.load.image('p_pyro', 'brawler/Pyro elephant beta.jpg');
     this.load.image('p_juni', 'brawler/Juni elephant beta.jpg');
     this.load.image('p_olydia', 'brawler/Olydia elephant beta.jpg');
