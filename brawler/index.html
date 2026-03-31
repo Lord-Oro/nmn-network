@@ -2,162 +2,103 @@
 <html lang="en">
 <head>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-P5WL9XNDY8');
-    </script>
-
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-P5WL9XNDY8');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NMN Brawler | Phantom Roster Beta</title>
+    <title>NMN Brawler | The Forge Beta</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
-        body { 
-            margin: 0; 
-            background: #070605; 
-            display: flex; 
-            flex-direction: column;
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            overflow: hidden; 
-            font-family: 'Courier New', Courier, monospace; 
-            color: white; 
-        }
-        #game-container {
-            width: 100%;
-            max-width: 800px;
-            aspect-ratio: 2 / 1;
-        }
-        canvas { 
-            border: 3px solid #FFD700; 
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3); 
-            width: 100% !important;
-            height: auto !important;
-        }
-        #feedback-bar { margin-top: 10px; font-size: 10px; color: #FFD700; text-transform: uppercase; letter-spacing: 1px; }
-        .back-link { margin-top: 5px; color: #666; text-decoration: none; font-size: 10px; }
+        body { margin: 0; background: #070605; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: 'Courier New', monospace; color: white; }
+        #game-container { width: 100%; max-width: 800px; aspect-ratio: 2 / 1; }
+        canvas { border: 2px solid #FFD700; width: 100% !important; height: auto !important; }
     </style>
 </head>
 <body>
     <div id="game-container"></div>
-    <div id="feedback-bar">BETA 0.3 | @NMN_Oro</div>
-    <a href="index.html" class="back-link">RETURN TO MINE EXIT</a>
-
 <script>
-// --- GLOBAL VARIABLES ---
-let player, enemy, cursors, spaceKey;
-let p1Health = 100, e1Health = 100;
-let p1HealthBar, e1HealthBar;
-let gameState = 'TITLE'; 
-let selectedPlayer = 'PYRO'; 
+let player, enemy, cursors, keyX, keyC, keySpace;
+let pHealth = 100, eHealth = 100, canDoubleJump = false;
+let gameState = 'TITLE', selectedChar = 'PYRO';
 
 const config = {
     type: Phaser.AUTO,
     parent: 'game-container',
     width: 800,
     height: 400,
-    scale: {
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH
-    },
-    physics: { default: 'arcade', arcade: { gravity: { y: 1200 } } },
+    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    physics: { default: 'arcade', arcade: { gravity: { y: 1400 } } },
     scene: { preload: preload, create: create, update: update }
 };
 
 const game = new Phaser.Game(config);
 
 function preload() {
+    this.load.image('background', 'forest_bg.jpg'); // Ensure you upload a bg image
     this.load.spritesheet('elephants', 'hero-sheet.png', { frameWidth: 28, frameHeight: 52, margin: 1, spacing: 2 });
 }
 
 function create() {
-    this.add.rectangle(400, 200, 800, 400, 0x0a0806);
-    const ground = this.add.rectangle(400, 390, 800, 20, 0x1a1510);
-    this.physics.add.existing(ground, true);
+    this.add.image(400, 200, 'background').setDisplaySize(800, 400);
+    
+    const platforms = this.physics.add.staticGroup();
+    platforms.create(400, 390, 'ground').setDisplaySize(800, 20).refreshBody(); // Ground
+    platforms.create(200, 250, 'ground').setDisplaySize(150, 20).refreshBody(); // Left Platform
+    platforms.create(600, 250, 'ground').setDisplaySize(150, 20).refreshBody(); // Right Platform
+    platforms.create(400, 150, 'ground').setDisplaySize(150, 20).refreshBody(); // Top Platform
 
-    this.projectiles = this.physics.add.group();
-    this.enemyProjectiles = this.physics.add.group();
-
-    this.titleText = this.add.text(400, 150, 'NONSENSE BRAWLER', { font: 'bold 40px Courier', fill: '#FFD700' }).setOrigin(0.5);
-    this.startBtn = this.add.text(400, 220, 'PRESS SPACE TO FORGE', { font: '18px Courier', fill: '#ffffff' }).setOrigin(0.5);
-
-    // Roster Icons Setup
-    this.rosterTitle = this.add.text(400, 50, 'SELECT YOUR ARCHITECT', { font: '28px Courier', fill: '#FFD700' }).setOrigin(0.5).setVisible(false);
-    this.iconPyro = this.add.rectangle(150, 200, 100, 100, 0x1a1510).setStrokeStyle(2, 0xFFD700).setInteractive({ useHandCursor: true }).setVisible(false);
-    this.iconJuni = this.add.rectangle(350, 200, 100, 100, 0x1a1510).setStrokeStyle(2, 0xc084fc).setInteractive({ useHandCursor: true }).setVisible(false);
-    this.iconOlydia = this.add.rectangle(550, 200, 100, 100, 0x070605).setStrokeStyle(2, 0x444444).setInteractive().setVisible(false);
-
-    player = this.physics.add.sprite(100, 300, 'elephants', 0).setScale(2.5).setVisible(false);
-    player.setCollideWorldBounds(true);
-    this.physics.add.collider(player, ground);
-
-    enemy = this.physics.add.sprite(700, 300, 'elephants', 20).setScale(2.5).setVisible(false);
-    enemy.setCollideWorldBounds(true);
-    this.physics.add.collider(enemy, ground);
+    player = this.physics.add.sprite(100, 300, 'elephants', 0).setScale(2.5).setCollideWorldBounds(true);
+    enemy = this.physics.add.sprite(700, 300, 'elephants', 20).setScale(2.5).setCollideWorldBounds(true);
     enemy.flipX = true;
 
-    p1HealthBar = this.add.rectangle(10, 35, 150, 10, 0x00FF00).setOrigin(0).setVisible(false);
-    e1HealthBar = this.add.rectangle(640, 35, 150, 10, 0x00FF00).setOrigin(0).setVisible(false);
+    this.physics.add.collider(player, platforms);
+    this.physics.add.collider(enemy, platforms);
 
-    this.anims.create({ key: 'walk_red', frames: this.anims.generateFrameNumbers('elephants', { start: 1, end: 4 }), frameRate: 8, repeat: -1 });
-    this.anims.create({ key: 'walk_green', frames: this.anims.generateFrameNumbers('elephants', { start: 21, end: 24 }), frameRate: 8, repeat: -1 });
-
-    this.physics.add.overlap(this.projectiles, enemy, (en, flare) => { flare.destroy(); e1Health -= 10; en.setTint(0xff0000); this.time.delayedCall(100, () => en.clearTint()); });
-    this.physics.add.overlap(this.enemyProjectiles, player, (pl, bolt) => { bolt.destroy(); p1Health -= 5; pl.setTint(0xff0000); this.time.delayedCall(100, () => pl.clearTint()); });
+    this.projectiles = this.physics.add.group();
+    this.physics.add.overlap(this.projectiles, enemy, (en, proj) => { proj.destroy(); eHealth -= 10; });
 
     cursors = this.input.keyboard.createCursorKeys();
-    spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-
-    // Event Listeners
-    this.iconPyro.on('pointerdown', () => startBattle(this, 'PYRO'));
-    this.iconJuni.on('pointerdown', () => startBattle(this, 'JUNI'));
-    this.iconOlydia.on('pointerdown', () => lockedPopup(this, "ARCHIVE KEY REQUIRED"));
+    keyX = this.input.keyboard.addKey('X');
+    keyC = this.input.keyboard.addKey('C');
+    keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 }
 
 function update() {
-    if (gameState === 'TITLE' && Phaser.Input.Keyboard.JustDown(spaceKey)) showRoster(this);
-    if (gameState !== 'BATTLE') return;
+    // Movement logic
+    if (cursors.left.isDown) { player.setVelocityX(-200); player.flipX = true; }
+    else if (cursors.right.isDown) { player.setVelocityX(200); player.flipX = false; }
+    else { player.setVelocityX(0); }
 
-    if (cursors.left.isDown) { player.setVelocityX(-180); player.flipX = true; player.anims.play(selectedPlayer === 'PYRO' ? 'walk_red' : 'walk_green', true); }
-    else if (cursors.right.isDown) { player.setVelocityX(180); player.flipX = false; player.anims.play(selectedPlayer === 'PYRO' ? 'walk_red' : 'walk_green', true); }
-    else { player.setVelocityX(0); player.anims.stop(); }
-
-    if (cursors.up.isDown && player.body.touching.down) player.setVelocityY(-550);
-    if (Phaser.Input.Keyboard.JustDown(spaceKey)) shootFlare(this);
-
-    // AI Logic
-    if (enemy.active) {
-        if (enemy.x > player.x + 60) { enemy.setVelocityX(-80); enemy.flipX = true; enemy.anims.play('walk_green', true); } 
-        else if (enemy.x < player.x - 60) { enemy.setVelocityX(80); enemy.flipX = false; enemy.anims.play('walk_green', true); } 
-        else { enemy.setVelocityX(0); }
-        if (Math.random() > 0.99) shootLightning(this);
+    // Double Jump Logic
+    if (Phaser.Input.Keyboard.JustDown(keySpace)) {
+        if (player.body.touching.down) {
+            player.setVelocityY(-500);
+            canDoubleJump = true;
+        } else if (canDoubleJump) {
+            player.setVelocityY(-450);
+            canDoubleJump = false;
+        }
     }
 
-    p1HealthBar.width = Math.max(0, p1Health * 1.5);
-    e1HealthBar.width = Math.max(0, e1Health * 1.5);
-    if (e1Health <= 0 || p1Health <= 0) endGame(this);
+    // Attack Logic
+    if (Phaser.Input.Keyboard.JustDown(keyX)) shootLongRange(this);
+    if (Phaser.Input.Keyboard.JustDown(keyC)) meleeAttack(this);
 }
 
-function showRoster(scene) {
-    gameState = 'ROSTER';
-    scene.titleText.setVisible(false); scene.startBtn.setVisible(false);
-    scene.rosterTitle.setVisible(true); scene.iconPyro.setVisible(true); scene.iconJuni.setVisible(true); scene.iconOlydia.setVisible(true);
+function shootLongRange(scene) {
+    let p = scene.add.rectangle(player.x, player.y, 20, 5, 0xFFD700);
+    scene.projectiles.add(p);
+    scene.physics.add.existing(p);
+    p.body.setAllowGravity(false);
+    p.body.setVelocityX(player.flipX ? -600 : 600);
 }
 
-function startBattle(scene, playerChar) {
-    gameState = 'BATTLE';
-    selectedPlayer = playerChar;
-    scene.rosterTitle.setVisible(false); scene.iconPyro.setVisible(false); scene.iconJuni.setVisible(false); scene.iconOlydia.setVisible(false);
-    player.setVisible(true); enemy.setVisible(true); p1HealthBar.setVisible(true); e1HealthBar.setVisible(true);
+function meleeAttack(scene) {
+    if (Phaser.Math.Distance.Between(player.x, player.y, enemy.x, enemy.y) < 60) {
+        eHealth -= 15;
+        enemy.setTint(0xff0000);
+        scene.time.delayedCall(100, () => enemy.clearTint());
+    }
 }
-
-function shootFlare(scene) { let flare = scene.add.rectangle(player.x, player.y, 30, 10, 0xFFD700); scene.projectiles.add(flare); scene.physics.add.existing(flare); flare.body.setAllowGravity(false); flare.body.setVelocityX(player.flipX ? -600 : 600); scene.time.delayedCall(1000, () => flare.destroy()); }
-function shootLightning(scene) { let bolt = scene.add.rectangle(enemy.x, enemy.y, 40, 5, 0x00BFFF); scene.enemyProjectiles.add(bolt); scene.physics.add.existing(bolt); bolt.body.setAllowGravity(false); bolt.body.setVelocityX(enemy.flipX ? -500 : 500); scene.time.delayedCall(1000, () => bolt.destroy()); }
-function lockedPopup(scene, msg) { let p = scene.add.text(400, 320, msg, { font: '14px Courier', fill: '#ff0000' }).setOrigin(0.5); scene.time.delayedCall(2000, () => p.destroy()); }
-function endGame(scene) { gameState = 'GAMEOVER'; scene.physics.world.pause(); scene.add.text(400, 200, p1Health > 0 ? 'FORGE SUCCESS' : 'FORGE FAILED', { font: '40px Courier', fill: '#FFD700' }).setOrigin(0.5); }
 </script>
 </body>
 </html>
