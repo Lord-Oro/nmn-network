@@ -3,10 +3,7 @@
 <head>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-P5WL9XNDY8');</script>
-    <style>
-        body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: 'Courier New', monospace; }
-        canvas { border: 2px solid #FFD700; }
-    </style>
+    <style>body{margin:0;background:#000;display:flex;justify-content:center;align-items:center;height:100vh;overflow:hidden;font-family:monospace;}</style>
 </head>
 <body>
 <div id="game-container"></div>
@@ -26,63 +23,53 @@ let player, enemy, cursors, space, keyX, pHealth=100, eHealth=100, pBar, eBar, j
 let gameState = 'TITLE', selectedFrame = 0;
 
 function preload() {
-    // 1. Background is in the ROOT (main folder)
+    // 1. BG loads perfectly (Root)
     this.load.image('bg', 'forest_bg.jpg');
     
-    // 2. Spritesheet is in the 'brawler' folder
-    this.load.spritesheet('elephants', 'brawler/hero-sheet.png', { frameWidth: 28, frameHeight: 48 });
+    // 2. Spritesheet (Folder)
+    this.load.spritesheet('elephants', 'brawler/hero-sheet.png', { frameWidth: 28, frameHeight: 52 });
     
-    // 3. Portraits are in the 'brawler' folder
-    // Note: GitHub is case-sensitive. These must match your upload exactly.
-    this.load.image('p_pyro', 'brawler/Pyro elephant beta.jpg');
-    this.load.image('p_juni', 'brawler/Juni elephant beta.jpg');
-    this.load.image('p_olydia', 'brawler/Olydia elephant beta.jpg');
-    this.load.image('p_helios', 'brawler/Helios elephant beta.jpg');
-    this.load.image('p_wanderer', 'brawler/Wanderer elephant beta.jpg');
-    this.load.image('p_orid', 'brawler/Orid elephant beta.jpg');
+    // 3. UI Portraits (Handling Spaces)
+    this.load.image('p_pyro', encodeURI('brawler/Pyro elephant beta.jpg'));
+    this.load.image('p_juni', encodeURI('brawler/Juni elephant beta.jpg'));
+    this.load.image('p_olydia', encodeURI('brawler/Olydia elephant beta.jpg'));
+    this.load.image('p_helios', encodeURI('brawler/Helios elephant beta.jpg'));
+    this.load.image('p_wanderer', encodeURI('brawler/Wanderer elephant beta.jpg'));
+    this.load.image('p_orid', encodeURI('brawler/Orid elephant beta.jpg'));
 }
 
 function create() {
     this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.5);
     
-    // --- INFO BOX ---
     this.infoBox = this.add.rectangle(400, 50, 600, 40, 0x000).setStrokeStyle(2, 0xFFD700).setVisible(false);
     this.infoTxt = this.add.text(400, 50, '', { font: '14px Courier', fill: '#FFD700' }).setOrigin(0.5).setVisible(false);
 
-    // --- TITLE / ROSTER ---
-    this.titleTxt = this.add.text(400, 200, 'NMN: THE FORGE\n\n[ FADED START ]', { font: '24px Courier', fill: '#FFD700', align: 'center' }).setOrigin(0.5).setInteractive();
-    this.titleTxt.setAlpha(0.5);
+    this.titleTxt = this.add.text(400, 200, 'NMN: THE FORGE\n\n[ CLICK TO START ]', { font: '24px Courier', fill: '#FFD700', align: 'center' }).setOrigin(0.5).setInteractive();
 
     this.roster = this.add.group();
     const rosterData = [
-        { key: 'p_pyro', x: 100, frame: 0, info: 'PYRO: FREE' },
-        { key: 'p_juni', x: 220, frame: 20, info: 'JUNI: FREE' },
-        { key: 'p_olydia', x: 340, frame: 40, info: 'OLYDIA: $1.99 - KEY REQUIRED' },
-        { key: 'p_helios', x: 460, frame: 60, info: 'HELIOS: $0.99 - KEY REQUIRED' },
-        { key: 'p_wanderer', x: 580, frame: 80, info: 'WANDERER: NEWSLETTER EXCLUSIVE' },
-        { key: 'p_orid', x: 700, frame: 100, info: 'ORID: PATREON EXCLUSIVE' }
+        { key: 'p_pyro', x: 100, f: 0, info: 'PYRO: FREE' },
+        { key: 'p_juni', x: 220, f: 20, info: 'JUNI: FREE' },
+        { key: 'p_olydia', x: 340, f: 40, info: 'OLYDIA: $1.99 - KEY REQUIRED' },
+        { key: 'p_helios', x: 460, f: 60, info: 'HELIOS: $0.99 - KEY REQUIRED' },
+        { key: 'p_wanderer', x: 580, f: 80, info: 'WANDERER: NEWSLETTER EXCLUSIVE' },
+        { key: 'p_orid', x: 700, f: 100, info: 'ORID: PATREON EXCLUSIVE' }
     ];
 
     rosterData.forEach(data => {
         let p = this.add.image(data.x, 200, data.key).setDisplaySize(90, 90).setInteractive();
         p.on('pointerover', () => { this.infoBox.setVisible(true); this.infoTxt.setVisible(true).setText(data.info); });
-        p.on('pointerdown', () => { if(data.frame <= 20) { selectedFrame = data.frame; startBattle(this); } });
+        p.on('pointerdown', () => { if(data.f <= 20) { selectedFrame = data.f; startBattle(this); } });
         this.roster.add(p);
     });
     this.roster.setVisible(false);
 
-    // --- ARENA ---
-    let platforms = this.physics.add.staticGroup();
-    platforms.create(400, 390, null).setDisplaySize(800, 20).refreshBody(); // Ground
-    platforms.create(200, 250, null).setDisplaySize(150, 20).setTint(0x1a1510).refreshBody();
-    platforms.create(600, 250, null).setDisplaySize(150, 20).setTint(0x1a1510).refreshBody();
-    platforms.create(400, 150, null).setDisplaySize(150, 20).setTint(0xFFD700).refreshBody();
-
+    let ground = this.add.rectangle(400, 390, 800, 20, 0x000).setAlpha(0);
+    this.physics.add.existing(ground, true);
     player = this.physics.add.sprite(150, 300, 'elephants', 0).setScale(2.5).setVisible(false).setCollideWorldBounds(true);
-    enemy = this.physics.add.sprite(650, 300, 'elephants', 20).setScale(2.5).setVisible(false).setFlipX(true).setCollideWorldBounds(true);
-    
-    this.physics.add.collider(player, platforms);
-    this.physics.add.collider(enemy, platforms);
+    enemy = this.physics.add.sprite(650, 300, 'elephants', 20).setScale(2.5).setVisible(false).setFlipX(true);
+    this.physics.add.collider(player, ground);
+    this.physics.add.collider(enemy, ground);
 
     pBar = this.add.rectangle(20, 30, 200, 10, 0x00ff00).setOrigin(0).setVisible(false);
     eBar = this.add.rectangle(580, 30, 200, 10, 0x00ff00).setOrigin(0).setVisible(false);
@@ -120,20 +107,8 @@ function update() {
     if (Phaser.Input.Keyboard.JustDown(keyX)) {
         if (Phaser.Math.Distance.Between(player.x, player.y, enemy.x, enemy.y) < 70) { eHealth -= 15; enemy.setTint(0xffffff); this.time.delayedCall(100, () => enemy.clearTint()); }
     }
-
     pBar.width = Math.max(0, pHealth * 2); eBar.width = Math.max(0, eHealth * 2);
-    if (eHealth <= 0 || pHealth <= 0) endGame(this);
-}
-
-function endGame(scene) {
-    gameState = 'END';
-    scene.physics.world.pause();
-    scene.add.rectangle(400, 200, 800, 400, 0x000, 0.8);
-    let msg = pHealth > 0 ? 'VICTORY' : 'DEFEAT';
-    scene.add.text(400, 120, msg, { font: '40px Courier', fill: '#FFD700' }).setOrigin(0.5);
-    scene.add.text(400, 220, 'STAY TUNED - EXPLORE THE LIBRARY\nUNLOCK LORE & NEW CHARACTERS', { font: '14px Courier', fill: '#FFF', align: 'center' }).setOrigin(0.5);
-    let reset = scene.add.text(400, 300, '[ RE-FORGE ]', { font: '18px Courier', fill: '#FFD700' }).setOrigin(0.5).setInteractive();
-    reset.on('pointerdown', () => window.location.reload());
+    if (eHealth <= 0 || pHealth <= 0) { gameState='END'; this.add.text(400, 200, 'FORGE TERMINATED', { font: '40px Courier', fill: '#FFD700' }).setOrigin(0.5); }
 }
 </script>
 </body>
