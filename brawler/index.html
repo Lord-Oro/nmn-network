@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-P5WL9XNDY8');</script>
     <style>
-        body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        canvas { border: 2px solid #FFD700; }
+        body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: 'Courier New', monospace; }
+        canvas { border: 2px solid #FFD700; image-rendering: pixelated; }
     </style>
 </head>
 <body>
@@ -13,49 +13,102 @@
 <script>
 const config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 400,
-    physics: { default: 'arcade', arcade: { gravity: { y: 1000 } } },
+    width: 800, height: 400,
+    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    physics: { default: 'arcade', arcade: { gravity: { y: 1200 } } },
     scene: { preload: preload, create: create, update: update }
 };
 
 const game = new Phaser.Game(config);
-let player, enemy, cursors, space, keyX, keyC;
+let player, enemy, cursors, space, keyX, keyP, pHealth=100, eHealth=100, pBar, eBar;
+let gameState = 'TITLE', selectedColor = 0, jumpCount = 0;
 
 function preload() {
     this.load.image('bg', 'forest_bg.jpg');
     this.load.spritesheet('elephants', 'hero-sheet.png', { frameWidth: 28, frameHeight: 52 });
+    this.load.image('p_pyro', 'Pyro elephant beta.jpg');
+    this.load.image('p_juni', 'Juni elephant beta.jpg');
+    this.load.image('p_olydia', 'Olydia elephant beta.jpg');
+    this.load.image('p_helios', 'Helios elephant beta.jpg');
+    this.load.image('p_wanderer', 'Wanderer elephant beta.jpg');
+    this.load.image('p_orid', 'Orid elephant beta.jpg');
 }
 
 function create() {
-    this.add.image(400, 200, 'bg').setDisplaySize(800, 400);
-    let ground = this.add.rectangle(400, 390, 800, 20, 0x000).setAlpha(0.1);
-    this.physics.add.existing(ground, true);
-
-    player = this.physics.add.sprite(100, 300, 'elephants', 0).setScale(2.5).setCollideWorldBounds(true);
-    enemy = this.physics.add.sprite(700, 300, 'elephants', 20).setScale(2.5).setCollideWorldBounds(true).setFlipX(true);
+    this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.5);
     
+    // --- TITLE ---
+    this.titleTxt = this.add.text(400, 200, 'NMN: THE FORGE\n[BETA 0.5]\n\nPRESS SPACE TO START', { font: '24px Courier', fill: '#FFD700', align: 'center' }).setOrigin(0.5);
+
+    // --- ROSTER ---
+    this.rosterGroup = this.add.group();
+    const chars = [
+        {img: 'p_pyro', name: 'PYRO', price: 'FREE', f: 0, x: 100},
+        {img: 'p_juni', name: 'JUNI', price: 'FREE', f: 20, x: 220},
+        {img: 'p_olydia', name: 'OLYDIA', price: '$0.99', f: 40, x: 340},
+        {img: 'p_helios', name: 'HELIOS', price: '$0.99', f: 60, x: 460},
+        {img: 'p_wanderer', name: 'WANDERER', price: '$0.99', f: 80, x: 580},
+        {img: 'p_orid', name: 'ORID', price: 'PATREON', f: 100, x: 700}
+    ];
+
+    chars.forEach(c => {
+        let img = this.add.image(c.x, 180, c.img).setDisplaySize(90, 90).setInteractive({useHandCursor:true});
+        let txt = this.add.text(c.x, 240, `${c.name}\n${c.price}`, {font: '10px Courier', fill: '#FFD700', align: 'center'}).setOrigin(0.5);
+        img.on('pointerdown', () => { if(c.price === 'FREE') { selectedColor = c.f; startBattle(this); } else { alert("LOCKED: " + c.price); } });
+        this.rosterGroup.addMultiple([img, txt]);
+    });
+    this.rosterGroup.setVisible(false);
+
+    // --- WORLD ---
+    let ground = this.add.rectangle(400, 390, 800, 20, 0x000).setAlpha(0);
+    this.physics.add.existing(ground, true);
+    player = this.physics.add.sprite(150, 300, 'elephants', 0).setScale(2.5).setVisible(false).setCollideWorldBounds(true);
+    enemy = this.physics.add.sprite(650, 300, 'elephants', 20).setScale(2.5).setVisible(false).setFlipX(true).setCollideWorldBounds(true);
     this.physics.add.collider(player, ground);
     this.physics.add.collider(enemy, ground);
+
+    pBar = this.add.rectangle(20, 30, 200, 10, 0x00ff00).setOrigin(0).setVisible(false);
+    eBar = this.add.rectangle(580, 30, 200, 10, 0x00ff00).setOrigin(0).setVisible(false);
+
+    this.projectiles = this.physics.add.group();
+    this.physics.add.overlap(this.projectiles, enemy, (en, pr) => { pr.destroy(); eHealth -= 10; en.setTint(0xff0000); this.time.delayedCall(100, ()=>en.clearTint()); });
 
     cursors = this.input.keyboard.createCursorKeys();
     space = this.input.keyboard.addKey('SPACE');
     keyX = this.input.keyboard.addKey('X');
-    keyC = this.input.keyboard.addKey('C');
+    keyP = this.input.keyboard.addKey('P');
+}
+
+function startBattle(scene) {
+    gameState = 'BATTLE';
+    scene.rosterGroup.setVisible(false);
+    player.setFrame(selectedColor).setVisible(true);
+    enemy.setVisible(true); pBar.setVisible(true); eBar.setVisible(true);
 }
 
 function update() {
-    if (cursors.left.isDown) player.setVelocityX(-200);
-    else if (cursors.right.isDown) player.setVelocityX(200);
+    if (gameState === 'TITLE' && Phaser.Input.Keyboard.JustDown(space)) { gameState = 'ROSTER'; this.titleTxt.setVisible(false); this.rosterGroup.setVisible(true); }
+    if (gameState !== 'BATTLE') return;
+
+    if (cursors.left.isDown) { player.setVelocityX(-220); player.setFlipX(true); }
+    else if (cursors.right.isDown) { player.setVelocityX(220); player.setFlipX(false); }
     else player.setVelocityX(0);
 
-    if (Phaser.Input.Keyboard.JustDown(space) && player.body.touching.down) player.setVelocityY(-500);
+    if (player.body.touching.down) jumpCount = 0;
+    if (Phaser.Input.Keyboard.JustDown(cursors.up) && jumpCount < 2) { player.setVelocityY(-520); jumpCount++; }
 
-    if (Phaser.Input.Keyboard.JustDown(keyX)) {
+    if (Phaser.Input.Keyboard.JustDown(space)) {
         let b = this.add.rectangle(player.x, player.y, 20, 10, 0xFFD700);
-        this.physics.add.existing(b);
-        b.body.setVelocityX(player.flipX ? -600 : 600);
+        this.projectiles.add(b); this.physics.add.existing(b);
+        b.body.setAllowGravity(false); b.body.setVelocityX(player.flipX ? -600 : 600);
     }
+    if (Phaser.Input.Keyboard.JustDown(keyX)) {
+        if (Phaser.Math.Distance.Between(player.x, player.y, enemy.x, enemy.y) < 70) { eHealth -= 15; enemy.setTint(0xffffff); this.time.delayedCall(100, () => enemy.clearTint()); }
+    }
+    if (Phaser.Input.Keyboard.JustDown(keyP)) { alert("PAUSED - Click OK to Resume"); }
+
+    pBar.width = Math.max(0, pHealth * 2); eBar.width = Math.max(0, eHealth * 2);
+    if (eHealth <= 0) { this.add.text(400, 200, 'FORGE SUCCESS', { font: '40px Courier', fill: '#FFD700' }).setOrigin(0.5); gameState='END'; }
 }
 </script>
 </body>
