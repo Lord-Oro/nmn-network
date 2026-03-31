@@ -27,10 +27,10 @@ let spaceKey;
 
 function preload() {
     this.load.spritesheet('elephant', 'hero-sheet.png', { 
-        frameWidth: 30,  // Tighten the width to 30 to cut off the 'chasing' frame
-        frameHeight: 56, // Height at 56 usually captures the hat to the feet
-        margin: 2,       // Skips the 2-pixel border on the left/top
-        spacing: 4       // Skips 4 pixels between each elephant
+        frameWidth: 28,  // Narrower to hide the 'line' from the next frame
+        frameHeight: 60, // Standard height for this sprite
+        margin: 1,       // Tiny offset for the start of the sheet
+        spacing: 2       // Tells Phaser there is a gap between characters
     });
 }
 
