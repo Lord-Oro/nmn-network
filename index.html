@@ -754,65 +754,65 @@ body::before{
 .nmn-seal img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated;}
 </style>
 
+<style>
 /* ─── DUAL VESSEL COLLECTION SYSTEM ─── */
-.collection-gateway{
-  display:flex;gap:2rem;justify-content:center;align-items:stretch;
-  margin-bottom:3rem;flex-wrap:wrap;
+.collection-gateway {
+  display: flex; gap: 2rem; justify-content: center; align-items: stretch;
+  margin-bottom: 3rem; flex-wrap: wrap;
 }
-.vessel-anchor-wrap{
-  flex:1;min-width:280px;max-width:520px;
-  cursor:pointer;
-  position:relative;
-  border:2px solid var(--gd);
-  overflow:hidden;
-  transition:border-color .3s,box-shadow .3s,transform .3s;
-  background:#0a0806;
+.vessel-anchor-wrap {
+  flex: 1; min-width: 280px; max-width: 520px;
+  cursor: pointer; position: relative;
+  border: 2px solid var(--gd); overflow: hidden;
+  transition: border-color .3s, box-shadow .3s, transform .3s;
+  background: #0a0806;
 }
-.vessel-anchor-wrap:hover{
-  border-color:var(--gold);
-  box-shadow:0 0 28px rgba(255,215,0,.35),inset 0 0 18px rgba(0,0,0,.5);
-  transform:scale(1.02);
+.vessel-anchor-wrap:hover {
+  border-color: var(--gold);
+  box-shadow: 0 0 28px rgba(255,215,0,.35), inset 0 0 18px rgba(0,0,0,.5);
+  transform: scale(1.02);
 }
-.vessel-anchor-wrap.active{
-  border-color:var(--gold);
-  box-shadow:0 0 40px rgba(255,215,0,.5),inset 0 0 24px rgba(0,0,0,.5);
+.vessel-anchor-wrap.active {
+  border-color: var(--gold);
+  box-shadow: 0 0 40px rgba(255,215,0,.5), inset 0 0 24px rgba(0,0,0,.5);
 }
-.vessel-anchor-wrap img{
-  display:block;width:100%;
-  image-rendering:pixelated;
-  filter:brightness(.85) contrast(1.05);
-  transition:filter .3s;
+.vessel-anchor-wrap img {
+  display: block; width: 100%;
+  image-rendering: pixelated;
+  filter: brightness(.85) contrast(1.05);
+  transition: filter .3s;
 }
 .vessel-anchor-wrap:hover img,
-.vessel-anchor-wrap.active img{
-  filter:brightness(1.08) contrast(1.1);
+.vessel-anchor-wrap.active img {
+  filter: brightness(1.08) contrast(1.1);
 }
-.vessel-label{
-  position:absolute;bottom:0;left:0;right:0;
-  background:linear-gradient(transparent,rgba(0,0,0,.92));
-  padding:1.5rem 1.25rem .85rem;
-  font-family:var(--font-pixel);
-  font-size:.38rem;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--gold);
-  display:flex;justify-content:space-between;align-items:flex-end;
+.vessel-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent,rgba(0,0,0,.92));
+  padding: 1.5rem 1.25rem .85rem;
+  font-family: var(--font-pixel);
+  font-size: .38rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--gold);
+  display: flex; justify-content: space-between; align-items: flex-end;
 }
-.vessel-sublabel{font-size:.28rem;color:var(--muted);letter-spacing:.1em;}
-.vessel-chevron{font-size:.55rem;color:var(--gold);transition:transform .25s;}
-.vessel-anchor-wrap.active .vessel-chevron{transform:rotate(90deg);}
-/* Filter panels */
-.filter-panel{
-  display:none;
-  animation:slideDown .3s ease;
+.vessel-sublabel { font-size: .28rem; color: var(--muted); letter-spacing: .1em; }
+.vessel-chevron { font-size: .55rem; color: var(--gold); transition: transform .25s; }
+.vessel-anchor-wrap.active .vessel-chevron { transform: rotate(90deg); }
+
+.filter-panel {
+  display: none;
+  animation: slideDown .3s ease;
 }
-.filter-panel.visible{display:block;}
-@keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
-/* Obsidian panel — dark purple accent override */
-#vessel-obsidian{border-color:rgba(138,43,226,.4);}
-#vessel-obsidian:hover,#vessel-obsidian.active{
-  border-color:#9B59B6;
-  box-shadow:0 0 28px rgba(155,89,182,.35),inset 0 0 18px rgba(0,0,0,.5);
+.filter-panel.visible { display: block; }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-12px) } to { opacity: 1; transform: translateY(0) } }
+
+#vessel-obsidian { border-color: rgba(138,43,226,.4); }
+#vessel-obsidian:hover, #vessel-obsidian.active {
+  border-color: #9B59B6;
+  box-shadow: 0 0 28px rgba(155,89,182,.35), inset 0 0 18px rgba(0,0,0,.5);
 }
-#vessel-obsidian .vessel-label{color:#c084fc;}
+#vessel-obsidian .vessel-label { color: #c084fc; }
+</style>
 
 </head>
 <body>
