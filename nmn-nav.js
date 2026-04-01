@@ -1,3 +1,16 @@
+// Global Google Analytics Handshake
+(function() {
+    var gaScript = document.createElement('script');
+    gaScript.async = true;
+    gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8';
+    document.head.appendChild(gaScript);
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-P5WL9XNDY8');
+})();
+
 /* ════════════════════════════════════════════
    nmn-nav.js — Shared pixel nav + lantern cursor
    Include at TOP of <body> on every page:
