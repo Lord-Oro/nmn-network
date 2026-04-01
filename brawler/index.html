@@ -34,12 +34,12 @@
 <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
 <script>
 const CHARACTERS = [
-  { key: 'pyro',     file: 'pyro_beta.jpg',     price: 'FREE', tier: 'Starter', desc: 'The Ember Scout. Speed over armor.' },
-  { key: 'juni',     file: 'juni_beta.jpg',     price: 'FREE', tier: 'Starter', desc: 'The Immortal. Balanced core strength.' },
-  { key: 'wanderer', file: 'wanderer_beta.jpg', price: '0.99$', tier: 'Copper', desc: 'The Stalker. Unlocks via story.' },
-  { key: 'helios',   file: 'helios_beta.jpg',   price: '2.99$', tier: 'Archive', desc: 'The Sun King. Lore master.' },
-  { key: 'olydia',   file: 'olydia_beta.jpg',   price: '5.00$', tier: 'Patreon', desc: 'Obsidian Blade. Elite scout.' },
-  { key: 'orid',     file: 'orid_beta.jpg',     price: '10.00$', tier: 'Silver', desc: 'The Oathbreaker. High weight.' }
+  { key: 'pyro',     file: 'pyro_beta.jpg',     price: 'FREE', tier: 'Starter', desc: 'Fast Ember Scout.' },
+  { key: 'juni',     file: 'juni_beta.jpg',     price: 'FREE', tier: 'Starter', desc: 'Balanced Immortal.' },
+  { key: 'wanderer', file: 'wanderer_beta.jpg', price: '0.99$', tier: 'Copper', desc: 'Shadow Stalker.' },
+  { key: 'helios',   file: 'helios_beta.jpg',   price: '2.99$', tier: 'Archive', desc: 'The Sun King.' },
+  { key: 'olydia',   file: 'olydia_beta.jpg',   price: '5.00$', tier: 'Patreon', desc: 'Elite Blade.' },
+  { key: 'orid',     file: 'orid_beta.jpg',     price: '10.00$', tier: 'Silver', desc: 'The Oathbreaker.' }
 ];
 
 class BrawlerScene extends Phaser.Scene {
@@ -54,8 +54,8 @@ class BrawlerScene extends Phaser.Scene {
     this.state = 'ROSTER';
     this.pHealth = 100; this.eHealth = 100;
     this.lastSelectedIdx = -1;
+    this.aiAggro = 1.0; // Multiplier for difficulty
 
-    // OBSIDIAN INFO BOX
     this.infoBox = this.add.rectangle(400, 55, 750, 70, 0x0a0a0a).setAlpha(0.9).setStrokeStyle(2, 0xFFD700);
     this.infoTxt = this.add.text(400, 55, 'TAP SCOUT TO VIEW INTEL\nTAP AGAIN TO ENTER THE FORGE', { 
         font: '12px "Press Start 2P"', fill: '#FFD700', align: 'center' 
@@ -71,15 +71,13 @@ class BrawlerScene extends Phaser.Scene {
       
       box.on('pointerdown', () => {
         if (this.lastSelectedIdx === i) {
-          // SECOND CLICK - LOCK IN
           if(c.price === 'FREE') this.startBattle(i);
           else window.open('https://books2read.com/u/4EOxZ0', '_blank');
         } else {
-          // FIRST CLICK - DISPLAY INFO
           this.lastSelectedIdx = i;
           this.rosterGroup.getChildren().forEach(child => { if(child.type === 'Rectangle') child.setStrokeStyle(1, 0xFFD700); });
           box.setStrokeStyle(4, 0xFFFFFF);
-          this.infoTxt.setText(`${c.key.toUpperCase()} Intel: ${c.tier}\n${c.desc}`);
+          this.infoTxt.setText(`${c.key.toUpperCase()}: ${c.tier}\n${c.desc}`);
         }
       });
       this.rosterGroup.addMultiple([box, img, name, cost]);
@@ -112,7 +110,8 @@ class BrawlerScene extends Phaser.Scene {
 
     this.physics.add.overlap(this.projectiles, this.enemy, (en, pr) => {
         pr.destroy(); this.eHealth -= 10;
-        this.cameras.main.shake(100, 0.005);
+        this.aiAggro += 0.15; // BECOMES MORE AGGRESSIVE
+        this.cameras.main.shake(150, 0.01);
         if(this.eHealth <= 0) this.triggerWin();
     });
 
@@ -122,12 +121,8 @@ class BrawlerScene extends Phaser.Scene {
         this.time.delayedCall(100, () => this.player.clearTint());
     });
 
-    this.time.addEvent({ delay: 1500, callback: this.enemyAttack, callbackScope: this, loop: true });
-    
-    // Only show mobile buttons if it's a touch device
-    if (this.sys.game.device.input.touch) {
-        this.createMobileControls();
-    }
+    this.enemyEvent = this.time.addEvent({ delay: 1500, callback: this.enemyAttack, callbackScope: this, loop: true });
+    if (this.sys.game.device.input.touch) this.createMobileControls();
   }
 
   createMobileControls() {
@@ -145,13 +140,14 @@ class BrawlerScene extends Phaser.Scene {
     let b = this.add.rectangle(origin.x, origin.y, 20, 10, color);
     group.add(b); this.physics.add.existing(b);
     b.body.setAllowGravity(false);
-    this.physics.moveToObject(b, target, 550);
+    this.physics.moveToObject(b, target, 550 * this.aiAggro);
   }
 
   enemyAttack() {
     if (this.state !== 'BATTLE' || !this.enemy) return;
     this.shoot(this.enemy, this.player, this.enemyProjectiles, 0xFF0000);
-    if (Phaser.Math.Between(0, 10) > 6 && this.enemy.body.blocked.down) this.enemy.setVelocityY(-550);
+    this.enemyEvent.delay = Math.max(500, 1500 / this.aiAggro); // SPEED UP ATTACKS
+    if (Phaser.Math.Between(0, 10) > 4 && this.enemy.body.blocked.down) this.enemy.setVelocityY(-600);
   }
 
   triggerWin() {
@@ -163,6 +159,10 @@ class BrawlerScene extends Phaser.Scene {
     if (this.state !== 'BATTLE') return;
     this.pBar.width = Math.max(0, this.pHealth * 2);
     this.eBar.width = Math.max(0, this.eHealth * 2);
+
+    // AI MOVEMENT LOGIC (Aggressive Hunter)
+    const dist = this.player.x - this.enemy.x;
+    if (Math.abs(dist) > 50) this.enemy.setVelocityX(dist > 0 ? 150 * this.aiAggro : -150 * this.aiAggro);
 
     let pointer = this.input.activePointer;
     if (pointer.isDown && pointer.x < 300) {
