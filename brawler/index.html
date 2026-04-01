@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>NMN: THE FORGE</title>
-
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -12,47 +11,39 @@
     gtag('js', new Date());
     gtag('config', 'G-P5WL9XNDY8');
   </script>
-
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
-
   <style>
-    body { margin: 0; background: #0a0a0a; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; touch-action: none; font-family: 'Share Tech Mono', monospace; }
+    body { margin: 0; background: #000; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; touch-action: none; }
     #game-wrapper { position: relative; width: 100%; max-width: 800px; }
     canvas { border: 2px solid #FFD700; image-rendering: pixelated; max-width: 100%; height: auto; }
-    #victory-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
+    #victory-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
     #victory-overlay.active { display: flex; }
-    .btn { font-family: 'Press Start 2P', cursive; padding: 15px; border: none; cursor: pointer; margin-top: 10px; width: 80%; max-width: 320px; font-size: 10px; transition: 0.2s; }
-    #claim-btn { background: #FFD700; color: #000; }
-    #reset-btn { background: #333; color: #FFD700; border: 1px solid #FFD700; }
+    .btn { font-family: 'Press Start 2P', cursive; padding: 15px; border: none; cursor: pointer; margin-top: 10px; width: 80%; max-width: 320px; font-size: 10px; }
   </style>
 </head>
 <body>
-
 <div id="game-wrapper">
   <div id="phaser-game">
     <div id="victory-overlay">
-      <h2 style="font-family:'Press Start 2P'; color:#FFD700; font-size: 16px; text-align:center;">SECTOR CLEARED</h2>
-      <button id="claim-btn" class="btn" onclick="window.open('https://books2read.com/u/4EOxZ0', '_blank')">📖 CLAIM REWARD: READ LORE</button>
-      <button id="reset-btn" class="btn" onclick="location.reload()">↺ RE-ENTER THE FORGE</button>
+      <h2 style="font-family:'Press Start 2P'; color:#FFD700; font-size: 16px;">SECTOR CLEARED</h2>
+      <button class="btn" style="background:#FFD700;" onclick="window.open('https://books2read.com/u/4EOxZ0', '_blank')">📖 READ THE LEGEND</button>
+      <button class="btn" style="background:#333; color:#FFD700;" onclick="location.reload()">↺ RESTART</button>
     </div>
   </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
-
 <script>
 const CHARACTERS = [
-  { key: 'pyro',     file: 'pyro_beta.jpg',     price: 'FREE', tier: 'Starter', desc: 'The Ember Scout.' },
-  { key: 'juni',     file: 'juni_beta.jpg',     price: 'FREE', tier: 'Starter', desc: 'The Immortal.' },
-  { key: 'wanderer', file: 'wanderer_beta.jpg', price: '0.99$', tier: 'Copper', desc: 'The Stalker.' },
-  { key: 'helios',   file: 'helios_beta.jpg',   price: '2.99$', tier: 'Elite', desc: 'Sun King.' },
-  { key: 'olydia',   file: 'olydia_beta.jpg',   price: '5.00$', tier: 'Patreon', desc: 'Obsidian Blade.' },
-  { key: 'orid',     file: 'orid_beta.jpg',     price: '10.00$', tier: 'Silver', desc: 'Oathbreaker.' }
+  { key: 'pyro',     file: 'pyro_beta.jpg',     price: 'FREE', tier: 'Starter' },
+  { key: 'juni',     file: 'juni_beta.jpg',     price: 'FREE', tier: 'Starter' },
+  { key: 'wanderer', file: 'wanderer_beta.jpg', price: '0.99$', tier: 'Copper' },
+  { key: 'helios',   file: 'helios_beta.jpg',   price: '2.99$', tier: 'Archive' },
+  { key: 'olydia',   file: 'olydia_beta.jpg',   price: '5.00$', tier: 'Elite' },
+  { key: 'orid',     file: 'orid_beta.jpg',     price: '10.00$', tier: 'Silver' }
 ];
 
 class BrawlerScene extends Phaser.Scene {
   constructor() { super('BrawlerScene'); }
-
   preload() {
     this.load.image('bg', 'forest_bg.jpg');
     CHARACTERS.forEach(c => this.load.image(c.key, c.file));
@@ -61,11 +52,132 @@ class BrawlerScene extends Phaser.Scene {
   create() {
     this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.3);
     this.state = 'ROSTER';
-
-    this.infoTxt = this.add.text(400, 60, 'SELECT A SCOUT', { font: '12px "Press Start 2P"', fill: '#FFD700' }).setOrigin(0.5);
-
+    this.pHealth = 100; this.eHealth = 100;
+    
     this.rosterGroup = this.add.group();
     CHARACTERS.forEach((c, i) => {
       let x = 100 + (i * 120);
-      let box = this.add.rectangle(x, 220, 105, 160, 0x1a1510).setStrokeStyle(1, 0xFFD700).setInteractive();
-      this.add.image(x, 195, c.key).setDisplaySize(90
+      let box = this.add.rectangle(x, 210, 105, 160, 0x1a1510).setStrokeStyle(1, 0xFFD700).setInteractive();
+      let img = this.add.image(x, 195, c.key).setDisplaySize(90, 90);
+      let name = this.add.text(x, 260, c.key.toUpperCase(), { font: '10px Courier', fill: '#FFD700' }).setOrigin(0.5);
+      let cost = this.add.text(x, 275, c.price, { font: '9px Courier', fill: '#FFF' }).setOrigin(0.5);
+      
+      box.on('pointerdown', () => {
+        if(c.price === 'FREE') this.startBattle(i);
+        else window.open('https://books2read.com/u/4EOxZ0', '_blank');
+      });
+      // Add all elements to group for clean removal
+      this.rosterGroup.addMultiple([box, img, name, cost]);
+    });
+
+    this.projectiles = this.physics.add.group();
+    this.enemyProjectiles = this.physics.add.group();
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.space = this.input.keyboard.addKey('SPACE');
+  }
+
+  startBattle(idx) {
+    this.state = 'BATTLE';
+    this.rosterGroup.clear(true, true); // CLEARS NAMES AND IMAGES PERMANENTLY
+
+    this.platforms = this.physics.add.staticGroup();
+    this.platforms.add(this.add.rectangle(400, 395, 800, 10, 0xFFD700).setAlpha(0.2));
+    this.platforms.add(this.add.rectangle(150, 280, 120, 10, 0xFFD700));
+    this.platforms.add(this.add.rectangle(650, 280, 120, 10, 0xFFD700));
+
+    this.player = this.physics.add.sprite(150, 200, CHARACTERS[idx].key).setDisplaySize(60, 60).setCollideWorldBounds(true);
+    this.enemy = this.physics.add.sprite(650, 200, CHARACTERS[Phaser.Math.Between(0, 5)].key).setDisplaySize(60, 60).setCollideWorldBounds(true);
+    this.enemy.setTint(0xffaaaa);
+
+    this.physics.add.collider([this.player, this.enemy], this.platforms);
+
+    // HEALTH BARS
+    this.add.text(20, 20, "SCOUT", {font: '10px "Press Start 2P"', fill: '#FFD700'});
+    this.pBar = this.add.rectangle(20, 40, 200, 15, 0x00ff00).setOrigin(0);
+    this.add.text(580, 20, "ENEMY", {font: '10px "Press Start 2P"', fill: '#FFD700'});
+    this.eBar = this.add.rectangle(580, 40, 200, 15, 0xff0000).setOrigin(0);
+
+    this.physics.add.overlap(this.projectiles, this.enemy, (en, pr) => {
+        pr.destroy(); this.eHealth -= 10;
+        this.cameras.main.shake(150, 0.01);
+        if(this.eHealth <= 0) this.triggerWin();
+    });
+
+    this.physics.add.overlap(this.enemyProjectiles, this.player, (pl, pr) => {
+        pr.destroy(); this.pHealth -= 5;
+        this.player.setTint(0xff0000);
+        this.time.delayedCall(100, () => this.player.clearTint());
+    });
+
+    this.time.addEvent({ delay: 1500, callback: this.enemyAttack, callbackScope: this, loop: true });
+    this.createMobileControls();
+  }
+
+  createMobileControls() {
+    // LEFT JOYSTICK AREA (Thumb Rest)
+    this.joyBase = this.add.circle(100, 300, 50, 0xFFD700, 0.1).setInteractive();
+    this.joyStick = this.add.circle(100, 300, 25, 0xFFD700, 0.3);
+    
+    // RIGHT COMBAT BUTTONS
+    let jBtn = this.add.circle(620, 320, 40, 0xFFD700, 0.3).setInteractive();
+    this.add.text(620, 320, 'UP', { font: 'bold 12px Arial', fill: '#FFF' }).setOrigin(0.5);
+    
+    let fBtn = this.add.circle(720, 280, 45, 0xFF0000, 0.4).setInteractive();
+    this.add.text(720, 280, 'FIRE', { font: 'bold 12px Arial', fill: '#FFF' }).setOrigin(0.5);
+
+    jBtn.on('pointerdown', () => { if(this.player.body.blocked.down) this.player.setVelocityY(-650); });
+    fBtn.on('pointerdown', () => this.shoot(this.player, this.enemy, this.projectiles, 0xFFD700));
+  }
+
+  shoot(origin, target, group, color) {
+    let b = this.add.rectangle(origin.x, origin.y, 20, 10, color);
+    group.add(b); this.physics.add.existing(b);
+    b.body.setAllowGravity(false);
+    this.physics.moveToObject(b, target, 550);
+    this.cameras.main.shake(100, 0.003);
+  }
+
+  enemyAttack() {
+    if (this.state !== 'BATTLE') return;
+    this.shoot(this.enemy, this.player, this.enemyProjectiles, 0xFF0000);
+    if (Phaser.Math.Between(0, 10) > 6 && this.enemy.body.blocked.down) this.enemy.setVelocityY(-550);
+  }
+
+  triggerWin() {
+    this.state = 'WIN';
+    document.getElementById('victory-overlay').classList.add('active');
+  }
+
+  update() {
+    if (this.state !== 'BATTLE') return;
+    
+    this.pBar.width = this.pHealth * 2;
+    this.eBar.width = this.eHealth * 2;
+
+    // JOYSTICK LOGIC
+    let pointer = this.input.activePointer;
+    if (pointer.isDown && pointer.x < 300) {
+        this.joyStick.setPosition(pointer.x, pointer.y);
+        this.player.setVelocityX(pointer.x < 100 ? -250 : 250);
+    } else {
+        this.joyStick.setPosition(100, 300);
+        if (!this.cursors.left.isDown && !this.cursors.right.isDown) this.player.setVelocityX(0);
+    }
+
+    if (this.cursors.left.isDown) this.player.setVelocityX(-250);
+    if (this.cursors.right.isDown) this.player.setVelocityX(250);
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.player.body.blocked.down) this.player.setVelocityY(-650);
+    if (Phaser.Input.Keyboard.JustDown(this.space)) this.shoot(this.player, this.enemy, this.projectiles, 0xFFD700);
+  }
+}
+
+const config = { 
+  type: Phaser.AUTO, width: 800, height: 400, parent: 'phaser-game', 
+  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+  physics: { default: 'arcade', arcade: { gravity: { y: 1500 } } }, 
+  scene: BrawlerScene 
+};
+new Phaser.Game(config);
+</script>
+</body>
+</html>
