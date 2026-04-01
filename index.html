@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -761,11 +762,16 @@ body::before{
   margin-bottom: 3rem; flex-wrap: wrap;
 }
 .vessel-anchor-wrap {
-  flex: 1; min-width: 280px; max-width: 520px;
+  flex: 1; 
+  min-width: 280px; 
+  max-width: 100%; /* Allows it to shrink on small mobile screens */
+  width: 100%;
   cursor: pointer; position: relative;
   border: 2px solid var(--gd); overflow: hidden;
   transition: border-color .3s, box-shadow .3s, transform .3s;
   background: #0a0806;
+  aspect-ratio: 16 / 9; /* Keeps the frame consistent */
+}
 }
 .vessel-anchor-wrap:hover {
   border-color: var(--gold);
@@ -777,7 +783,10 @@ body::before{
   box-shadow: 0 0 40px rgba(255,215,0,.5), inset 0 0 24px rgba(0,0,0,.5);
 }
 .vessel-anchor-wrap img {
-  display: block; width: 100%;
+  display: block; 
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures the image fills the box without distorting */
   image-rendering: pixelated;
   filter: brightness(.85) contrast(1.05);
   transition: filter .3s;
@@ -812,6 +821,17 @@ body::before{
   box-shadow: 0 0 28px rgba(155,89,182,.35), inset 0 0 18px rgba(0,0,0,.5);
 }
 #vessel-obsidian .vessel-label { color: #c084fc; }
+
+@media (max-width: 600px) {
+    .collection-gateway {
+        flex-direction: column; /* Stacks the two collections vertically */
+        align-items: center;
+        gap: 1rem;
+    }
+    .vessel-anchor-wrap {
+        max-width: 95%; /* Gives a tiny bit of breathing room on the edges */
+    }
+}
 </style>
 
 </head>
