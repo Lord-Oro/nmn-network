@@ -23,7 +23,7 @@
     canvas { border: 2px solid #FFD700; image-rendering: pixelated; }
     #victory-overlay { display: none; position: absolute; top: 0; left: 0; width: 800px; height: 400px; background: rgba(0,0,0,0.85); flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
     #victory-overlay.active { display: flex; }
-    #claim-btn { font-family: 'Press Start 2P', cursive; background: #FFD700; padding: 15px 25px; border: none; cursor: pointer; margin-top: 20px; }
+    #claim-btn { font-family: 'Press Start 2P', cursive; background: #FFD700; padding: 15px 25px; border: none; cursor: pointer; margin-top: 20px; color: #000; }
   </style>
 </head>
 <body>
@@ -41,21 +41,20 @@
 <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
 
 <script>
-// EXACT FILENAMES FROM YOUR GITHUB SCREENSHOT
+// CHARACTER ROSTER WITH MONETIZATION TIERS
 const CHARACTERS = [
-  { key: 'pyro',     file: 'pyro_beta.jpg',     f: 0,   color: '#FF4400' },
-  { key: 'juni',     file: 'juni_beta.jpg',     f: 20,  color: '#44BB44' },
-  { key: 'olydia',   file: 'olydia_beta.jpg',   f: 40,  color: '#9933CC' },
-  { key: 'helios',   file: 'helios_beta.jpg',   f: 60,  color: '#FFD700' },
-  { key: 'wanderer', file: 'wanderer_beta.jpg', f: 80,  color: '#336699' },
-  { key: 'orid',     file: 'orid_beta.jpg',     f: 100, color: '#884422' }
+  { key: 'pyro',     file: 'pyro_beta.jpg',     f: 0,   price: 'FREE', color: '#FF4400' },
+  { key: 'juni',     file: 'juni_beta.jpg',     f: 20,  price: 'FREE', color: '#44BB44' },
+  { key: 'helios',   file: 'helios_beta.jpg',   f: 60,  price: '0.99$', color: '#FFD700' },
+  { key: 'olydia',   file: 'olydia_beta.jpg',   f: 40,  price: '2.99$', color: '#9933CC' },
+  { key: 'wanderer', file: 'wanderer_beta.jpg', f: 80,  price: '5.00$', color: '#336699' },
+  { key: 'orid',     file: 'orid_beta.jpg',     f: 100, price: '10.00$', color: '#884422' }
 ];
 
 class BrawlerScene extends Phaser.Scene {
   constructor() { super('BrawlerScene'); }
 
   preload() {
-    // No setBaseURL because index.html and assets are in the same folder (/brawler/)
     this.load.image('bg', 'forest_bg.jpg');
     this.load.spritesheet('hero_sheet', 'hero-sheet.png', { frameWidth: 28, frameHeight: 52 });
     CHARACTERS.forEach(c => this.load.image(c.key, c.file));
@@ -64,44 +63,53 @@ class BrawlerScene extends Phaser.Scene {
   create() {
     this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.5);
     this.state = 'ROSTER';
-    this.projectiles = this.physics.add.group();
-    this.enemyProjectiles = this.physics.add.group();
     
-    // BUILD ROSTER
+    // PLATFORMS
+    this.platforms = this.physics.add.staticGroup();
+    let ground = this.add.rectangle(400, 395, 800, 10, 0x000).setAlpha(0);
+    this.physics.add.existing(ground, true);
+    this.platforms.add(ground);
+    
+    // Three visible platforms for verticality
+    this.platforms.add(this.add.rectangle(200, 280, 150, 10, 0xFFD700));
+    this.platforms.add(this.add.rectangle(600, 280, 150, 10, 0xFFD700));
+    this.platforms.add(this.add.rectangle(400, 180, 200, 10, 0xFFD700));
+
+    // ROSTER UI
     this.rosterGroup = this.add.group();
     CHARACTERS.forEach((c, i) => {
-      let x = 100 + (i * 120);
-      let img = this.add.image(x, 200, c.key).setDisplaySize(90, 90).setInteractive();
-      let txt = this.add.text(x, 260, c.key.toUpperCase(), { font: '10px Courier', fill: c.color }).setOrigin(0.5);
-      img.on('pointerdown', () => this.startBattle(i));
-      this.rosterGroup.addMultiple([img, txt]);
+      let x = 120 + (i * 112);
+      let box = this.add.rectangle(x, 200, 100, 140, 0x1a1510).setStrokeStyle(1, 0xFFD700).setInteractive();
+      let img = this.add.image(x, 180, c.key).setDisplaySize(85, 85);
+      this.add.text(x, 240, c.key.toUpperCase(), { font: '10px Courier', fill: c.color }).setOrigin(0.5);
+      this.add.text(x, 255, c.price, { font: '9px Courier', fill: '#FFF' }).setOrigin(0.5);
+
+      box.on('pointerdown', () => {
+        if(c.price === 'FREE') this.startBattle(i);
+        else window.open('https://books2read.com/u/4EOxZ0', '_blank');
+      });
+      this.rosterGroup.addMultiple([box, img]);
     });
 
+    this.projectiles = this.physics.add.group();
     this.cursors = this.input.keyboard.createCursorKeys();
     this.space = this.input.keyboard.addKey('SPACE');
   }
 
-startBattle(idx) {
+  startBattle(idx) {
     this.state = 'BATTLE';
     this.rosterGroup.setVisible(false);
     
-    // Player & Enemy setup - CHANGED 'elephants' TO 'hero_sheet' TO MATCH PRELOAD
     this.player = this.physics.add.sprite(150, 300, 'hero_sheet', CHARACTERS[idx].f).setScale(2.5).setCollideWorldBounds(true);
-    
-    let eIdx = (idx + 1) % 6;
+    let eIdx = (idx + 1) % 2; 
     this.enemy = this.physics.add.sprite(650, 300, 'hero_sheet', CHARACTERS[eIdx].f).setScale(2.5).setFlipX(true);
     
-    // Ground Setup - Static body ensures they stay on top
-    let ground = this.add.rectangle(400, 395, 800, 10, 0x000).setAlpha(0);
-    this.physics.add.existing(ground, true);
-    this.physics.add.collider([this.player, this.enemy], ground);
+    this.physics.add.collider([this.player, this.enemy], this.platforms);
 
-    // Hit Logic
     this.physics.add.overlap(this.projectiles, this.enemy, (en, pr) => {
         pr.destroy();
         this.cameras.main.shake(150, 0.01);
         en.setTint(0xff0000);
-        // Victory triggers after a slight delay for visual impact
         this.time.delayedCall(300, () => { en.clearTint(); this.triggerWin(); });
     });
   }
@@ -118,7 +126,9 @@ startBattle(idx) {
     else if (this.cursors.right.isDown) { this.player.setVelocityX(220); this.player.setFlipX(false); }
     else this.player.setVelocityX(0);
 
-    if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.player.body.touching.down) this.player.setVelocityY(-500);
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.player.body.blocked.down) {
+        this.player.setVelocityY(-550);
+    }
 
     if (Phaser.Input.Keyboard.JustDown(this.space)) {
         let b = this.add.rectangle(this.player.x, this.player.y, 20, 10, 0xFFD700);
@@ -129,7 +139,7 @@ startBattle(idx) {
   }
 }
 
-const config = { type: Phaser.AUTO, width: 800, height: 400, parent: 'phaser-game', physics: { default: 'arcade', arcade: { gravity: { y: 1000 } } }, scene: BrawlerScene };
+const config = { type: Phaser.AUTO, width: 800, height: 400, parent: 'phaser-game', physics: { default: 'arcade', arcade: { gravity: { y: 1200 } } }, scene: BrawlerScene };
 new Phaser.Game(config);
 </script>
 </body>
