@@ -56,6 +56,7 @@ class BrawlerScene extends Phaser.Scene {
   }
 
   create() {
+    // 1. ANIMS SETUP
     this.anims.create({
         key: 'ganesha_idle',
         frames: this.anims.generateFrameNumbers('brawlers_master', { start: 0, end: 3 }),
@@ -67,6 +68,7 @@ class BrawlerScene extends Phaser.Scene {
         frameRate: 8, repeat: -1
     });
 
+    // 2. ROSTER UI SETUP
     this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.3);
     this.state = 'ROSTER';
     this.pHealth = 100; this.eHealth = 100;
@@ -117,7 +119,6 @@ class BrawlerScene extends Phaser.Scene {
     this.platforms.add(this.add.rectangle(150, 280, 120, 10, 0xFFD700));
     this.platforms.add(this.add.rectangle(650, 280, 120, 10, 0xFFD700));
 
-    // PLAYER Setup
     this.player = this.physics.add.sprite(150, 200, 'brawlers_master');
     this.player.setOrigin(0.5, 1); 
     this.player.setDisplaySize(120, 120);
@@ -126,7 +127,6 @@ class BrawlerScene extends Phaser.Scene {
     const playerRoll = Phaser.Math.Between(0, 1) === 0 ? 'ganesha_idle' : 'green_lion_idle';
     this.player.play(playerRoll);
 
-    // ENEMY Setup
     this.enemy = this.physics.add.sprite(650, 200, 'brawlers_master');
     this.enemy.setOrigin(0.5, 1);
     this.enemy.setDisplaySize(120, 120).setCollideWorldBounds(true).setTint(0xffaaaa);
