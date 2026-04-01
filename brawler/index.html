@@ -21,7 +21,7 @@
     canvas { border: 2px solid #FFD700; image-rendering: pixelated; max-width: 100%; height: auto; }
     #victory-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
     #victory-overlay.active { display: flex; }
-    .btn { font-family: 'Press Start 2P', cursive; padding: 15px; border: none; cursor: pointer; margin-top: 10px; width: 80%; max-width: 280px; font-size: 10px; transition: 0.2s; }
+    .btn { font-family: 'Press Start 2P', cursive; padding: 15px; border: none; cursor: pointer; margin-top: 10px; width: 80%; max-width: 320px; font-size: 10px; transition: 0.2s; }
     #claim-btn { background: #FFD700; color: #000; }
     #reset-btn { background: #333; color: #FFD700; border: 1px solid #FFD700; }
   </style>
@@ -31,9 +31,9 @@
 <div id="game-wrapper">
   <div id="phaser-game">
     <div id="victory-overlay">
-      <h2 style="font-family:'Press Start 2P'; color:#FFD700; font-size: 16px;">SECTOR CLEARED</h2>
-      <button id="claim-btn" class="btn" onclick="window.open('https://books2read.com/u/4EOxZ0', '_blank')">📖 READ THE LEGEND</button>
-      <button id="reset-btn" class="btn" onclick="location.reload()">↺ RE-ENTER FORGE</button>
+      <h2 style="font-family:'Press Start 2P'; color:#FFD700; font-size: 16px; text-align:center;">SECTOR CLEARED</h2>
+      <button id="claim-btn" class="btn" onclick="window.open('https://books2read.com/u/4EOxZ0', '_blank')">📖 CLAIM REWARD: READ LORE</button>
+      <button id="reset-btn" class="btn" onclick="location.reload()">↺ RE-ENTER THE FORGE</button>
     </div>
   </div>
 </div>
@@ -44,10 +44,10 @@
 const CHARACTERS = [
   { key: 'pyro',     file: 'pyro_beta.jpg',     price: 'FREE', tier: 'Starter', desc: 'The Ember Scout.' },
   { key: 'juni',     file: 'juni_beta.jpg',     price: 'FREE', tier: 'Starter', desc: 'The Immortal.' },
-  { key: 'helios',   file: 'helios_beta.jpg',   price: '0.99$', tier: 'Archive', desc: 'Sun King Archive.' },
-  { key: 'olydia',   file: 'olydia_beta.jpg',   price: '2.99$', tier: 'Elite', desc: 'Obsidian Blade.' },
-  { key: 'wanderer', file: 'wanderer_beta.jpg', price: '5.00$', tier: 'Copper', desc: 'Newsletter Exclusive.' },
-  { key: 'orid',     file: 'orid_beta.jpg',     price: '10.00$', tier: 'Silver', desc: 'The Oathbreaker.' }
+  { key: 'wanderer', file: 'wanderer_beta.jpg', price: '0.99$', tier: 'Copper', desc: 'The Stalker.' },
+  { key: 'helios',   file: 'helios_beta.jpg',   price: '2.99$', tier: 'Elite', desc: 'Sun King.' },
+  { key: 'olydia',   file: 'olydia_beta.jpg',   price: '5.00$', tier: 'Patreon', desc: 'Obsidian Blade.' },
+  { key: 'orid',     file: 'orid_beta.jpg',     price: '10.00$', tier: 'Silver', desc: 'Oathbreaker.' }
 ];
 
 class BrawlerScene extends Phaser.Scene {
@@ -55,7 +55,6 @@ class BrawlerScene extends Phaser.Scene {
 
   preload() {
     this.load.image('bg', 'forest_bg.jpg');
-    // NO MORE HERO-SHEET. Loading only your original Beta assets.
     CHARACTERS.forEach(c => this.load.image(c.key, c.file));
   }
 
@@ -63,129 +62,10 @@ class BrawlerScene extends Phaser.Scene {
     this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.3);
     this.state = 'ROSTER';
 
-    this.infoTxt = this.add.text(400, 50, 'SELECT SCOUT', { font: '14px Press Start 2P', fill: '#FFD700' }).setOrigin(0.5);
+    this.infoTxt = this.add.text(400, 60, 'SELECT A SCOUT', { font: '12px "Press Start 2P"', fill: '#FFD700' }).setOrigin(0.5);
 
     this.rosterGroup = this.add.group();
     CHARACTERS.forEach((c, i) => {
-      let x = 120 + (i * 112);
-      let box = this.add.rectangle(x, 210, 100, 160, 0x1a1510).setStrokeStyle(1, 0xFFD700).setInteractive();
-      let img = this.add.image(x, 190, c.key).setDisplaySize(85, 85);
-      this.add.text(x, 250, c.key.toUpperCase(), { font: '10px Courier', fill: '#FFD700' }).setOrigin(0.5);
-      this.add.text(x, 265, c.price, { font: '9px Courier', fill: '#FFF' }).setOrigin(0.5);
-
-      box.on('pointerover', () => { this.infoTxt.setText(c.tier + ": " + c.desc); box.setStrokeStyle(2, 0xFFFFFF); });
-      box.on('pointerout', () => { this.infoTxt.setText('SELECT SCOUT'); box.setStrokeStyle(1, 0xFFD700); });
-
-      box.on('pointerdown', () => {
-        if(c.price === 'FREE') this.startBattle(i);
-        else window.open('https://books2read.com/u/4EOxZ0', '_blank');
-      });
-      this.rosterGroup.addMultiple([box, img]);
-    });
-
-    this.projectiles = this.physics.add.group();
-    this.enemyProjectiles = this.physics.add.group();
-    this.cursors = this.input.keyboard.createCursorKeys();
-    this.space = this.input.keyboard.addKey('SPACE');
-  }
-
-  startBattle(idx) {
-    this.state = 'BATTLE';
-    this.rosterGroup.clear(true, true);
-    this.infoTxt.setVisible(false);
-
-    this.platforms = this.physics.add.staticGroup();
-    this.platforms.add(this.add.rectangle(400, 395, 800, 10, 0xFFD700).setAlpha(0.2));
-    this.platforms.add(this.add.rectangle(200, 280, 150, 8, 0xFFD700));
-    this.platforms.add(this.add.rectangle(600, 280, 150, 8, 0xFFD700));
-    this.platforms.add(this.add.rectangle(400, 180, 200, 8, 0xFFD700));
-
-    // Player & Enemy now use their own Beta JPGs
-    this.player = this.physics.add.sprite(150, 300, CHARACTERS[idx].key).setDisplaySize(70, 70).setCollideWorldBounds(true);
-    
-    // Enemy is a random scout from the full list
-    let eIdx = Phaser.Math.Between(0, 5);
-    this.enemy = this.physics.add.sprite(650, 300, CHARACTERS[eIdx].key).setDisplaySize(70, 70).setCollideWorldBounds(true);
-    this.enemy.setTint(0xff8888);
-
-    this.physics.add.collider([this.player, this.enemy], this.platforms);
-
-    this.physics.add.overlap(this.projectiles, this.enemy, (en, pr) => {
-        pr.destroy();
-        this.cameras.main.shake(200, 0.01);
-        this.time.delayedCall(200, () => this.triggerWin());
-    });
-
-    this.physics.add.overlap(this.enemyProjectiles, this.player, () => {
-        this.cameras.main.shake(100, 0.005);
-        this.player.setTint(0xff0000);
-        this.time.delayedCall(100, () => this.player.clearTint());
-    });
-
-    this.time.addEvent({ delay: 1800, callback: this.enemyAttack, callbackScope: this, loop: true });
-    this.createMobileButtons();
-  }
-
-  createMobileButtons() {
-    let jBtn = this.add.circle(100, 320, 45, 0xFFD700, 0.4).setInteractive();
-    this.add.text(100, 320, 'JUMP', { font: 'bold 14px Arial', fill: '#FFF' }).setOrigin(0.5);
-    jBtn.on('pointerdown', () => { if(this.player.body.blocked.down) this.player.setVelocityY(-650); });
-
-    let fBtn = this.add.circle(700, 320, 45, 0xFF0000, 0.4).setInteractive();
-    this.add.text(700, 320, 'FIRE', { font: 'bold 14px Arial', fill: '#FFF' }).setOrigin(0.5);
-    fBtn.on('pointerdown', () => this.shoot(this.player, this.enemy, this.projectiles, 0xFFD700));
-  }
-
-  shoot(origin, target, group, color) {
-    let b = this.add.rectangle(origin.x, origin.y, 20, 10, color);
-    group.add(b);
-    this.physics.add.existing(b);
-    b.body.setAllowGravity(false);
-    this.physics.moveToObject(b, target, 500);
-    this.cameras.main.shake(100, 0.003);
-  }
-
-  enemyAttack() {
-    if (this.state !== 'BATTLE') return;
-    this.shoot(this.enemy, this.player, this.enemyProjectiles, 0xFF0000);
-    if (Phaser.Math.Between(0, 10) > 7 && this.enemy.body.blocked.down) this.enemy.setVelocityY(-600);
-  }
-
-  triggerWin() {
-    this.state = 'WIN';
-    document.getElementById('victory-overlay').classList.add('active');
-  }
-
-  update() {
-    if (this.state !== 'BATTLE') return;
-
-    // AI Hunter
-    const dist = this.player.x - this.enemy.x;
-    if (Math.abs(dist) > 80) this.enemy.setVelocityX(dist > 0 ? 120 : -120);
-    else this.enemy.setVelocityX(0);
-
-    // Controls
-    if (this.input.activePointer.isDown && this.input.activePointer.y < 250) {
-        if (this.input.activePointer.x < 400) this.player.setVelocityX(-220);
-        else this.player.setVelocityX(220);
-    } else if (!this.cursors.left.isDown && !this.cursors.right.isDown) {
-        this.player.setVelocityX(0);
-    }
-
-    if (this.cursors.left.isDown) this.player.setVelocityX(-220);
-    if (this.cursors.right.isDown) this.player.setVelocityX(220);
-    if (Phaser.Input.Keyboard.JustDown(this.space)) this.shoot(this.player, this.enemy, this.projectiles, 0xFFD700);
-    if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.player.body.blocked.down) this.player.setVelocityY(-650);
-  }
-}
-
-const config = { 
-  type: Phaser.AUTO, width: 800, height: 400, parent: 'phaser-game', 
-  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-  physics: { default: 'arcade', arcade: { gravity: { y: 1400 } } }, 
-  scene: BrawlerScene 
-};
-new Phaser.Game(config);
-</script>
-</body>
-</html>
+      let x = 100 + (i * 120);
+      let box = this.add.rectangle(x, 220, 105, 160, 0x1a1510).setStrokeStyle(1, 0xFFD700).setInteractive();
+      this.add.image(x, 195, c.key).setDisplaySize(90
