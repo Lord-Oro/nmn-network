@@ -23,34 +23,31 @@ let player, enemy, cursors, space, pHealth=100, eHealth=100, pBar, eBar, jumpCou
 let gameState = 'TITLE', selectedFrame = 0;
 
 function preload() {
-    // FORCE PATHS TO YOUR GITHUB REPO
+    // FIXED: The BaseURL is the Root. The individual loads now point to the /brawler/ folder correctly.
     this.load.setBaseURL('https://Lord-Oro.github.io/nmn-network/');
     
     this.load.image('bg', 'brawler/forest_bg.jpg'); 
     this.load.spritesheet('elephants', 'brawler/hero-sheet.png', { frameWidth: 28, frameHeight: 52 });
     
-    // Character Portraits
+    // Character Portraits - Simplified naming loop
     const scouts = ['pyro', 'juni', 'olydia', 'helios', 'wanderer', 'orid'];
     scouts.forEach(s => this.load.image(`p_${s}`, `brawler/${s}_beta.jpg`));
 }
 
 function create() {
-    // Background with more intensity
     this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.6);
     
-    // Branding & Title
-    this.titleTxt = this.add.text(400, 180, 'NONSENSICAL BRAWLER\n[SECTOR 1: THE FORGE]\n\nCLICK TO ENGAGE', { 
-        font: '24px Courier', fill: '#FFD700', align: 'center', stroke: '#000', strokeThickness: 4
+    this.titleTxt = this.add.text(400, 180, 'NONSENSICAL BRAWLER\n[SECTOR 1: THE FORGE]\n\nCLICK TO START', { 
+        font: '26px Courier', fill: '#FFD700', align: 'center', stroke: '#000', strokeThickness: 4
     }).setOrigin(0.5).setInteractive();
 
-    // Universal Book Link Button
-    let loreLink = this.add.text(400, 340, '📖 READ JUNI THE IMMORTAL (GLOBAL)', { 
+    // Universal Book Link - Styled for the selection screen
+    this.loreLink = this.add.text(400, 340, '📖 READ JUNI THE IMMORTAL (GLOBAL)', { 
         font: '16px Courier', fill: '#000', backgroundColor: '#FFD700', padding: {x:10, y:5} 
-    }).setOrigin(0.5).setInteractive();
-    loreLink.on('pointerdown', () => window.open('https://books2read.com/u/4EOxZ0', '_blank'));
+    }).setOrigin(0.5).setInteractive().setVisible(true);
+    this.loreLink.on('pointerdown', () => window.open('https://books2read.com/u/4EOxZ0', '_blank'));
 
-    // Donor Ticker
-    this.donorTxt = this.add.text(800, 380, "LATEST EXCAVATORS: THANK YOU FOR JOINING THE MADNESS! | SECTOR 1 ALPHA LIVE | JUNI THE IMMORTAL PUBLISHED WORLDWIDE!", {
+    this.donorTxt = this.add.text(800, 380, "EXCAVATE THE GOLDMINE | JUNI THE IMMORTAL IS LIVE WORLDWIDE | NEW SECTORS OPENING EVERY 2 HOURS...", {
         font: '14px Courier', fill: '#FFD700'
     });
 
@@ -67,22 +64,22 @@ function create() {
     rosterData.forEach(data => {
         let box = this.add.rectangle(data.x, 200, 80, 80, 0x1a1510).setStrokeStyle(2, 0xFFD700).setInteractive();
         let img = this.add.image(data.x, 200, data.key).setDisplaySize(75, 75);
-        this.add.text(data.x, 260, data.label, {font:'10px Courier'}).setOrigin(0.5);
+        let lbl = this.add.text(data.x, 260, data.label, {font:'10px Courier'}).setOrigin(0.5);
         
         box.on('pointerdown', () => { 
-            if(data.f <= 20) { 
-                selectedFrame = data.f; 
-                startBattle(this); 
-            } 
+            selectedFrame = data.f; 
+            startBattle(this); 
         });
-        this.roster.addMultiple([box, img]);
+        this.roster.addMultiple([box, img, lbl]);
     });
     this.roster.setVisible(false);
 
-    let ground = this.add.rectangle(400, 390, 800, 20, 0x000).setAlpha(0);
+    let ground = this.add.rectangle(400, 395, 800, 10, 0x000).setAlpha(0);
     this.physics.add.existing(ground, true);
+    
     player = this.physics.add.sprite(150, 300, 'elephants', 0).setScale(2.5).setVisible(false).setCollideWorldBounds(true);
     enemy = this.physics.add.sprite(650, 300, 'elephants', 20).setScale(2.5).setVisible(false).setFlipX(true);
+    
     this.physics.add.collider(player, ground);
     this.physics.add.collider(enemy, ground);
 
@@ -92,17 +89,17 @@ function create() {
     this.projectiles = this.physics.add.group();
     this.physics.add.overlap(this.projectiles, enemy, (en, pr) => { 
         pr.destroy(); 
-        eHealth -= 10; 
+        eHealth -= 5; 
         en.setTint(0xff0000); 
-        this.cameras.main.shake(100, 0.005); // SCREEN SHAKE ON HIT
+        this.cameras.main.shake(100, 0.005);
         this.time.delayedCall(100, ()=>en.clearTint()); 
     });
 
     cursors = this.input.keyboard.createCursorKeys();
     space = this.input.keyboard.addKey('SPACE');
+    
     this.titleTxt.on('pointerdown', () => { 
         this.titleTxt.setVisible(false); 
-        loreLink.setVisible(false);
         this.roster.setVisible(true); 
     });
 }
@@ -110,15 +107,24 @@ function create() {
 function startBattle(scene) {
     gameState = 'BATTLE';
     scene.roster.setVisible(false);
+    scene.loreLink.setVisible(false);
     player.setFrame(selectedFrame).setVisible(true);
     enemy.setVisible(true); pBar.setVisible(true); eBar.setVisible(true);
 }
 
 function update() {
     this.donorTxt.x -= 2;
-    if (this.donorTxt.x < -1500) this.donorTxt.x = 800;
+    if (this.donorTxt.x < -2000) this.donorTxt.x = 800;
 
     if (gameState !== 'BATTLE') return;
+
+    if (eHealth <= 0) {
+        this.add.text(400, 200, 'VICTORY: LEGEND FORGED', { font: '32px Courier', fill: '#FFD700' }).setOrigin(0.5);
+        this.loreLink.setVisible(true).setText('📖 CLAIM YOUR REWARD (READ THE BOOK)');
+        gameState = 'WIN';
+        return;
+    }
+
     if (cursors.left.isDown) { player.setVelocityX(-220); player.setFlipX(true); }
     else if (cursors.right.isDown) { player.setVelocityX(220); player.setFlipX(false); }
     else player.setVelocityX(0);
@@ -134,6 +140,9 @@ function update() {
         this.projectiles.add(b); this.physics.add.existing(b);
         b.body.setAllowGravity(false); b.body.setVelocityX(player.flipX ? -600 : 600);
     }
+    
+    pBar.width = pHealth * 2;
+    eBar.width = eHealth * 2;
 }
 </script>
 </body>
