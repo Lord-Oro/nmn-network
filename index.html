@@ -675,13 +675,15 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
 <style id="gemini-v5">
 .mining-frame{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-height:85vh;margin:0 auto;overflow:hidden}
 canvas,.slot-machine,.loom-grid{max-width:95%;height:auto!important;border:2px solid var(--gold,#c9962a)}
-.pixel-sticker{
-  display:block;
-  width:100%;height:100%;
-  object-fit:cover;object-position:center top;
-  image-rendering:pixelated;
-  filter:contrast(110%) brightness(108%);
-  transition:transform .35s ease,filter .35s ease;
+.pixel-sticker {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* CRITICAL: This ensures the full book cover is visible */
+  image-rendering: pixelated;
+  filter: contrast(110%) brightness(108%);
+  transition: transform .35s ease, filter .35s ease;
+  background: #000; /* Adds black bars if the book ratio doesn't match perfectly */
 }
 .book-cover-art:hover .pixel-sticker{transform:scale(1.04);filter:contrast(115%) brightness(115%);}
 .oro-eyes{background:#000;position:relative;width:100px;height:100px;border-radius:8px;display:inline-block}
@@ -796,13 +798,20 @@ body::before{
   filter: brightness(1.08) contrast(1.1);
 }
 .vessel-label {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  background: linear-gradient(transparent,rgba(0,0,0,.92));
-  padding: 1.5rem 1.25rem .85rem;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 70%, transparent 100%);
+  padding: 1rem 1rem 0.5rem; /* Better spacing for mobile thumbs */
   font-family: var(--font-pixel);
-  font-size: .38rem; letter-spacing: .2em; text-transform: uppercase;
+  font-size: 0.5rem; /* Slightly larger for readability */
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--gold);
-  display: flex; justify-content: space-between; align-items: flex-end;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
 }
 .vessel-sublabel { font-size: .28rem; color: var(--muted); letter-spacing: .1em; }
 .vessel-chevron { font-size: .55rem; color: var(--gold); transition: transform .25s; }
@@ -915,7 +924,7 @@ body::before{
     <div class="pillars">
       <div class="pillar"><div class="pillar-num">01 — Books</div><h3>The Written Universe</h3><p>Fantasy novels, novellas, serialized fiction. Lord Oro woven as a silent observer across every world.</p></div>
       <div class="pillar"><div class="pillar-num">02 — Music</div><h3>Lord Oro's Allegory</h3><p>A concept album tracing awakening, temptation, shadow work, and enlightenment.</p></div>
-      <div class="pillar"><div class="pillar-num">03 — Games</div><h3>The Recreation Hall</h3><p>12 games built inside the mine shaft by the Excavation Committee.</p></div>
+      <div class="pillar"><div class="pillar-num">03 — Games</div><h3>The Micro Games Collection</h3><p>12 games built inside the mine shaft by the Excavation Committee.</p></div>
       <div class="pillar"><div class="pillar-num">04 — Experiences</div><h3>The Oracle's Chamber</h3><p>Tora, the Echoing Well, the Star Map, the Vigil. Corners of the mine that reward curiosity.</p></div>
     </div>
   </div>
@@ -1421,7 +1430,7 @@ body::before{
 
       <a href="games.html" class="mine-bubble bubble-games">
         <span class="bubble-icon">🎮</span>
-        <span class="bubble-name">Recreation Hall</span>
+        <span class="bubble-name">Micro Games Collection</span>
         <span class="bubble-count">⛏ 12 GAMES LIVE</span>
       </a>
 
