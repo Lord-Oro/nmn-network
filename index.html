@@ -2,6 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P5WL9XNDY8');
+</script>
+<link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nonsense Media Network — Lord Oro</title>
 
@@ -696,10 +706,6 @@ canvas,.slot-machine,.loom-grid{max-width:95%;height:auto!important;border:2px s
 body{padding-bottom:65px!important}
 </style>
 <style id="lesson-z">#lessonPopup{z-index:10001!important;display:none}#lessonPopup.show{display:block!important}#lessonBackdrop{display:none}#lessonBackdrop.show{display:block!important}</style>
-
-<!-- Monetag vignette popup removed — Obsidian & Gold brand experience preserved -->
-
-
 
 <style>
 /* ─── GLASS MONITOR / CRT SCANLINES ─── */
@@ -2076,6 +2082,39 @@ document.querySelectorAll('.vessel-anchor-wrap').forEach(el => {
   });
 });
 </script>
+<div class="mobile-hub-nav">
+    <a href="brawler/index.html" class="hub-tab active">
+        <span class="hub-icon">⚔️</span> FORGE
+    </a>
+    <a href="https://www.youtube.com/@Lord-Oro/videos" class="hub-tab">
+        <span class="hub-icon">📺</span> LIVE
+    </a>
+    <a href="#works" class="hub-tab">
+        <span class="hub-icon">📖</span> LORE
+    </a>
+    <a href="https://gofund.me/e643a8283" class="hub-tab">
+        <span class="hub-icon">🏮</span> SUPPORT
+    </a>
+</div>
 
+<style>
+/* MOBILE HUB DOCK - Only shows on small screens */
+@media (max-width: 768px) {
+    .mobile-hub-nav {
+        position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
+        background: #111; border-top: 2px solid #FFD700;
+        display: flex; justify-content: space-around; align-items: center;
+        z-index: 99999; padding-bottom: env(safe-area-inset-bottom);
+    }
+    .hub-tab {
+        color: #888; text-align: center; flex: 1; font-family: 'Press Start 2P', cursive;
+        font-size: 8px; text-decoration: none;
+    }
+    .hub-tab.active { color: #FFD700; }
+    .hub-icon { font-size: 18px; display: block; margin-bottom: 5px; }
+    body { padding-bottom: 80px !important; } 
+}
+@media (min-width: 769px) { .mobile-hub-nav { display: none; } }
+</style>
 </body>
 </html>
