@@ -21,19 +21,23 @@
     #game-wrapper { position: relative; width: 800px; }
     #game-title { font-family: 'Press Start 2P', cursive; font-size: 14px; color: #FFD700; text-align: center; margin-bottom: 10px; }
     canvas { border: 2px solid #FFD700; image-rendering: pixelated; }
-    #victory-overlay { display: none; position: absolute; top: 0; left: 0; width: 800px; height: 400px; background: rgba(0,0,0,0.85); flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
+    #victory-overlay { display: none; position: absolute; top: 0; left: 0; width: 800px; height: 400px; background: rgba(0,0,0,0.9); flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
     #victory-overlay.active { display: flex; }
-    #claim-btn { font-family: 'Press Start 2P', cursive; background: #FFD700; padding: 15px 25px; border: none; cursor: pointer; margin-top: 20px; color: #000; }
+    .btn { font-family: 'Press Start 2P', cursive; padding: 12px 20px; border: none; cursor: pointer; margin-top: 15px; width: 280px; font-size: 10px; transition: 0.2s; }
+    #claim-btn { background: #FFD700; color: #000; }
+    #reset-btn { background: #333; color: #FFD700; border: 1px solid #FFD700; }
+    .btn:hover { transform: scale(1.05); filter: brightness(1.2); }
   </style>
 </head>
 <body>
 
 <div id="game-wrapper">
-  <div id="game-title">⚔ NONSENSICAL BRAWLER: SECTOR 1 ⚔</div>
+  <div id="game-title">⚔ NMN: THE FORGE ⚔</div>
   <div id="phaser-game">
     <div id="victory-overlay">
-      <h2 style="font-family:'Press Start 2P'; color:#FFD700;">SECTOR CLEARED</h2>
-      <button id="claim-btn" onclick="window.open('https://books2read.com/u/4EOxZ0', '_blank')">📖 READ THE LEGEND</button>
+      <h2 style="font-family:'Press Start 2P'; color:#FFD700; font-size: 18px;">SECTOR CLEARED</h2>
+      <button id="claim-btn" class="btn" onclick="window.open('https://books2read.com/u/4EOxZ0', '_blank')">📖 READ THE LEGEND</button>
+      <button id="reset-btn" class="btn" onclick="location.reload()">↺ RE-ENTER THE FORGE</button>
     </div>
   </div>
 </div>
@@ -41,14 +45,13 @@
 <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
 
 <script>
-// CHARACTER ROSTER WITH MONETIZATION TIERS
 const CHARACTERS = [
-  { key: 'pyro',     file: 'pyro_beta.jpg',     f: 0,   price: 'FREE', color: '#FF4400' },
-  { key: 'juni',     file: 'juni_beta.jpg',     f: 20,  price: 'FREE', color: '#44BB44' },
-  { key: 'helios',   file: 'helios_beta.jpg',   f: 60,  price: '0.99$', color: '#FFD700' },
-  { key: 'olydia',   file: 'olydia_beta.jpg',   f: 40,  price: '2.99$', color: '#9933CC' },
-  { key: 'wanderer', file: 'wanderer_beta.jpg', f: 80,  price: '5.00$', color: '#336699' },
-  { key: 'orid',     file: 'orid_beta.jpg',     f: 100, price: '10.00$', color: '#884422' }
+  { key: 'pyro',     file: 'pyro_beta.jpg',     f: 0,   price: 'FREE', tier: 'Starter', desc: 'The Ember Scout. High speed, low weight.' },
+  { key: 'juni',     file: 'juni_beta.jpg',     f: 20,  price: 'FREE', tier: 'Starter', desc: 'The Immortal. Balanced offense and defense.' },
+  { key: 'helios',   file: 'helios_beta.jpg',   f: 60,  price: '0.99$', tier: 'Archive', desc: 'The Sun King. Locked in the Archive.' },
+  { key: 'olydia',   file: 'olydia_beta.jpg',   f: 40,  price: '2.99$', tier: 'Elite', desc: 'The Obsidian Blade. Elite combatant.' },
+  { key: 'wanderer', file: 'wanderer_beta.jpg', f: 80,  price: '5.00$', tier: 'Copper', desc: 'The Stalker. Unlocked via Newsletter.' },
+  { key: 'orid',     file: 'orid_beta.jpg',     f: 100, price: '10.00$', tier: 'Silver', desc: 'The Oathbreaker. High gravity champion.' }
 ];
 
 class BrawlerScene extends Phaser.Scene {
@@ -61,28 +64,29 @@ class BrawlerScene extends Phaser.Scene {
   }
 
   create() {
-    this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.5);
+    this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.3);
     this.state = 'ROSTER';
-    
-    // PLATFORMS
-    this.platforms = this.physics.add.staticGroup();
-    let ground = this.add.rectangle(400, 395, 800, 10, 0x000).setAlpha(0);
-    this.physics.add.existing(ground, true);
-    this.platforms.add(ground);
-    
-    // Three visible platforms for verticality
-    this.platforms.add(this.add.rectangle(200, 280, 150, 10, 0xFFD700));
-    this.platforms.add(this.add.rectangle(600, 280, 150, 10, 0xFFD700));
-    this.platforms.add(this.add.rectangle(400, 180, 200, 10, 0xFFD700));
+
+    // TOP INFO TEXT (The Identity Header)
+    this.infoBox = this.add.rectangle(400, 50, 700, 60, 0x000000).setAlpha(0.7).setStrokeStyle(1, 0xFFD700);
+    this.infoTxt = this.add.text(400, 50, 'SELECT YOUR SCOUT TO ENTER THE FORGE', { font: '14px Share Tech Mono', fill: '#FFD700', align: 'center' }).setOrigin(0.5);
 
     // ROSTER UI
     this.rosterGroup = this.add.group();
     CHARACTERS.forEach((c, i) => {
       let x = 120 + (i * 112);
-      let box = this.add.rectangle(x, 200, 100, 140, 0x1a1510).setStrokeStyle(1, 0xFFD700).setInteractive();
-      let img = this.add.image(x, 180, c.key).setDisplaySize(85, 85);
-      this.add.text(x, 240, c.key.toUpperCase(), { font: '10px Courier', fill: c.color }).setOrigin(0.5);
-      this.add.text(x, 255, c.price, { font: '9px Courier', fill: '#FFF' }).setOrigin(0.5);
+      let box = this.add.rectangle(x, 220, 100, 150, 0x1a1510).setStrokeStyle(1, 0xFFD700).setInteractive();
+      let img = this.add.image(x, 200, c.key).setDisplaySize(85, 85);
+      this.add.text(x, 260, c.key.toUpperCase(), { font: '10px Courier', fill: '#FFD700' }).setOrigin(0.5);
+      
+      box.on('pointerover', () => {
+        box.setStrokeStyle(3, 0xFFFFFF);
+        this.infoTxt.setText(`${c.key.toUpperCase()} - ${c.tier}\n${c.desc}`);
+      });
+      box.on('pointerout', () => {
+        box.setStrokeStyle(1, 0xFFD700);
+        this.infoTxt.setText('SELECT YOUR SCOUT TO ENTER THE FORGE');
+      });
 
       box.on('pointerdown', () => {
         if(c.price === 'FREE') this.startBattle(i);
@@ -92,6 +96,7 @@ class BrawlerScene extends Phaser.Scene {
     });
 
     this.projectiles = this.physics.add.group();
+    this.enemyProjectiles = this.physics.add.group();
     this.cursors = this.input.keyboard.createCursorKeys();
     this.space = this.input.keyboard.addKey('SPACE');
   }
@@ -99,19 +104,46 @@ class BrawlerScene extends Phaser.Scene {
   startBattle(idx) {
     this.state = 'BATTLE';
     this.rosterGroup.setVisible(false);
-    
-    this.player = this.physics.add.sprite(150, 300, 'hero_sheet', CHARACTERS[idx].f).setScale(2.5).setCollideWorldBounds(true);
+    this.infoBox.setVisible(false);
+    this.infoTxt.setVisible(false);
+
+    // PLATFORMS
+    this.platforms = this.physics.add.staticGroup();
+    this.platforms.add(this.add.rectangle(400, 395, 800, 10, 0xFFD700).setAlpha(0.2));
+    this.platforms.add(this.add.rectangle(200, 280, 150, 8, 0xFFD700));
+    this.platforms.add(this.add.rectangle(600, 280, 150, 8, 0xFFD700));
+    this.platforms.add(this.add.rectangle(400, 180, 200, 8, 0xFFD700));
+
+    // Player (Using portrait as Battle Card for better fit)
+    this.player = this.physics.add.sprite(150, 300, CHARACTERS[idx].key).setDisplaySize(60, 60).setCollideWorldBounds(true);
+    this.player.setDragX(1000);
+
+    // Enemy (Mirror AI)
     let eIdx = (idx + 1) % 2; 
-    this.enemy = this.physics.add.sprite(650, 300, 'hero_sheet', CHARACTERS[eIdx].f).setScale(2.5).setFlipX(true);
-    
+    this.enemy = this.physics.add.sprite(650, 300, CHARACTERS[eIdx].key).setDisplaySize(60, 60).setCollideWorldBounds(true);
+    this.enemy.setTint(0xff8888);
+
     this.physics.add.collider([this.player, this.enemy], this.platforms);
 
+    // COMBAT OVERLAPS
     this.physics.add.overlap(this.projectiles, this.enemy, (en, pr) => {
         pr.destroy();
         this.cameras.main.shake(150, 0.01);
         en.setTint(0xff0000);
-        this.time.delayedCall(300, () => { en.clearTint(); this.triggerWin(); });
+        this.time.delayedCall(200, () => { en.clearTint(); this.triggerWin(); });
     });
+
+    // Enemy Shoots Back
+    this.time.addEvent({ delay: 2000, callback: this.enemyShoot, callbackScope: this, loop: true });
+  }
+
+  enemyShoot() {
+    if (this.state !== 'BATTLE') return;
+    let b = this.add.rectangle(this.enemy.x, this.enemy.y, 15, 5, 0xFF0000);
+    this.enemyProjectiles.add(b);
+    this.physics.add.existing(b);
+    b.body.setAllowGravity(false);
+    this.physics.moveToObject(b, this.player, 400);
   }
 
   triggerWin() {
@@ -122,24 +154,29 @@ class BrawlerScene extends Phaser.Scene {
   update() {
     if (this.state !== 'BATTLE') return;
     
-    if (this.cursors.left.isDown) { this.player.setVelocityX(-220); this.player.setFlipX(true); }
-    else if (this.cursors.right.isDown) { this.player.setVelocityX(220); this.player.setFlipX(false); }
-    else this.player.setVelocityX(0);
+    // PLAYER MOVEMENT
+    if (this.cursors.left.isDown) this.player.setVelocityX(-250);
+    else if (this.cursors.right.isDown) this.player.setVelocityX(250);
 
     if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.player.body.blocked.down) {
-        this.player.setVelocityY(-550);
+        this.player.setVelocityY(-600);
     }
 
+    // AUTO-AIM SHOOTING
     if (Phaser.Input.Keyboard.JustDown(this.space)) {
         let b = this.add.rectangle(this.player.x, this.player.y, 20, 10, 0xFFD700);
-        this.projectiles.add(b); this.physics.add.existing(b);
-        b.body.setAllowGravity(false); b.body.setVelocityX(this.player.flipX ? -600 : 600);
+        this.projectiles.add(b);
+        this.physics.add.existing(b);
+        b.body.setAllowGravity(false);
+        
+        // Auto-Aim Logic: Moves toward enemy position
+        this.physics.moveToObject(b, this.enemy, 600);
         this.cameras.main.shake(100, 0.003);
     }
   }
 }
 
-const config = { type: Phaser.AUTO, width: 800, height: 400, parent: 'phaser-game', physics: { default: 'arcade', arcade: { gravity: { y: 1200 } } }, scene: BrawlerScene };
+const config = { type: Phaser.AUTO, width: 800, height: 400, parent: 'phaser-game', physics: { default: 'arcade', arcade: { gravity: { y: 1400 } } }, scene: BrawlerScene };
 new Phaser.Game(config);
 </script>
 </body>
