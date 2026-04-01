@@ -555,98 +555,75 @@ footer{padding:1.75rem 3rem;border-top:1px solid rgba(255,215,0,.08);display:fle
 .dg-link:hover{color:var(--gold)}
 
 
-/* SECTIONS GRID */
-/* ── TUNNEL BUBBLES ── */
-.tunnels-intro{margin-bottom:3rem}
-.tunnels-tagline{font-family:var(--font-pixel);font-size:.42rem;color:var(--muted);line-height:2.4;max-width:480px;margin-top:.75rem}
-/* ── MINE CARTS — replaces floating bubbles ── */
-.mine-bubbles{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
-  gap:1.25rem;
-  max-width:1100px;
-  margin:0 auto;
-  padding:0 1rem 2rem;
+/* SECTIONS GRID - New Vertical Static Lion Layout */
+.mine-bubbles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1.25rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1rem 2rem;
 }
-.mine-bubble{
-  position:relative;
-  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
-  padding:1rem .75rem .85rem;
-  text-decoration:none;
-  background:rgba(10,9,6,.85);
-  border:1px solid rgba(255,215,0,.13);
-  transition:transform .25s,box-shadow .25s,border-color .25s;
-  overflow:hidden;
-  image-rendering:pixelated;
-  min-height:114px;
+
+.mine-bubble {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between; /* Spacks info below asset */
+  padding: 1.5rem 0.75rem;
+  text-decoration: none;
+  background: rgba(10,9,6,0.92); /* Darker for text readability */
+  border: 1px solid rgba(255,215,0,0.13);
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+  image-rendering: pixelated;
+  min-height: 160px; /* Taller for vertical layout */
+  text-align: center;
+  overflow: hidden;
 }
-/* PIXEL ART MINE CART — drawn in CSS */
-.mine-bubble::before{
-  content:'';
-  position:absolute;
-  top:10px;left:50%;
-  transform:translateX(-50%);
-  width:60px;height:40px;
-  background:
-    /* left wheel */
-    radial-gradient(circle,#777 0%,#444 45%,#222 60%,transparent 61%) 2px 28px/14px 14px no-repeat,
-    /* right wheel */
-    radial-gradient(circle,#777 0%,#444 45%,#222 60%,transparent 61%) 44px 28px/14px 14px no-repeat,
-    /* axle bar */
-    linear-gradient(#555,#333) 2px 33px/56px 4px no-repeat,
-    /* cart body sides */
-    linear-gradient(#7a5a1a,#5a3e08) 0 8px/6px 22px no-repeat,
-    linear-gradient(#7a5a1a,#5a3e08) 54px 8px/6px 22px no-repeat,
-    /* cart body bottom */
-    linear-gradient(#5a3e08,#3a2808) 0 26px/60px 4px no-repeat,
-    /* cart body fill */
-    linear-gradient(#B8860B,#8B6000) 6px 8px/48px 18px no-repeat,
-    /* cart top rim */
-    linear-gradient(#FFD700,#e8b84b) 4px 6px/52px 5px no-repeat,
-    /* ore glow inside — color per cart */
-    radial-gradient(ellipse,var(--ore-clr,rgba(255,215,0,.7)) 0%,transparent 65%) 10px 12px/40px 14px no-repeat;
-  image-rendering:pixelated;
-  transition:transform .25s;
+
+/* Updated selector for your 50x50 Lion icons */
+.mine-bubble img {
+  width: 50px;
+  height: 50px;
+  image-rendering: pixelated;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 0 5px var(--ore-clr));
 }
-/* Track rails under cart */
-.mine-bubble::after{
-  content:'';
-  position:absolute;
-  bottom:24px;left:4px;right:4px;height:3px;
-  background:repeating-linear-gradient(
-    90deg,
-    rgba(255,215,0,.35) 0,rgba(255,215,0,.35) 7px,
-    transparent 7px,transparent 12px
-  );
+
+.mine-bubble:hover {
+  border-color: rgba(255,215,0,0.45);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 28px rgba(0,0,0,.7), 0 0 18px var(--ore-clr, rgba(255,215,0,.15));
 }
-.mine-bubble:hover{
-  border-color:rgba(255,215,0,.45);
-  transform:translateY(-5px);
-  box-shadow:0 10px 28px rgba(0,0,0,.7),0 0 18px var(--ore-clr,rgba(255,215,0,.15));
+
+/* New block for text styling below the image */
+.bubble-info-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    pointer-events: none;
 }
-.mine-bubble:hover::before{transform:translateX(-50%) translateY(-3px);}
-.bubble-icon{display:none}
-.bubble-name{
-  font-family:var(--font-pixel);
-  font-size:.36rem;
-  letter-spacing:.08em;
-  color:var(--gold);
-  text-align:center;
-  margin-top:54px;
-  text-transform:uppercase;
-  line-height:1.9;
-  position:relative;z-index:1;
+
+.bubble-name {
+  font-family: var(--font-pixel);
+  font-size: 0.36rem;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  text-transform: uppercase;
+  line-height: 1.4;
 }
-.bubble-count{
-  font-family:var(--font-pixel);
-  font-size:.27rem;
-  letter-spacing:.07em;
-  color:var(--muted);
-  text-align:center;
-  margin-top:.25rem;
-  position:relative;z-index:1;
+
+.bubble-count {
+  font-family: var(--font-pixel);
+  font-size: 0.27rem;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  line-height: 1;
 }
-/* Ore color per cart */
+
+/* Ore color colors (keep these) */
 .bubble-games{--ore-clr:rgba(255,140,0,.8)}
 .bubble-oracle{--ore-clr:rgba(153,50,255,.8)}
 .bubble-archives{--ore-clr:rgba(0,191,255,.8)}
@@ -964,7 +941,17 @@ body::before{
 </section>
 
 <div class="divider"></div>
-
+<div class="section-tag" style="margin-top: 3rem;">Guardian of the Upper Shaft</div>
+<a href="brawler/index.html" class="brawler-featured-wrap">
+    <img src="brawler_promo.jpg" class="brawler-promo-img" alt="Nonsensical Brawlers">
+    <div class="brawler-overlay-text">
+        <div>
+            <div class="brawler-tag">SECTOR 1: THE FORGE</div>
+            <div style="font-size: 0.9rem;">NONSENSICAL BRAWLERS</div>
+        </div>
+        <div style="font-size: 1.5rem;">⚔️</div>
+    </div>
+</a>
 <!-- ABOUT -->
 <section id="about">
   <div class="section-tag">About Lord Oro</div>
@@ -1499,70 +1486,89 @@ body::before{
       <p class="tunnels-tagline">Games, tarot, lore, music, books, history, ritual. You don't have to play to belong here. You just have to descend.</p>
     </div>
 
-    <div class="mine-bubbles">
+   <div class="mine-bubbles">
 
-      <a href="games.html" class="mine-bubble bubble-games">
-        <span class="bubble-icon">🎮</span>
+  <a href="games.html" class="mine-bubble bubble-games">
+    <img src="brawler_icon.jpg" alt="Static Lion Red"> 
+    <div class="bubble-info-block">
         <span class="bubble-name">Micro Games Collection</span>
         <span class="bubble-count">⛏ 12 GAMES LIVE</span>
-      </a>
+    </div>
+  </a>
 
-      <a href="oracle.html" class="mine-bubble bubble-oracle">
-        <span class="bubble-icon">🔮</span>
+  <a href="oracle.html" class="mine-bubble bubble-oracle">
+    <img src="oracle_icon.jpg" alt="Static Lion Purple">
+    <div class="bubble-info-block">
         <span class="bubble-name">Oracle's Chamber</span>
         <span class="bubble-count">⛏ 6 EXPERIENCES</span>
-      </a>
+    </div>
+  </a>
 
-      <a href="archives.html" class="mine-bubble bubble-archives">
-        <span class="bubble-icon">📖</span>
+  <a href="archives.html" class="mine-bubble bubble-archives">
+    <img src="archive_icon.jpg" alt="Static Lion Blue">
+    <div class="bubble-info-block">
         <span class="bubble-name">The Archives</span>
         <span class="bubble-count">⛏ 6 TITLES + QUOTE</span>
-      </a>
+    </div>
+  </a>
 
-      <a href="soundshaft.html" class="mine-bubble bubble-sound">
-        <span class="bubble-icon">🎵</span>
+  <a href="soundshaft.html" class="mine-bubble bubble-sound">
+    <img src="sound_icon.jpg" alt="Static Lion Green">
+    <div class="bubble-info-block">
         <span class="bubble-name">Sound Shaft</span>
         <span class="bubble-count">⛏ 5 TRACKS</span>
-      </a>
+    </div>
+  </a>
 
-      <a href="lantern.html" class="mine-bubble bubble-mine">
-        <span class="bubble-icon">🕯️</span>
+  <a href="lantern.html" class="mine-bubble bubble-mine">
+    <img src="mine_icon.jpg" alt="Static Lion Obsidian">
+    <div class="bubble-info-block">
         <span class="bubble-name">The Deep Mine</span>
         <span class="bubble-count">⛏ 8 ROOMS</span>
-      </a>
+    </div>
+  </a>
 
-      <a href="newsletter.html" class="mine-bubble bubble-join">
-        <span class="bubble-icon">⬡</span>
+  <a href="newsletter.html" class="mine-bubble bubble-join">
+    <img src="brawler_icon.jpg" alt="Static Lion Red">
+    <div class="bubble-info-block">
         <span class="bubble-name">The Goldmine</span>
         <span class="bubble-count">⛏ FREE NEWSLETTER</span>
-      </a>
+    </div>
+  </a>
 
-      <a href="ivytunnel.html" class="mine-bubble bubble-ivy">
-        <span class="bubble-icon">🌿</span>
+  <a href="ivytunnel.html" class="mine-bubble bubble-ivy">
+    <img src="sound_icon.jpg" alt="Static Lion Green">
+    <div class="bubble-info-block">
         <span class="bubble-name">Ivy's Tunnel</span>
         <span class="bubble-count">⛏ 3 LIVE NOW</span>
-      </a>
+    </div>
+  </a>
 
-      <a href="toradomain.html" class="mine-bubble bubble-tora">
-        <span class="bubble-icon">🌕</span>
+  <a href="toradomain.html" class="mine-bubble bubble-tora">
+    <img src="oracle_icon.jpg" alt="Static Lion Purple">
+    <div class="bubble-info-block">
         <span class="bubble-name">Tora's Domain</span>
         <span class="bubble-count">⛏ VÖLVA'S QUARTER</span>
-      </a>
+    </div>
+  </a>
 
-      <a href="shorts.html" class="mine-bubble bubble-shorts">
-        <span class="bubble-icon">🎬</span>
+  <a href="shorts.html" class="mine-bubble bubble-shorts">
+    <img src="archive_icon.jpg" alt="Static Lion Blue">
+    <div class="bubble-info-block">
         <span class="bubble-name">Projection Room</span>
         <span class="bubble-count">⛏ 5 SHORTS</span>
-      </a>
+    </div>
+  </a>
 
-      <a href="flowpipes.html" class="mine-bubble bubble-flow">
-        <span class="bubble-icon">🔵</span>
+  <a href="flowpipes.html" class="mine-bubble bubble-flow">
+    <img src="mine_icon.jpg" alt="Static Lion Obsidian">
+    <div class="bubble-info-block">
         <span class="bubble-name">Ore Flow</span>
         <span class="bubble-count">⛏ 5 LEVELS</span>
-      </a>
-
     </div>
-  </div>
+  </a>
+
+</div>
 </section>
 
 <!-- CONTACT -->
