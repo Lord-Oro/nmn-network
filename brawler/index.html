@@ -48,9 +48,7 @@ class BrawlerScene extends Phaser.Scene {
 
   preload() {
     this.load.image('bg', 'forest_bg.jpg');
-    // Loading individual character cards for the roster
     CHARACTERS.forEach(c => this.load.image(c.key, c.file));
-    // Loading the Master Spritesheet for Battle
     this.load.spritesheet('brawlers_master', 'NMN_War_Beta_V1.png', { 
         frameWidth: 128, 
         frameHeight: 128 
@@ -58,7 +56,6 @@ class BrawlerScene extends Phaser.Scene {
   }
 
   create() {
-    // 1. ANIMS SETUP
     this.anims.create({
         key: 'ganesha_idle',
         frames: this.anims.generateFrameNumbers('brawlers_master', { start: 0, end: 3 }),
@@ -70,7 +67,6 @@ class BrawlerScene extends Phaser.Scene {
         frameRate: 8, repeat: -1
     });
 
-    // 2. ROSTER UI SETUP
     this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.3);
     this.state = 'ROSTER';
     this.pHealth = 100; this.eHealth = 100;
@@ -110,7 +106,7 @@ class BrawlerScene extends Phaser.Scene {
     this.space = this.input.keyboard.addKey('SPACE');
   }
 
- startBattle(idx) {
+  startBattle(idx) {
     this.state = 'BATTLE';
     this.rosterGroup.clear(true, true);
     if(this.infoBox) this.infoBox.destroy(); 
@@ -121,57 +117,21 @@ class BrawlerScene extends Phaser.Scene {
     this.platforms.add(this.add.rectangle(150, 280, 120, 10, 0xFFD700));
     this.platforms.add(this.add.rectangle(650, 280, 120, 10, 0xFFD700));
 
-    // PLAYER: Forces an animated sprite from the master sheet
+    // PLAYER Setup
     this.player = this.physics.add.sprite(150, 200, 'brawlers_master');
     this.player.setOrigin(0.5, 1); 
     this.player.setDisplaySize(120, 120);
     this.player.setCollideWorldBounds(true);
 
-    // BETA RANDOMIZER: Pick either Ganesha (0) or Green Lion (40) for the player
     const playerRoll = Phaser.Math.Between(0, 1) === 0 ? 'ganesha_idle' : 'green_lion_idle';
     this.player.play(playerRoll);
 
-    // ENEMY: Always picks the other one or a random one to fight
+    // ENEMY Setup
     this.enemy = this.physics.add.sprite(650, 200, 'brawlers_master');
     this.enemy.setOrigin(0.5, 1);
     this.enemy.setDisplaySize(120, 120).setCollideWorldBounds(true).setTint(0xffaaaa);
-    
     const enemyRoll = playerRoll === 'ganesha_idle' ? 'green_lion_idle' : 'ganesha_idle';
     this.enemy.play(enemyRoll);
-
-    this.physics.add.collider([this.player, this.enemy], this.platforms);
-
-    // Health Bars
-    this.pBar = this.add.rectangle(20, 40, 200, 15, 0x00ff00).setOrigin(0);
-    this.eBar = this.add.rectangle(580, 40, 200, 15, 0xff0000).setOrigin(0);
-
-    // Re-bind overlaps for the new animated sprites
-    this.physics.add.overlap(this.projectiles, this.enemy, (en, pr) => {
-        pr.destroy(); this.eHealth -= 10;
-        this.aiAggro += 0.25;
-        this.cameras.main.shake(150, 0.01);
-        if(this.eHealth <= 0) this.triggerWin();
-    });
-
-    this.physics.add.overlap(this.enemyProjectiles, this.player, (pl, pr) => {
-        pr.destroy(); this.pHealth -= 5;
-        this.player.setTint(0xff0000);
-        this.time.delayedCall(100, () => this.player.clearTint());
-    });
-
-    this.enemyEvent = this.time.addEvent({ delay: 1000, callback: this.enemyAttack, callbackScope: this, loop: true });
-    if (this.sys.game.device.input.touch) this.createMobileControls();
-  }
-    // Player Animation Selection
-    this.player = this.physics.add.sprite(150, 200, 'brawlers_master');
-    this.player.setOrigin(0.5).setDisplaySize(96, 96).setCollideWorldBounds(true);
-    const pAnim = CHARACTERS[idx].key === 'juni' ? 'ganesha_idle' : 'green_lion_idle';
-    this.player.play(pAnim);
-
-    // Enemy Animation Selection
-    this.enemy = this.physics.add.sprite(650, 200, 'brawlers_master');
-    this.enemy.setDisplaySize(96, 96).setCollideWorldBounds(true).setTint(0xffaaaa);
-    this.enemy.play('green_lion_idle');
 
     this.physics.add.collider([this.player, this.enemy], this.platforms);
 
