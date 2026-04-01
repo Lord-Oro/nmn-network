@@ -19,25 +19,40 @@ const config = {
 };
 
 const game = new Phaser.Game(config);
-let player, enemy, cursors, space, keyX, pHealth=100, eHealth=100, pBar, eBar, jumpCount=0;
+let player, enemy, cursors, space, pHealth=100, eHealth=100, pBar, eBar, jumpCount=0;
 let gameState = 'TITLE', selectedFrame = 0;
 
 function preload() {
-    // UPDATED PATHS TO MATCH YOUR REPOSITORY
+    // FORCE PATHS TO YOUR GITHUB REPO
+    this.load.setBaseURL('https://Lord-Oro.github.io/nmn-network/');
+    
     this.load.image('bg', 'brawler/forest_bg.jpg'); 
     this.load.spritesheet('elephants', 'brawler/hero-sheet.png', { frameWidth: 28, frameHeight: 52 });
     
-    this.load.image('p_pyro', 'brawler/pyro_beta.jpg');
-    this.load.image('p_juni', 'brawler/juni_beta.jpg');
-    this.load.image('p_olydia', 'brawler/olydia_beta.jpg');
-    this.load.image('p_helios', 'brawler/helios_beta.jpg');
-    this.load.image('p_wanderer', 'brawler/wanderer_beta.jpg');
-    this.load.image('p_orid', 'brawler/orid_beta.jpg');
+    // Character Portraits
+    const scouts = ['pyro', 'juni', 'olydia', 'helios', 'wanderer', 'orid'];
+    scouts.forEach(s => this.load.image(`p_${s}`, `brawler/${s}_beta.jpg`));
 }
 
 function create() {
+    // Background with more intensity
     this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.6);
-    this.titleTxt = this.add.text(400, 200, 'NMN: THE FORGE\n\n[ CLICK TO START ]', { font: '24px Courier', fill: '#FFD700', align: 'center' }).setOrigin(0.5).setInteractive();
+    
+    // Branding & Title
+    this.titleTxt = this.add.text(400, 180, 'NONSENSICAL BRAWLER\n[SECTOR 1: THE FORGE]\n\nCLICK TO ENGAGE', { 
+        font: '24px Courier', fill: '#FFD700', align: 'center', stroke: '#000', strokeThickness: 4
+    }).setOrigin(0.5).setInteractive();
+
+    // Universal Book Link Button
+    let loreLink = this.add.text(400, 340, '📖 READ JUNI THE IMMORTAL (GLOBAL)', { 
+        font: '16px Courier', fill: '#000', backgroundColor: '#FFD700', padding: {x:10, y:5} 
+    }).setOrigin(0.5).setInteractive();
+    loreLink.on('pointerdown', () => window.open('https://books2read.com/u/4EOxZ0', '_blank'));
+
+    // Donor Ticker
+    this.donorTxt = this.add.text(800, 380, "LATEST EXCAVATORS: THANK YOU FOR JOINING THE MADNESS! | SECTOR 1 ALPHA LIVE | JUNI THE IMMORTAL PUBLISHED WORLDWIDE!", {
+        font: '14px Courier', fill: '#FFD700'
+    });
 
     this.roster = this.add.group();
     const rosterData = [
@@ -50,10 +65,17 @@ function create() {
     ];
 
     rosterData.forEach(data => {
-        let img = this.add.image(data.x, 200, data.key).setDisplaySize(90, 90).setInteractive();
+        let box = this.add.rectangle(data.x, 200, 80, 80, 0x1a1510).setStrokeStyle(2, 0xFFD700).setInteractive();
+        let img = this.add.image(data.x, 200, data.key).setDisplaySize(75, 75);
         this.add.text(data.x, 260, data.label, {font:'10px Courier'}).setOrigin(0.5);
-        img.on('pointerdown', () => { if(data.f <= 20) { selectedFrame = data.f; startBattle(this); } });
-        this.roster.add(img);
+        
+        box.on('pointerdown', () => { 
+            if(data.f <= 20) { 
+                selectedFrame = data.f; 
+                startBattle(this); 
+            } 
+        });
+        this.roster.addMultiple([box, img]);
     });
     this.roster.setVisible(false);
 
@@ -68,11 +90,21 @@ function create() {
     eBar = this.add.rectangle(580, 30, 200, 10, 0x00ff00).setOrigin(0).setVisible(false);
 
     this.projectiles = this.physics.add.group();
-    this.physics.add.overlap(this.projectiles, enemy, (en, pr) => { pr.destroy(); eHealth -= 10; en.setTint(0xff0000); this.time.delayedCall(100, ()=>en.clearTint()); });
+    this.physics.add.overlap(this.projectiles, enemy, (en, pr) => { 
+        pr.destroy(); 
+        eHealth -= 10; 
+        en.setTint(0xff0000); 
+        this.cameras.main.shake(100, 0.005); // SCREEN SHAKE ON HIT
+        this.time.delayedCall(100, ()=>en.clearTint()); 
+    });
 
     cursors = this.input.keyboard.createCursorKeys();
     space = this.input.keyboard.addKey('SPACE');
-    this.titleTxt.on('pointerdown', () => { this.titleTxt.setVisible(false); this.roster.setVisible(true); });
+    this.titleTxt.on('pointerdown', () => { 
+        this.titleTxt.setVisible(false); 
+        loreLink.setVisible(false);
+        this.roster.setVisible(true); 
+    });
 }
 
 function startBattle(scene) {
@@ -83,13 +115,19 @@ function startBattle(scene) {
 }
 
 function update() {
+    this.donorTxt.x -= 2;
+    if (this.donorTxt.x < -1500) this.donorTxt.x = 800;
+
     if (gameState !== 'BATTLE') return;
     if (cursors.left.isDown) { player.setVelocityX(-220); player.setFlipX(true); }
     else if (cursors.right.isDown) { player.setVelocityX(220); player.setFlipX(false); }
     else player.setVelocityX(0);
 
     if (player.body.touching.down) jumpCount = 0;
-    if (Phaser.Input.Keyboard.JustDown(cursors.up) && jumpCount < 2) { player.setVelocityY(-520); jumpCount++; }
+    if (Phaser.Input.Keyboard.JustDown(cursors.up) && jumpCount < 2) { 
+        player.setVelocityY(-520); 
+        jumpCount++; 
+    }
 
     if (Phaser.Input.Keyboard.JustDown(space)) {
         let b = this.add.rectangle(player.x, player.y, 20, 10, 0xFFD700);
