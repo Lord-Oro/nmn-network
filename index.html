@@ -235,7 +235,63 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 .pillar h3{font-family:var(--font-display);font-size:1rem;color:var(--cream);margin-bottom:.3rem}
 .pillar p{font-size:.72rem;color:var(--faint);line-height:1.7}
 
-/* WORKS */
+/* BRAWLER HIGH CHAMBER - Featured Guardian Slot */
+.brawler-featured-wrap {
+  width: 92%;
+  max-width: 900px;
+  margin: 2rem auto 4rem;
+  position: relative;
+  border: 3px solid #FFD700;
+  background: #000;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: block;
+  text-decoration: none;
+}
+
+.brawler-featured-wrap:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
+  border-color: #fff;
+}
+
+.brawler-promo-img {
+  width: 100%;
+  display: block;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  image-rendering: pixelated;
+  opacity: 0.85;
+  transition: opacity 0.3s;
+}
+
+.brawler-featured-wrap:hover .brawler-promo-img {
+  opacity: 1;
+}
+
+.brawler-overlay-text {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 100%);
+  padding: 1.5rem;
+  font-family: 'Press Start 2P', cursive;
+  color: #FFD700;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.brawler-tag {
+  font-size: 0.4rem;
+  color: #8B6914;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+    
+    /* WORKS */
 /* ── WORKS GRID — Painterly Book Cards ── */
 .works-grid{
   display:grid;
