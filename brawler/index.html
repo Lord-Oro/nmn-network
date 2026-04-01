@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>NMN: THE FORGE</title>
+
+  <link rel="icon" type="image/png" href="logo.png">
+
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -54,7 +57,7 @@ class BrawlerScene extends Phaser.Scene {
     this.state = 'ROSTER';
     this.pHealth = 100; this.eHealth = 100;
     this.lastSelectedIdx = -1;
-    this.aiAggro = 1.0; // Multiplier for difficulty
+    this.aiAggro = 1.2; 
 
     this.infoBox = this.add.rectangle(400, 55, 750, 70, 0x0a0a0a).setAlpha(0.9).setStrokeStyle(2, 0xFFD700);
     this.infoTxt = this.add.text(400, 55, 'TAP SCOUT TO VIEW INTEL\nTAP AGAIN TO ENTER THE FORGE', { 
@@ -110,7 +113,7 @@ class BrawlerScene extends Phaser.Scene {
 
     this.physics.add.overlap(this.projectiles, this.enemy, (en, pr) => {
         pr.destroy(); this.eHealth -= 10;
-        this.aiAggro += 0.15; // BECOMES MORE AGGRESSIVE
+        this.aiAggro += 0.2; // FASTER GROWTH
         this.cameras.main.shake(150, 0.01);
         if(this.eHealth <= 0) this.triggerWin();
     });
@@ -121,7 +124,7 @@ class BrawlerScene extends Phaser.Scene {
         this.time.delayedCall(100, () => this.player.clearTint());
     });
 
-    this.enemyEvent = this.time.addEvent({ delay: 1500, callback: this.enemyAttack, callbackScope: this, loop: true });
+    this.enemyEvent = this.time.addEvent({ delay: 1200, callback: this.enemyAttack, callbackScope: this, loop: true });
     if (this.sys.game.device.input.touch) this.createMobileControls();
   }
 
@@ -140,14 +143,15 @@ class BrawlerScene extends Phaser.Scene {
     let b = this.add.rectangle(origin.x, origin.y, 20, 10, color);
     group.add(b); this.physics.add.existing(b);
     b.body.setAllowGravity(false);
-    this.physics.moveToObject(b, target, 550 * this.aiAggro);
+    this.physics.moveToObject(b, target, 600 * this.aiAggro);
   }
 
   enemyAttack() {
     if (this.state !== 'BATTLE' || !this.enemy) return;
     this.shoot(this.enemy, this.player, this.enemyProjectiles, 0xFF0000);
-    this.enemyEvent.delay = Math.max(500, 1500 / this.aiAggro); // SPEED UP ATTACKS
-    if (Phaser.Math.Between(0, 10) > 4 && this.enemy.body.blocked.down) this.enemy.setVelocityY(-600);
+    this.enemyEvent.delay = Math.max(400, 1200 / this.aiAggro); 
+    // AGGRESSIVE JUMPING
+    if (Phaser.Math.Between(0, 10) > 3 && this.enemy.body.blocked.down) this.enemy.setVelocityY(-600);
   }
 
   triggerWin() {
@@ -160,9 +164,11 @@ class BrawlerScene extends Phaser.Scene {
     this.pBar.width = Math.max(0, this.pHealth * 2);
     this.eBar.width = Math.max(0, this.eHealth * 2);
 
-    // AI MOVEMENT LOGIC (Aggressive Hunter)
+    // AI STALK LOGIC
     const dist = this.player.x - this.enemy.x;
-    if (Math.abs(dist) > 50) this.enemy.setVelocityX(dist > 0 ? 150 * this.aiAggro : -150 * this.aiAggro);
+    if (Math.abs(dist) > 40) {
+        this.enemy.setVelocityX(dist > 0 ? 180 * this.aiAggro : -180 * this.aiAggro);
+    }
 
     let pointer = this.input.activePointer;
     if (pointer.isDown && pointer.x < 300) {
