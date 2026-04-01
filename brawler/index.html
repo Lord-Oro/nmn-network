@@ -34,18 +34,17 @@
 <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
 <script>
 const CHARACTERS = [
-  { key: 'pyro',     file: 'pyro_beta.jpg',     price: 'FREE', tier: 'Starter' },
-  { key: 'juni',     file: 'juni_beta.jpg',     price: 'FREE', tier: 'Starter' },
-  { key: 'wanderer', file: 'wanderer_beta.jpg', price: '0.99$', tier: 'Copper' },
-  { key: 'helios',   file: 'helios_beta.jpg',   price: '2.99$', tier: 'Archive' },
-  { key: 'olydia',   file: 'olydia_beta.jpg',   price: '5.00$', tier: 'Elite' },
-  { key: 'orid',     file: 'orid_beta.jpg',     price: '10.00$', tier: 'Silver' }
+  { key: 'pyro',     file: 'pyro_beta.jpg',     price: 'FREE', tier: 'Starter', desc: 'The Ember Scout. Speed over armor.' },
+  { key: 'juni',     file: 'juni_beta.jpg',     price: 'FREE', tier: 'Starter', desc: 'The Immortal. Balanced core strength.' },
+  { key: 'wanderer', file: 'wanderer_beta.jpg', price: '0.99$', tier: 'Copper', desc: 'The Stalker. Unlocks via story.' },
+  { key: 'helios',   file: 'helios_beta.jpg',   price: '2.99$', tier: 'Archive', desc: 'The Sun King. Lore master.' },
+  { key: 'olydia',   file: 'olydia_beta.jpg',   price: '5.00$', tier: 'Patreon', desc: 'Obsidian Blade. Elite scout.' },
+  { key: 'orid',     file: 'orid_beta.jpg',     price: '10.00$', tier: 'Silver', desc: 'The Oathbreaker. High weight.' }
 ];
 
 class BrawlerScene extends Phaser.Scene {
   constructor() { super('BrawlerScene'); }
   preload() {
-    let loadTxt = this.add.text(400, 200, 'LOADING NMN ENGINE...', { font: '14px "Press Start 2P"', fill: '#FFD700' }).setOrigin(0.5);
     this.load.image('bg', 'forest_bg.jpg');
     CHARACTERS.forEach(c => this.load.image(c.key, c.file));
   }
@@ -54,18 +53,34 @@ class BrawlerScene extends Phaser.Scene {
     this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.3);
     this.state = 'ROSTER';
     this.pHealth = 100; this.eHealth = 100;
-    
+    this.lastSelectedIdx = -1;
+
+    // OBSIDIAN INFO BOX
+    this.infoBox = this.add.rectangle(400, 55, 750, 70, 0x0a0a0a).setAlpha(0.9).setStrokeStyle(2, 0xFFD700);
+    this.infoTxt = this.add.text(400, 55, 'TAP SCOUT TO VIEW INTEL\nTAP AGAIN TO ENTER THE FORGE', { 
+        font: '12px "Press Start 2P"', fill: '#FFD700', align: 'center' 
+    }).setOrigin(0.5);
+
     this.rosterGroup = this.add.group();
     CHARACTERS.forEach((c, i) => {
       let x = 100 + (i * 120);
-      let box = this.add.rectangle(x, 210, 105, 160, 0x1a1510).setStrokeStyle(1, 0xFFD700).setInteractive();
-      let img = this.add.image(x, 195, c.key).setDisplaySize(90, 90);
-      let name = this.add.text(x, 260, c.key.toUpperCase(), { font: '10px Courier', fill: '#FFD700' }).setOrigin(0.5);
-      let cost = this.add.text(x, 275, c.price, { font: '9px Courier', fill: '#FFF' }).setOrigin(0.5);
+      let box = this.add.rectangle(x, 230, 105, 160, 0x1a1510).setStrokeStyle(1, 0xFFD700).setInteractive();
+      let img = this.add.image(x, 210, c.key).setDisplaySize(90, 90);
+      let name = this.add.text(x, 280, c.key.toUpperCase(), { font: '10px Courier', fill: '#FFD700' }).setOrigin(0.5);
+      let cost = this.add.text(x, 295, c.price, { font: '9px Courier', fill: '#FFF' }).setOrigin(0.5);
       
       box.on('pointerdown', () => {
-        if(c.price === 'FREE') this.startBattle(i);
-        else window.open('https://books2read.com/u/4EOxZ0', '_blank');
+        if (this.lastSelectedIdx === i) {
+          // SECOND CLICK - LOCK IN
+          if(c.price === 'FREE') this.startBattle(i);
+          else window.open('https://books2read.com/u/4EOxZ0', '_blank');
+        } else {
+          // FIRST CLICK - DISPLAY INFO
+          this.lastSelectedIdx = i;
+          this.rosterGroup.getChildren().forEach(child => { if(child.type === 'Rectangle') child.setStrokeStyle(1, 0xFFD700); });
+          box.setStrokeStyle(4, 0xFFFFFF);
+          this.infoTxt.setText(`${c.key.toUpperCase()} Intel: ${c.tier}\n${c.desc}`);
+        }
       });
       this.rosterGroup.addMultiple([box, img, name, cost]);
     });
@@ -79,6 +94,7 @@ class BrawlerScene extends Phaser.Scene {
   startBattle(idx) {
     this.state = 'BATTLE';
     this.rosterGroup.clear(true, true);
+    this.infoBox.destroy(); this.infoTxt.destroy();
 
     this.platforms = this.physics.add.staticGroup();
     this.platforms.add(this.add.rectangle(400, 395, 800, 10, 0x000).setAlpha(0));
@@ -102,13 +118,16 @@ class BrawlerScene extends Phaser.Scene {
 
     this.physics.add.overlap(this.enemyProjectiles, this.player, (pl, pr) => {
         pr.destroy(); this.pHealth -= 5;
-        this.cameras.main.shake(80, 0.003);
         this.player.setTint(0xff0000);
         this.time.delayedCall(100, () => this.player.clearTint());
     });
 
     this.time.addEvent({ delay: 1500, callback: this.enemyAttack, callbackScope: this, loop: true });
-    this.createMobileControls();
+    
+    // Only show mobile buttons if it's a touch device
+    if (this.sys.game.device.input.touch) {
+        this.createMobileControls();
+    }
   }
 
   createMobileControls() {
@@ -132,6 +151,7 @@ class BrawlerScene extends Phaser.Scene {
   enemyAttack() {
     if (this.state !== 'BATTLE' || !this.enemy) return;
     this.shoot(this.enemy, this.player, this.enemyProjectiles, 0xFF0000);
+    if (Phaser.Math.Between(0, 10) > 6 && this.enemy.body.blocked.down) this.enemy.setVelocityY(-550);
   }
 
   triggerWin() {
@@ -146,10 +166,10 @@ class BrawlerScene extends Phaser.Scene {
 
     let pointer = this.input.activePointer;
     if (pointer.isDown && pointer.x < 300) {
-        this.joyStick.setPosition(pointer.x, pointer.y).setVisible(true);
+        if(this.joyStick) this.joyStick.setPosition(pointer.x, pointer.y);
         this.player.setVelocityX(pointer.x < 100 ? -250 : 250);
     } else {
-        if(this.joyStick) this.joyStick.setPosition(100, 300).setVisible(true);
+        if(this.joyStick) this.joyStick.setPosition(100, 300);
         if (!this.cursors.left.isDown && !this.cursors.right.isDown) this.player.setVelocityX(0);
     }
 
