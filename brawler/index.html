@@ -1,152 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
-    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-P5WL9XNDY8');</script>
-    <style>body{margin:0;background:#000;display:flex;justify-content:center;align-items:center;height:100vh;overflow:hidden;font-family:monospace;color:#FFD700;}</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nonsensical Brawler — NMN</title>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-P5WL9XNDY8');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+  <style>
+    body { margin: 0; background: #0a0a0a; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; font-family: 'Share Tech Mono', monospace; color: #E8E0D0; }
+    #game-wrapper { position: relative; width: 800px; }
+    #game-title { font-family: 'Press Start 2P', cursive; font-size: 14px; color: #FFD700; text-align: center; margin-bottom: 10px; }
+    canvas { border: 2px solid #FFD700; image-rendering: pixelated; }
+    #victory-overlay { display: none; position: absolute; top: 0; left: 0; width: 800px; height: 400px; background: rgba(0,0,0,0.85); flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
+    #victory-overlay.active { display: flex; }
+    #claim-btn { font-family: 'Press Start 2P', cursive; background: #FFD700; padding: 15px 25px; border: none; cursor: pointer; margin-top: 20px; }
+  </style>
 </head>
 <body>
-<div id="game-container"></div>
-<script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
+
+<div id="game-wrapper">
+  <div id="game-title">⚔ NONSENSICAL BRAWLER: SECTOR 1 ⚔</div>
+  <div id="phaser-game">
+    <div id="victory-overlay">
+      <h2 style="font-family:'Press Start 2P'; color:#FFD700;">SECTOR CLEARED</h2>
+      <button id="claim-btn" onclick="window.open('https://books2read.com/u/4EOxZ0', '_blank')">📖 READ THE LEGEND</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+
 <script>
-const config = {
-    type: Phaser.AUTO,
-    width: 800, height: 400,
-    parent: 'game-container',
-    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    physics: { default: 'arcade', arcade: { gravity: { y: 1200 } } },
-    scene: { preload: preload, create: create, update: update }
-};
-
-const game = new Phaser.Game(config);
-let player, enemy, cursors, space, pHealth=100, eHealth=100, pBar, eBar, jumpCount=0;
-let gameState = 'TITLE', selectedFrame = 0;
-
-const ROSTER_DATA = [
-    { key: 'p_pyro',     label: 'PYRO',     f: 0 },
-    { key: 'p_juni',     label: 'JUNI',     f: 20 },
-    { key: 'p_olydia',   label: 'OLYDIA',   f: 40 },
-    { key: 'p_helios',   label: 'HELIOS',   f: 60 },
-    { key: 'p_wanderer', label: 'WANDERER', f: 80 },
-    { key: 'p_orid',     label: 'ORID',     f: 100 },
+// EXACT FILENAMES FROM YOUR GITHUB SCREENSHOT
+const CHARACTERS = [
+  { key: 'pyro',     file: 'pyro_beta.jpg',     f: 0,   color: '#FF4400' },
+  { key: 'juni',     file: 'juni_beta.jpg',     f: 20,  color: '#44BB44' },
+  { key: 'olydia',   file: 'olydia_beta.jpg',   f: 40,  color: '#9933CC' },
+  { key: 'helios',   file: 'helios_beta.jpg',   f: 60,  color: '#FFD700' },
+  { key: 'wanderer', file: 'wanderer_beta.jpg', f: 80,  color: '#336699' },
+  { key: 'orid',     file: 'orid_beta.jpg',     f: 100, color: '#884422' }
 ];
 
-function preload() {
-    // BASE URL FIX: Points to your repo root
-    this.load.setBaseURL('https://Lord-Oro.github.io/nmn-network/');
+class BrawlerScene extends Phaser.Scene {
+  constructor() { super('BrawlerScene'); }
 
-    // ASSET LOADING - Matches your GitHub filenames exactly
-    this.load.image('bg', 'brawler/forest_bg.jpg'); 
-    this.load.spritesheet('elephants', 'brawler/hero-sheet.png', { frameWidth: 28, frameHeight: 52 });
+  preload() {
+    // No setBaseURL because index.html and assets are in the same folder (/brawler/)
+    this.load.image('bg', 'forest_bg.jpg');
+    this.load.spritesheet('hero_sheet', 'hero-sheet.png', { frameWidth: 28, frameHeight: 52 });
+    CHARACTERS.forEach(c => this.load.image(c.key, c.file));
+  }
+
+  create() {
+    this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.5);
+    this.state = 'ROSTER';
+    this.projectiles = this.physics.add.group();
+    this.enemyProjectiles = this.physics.add.group();
     
-    // Load individual beta portraits
-    const scouts = ['pyro', 'juni', 'olydia', 'helios', 'wanderer', 'orid'];
-    scouts.forEach(s => this.load.image(`p_${s}`, `brawler/${s}_beta.jpg`));
-}
-
-function create() {
-    this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.6);
-    
-    // Title UI
-    this.titleTxt = this.add.text(400, 150, 'NONSENSICAL BRAWLER\n[SECTOR 1: THE FORGE]', { 
-        font: '28px Courier', fill: '#FFD700', align: 'center', stroke: '#000', strokeThickness: 4 
-    }).setOrigin(0.5).setInteractive();
-
-    this.loreLink = this.add.text(400, 360, '📖 READ JUNI THE IMMORTAL (GLOBAL)', { 
-        font: '16px Courier', fill: '#000', backgroundColor: '#FFD700', padding: {x:10, y:5} 
-    }).setOrigin(0.5).setInteractive();
-    this.loreLink.on('pointerdown', () => window.open('https://books2read.com/u/4EOxZ0', '_blank'));
-
-    this.donorTxt = this.add.text(800, 385, "LATEST EXCAVATORS: THANK YOU FOR JOINING THE MADNESS! | JUNI THE IMMORTAL IS LIVE WORLDWIDE!", {
-        font: '14px Courier', fill: '#FFD700'
+    // BUILD ROSTER
+    this.rosterGroup = this.add.group();
+    CHARACTERS.forEach((c, i) => {
+      let x = 100 + (i * 120);
+      let img = this.add.image(x, 200, c.key).setDisplaySize(90, 90).setInteractive();
+      let txt = this.add.text(x, 260, c.key.toUpperCase(), { font: '10px Courier', fill: c.color }).setOrigin(0.5);
+      img.on('pointerdown', () => this.startBattle(i));
+      this.rosterGroup.addMultiple([img, txt]);
     });
 
-    // --- ROSTER UI SYSTEM ---
-    this.roster = this.add.group();
-    ROSTER_DATA.forEach((char, i) => {
-        let xPos = 110 + (i * 115);
-        let box = this.add.rectangle(xPos, 220, 85, 85, 0x1a1510).setStrokeStyle(2, 0xFFD700).setInteractive();
-        let img = this.add.image(xPos, 220, char.key).setDisplaySize(80, 80);
-        let lbl = this.add.text(xPos, 275, char.label, {font:'10px Courier', fill:'#FFD700'}).setOrigin(0.5);
-        
-        box.on('pointerover', () => box.setStrokeStyle(4, 0xFFFFFF));
-        box.on('pointerout', () => box.setStrokeStyle(2, 0xFFD700));
-        
-        box.on('pointerdown', () => {
-            selectedFrame = char.f;
-            startBattle(this);
-        });
-        this.roster.addMultiple([box, img, lbl]);
-    });
-    this.roster.setVisible(false);
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.space = this.input.keyboard.addKey('SPACE');
+  }
 
-    // Physics Assets
+  startBattle(idx) {
+    this.state = 'BATTLE';
+    this.rosterGroup.setVisible(false);
+    
+    // Player & Enemy setup
+    this.player = this.physics.add.sprite(150, 300, 'elephants', CHARACTERS[idx].f).setScale(2.5).setCollideWorldBounds(true);
+    let eIdx = (idx + 1) % 6;
+    this.enemy = this.physics.add.sprite(650, 300, 'elephants', CHARACTERS[eIdx].f).setScale(2.5).setFlipX(true);
+    
     let ground = this.add.rectangle(400, 390, 800, 20, 0x000).setAlpha(0);
     this.physics.add.existing(ground, true);
+    this.physics.add.collider([this.player, this.enemy], ground);
+
+    // Hit Logic
+    this.physics.add.overlap(this.projectiles, this.enemy, (en, pr) => {
+        pr.destroy();
+        this.cameras.main.shake(150, 0.01);
+        en.setTint(0xff0000);
+        this.time.delayedCall(100, () => { en.clearTint(); this.triggerWin(); });
+    });
+  }
+
+  triggerWin() {
+    this.state = 'WIN';
+    document.getElementById('victory-overlay').classList.add('active');
+  }
+
+  update() {
+    if (this.state !== 'BATTLE') return;
     
-    player = this.physics.add.sprite(150, 300, 'elephants', 0).setScale(2.5).setVisible(false).setCollideWorldBounds(true);
-    enemy = this.physics.add.sprite(650, 300, 'elephants', 20).setScale(2.5).setVisible(false).setFlipX(true);
-    this.physics.add.collider(player, ground);
-    this.physics.add.collider(enemy, ground);
+    if (this.cursors.left.isDown) { this.player.setVelocityX(-220); this.player.setFlipX(true); }
+    else if (this.cursors.right.isDown) { this.player.setVelocityX(220); this.player.setFlipX(false); }
+    else this.player.setVelocityX(0);
 
-    pBar = this.add.rectangle(20, 30, 200, 10, 0x00ff00).setOrigin(0).setVisible(false);
-    eBar = this.add.rectangle(580, 30, 200, 10, 0x00ff00).setOrigin(0).setVisible(false);
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.player.body.touching.down) this.player.setVelocityY(-500);
 
-    this.projectiles = this.physics.add.group();
-    this.physics.add.overlap(this.projectiles, enemy, (en, pr) => { 
-        pr.destroy(); eHealth -= 10; en.setTint(0xff0000); 
-        this.cameras.main.shake(150, 0.008); // CRUNCHY IMPACT SHAKE
-        this.time.delayedCall(100, ()=>en.clearTint()); 
-    });
-
-    cursors = this.input.keyboard.createCursorKeys();
-    space = this.input.keyboard.addKey('SPACE');
-    this.titleTxt.on('pointerdown', () => {
-        this.titleTxt.setVisible(false);
-        this.roster.setVisible(true);
-    });
-}
-
-function startBattle(scene) {
-    gameState = 'BATTLE';
-    scene.roster.setVisible(false);
-    scene.loreLink.setVisible(false);
-    player.setFrame(selectedFrame).setVisible(true);
-    enemy.setVisible(true); pBar.setVisible(true); eBar.setVisible(true);
-}
-
-function update() {
-    this.donorTxt.x -= 2;
-    if (this.donorTxt.x < -1800) this.donorTxt.x = 800;
-
-    if (gameState !== 'BATTLE') return;
-
-    if (cursors.left.isDown) { player.setVelocityX(-220); player.setFlipX(true); }
-    else if (cursors.right.isDown) { player.setVelocityX(220); player.setFlipX(false); }
-    else player.setVelocityX(0);
-
-    if (player.body.touching.down) jumpCount = 0;
-    if (Phaser.Input.Keyboard.JustDown(cursors.up) && jumpCount < 2) { 
-        player.setVelocityY(-520); 
-        jumpCount++; 
-    }
-
-    if (Phaser.Input.Keyboard.JustDown(space)) {
-        let b = this.add.rectangle(player.x, player.y, 20, 10, 0xFFD700);
+    if (Phaser.Input.Keyboard.JustDown(this.space)) {
+        let b = this.add.rectangle(this.player.x, this.player.y, 20, 10, 0xFFD700);
         this.projectiles.add(b); this.physics.add.existing(b);
-        b.body.setAllowGravity(false); b.body.setVelocityX(player.flipX ? -600 : 600);
-        this.cameras.main.shake(100, 0.003); // LIGHT RECOIL SHAKE
+        b.body.setAllowGravity(false); b.body.setVelocityX(this.player.flipX ? -600 : 600);
+        this.cameras.main.shake(100, 0.003);
     }
-
-    pBar.width = Math.max(0, pHealth * 2);
-    eBar.width = Math.max(0, eHealth * 2);
-
-    if (eHealth <= 0) {
-        gameState = 'WIN';
-        this.add.text(400, 200, 'SECTOR CLEARED', { font: '40px Courier', fill: '#FFD700' }).setOrigin(0.5);
-        this.loreLink.setVisible(true).setText('📖 CLAIM REWARD: READ THE LEGEND');
-    }
+  }
 }
+
+const config = { type: Phaser.AUTO, width: 800, height: 400, parent: 'phaser-game', physics: { default: 'arcade', arcade: { gravity: { y: 1000 } } }, scene: BrawlerScene };
+new Phaser.Game(config);
 </script>
 </body>
 </html>
