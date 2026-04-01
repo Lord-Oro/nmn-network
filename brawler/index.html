@@ -81,16 +81,18 @@ class BrawlerScene extends Phaser.Scene {
     this.space = this.input.keyboard.addKey('SPACE');
   }
 
-  startBattle(idx) {
+startBattle(idx) {
     this.state = 'BATTLE';
     this.rosterGroup.setVisible(false);
     
-    // Player & Enemy setup
-    this.player = this.physics.add.sprite(150, 300, 'elephants', CHARACTERS[idx].f).setScale(2.5).setCollideWorldBounds(true);
-    let eIdx = (idx + 1) % 6;
-    this.enemy = this.physics.add.sprite(650, 300, 'elephants', CHARACTERS[eIdx].f).setScale(2.5).setFlipX(true);
+    // Player & Enemy setup - CHANGED 'elephants' TO 'hero_sheet' TO MATCH PRELOAD
+    this.player = this.physics.add.sprite(150, 300, 'hero_sheet', CHARACTERS[idx].f).setScale(2.5).setCollideWorldBounds(true);
     
-    let ground = this.add.rectangle(400, 390, 800, 20, 0x000).setAlpha(0);
+    let eIdx = (idx + 1) % 6;
+    this.enemy = this.physics.add.sprite(650, 300, 'hero_sheet', CHARACTERS[eIdx].f).setScale(2.5).setFlipX(true);
+    
+    // Ground Setup - Static body ensures they stay on top
+    let ground = this.add.rectangle(400, 395, 800, 10, 0x000).setAlpha(0);
     this.physics.add.existing(ground, true);
     this.physics.add.collider([this.player, this.enemy], ground);
 
@@ -99,7 +101,8 @@ class BrawlerScene extends Phaser.Scene {
         pr.destroy();
         this.cameras.main.shake(150, 0.01);
         en.setTint(0xff0000);
-        this.time.delayedCall(100, () => { en.clearTint(); this.triggerWin(); });
+        // Victory triggers after a slight delay for visual impact
+        this.time.delayedCall(300, () => { en.clearTint(); this.triggerWin(); });
     });
   }
 
