@@ -14,18 +14,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
     body { margin: 0; background: #000; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; touch-action: none; }
-    #game-wrapper { position: relative; width: 100%; max-width: 800px; }
+    #game-wrapper { position: relative; width: 800px; height: 400px; }
     canvas { border: 2px solid #FFD700; image-rendering: pixelated; max-width: 100%; height: auto; }
     #victory-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
     #victory-overlay.active { display: flex; }
-    .btn { font-family: 'Press Start 2P', cursive; padding: 15px; border: none; cursor: pointer; margin-top: 10px; width: 80%; max-width: 320px; font-size: 10px; }
+    .btn { font-family: 'Press Start 2P', cursive; padding: 15px; border: none; cursor: pointer; margin-top: 10px; width: 280px; font-size: 10px; }
   </style>
 </head>
 <body>
 <div id="game-wrapper">
   <div id="phaser-game">
     <div id="victory-overlay">
-      <h2 style="font-family:'Press Start 2P'; color:#FFD700; font-size: 16px;">SECTOR CLEARED</h2>
+      <h2 style="font-family:'Press Start 2P'; color:#FFD700; font-size: 16px; text-align:center;">SECTOR CLEARED</h2>
       <button class="btn" style="background:#FFD700;" onclick="window.open('https://books2read.com/u/4EOxZ0', '_blank')">📖 READ THE LEGEND</button>
       <button class="btn" style="background:#333; color:#FFD700;" onclick="location.reload()">↺ RESTART</button>
     </div>
@@ -45,6 +45,7 @@ const CHARACTERS = [
 class BrawlerScene extends Phaser.Scene {
   constructor() { super('BrawlerScene'); }
   preload() {
+    let loadTxt = this.add.text(400, 200, 'LOADING NMN ENGINE...', { font: '14px "Press Start 2P"', fill: '#FFD700' }).setOrigin(0.5);
     this.load.image('bg', 'forest_bg.jpg');
     CHARACTERS.forEach(c => this.load.image(c.key, c.file));
   }
@@ -66,7 +67,6 @@ class BrawlerScene extends Phaser.Scene {
         if(c.price === 'FREE') this.startBattle(i);
         else window.open('https://books2read.com/u/4EOxZ0', '_blank');
       });
-      // Add all elements to group for clean removal
       this.rosterGroup.addMultiple([box, img, name, cost]);
     });
 
@@ -78,10 +78,10 @@ class BrawlerScene extends Phaser.Scene {
 
   startBattle(idx) {
     this.state = 'BATTLE';
-    this.rosterGroup.clear(true, true); // CLEARS NAMES AND IMAGES PERMANENTLY
+    this.rosterGroup.clear(true, true);
 
     this.platforms = this.physics.add.staticGroup();
-    this.platforms.add(this.add.rectangle(400, 395, 800, 10, 0xFFD700).setAlpha(0.2));
+    this.platforms.add(this.add.rectangle(400, 395, 800, 10, 0x000).setAlpha(0));
     this.platforms.add(this.add.rectangle(150, 280, 120, 10, 0xFFD700));
     this.platforms.add(this.add.rectangle(650, 280, 120, 10, 0xFFD700));
 
@@ -91,20 +91,18 @@ class BrawlerScene extends Phaser.Scene {
 
     this.physics.add.collider([this.player, this.enemy], this.platforms);
 
-    // HEALTH BARS
-    this.add.text(20, 20, "SCOUT", {font: '10px "Press Start 2P"', fill: '#FFD700'});
     this.pBar = this.add.rectangle(20, 40, 200, 15, 0x00ff00).setOrigin(0);
-    this.add.text(580, 20, "ENEMY", {font: '10px "Press Start 2P"', fill: '#FFD700'});
     this.eBar = this.add.rectangle(580, 40, 200, 15, 0xff0000).setOrigin(0);
 
     this.physics.add.overlap(this.projectiles, this.enemy, (en, pr) => {
         pr.destroy(); this.eHealth -= 10;
-        this.cameras.main.shake(150, 0.01);
+        this.cameras.main.shake(100, 0.005);
         if(this.eHealth <= 0) this.triggerWin();
     });
 
     this.physics.add.overlap(this.enemyProjectiles, this.player, (pl, pr) => {
         pr.destroy(); this.pHealth -= 5;
+        this.cameras.main.shake(80, 0.003);
         this.player.setTint(0xff0000);
         this.time.delayedCall(100, () => this.player.clearTint());
     });
@@ -114,14 +112,9 @@ class BrawlerScene extends Phaser.Scene {
   }
 
   createMobileControls() {
-    // LEFT JOYSTICK AREA (Thumb Rest)
-    this.joyBase = this.add.circle(100, 300, 50, 0xFFD700, 0.1).setInteractive();
     this.joyStick = this.add.circle(100, 300, 25, 0xFFD700, 0.3);
-    
-    // RIGHT COMBAT BUTTONS
     let jBtn = this.add.circle(620, 320, 40, 0xFFD700, 0.3).setInteractive();
     this.add.text(620, 320, 'UP', { font: 'bold 12px Arial', fill: '#FFF' }).setOrigin(0.5);
-    
     let fBtn = this.add.circle(720, 280, 45, 0xFF0000, 0.4).setInteractive();
     this.add.text(720, 280, 'FIRE', { font: 'bold 12px Arial', fill: '#FFF' }).setOrigin(0.5);
 
@@ -134,13 +127,11 @@ class BrawlerScene extends Phaser.Scene {
     group.add(b); this.physics.add.existing(b);
     b.body.setAllowGravity(false);
     this.physics.moveToObject(b, target, 550);
-    this.cameras.main.shake(100, 0.003);
   }
 
   enemyAttack() {
-    if (this.state !== 'BATTLE') return;
+    if (this.state !== 'BATTLE' || !this.enemy) return;
     this.shoot(this.enemy, this.player, this.enemyProjectiles, 0xFF0000);
-    if (Phaser.Math.Between(0, 10) > 6 && this.enemy.body.blocked.down) this.enemy.setVelocityY(-550);
   }
 
   triggerWin() {
@@ -150,17 +141,15 @@ class BrawlerScene extends Phaser.Scene {
 
   update() {
     if (this.state !== 'BATTLE') return;
-    
-    this.pBar.width = this.pHealth * 2;
-    this.eBar.width = this.eHealth * 2;
+    this.pBar.width = Math.max(0, this.pHealth * 2);
+    this.eBar.width = Math.max(0, this.eHealth * 2);
 
-    // JOYSTICK LOGIC
     let pointer = this.input.activePointer;
     if (pointer.isDown && pointer.x < 300) {
-        this.joyStick.setPosition(pointer.x, pointer.y);
+        this.joyStick.setPosition(pointer.x, pointer.y).setVisible(true);
         this.player.setVelocityX(pointer.x < 100 ? -250 : 250);
     } else {
-        this.joyStick.setPosition(100, 300);
+        if(this.joyStick) this.joyStick.setPosition(100, 300).setVisible(true);
         if (!this.cursors.left.isDown && !this.cursors.right.isDown) this.player.setVelocityX(0);
     }
 
@@ -171,12 +160,7 @@ class BrawlerScene extends Phaser.Scene {
   }
 }
 
-const config = { 
-  type: Phaser.AUTO, width: 800, height: 400, parent: 'phaser-game', 
-  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-  physics: { default: 'arcade', arcade: { gravity: { y: 1500 } } }, 
-  scene: BrawlerScene 
-};
+const config = { type: Phaser.AUTO, width: 800, height: 400, parent: 'phaser-game', scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH }, physics: { default: 'arcade', arcade: { gravity: { y: 1500 } } }, scene: BrawlerScene };
 new Phaser.Game(config);
 </script>
 </body>
