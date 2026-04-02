@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>NMN: THE FORGE</title>
+  <title>NMN: THE FORGE BETA V1.0</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
   <script>
@@ -34,76 +34,44 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
 <script>
-const CHARACTERS = [
-  { key: 'pyro',     file: 'pyro_beta.jpg',     price: 'FREE', tier: 'Starter', desc: 'Fast Ember Scout.' },
-  { key: 'juni',     file: 'juni_beta.jpg',     price: 'FREE', tier: 'Starter', desc: 'Balanced Immortal.' },
-  { key: 'wanderer', file: 'wanderer_beta.jpg', price: '0.99$', tier: 'Copper', desc: 'Shadow Stalker.' },
-  { key: 'helios',   file: 'helios_beta.jpg',   price: '2.99$', tier: 'Archive', desc: 'The Sun King.' },
-  { key: 'olydia',   file: 'olydia_beta.jpg',   price: '5.00$', tier: 'Patreon', desc: 'Elite Blade.' },
-  { key: 'orid',     file: 'orid_beta.jpg',     price: '10.00$', tier: 'Silver', desc: 'The Oathbreaker.' }
-];
-
 class BrawlerScene extends Phaser.Scene {
   constructor() { super('BrawlerScene'); }
 
   preload() {
+    console.log("Preloading Assets...");
     this.load.image('bg', 'forest_bg.jpg');
-    CHARACTERS.forEach(c => this.load.image(c.key, c.file));
-    this.load.spritesheet('brawlers_master', 'NMN_War_Beta_V1.png', { 
+    this.load.image('logo', 'logo.jpg');
+    
+    // THE PLUG: Using 'juni_beta.jpg' as a 128x128 placeholder sheet.
+    // We will slice it as 1 frame per image for now.
+    this.load.spritesheet('brawlers_master', 'juni_beta.jpg', { 
         frameWidth: 128, 
         frameHeight: 128 
     });
   }
 
   create() {
-    // 1. ANIMS SETUP
-    this.anims.create({
-        key: 'ganesha_idle',
-        frames: this.anims.generateFrameNumbers('brawlers_master', { start: 0, end: 3 }),
-        frameRate: 8, repeat: -1
-    });
-    this.anims.create({
-        key: 'green_lion_idle',
-        frames: this.anims.generateFrameNumbers('brawlers_master', { start: 40, end: 43 }),
-        frameRate: 8, repeat: -1
-    });
-
-    // 2. ROSTER UI SETUP
+    // Background and initial state
     this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.3);
     this.state = 'ROSTER';
     this.pHealth = 100; this.eHealth = 100;
-    this.lastSelectedIdx = -1;
-    this.aiAggro = 1.3;
 
-    this.infoBox = this.add.rectangle(400, 55, 750, 70, 0x0a0a0a).setAlpha(0.9).setStrokeStyle(2, 0xFFD700);
-    this.infoTxt = this.add.text(400, 55, 'TAP SCOUT TO VIEW INTEL\nTAP AGAIN TO ENTER THE FORGE', { 
-        font: '12px "Press Start 2P"', fill: '#FFD700', align: 'center' 
-    }).setOrigin(0.5);
+    // Roster UI (Simplest Free Four Setup)
+    const freeFour = ['JUNI', 'PYRO', 'GLITCH', 'STATIC'];
+    this.add.rectangle(400, 200, 750, 150, 0x1a1510).setStrokeStyle(2, 0xFFD700);
+    this.add.text(400, 150, 'SELECT YOUR BRAWLER', { font: '14px "Press Start 2P"', fill: '#FFD700' }).setOrigin(0.5);
 
     this.rosterGroup = this.add.group();
-    CHARACTERS.forEach((c, i) => {
-      let x = 100 + (i * 120);
-      let box = this.add.rectangle(x, 230, 105, 160, 0x1a1510).setStrokeStyle(1, 0xFFD700).setInteractive();
-      let img = this.add.image(x, 210, c.key).setDisplaySize(90, 90);
-      let name = this.add.text(x, 280, c.key.toUpperCase(), { font: '10px Courier', fill: '#FFD700' }).setOrigin(0.5);
-      let cost = this.add.text(x, 295, c.price, { font: '9px Courier', fill: '#FFF' }).setOrigin(0.5);
+    freeFour.forEach((name, i) => {
+      let x = 150 + (i * 170);
+      let box = this.add.rectangle(x, 230, 140, 60, 0x0a0a0a).setStrokeStyle(1, 0xFFD700).setInteractive();
+      let nameTxt = this.add.text(x, 230, name, { font: '12px Courier', fill: '#FFF' }).setOrigin(0.5);
       
-      box.on('pointerdown', () => {
-        if (this.lastSelectedIdx === i) {
-          if(c.price === 'FREE') this.startBattle(i);
-          else window.open('https://books2read.com/u/4EOxZ0', '_blank');
-        } else {
-          this.lastSelectedIdx = i;
-          this.rosterGroup.getChildren().forEach(child => { if(child.type === 'Rectangle') child.setStrokeStyle(1, 0xFFD700); });
-          box.setStrokeStyle(4, 0xFFFFFF);
-          this.infoTxt.setText(`${c.key.toUpperCase()}: ${c.tier}\n${c.desc}`);
-        }
-      });
-      this.rosterGroup.addMultiple([box, img, name, cost]);
+      box.on('pointerdown', () => this.startBattle(i));
+      this.rosterGroup.addMultiple([box, nameTxt]);
     });
 
-    this.projectiles = this.physics.add.group();
-    this.enemyProjectiles = this.physics.add.group();
+    // Control setup
     this.cursors = this.input.keyboard.createCursorKeys();
     this.space = this.input.keyboard.addKey('SPACE');
   }
@@ -111,103 +79,70 @@ class BrawlerScene extends Phaser.Scene {
   startBattle(idx) {
     this.state = 'BATTLE';
     this.rosterGroup.clear(true, true);
-    if(this.infoBox) this.infoBox.destroy(); 
-    if(this.infoTxt) this.infoTxt.destroy();
 
-    this.platforms = this.physics.add.staticGroup();
-    this.platforms.add(this.add.rectangle(400, 395, 800, 10, 0x000).setAlpha(0));
-    this.platforms.add(this.add.rectangle(150, 280, 120, 10, 0xFFD700));
-    this.platforms.add(this.add.rectangle(650, 280, 120, 10, 0xFFD700));
+    // Blast Zone Definition: Rect( -100, -100, 1000, 600)
+    // Center Command: Phaser.Geom.Rectangle is ready to use.
+    this.blastZoneBounds = new Phaser.Geom.Rectangle(-100, -100, 1000, 600);
 
-    this.player = this.physics.add.sprite(150, 200, 'brawlers_master');
-    this.player.setOrigin(0.5, 1); 
-    this.player.setDisplaySize(120, 120);
-    this.player.setCollideWorldBounds(true);
+    // Spawn player and enemy on two legs from the juni_beta.jpg sheet
+    this.player = this.physics.add.sprite(200, 300, 'brawlers_master', 0);
+    this.player.setOrigin(0.5, 1).setDisplaySize(96, 96).setCollideWorldBounds(true);
+    // Setting bipedal movement with no animation loop for Beta
+    this.player.body.setAllowGravity(true);
 
-    const playerRoll = Phaser.Math.Between(0, 1) === 0 ? 'ganesha_idle' : 'green_lion_idle';
-    this.player.play(playerRoll);
+    this.enemy = this.physics.add.sprite(600, 300, 'brawlers_master', 0);
+    this.enemy.setOrigin(0.5, 1).setDisplaySize(96, 96).setCollideWorldBounds(true).setTint(0xffaaaa);
+    this.enemy.body.setAllowGravity(true);
 
-    this.enemy = this.physics.add.sprite(650, 200, 'brawlers_master');
-    this.enemy.setOrigin(0.5, 1);
-    this.enemy.setDisplaySize(120, 120).setCollideWorldBounds(true).setTint(0xffaaaa);
-    const enemyRoll = playerRoll === 'ganesha_idle' ? 'green_lion_idle' : 'ganesha_idle';
-    this.enemy.play(enemyRoll);
+    // Setting up the arena
+    this.add.rectangle(400, 395, 800, 10, 0x000).setAlpha(0); // Ground (invisible)
+    const platform = this.add.rectangle(400, 390, 600, 20, 0xFFD700);
+    this.physics.add.existing(platform, true);
+    this.physics.add.collider([this.player, this.enemy], platform);
 
-    this.physics.add.collider([this.player, this.enemy], this.platforms);
-
-    this.pBar = this.add.rectangle(20, 40, 200, 15, 0x00ff00).setOrigin(0);
-    this.eBar = this.add.rectangle(580, 40, 200, 15, 0xff0000).setOrigin(0);
-
-    this.physics.add.overlap(this.projectiles, this.enemy, (en, pr) => {
-        pr.destroy(); this.eHealth -= 10;
-        this.aiAggro += 0.25;
-        this.cameras.main.shake(150, 0.01);
-        if(this.eHealth <= 0) this.triggerWin();
-    });
-
-    this.physics.add.overlap(this.enemyProjectiles, this.player, (pl, pr) => {
-        pr.destroy(); this.pHealth -= 5;
-        this.player.setTint(0xff0000);
-        this.time.delayedCall(100, () => this.player.clearTint());
-    });
-
-    this.enemyEvent = this.time.addEvent({ delay: 1000, callback: this.enemyAttack, callbackScope: this, loop: true });
-    if (this.sys.game.device.input.touch) this.createMobileControls();
+    this.input.keyboard.on('keydown-SPACE', () => this.executeAttack());
   }
 
-  createMobileControls() {
-    this.joyStick = this.add.circle(100, 300, 25, 0xFFD700, 0.3);
-    let jBtn = this.add.circle(620, 320, 40, 0xFFD700, 0.3).setInteractive();
-    this.add.text(620, 320, 'UP', { font: 'bold 12px Arial', fill: '#FFF' }).setOrigin(0.5);
-    let fBtn = this.add.circle(720, 280, 45, 0xFF0000, 0.4).setInteractive();
-    this.add.text(720, 280, 'FIRE', { font: 'bold 12px Arial', fill: '#FFF' }).setOrigin(0.5);
-
-    jBtn.on('pointerdown', () => { if(this.player.body.blocked.down) this.player.setVelocityY(-650); });
-    fBtn.on('pointerdown', () => this.shoot(this.player, this.enemy, this.projectiles, 0xFFD700));
-  }
-
-  shoot(origin, target, group, color) {
-    let b = this.add.rectangle(origin.x, origin.y, 20, 10, color);
-    group.add(b); this.physics.add.existing(b);
-    b.body.setAllowGravity(false);
-    this.physics.moveToObject(b, target, 600 * this.aiAggro);
-  }
-
-  enemyAttack() {
-    if (this.state !== 'BATTLE' || !this.enemy) return;
-    this.shoot(this.enemy, this.player, this.enemyProjectiles, 0xFF0000);
-    this.enemyEvent.delay = Math.max(300, 1000 / this.aiAggro); 
-    if (Phaser.Math.Between(0, 10) > 2 && this.enemy.body.blocked.down) this.enemy.setVelocityY(-600);
-  }
-
-  triggerWin() {
-    this.state = 'WIN';
-    document.getElementById('victory-overlay').classList.add('active');
+  executeAttack() {
+    if (this.state !== 'BATTLE') return;
+    // Basic melee logic: when P1 hits P2, apply knockback multiplier based on health
+    let dist = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.enemy.x, this.enemy.y);
+    if (dist < 100) {
+        // Multiplier grows as enemy "health" (eHealth) decreases (e.g., starts at 1x, grows to 3x)
+        const knockbackMultiplier = 1 + (100 - this.eHealth) / 20; 
+        const velocityX = dist > 0 ? 500 * knockbackMultiplier : -500 * knockbackMultiplier;
+        
+        this.enemy.setVelocity(velocityX, -300 * knockbackMultiplier);
+        this.cameras.main.shake(200, 0.01);
+        this.eHealth -= 10;
+        console.log(`P2 % Damage: ${100 - this.eHealth}%`);
+    }
   }
 
   update() {
     if (this.state !== 'BATTLE') return;
-    this.pBar.width = Math.max(0, this.pHealth * 2);
-    this.eBar.width = Math.max(0, this.eHealth * 2);
 
-    const dist = this.player.x - this.enemy.x;
-    if (Math.abs(dist) > 30) {
-        this.enemy.setVelocityX(dist > 0 ? 210 * this.aiAggro : -210 * this.aiAggro);
-    }
-
-    let pointer = this.input.activePointer;
-    if (pointer.isDown && pointer.x < 300) {
-        if(this.joyStick) this.joyStick.setPosition(pointer.x, pointer.y);
-        this.player.setVelocityX(pointer.x < 100 ? -250 : 250);
-    } else {
-        if(this.joyStick) this.joyStick.setPosition(100, 300);
-        if (!this.cursors.left.isDown && !this.cursors.right.isDown) this.player.setVelocityX(0);
-    }
-
+    // Center Command: Input handling for independent movement is ready.
+    this.player.setVelocityX(0);
     if (this.cursors.left.isDown) this.player.setVelocityX(-250);
     if (this.cursors.right.isDown) this.player.setVelocityX(250);
     if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.player.body.blocked.down) this.player.setVelocityY(-650);
-    if (Phaser.Input.Keyboard.JustDown(this.space)) this.shoot(this.player, this.enemy, this.projectiles, 0xFFD700);
+
+    // AI Aggro logic (keep enemy moving toward player)
+    const aiSpeed = 150;
+    if (this.enemy.x < this.player.x) this.enemy.setVelocityX(aiSpeed);
+    else this.enemy.setVelocityX(-aiSpeed);
+
+    // The Blast Zone Check (Data Log v1.0 standard)
+    if (!this.blastZoneBounds.contains(this.player.x, this.player.y)) this.triggerKO('PLAYER 1');
+    if (!this.blastZoneBounds.contains(this.enemy.x, this.enemy.y)) this.triggerKO('PLAYER 2 (ENEMY)');
+  }
+
+  triggerKO(label) {
+    this.state = 'KO';
+    console.log(`KO! ${label} has been blasted.`);
+    this.cameras.main.fade(500, 0, 0, 0);
+    this.time.delayedCall(1000, () => this.scene.restart());
   }
 }
 
