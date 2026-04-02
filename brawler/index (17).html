@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NMN: MINE WARFARE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { background:#050308; width:100%; height:100%; overflow:hidden; }
+    #game-container { width:100vw; height:100vh; display:flex; align-items:center; justify-content:center; }
+    #mobile-controls { display:none; position:fixed; bottom:0; left:0; right:0; height:160px; pointer-events:none; z-index:999; }
+    #mobile-controls.active { display:block; }
+    .m-btn {
+      position:absolute; width:56px; height:56px; border-radius:50%;
+      border:2px solid #FFD700; background:rgba(255,215,0,0.15);
+      color:#FFD700; font-size:10px; display:flex; align-items:center; justify-content:center;
+      pointer-events:all; user-select:none; -webkit-user-select:none;
+      font-family:"Press Start 2P",monospace;
+    }
+    #btn-left  { left:20px;  bottom:60px; }
+    #btn-right { left:96px;  bottom:60px; }
+    #btn-jump  { left:58px;  bottom:116px; }
+    #btn-atk   { right:20px; bottom:100px; }
+    #btn-spec  { right:90px; bottom:80px; }
+  </style>
+</head>
+<body>
+<div id="game-container"></div>
+<div id="mobile-controls">
+  <div class="m-btn" id="btn-left">◀</div>
+  <div class="m-btn" id="btn-right">▶</div>
+  <div class="m-btn" id="btn-jump">▲</div>
+  <div class="m-btn" id="btn-atk">ATK</div>
+  <div class="m-btn" id="btn-spec">SPC</div>
+</div>
+<script>
+const GW=800, GH=450;
+const BLAST={minX:-150,maxX:950,minY:-150,maxY:700};
+const mobileP1={left:false,right:false,jump:false,atk:false,spec:false};
+
+const ROSTER=[
+  {name:"Juni",            free:true,  frame:0, color:"#00FF88", lore:"The Immortal Seedling. She has died a thousand times and remembers every one."},
+  {name:"Pyro",            free:true,  frame:1, color:"#FF6600", lore:"Born from the forge. His tusks run hotter than the mine walls."},
+  {name:"Glitch Elephant", free:true,  frame:2, color:"#AA55FF", lore:"A signal corrupted mid-transmission. Exists in two places at once."},
+  {name:"Static Lion",     free:true,  frame:3, color:"#55AAFF", lore:"The roar that breaks frequencies. His mane is pure interference."},
+  {name:"Olydia",          free:false, frame:4, color:"#9933CC", lore:"UNLOCK: Read the Legend", url:"https://books2read.com/u/4EOxZ0"},
+  {name:"Helios",          free:false, frame:5, color:"#FFD700", lore:"UNLOCK: Read the Legend", url:"https://books2read.com/u/4EOxZ0"},
+  {name:"Wanderer",        free:false, frame:6, color:"#336699", lore:"UNLOCK: Become a Patron",  url:"https://patreon.com/Lordminadeoro"},
+  {name:"Orid",            free:false, frame:7, color:"#884422", lore:"UNLOCK: Read the Legend", url:"https://books2read.com/u/4EOxZ0"},
+  {name:"Notty",           free:false, frame:8, color:"#FF55AA", lore:"UNLOCK: Become a Patron",  url:"https://patreon.com/Lordminadeoro"},
+  {name:"???",             free:false, frame:9, color:"#444444", lore:"UNLOCK: Enter the Mine",   url:"https://nonsensemedianetwork.com"}
+];
+
+const STAGES=[
+  {key:"mana_forest",  label:"MANA FOREST",  bgKey:"bg_deep_forest"},
+  {key:"glitch_mines", label:"GLITCH MINES", bgKey:"forest_bg"}
+];
+
+const Match={p1:null,p2:null,stage:null,winner:null};
+
+// ── SAFE TEXTURE FACTORY ──────────────────────────────
+function ensureTextures(scene){
+  if(!scene.textures.exists("bg_deep_forest")){
+    const c=scene.textures.createCanvas("bg_deep_forest",GW,GH);
+    const ctx=c.getContext();
+    const g=ctx.createLinearGradient(0,0,0,GH);
+    g.addColorStop(0,"#0a1a0a"); g.addColorStop(1,"#050308");
+    ctx.fillStyle=g; ctx.fillRect(0,0,GW,GH); c.refresh();
+  }
+  if(!scene.textures.exists("forest_bg")){
+    const c=scene.textures.createCanvas("forest_bg",GW,GH);
+    const ctx=c.getContext();
+    const g=ctx.createLinearGradient(0,0,GW,GH);
+    g.addColorStop(0,"#0d0a1a"); g.addColorStop(1,"#050308");
+    ctx.fillStyle=g; ctx.fillRect(0,0,GW,GH); c.refresh();
+  }
+  if(!scene.textures.exists("brawlers_master")){
+    const cols=["#00FF88","#FF6600","#AA55FF","#55AAFF","#9933CC","#FFD700","#336699","#884422","#FF55AA","#333333"];
+    const c=scene.textures.createCanvas("brawlers_master",128*10,128);
+    const ctx=c.getContext();
+    cols.forEach((col,i)=>{
+      ctx.fillStyle=col; ctx.fillRect(i*128+4,4,120,120);
+      ctx.strokeStyle="#FFD700"; ctx.lineWidth=2; ctx.strokeRect(i*128+4,4,120,120);
+    });
+    c.refresh();
+    const tex=scene.textures.get("brawlers_master");
+    for(let i=0;i<10;i++) tex.add(i,0,i*128,0,128,128);
+  }
+}
+
+function addCRT(scene){
+  const g=scene.add.graphics().setDepth(9000).setScrollFactor(0).setAlpha(0.06);
+  for(let y=0;y<GH;y+=3){ g.lineStyle(1,0x000000,1); g.beginPath(); g.moveTo(0,y); g.lineTo(GW,y); g.strokePath(); }
+}
+
+// ── START SCREEN ──────────────────────────────────────
+class StartScreen extends Phaser.Scene {
+  constructor(){super("StartScreen");}
+  preload(){
+    this.load.image("title_img","logo.jpg");
+    this.load.image("bg_deep_forest","bg_deep_forest.jpg");
+    this.load.image("forest_bg","forest_bg.jpg");
+    this.load.spritesheet("brawlers_master","brawlers_master.jpg",{frameWidth:128,frameHeight:128});
+    // Portrait betas
+    ROSTER.slice(0,4).forEach(r=>{
+      const k=r.name.toLowerCase().replace(/ /g,"_")+"_beta";
+      this.load.image(k,k+".jpg");
+    });
+    ["helios","juni","olydia","orid","pyro","wanderer"].forEach(n=>{
+      this.load.image(n+"_beta",n+"_beta.jpg");
+    });
+    this.load.on("loaderror",f=>console.warn("Missing asset (fallback active):",f.key));
+  }
+  create(){
+    ensureTextures(this); addCRT(this);
+    const bg=this.add.image(GW/2,GH/2,"bg_deep_forest").setDisplaySize(GW,GH).setAlpha(0.35);
+    const scan=this.add.rectangle(GW/2,0,GW,2,0xFFD700,0.2).setDepth(1).setScrollFactor(0);
+    this.tweens.add({targets:scan,y:GH,duration:2800,repeat:-1});
+    if(this.textures.exists("title_img")&&this.textures.get("title_img").source[0].width>1){
+      this.add.image(GW/2,GH/2-90,"title_img").setScale(0.42).setDepth(2);
+    }
+    this.add.text(GW/2,GH/2-18,"NMN: MINE WARFARE",{fontFamily:"Press Start 2P",fontSize:"18px",color:"#FFD700",stroke:"#000000",strokeThickness:4}).setOrigin(0.5).setDepth(2);
+    this.add.text(GW/2,GH/2+16,"BETA v0.2",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#666666"}).setOrigin(0.5).setDepth(2);
+    const blink=this.add.text(GW/2,GH/2+68,"PRESS ANY KEY / TAP TO START",{fontFamily:"Press Start 2P",fontSize:"10px",color:"#FFD700"}).setOrigin(0.5).setDepth(2);
+    this.tweens.add({targets:blink,alpha:0,duration:700,yoyo:true,repeat:-1});
+    this.add.text(GW/2,GH-14,"nonsensemedianetwork.com  |  @LordOroNMN",{fontFamily:"Press Start 2P",fontSize:"6px",color:"#333333"}).setOrigin(0.5).setDepth(2);
+    const go=()=>this.scene.start("BrawlerScene");
+    this.input.keyboard.on("keydown",go);
+    this.input.on("pointerdown",go);
+  }
+}
+
+// ── ROSTER SCENE ──────────────────────────────────────
+class BrawlerScene extends Phaser.Scene {
+  constructor(){super("BrawlerScene");}
+  create(){
+    ensureTextures(this); addCRT(this);
+    Match.p1=null; Match.p2=null; Match.stage=null; Match.winner=null;
+    this.scoutIdx=-1; this.p1Done=false; this.p2Done=false;
+
+    this.add.rectangle(0,0,GW,GH,0x050308).setOrigin(0);
+    this.add.rectangle(0,0,GW,36,0x0a0a0a,0.9).setOrigin(0);
+    this.add.text(GW/2,10,"SELECT BRAWLERS",{fontFamily:"Press Start 2P",fontSize:"11px",color:"#FFD700"}).setOrigin(0.5,0);
+
+    this.intelBox=this.add.rectangle(GW/2,54,GW-16,28,0x111111).setOrigin(0.5);
+    this.intelTxt=this.add.text(GW/2,54,"[ CLICK ONCE TO SCOUT — CLICK AGAIN TO SELECT ]",{fontFamily:"Press Start 2P",fontSize:"6px",color:"#666666",align:"center",wordWrap:{width:GW-24}}).setOrigin(0.5);
+
+    this.p1Lbl=this.add.text(16,GH-42,"P1: ---",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#00FF88"});
+    this.p2Lbl=this.add.text(GW-16,GH-42,"P2: ---",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#FF5555"}).setOrigin(1,0);
+    this.add.text(GW/2,GH-42,"P1=WASD+J/K   P2=ARROWS+NUM1/2",{fontFamily:"Press Start 2P",fontSize:"6px",color:"#444444"}).setOrigin(0.5,0);
+
+    this.startBtn=this.add.text(GW/2,GH-16,"▶ START FORGE ◀",{fontFamily:"Press Start 2P",fontSize:"10px",color:"#050308",backgroundColor:"#FFD700",padding:{x:12,y:5}}).setOrigin(0.5).setVisible(false).setInteractive({useHandCursor:true});
+    this.startBtn.on("pointerdown",()=>this.scene.start("StageSelectScene"));
+
+    const cols=5,cellW=152,cellH=84;
+    const sx=GW/2-(cols*cellW)/2+cellW/2, sy=80;
+
+    ROSTER.forEach((entry,i)=>{
+      const col=i%cols, row=Math.floor(i/cols);
+      const x=sx+col*cellW, y=sy+row*cellH+cellH/2;
+      const isFree=entry.free;
+      const bc=isFree?0x00ff88:0x444444;
+
+      const panel=this.add.rectangle(x,y,cellW-8,cellH-8,0x0d0d0d).setStrokeStyle(2,bc).setInteractive({useHandCursor:true});
+
+      // Icon
+      const pk=entry.name.toLowerCase().replace(/ /g,"_")+"_beta";
+      const useKey=this.textures.exists(pk)?pk:"brawlers_master";
+      const frame=this.textures.exists(pk)?null:entry.frame;
+      const icon=frame!==null
+        ?this.add.image(x,y-14,useKey,frame).setDisplaySize(38,38)
+        :this.add.image(x,y-14,useKey).setDisplaySize(38,38);
+
+      this.add.text(x,y+18,entry.name,{fontFamily:"Press Start 2P",fontSize:"5px",color:isFree?entry.color:"#555555",align:"center",wordWrap:{width:cellW-12}}).setOrigin(0.5);
+      if(!isFree) this.add.text(x,y+30,"LOCKED",{fontFamily:"Press Start 2P",fontSize:"5px",color:"#FF4444"}).setOrigin(0.5);
+
+      panel.on("pointerover",()=>panel.setStrokeStyle(2,0xFFD700));
+      panel.on("pointerout", ()=>panel.setStrokeStyle(2,this.p1Done&&Match.p1===entry?0x00ff88:this.p2Done&&Match.p2===entry?0xFF5555:bc));
+
+      panel.on("pointerdown",()=>{
+        if(!isFree){
+          if(this.scoutIdx===i){ if(entry.url)window.open(entry.url,"_blank"); }
+          else{ this.scoutIdx=i; this.intelTxt.setText("🔒 "+entry.name.toUpperCase()+": "+entry.lore).setColor("#FF8888"); }
+          return;
+        }
+        if(this.scoutIdx!==i){
+          this.scoutIdx=i;
+          this.intelTxt.setText("★ "+entry.name.toUpperCase()+" ★  "+entry.lore).setColor(entry.color);
+          return;
+        }
+        if(!this.p1Done){
+          Match.p1=entry; this.p1Done=true;
+          this.p1Lbl.setText("P1: "+entry.name).setColor(entry.color);
+          panel.setStrokeStyle(3,0x00ff88); this.scoutIdx=-1;
+          this.intelTxt.setText("P1 LOCKED — SCOUT P2 NOW").setColor("#00FF88");
+        } else if(!this.p2Done&&entry!==Match.p1){
+          Match.p2=entry; this.p2Done=true;
+          this.p2Lbl.setText("P2: "+entry.name).setColor(entry.color);
+          panel.setStrokeStyle(3,0xFF5555); this.scoutIdx=-1;
+          this.intelTxt.setText("BOTH WARRIORS READY — HIT START FORGE").setColor("#FFD700");
+          this.startBtn.setVisible(true);
+        }
+      });
+    });
+  }
+}
+
+// ── STAGE SELECT ──────────────────────────────────────
+class StageSelectScene extends Phaser.Scene {
+  constructor(){super("StageSelectScene");}
+  create(){
+    ensureTextures(this); addCRT(this);
+    this.add.rectangle(0,0,GW,GH,0x050308).setOrigin(0);
+    this.add.text(GW/2,20,"SELECT STAGE",{fontFamily:"Press Start 2P",fontSize:"12px",color:"#FFD700"}).setOrigin(0.5);
+    STAGES.forEach((stage,i)=>{
+      const x=GW/2+(i===0?-190:190), y=GH/2;
+      this.add.image(x,y,stage.bgKey).setDisplaySize(320,160).setAlpha(0.55);
+      const panel=this.add.rectangle(x,y,320,160,0x000000,0).setStrokeStyle(2,0xFFD700).setInteractive({useHandCursor:true});
+      this.add.text(x,y-14,stage.label,{fontFamily:"Press Start 2P",fontSize:"10px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
+      this.add.text(x,y+12,i===0?"STABLE / VERDANT":"UNSTABLE / CORRUPTED",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#AAAAAA"}).setOrigin(0.5);
+      panel.on("pointerover",()=>panel.setStrokeStyle(3,0xFFFFFF));
+      panel.on("pointerout", ()=>panel.setStrokeStyle(2,0xFFD700));
+      panel.on("pointerdown",()=>{ Match.stage=stage.key; this.scene.start("BattleScene"); });
+    });
+    this.add.text(GW/2,GH-18,"Click a stage to enter the mine.",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#444444"}).setOrigin(0.5);
+  }
+}
+
+// ── BATTLE SCENE ──────────────────────────────────────
+class BattleScene extends Phaser.Scene {
+  constructor(){super("BattleScene");}
+
+  create(){
+    ensureTextures(this);
+    const stage=STAGES.find(s=>s.key===Match.stage)||STAGES[0];
+
+    // BG layers
+    this.add.image(GW/2,GH/2,stage.bgKey).setDisplaySize(GW*1.3,GH*1.3).setAlpha(0.55).setScrollFactor(0);
+    this.add.image(GW/2,GH/2,stage.bgKey).setDisplaySize(GW*1.05,GH*1.05).setAlpha(0.2).setScrollFactor(0).setTint(0x8899ff);
+    addCRT(this);
+
+    // Mana dust particles (Mana Forest only)
+    if(Match.stage==="mana_forest"){
+      try{
+        this.add.particles(0,0,"brawlers_master",{
+          frame:0,x:{min:0,max:GW},y:GH,
+          lifespan:3500,speedY:{min:-30,max:-80},
+          scale:{start:0.06,end:0},alpha:{start:0.5,end:0},
+          quantity:1,frequency:300,tint:0x88FFaa
+        });
+      }catch(e){}
+    }
+
+    // Physics
+    this.physics.world.gravity.y=650;
+    this.physics.world.setBounds(BLAST.minX,BLAST.minY,BLAST.maxX-BLAST.minX,BLAST.maxY-BLAST.minY);
+
+    // Ground
+    const ground=this.add.rectangle(GW/2,GH-14,GW,28,0x2a1a0a);
+    this.physics.add.existing(ground,true);
+
+    // Floating platforms
+    this.platforms=this.physics.add.staticGroup();
+    this.platforms.add(ground);
+    [[200,GH-130,180],[600,GH-130,180],[400,GH-220,160]].forEach(([px,py,pw])=>{
+      const p=this.add.rectangle(px,py,pw,14,0x3a2a0a);
+      this.add.rectangle(px,py-3,pw,3,0xFFD700,0.3);
+      this.physics.add.existing(p,true);
+      this.platforms.add(p);
+    });
+
+    // Players
+    const p1cfg=Match.p1||ROSTER[0];
+    const p2cfg=Match.p2||ROSTER[1];
+    this.p1=this.createPlayer(180,GH-100,p1cfg);
+    this.p2=this.createPlayer(620,GH-100,p2cfg);
+    this.p2.setFlipX(true);
+
+    this.physics.add.collider(this.p1,this.platforms);
+    this.physics.add.collider(this.p2,this.platforms);
+
+    // State
+    this.p1Dmg=0; this.p2Dmg=0;
+    this.p1Lives=3; this.p2Lives=3;
+    this.p1Stunned=false; this.p2Stunned=false;
+    this.p1CanAtk=true;  this.p2CanAtk=true;
+    this.p1Jumps=0;       this.p2Jumps=0;
+    this.hitStop=false;   this.gameOver=false;
+
+    // HUD
+    this.createHUD(p1cfg,p2cfg);
+
+    // Keys
+    this.k1=this.input.keyboard.addKeys({
+      left:Phaser.Input.Keyboard.KeyCodes.A,
+      right:Phaser.Input.Keyboard.KeyCodes.D,
+      up:Phaser.Input.Keyboard.KeyCodes.W,
+      atk:Phaser.Input.Keyboard.KeyCodes.J,
+      spec:Phaser.Input.Keyboard.KeyCodes.K
+    });
+    this.k2=this.input.keyboard.addKeys({
+      left:Phaser.Input.Keyboard.KeyCodes.LEFT,
+      right:Phaser.Input.Keyboard.KeyCodes.RIGHT,
+      up:Phaser.Input.Keyboard.KeyCodes.UP,
+      atk:Phaser.Input.Keyboard.KeyCodes.NUMPAD_ONE,
+      spec:Phaser.Input.Keyboard.KeyCodes.NUMPAD_TWO
+    });
+
+    // Gamepad
+    this.pad=null;
+    this.input.gamepad.once("connected",pad=>{this.pad=pad;});
+
+    // Mobile
+    if(this.sys.game.device.input.touch){
+      document.getElementById("mobile-controls").classList.add("active");
+      this.setupMobile();
+    }
+
+    // Hitbox groups
+    this.hb1=this.physics.add.group();
+    this.hb2=this.physics.add.group();
+    this.physics.add.overlap(this.hb1,this.p2,(hb)=>{if(!hb.active)return;hb.destroy();this.applyHit("p1","p2",hb.getData("power"),hb.getData("spec"));});
+    this.physics.add.overlap(this.hb2,this.p1,(hb)=>{if(!hb.active)return;hb.destroy();this.applyHit("p2","p1",hb.getData("power"),hb.getData("spec"));});
+  }
+
+  createPlayer(x,y,cfg){
+    const pk=cfg.name.toLowerCase().replace(/ /g,"_")+"_beta";
+    const useKey=this.textures.exists(pk)?pk:"brawlers_master";
+    const frame=this.textures.exists(pk)?null:cfg.frame;
+    const sp=frame!==null
+      ?this.physics.add.sprite(x,y,useKey,frame)
+      :this.physics.add.sprite(x,y,useKey);
+    sp.setDisplaySize(54,54).setCollideWorldBounds(false);
+    sp.body.setMaxVelocityY(1000);
+    sp.setData("cfg",cfg);
+    return sp;
+  }
+
+  createHUD(p1cfg,p2cfg){
+    const D=9999;
+    this.add.rectangle(0,0,200,40,0x050308,0.88).setOrigin(0).setDepth(D).setScrollFactor(0);
+    this.add.rectangle(GW,0,200,40,0x050308,0.88).setOrigin(1,0).setDepth(D).setScrollFactor(0);
+    this.p1NT=this.add.text(10,6,p1cfg.name,{fontFamily:"Press Start 2P",fontSize:"7px",color:p1cfg.color||"#00FF88"}).setDepth(D).setScrollFactor(0);
+    this.p1DT=this.add.text(10,18,"0%",{fontFamily:"Press Start 2P",fontSize:"13px",color:"#FFFFFF"}).setDepth(D).setScrollFactor(0);
+    this.p2NT=this.add.text(GW-10,6,p2cfg.name,{fontFamily:"Press Start 2P",fontSize:"7px",color:p2cfg.color||"#FF5555"}).setOrigin(1,0).setDepth(D).setScrollFactor(0);
+    this.p2DT=this.add.text(GW-10,18,"0%",{fontFamily:"Press Start 2P",fontSize:"13px",color:"#FFFFFF"}).setOrigin(1,0).setDepth(D).setScrollFactor(0);
+    this.add.text(GW/2,6,(Match.stage||"STAGE").toUpperCase().replace("_"," "),{fontFamily:"Press Start 2P",fontSize:"7px",color:"#FFD700"}).setOrigin(0.5,0).setDepth(D).setScrollFactor(0);
+  }
+
+  setupMobile(){
+    const bind=(id,prop)=>{
+      const el=document.getElementById(id);
+      el.addEventListener("touchstart",e=>{e.preventDefault();mobileP1[prop]=true;},{passive:false});
+      el.addEventListener("touchend",  e=>{e.preventDefault();mobileP1[prop]=false;},{passive:false});
+    };
+    bind("btn-left","left"); bind("btn-right","right"); bind("btn-jump","jump");
+    bind("btn-atk","atk");   bind("btn-spec","spec");
+  }
+
+  spawnHB(owner,isSpec){
+    const sp=owner==="p1"?this.p1:this.p2;
+    const grp=owner==="p1"?this.hb1:this.hb2;
+    const dir=sp.flipX?-1:1;
+    const power=isSpec?22:12;
+    const hb=this.add.rectangle(sp.x+dir*38,sp.y,isSpec?64:40,28,isSpec?0xFF6600:0xFFD700,0.5);
+    this.physics.add.existing(hb);
+    hb.body.setAllowGravity(false).setImmovable(true);
+    hb.setData("power",power).setData("spec",isSpec);
+    grp.add(hb);
+    this.tweens.add({targets:hb,alpha:0,duration:110,onComplete:()=>hb.active&&hb.destroy()});
+    this.cameras.main.shake(isSpec?150:70,isSpec?0.009:0.004);
+    this.cameras.main.flash(60,255,255,255,false);
+  }
+
+  applyHit(atkId,tgtId,power,isSpec){
+    if(this.gameOver) return;
+    if(tgtId==="p2") this.p2Dmg+=power; else this.p1Dmg+=power;
+    const dmg=tgtId==="p2"?this.p2Dmg:this.p1Dmg;
+    const tgt=tgtId==="p2"?this.p2:this.p1;
+    const atk=atkId==="p1"?this.p1:this.p2;
+    const scale=1+(dmg*0.03);
+    const dirX=tgt.x>=atk.x?1:-1;
+    const vx=(isSpec?440:290)*scale*dirX;
+    const vy=(isSpec?-400:-270)*scale;
+
+    // Hit-stop
+    this.hitStop=true; this.physics.world.pause();
+    this.time.delayedCall(60,()=>{
+      this.physics.world.resume(); this.hitStop=false;
+      tgt.body.setVelocity(vx,vy);
+      if(tgtId==="p1")this.p1Stunned=true; else this.p2Stunned=true;
+      this.time.delayedCall(300,()=>{if(tgtId==="p1")this.p1Stunned=false; else this.p2Stunned=false;});
+    });
+
+    this.tweens.add({targets:tgt,tint:{from:0xFF0000,to:0xFFFFFF},duration:220});
+    this.updateHUD();
+  }
+
+  checkBlast(){
+    [["p1",this.p1],["p2",this.p2]].forEach(([id,sp])=>{
+      if(!sp.active) return;
+      if(sp.x<BLAST.minX||sp.x>BLAST.maxX||sp.y<BLAST.minY||sp.y>BLAST.maxY) this.signalLost(id);
+    });
+  }
+
+  signalLost(loserId){
+    if(this.gameOver) return;
+    this.gameOver=true;
+    Match.winner=loserId==="p1"?"P2":"P1";
+    const loser=loserId==="p1"?this.p1:this.p2;
+    loser.setActive(false).setVisible(false);
+    if(loserId==="p1")this.p1Lives--; else this.p2Lives--;
+    this.updateHUD();
+    this.cameras.main.shake(500,0.025);
+    this.cameras.main.flash(400,255,50,50);
+    const ov=this.add.rectangle(GW/2,GH/2,GW,GH,0x000000,0).setDepth(8000).setScrollFactor(0);
+    this.tweens.add({targets:ov,alpha:0.75,duration:400});
+    this.add.text(GW/2,GH/2-28,"SIGNAL LOST",{fontFamily:"Press Start 2P",fontSize:"22px",color:"#FF2222",stroke:"#000",strokeThickness:4}).setDepth(8001).setOrigin(0.5).setScrollFactor(0);
+    this.add.text(GW/2,GH/2+12,Match.winner+" WINS THE SECTOR",{fontFamily:"Press Start 2P",fontSize:"10px",color:"#FFD700"}).setDepth(8001).setOrigin(0.5).setScrollFactor(0);
+    this.time.delayedCall(1600,()=>{
+      document.getElementById("mobile-controls").classList.remove("active");
+      this.scene.start("ResultsScene");
+    });
+  }
+
+  updateHUD(){
+    this.p1DT.setText(this.p1Dmg+"%"); this.p2DT.setText(this.p2Dmg+"%");
+    if(this.p1Dmg>80)this.p1DT.setColor("#FF4444");
+    if(this.p2Dmg>80)this.p2DT.setColor("#FF4444");
+  }
+
+  update(){
+    if(this.gameOver||this.hitStop) return;
+    this.moveP("p1"); this.moveP("p2"); this.checkBlast();
+  }
+
+  moveP(id){
+    const isP1=id==="p1";
+    const sp=isP1?this.p1:this.p2;
+    const k=isP1?this.k1:this.k2;
+    const stun=isP1?this.p1Stunned:this.p2Stunned;
+    const cARef=isP1?"p1CanAtk":"p2CanAtk";
+    const jRef=isP1?"p1Jumps":"p2Jumps";
+    if(!sp.active||!sp.body) return;
+    const body=sp.body;
+    if(body.blocked.down) this[jRef]=0;
+
+    const gL=isP1?(k.left.isDown||mobileP1.left):k.left.isDown;
+    const gR=isP1?(k.right.isDown||mobileP1.right):k.right.isDown;
+    const gJ=isP1?(Phaser.Input.Keyboard.JustDown(k.up)||mobileP1.jump):Phaser.Input.Keyboard.JustDown(k.up);
+    const gA=isP1?(Phaser.Input.Keyboard.JustDown(k.atk)||mobileP1.atk):Phaser.Input.Keyboard.JustDown(k.atk);
+    const gS=isP1?(Phaser.Input.Keyboard.JustDown(k.spec)||mobileP1.spec):Phaser.Input.Keyboard.JustDown(k.spec);
+
+    if(!stun){
+      if(gL)      {body.setVelocityX(-210);sp.setFlipX(true);}
+      else if(gR) {body.setVelocityX(210); sp.setFlipX(false);}
+      else        {body.setVelocityX(body.velocity.x*0.72);}
+      if(gJ&&this[jRef]<2){body.setVelocityY(-380);this[jRef]++;mobileP1.jump=false;}
+      if(gA&&this[cARef]){this[cARef]=false;this.spawnHB(id,false);this.time.delayedCall(220,()=>this[cARef]=true);mobileP1.atk=false;}
+      if(gS&&this[cARef]){this[cARef]=false;this.spawnHB(id,true);this.time.delayedCall(420,()=>this[cARef]=true);mobileP1.spec=false;}
+    }
+
+    // Gamepad P2 override
+    if(!isP1&&this.pad){
+      const ax=this.pad.axes.length>0?this.pad.axes[0].getValue():0;
+      if(Math.abs(ax)>0.2) body.setVelocityX(ax*210*1.2);
+      if(this.pad.buttons[0]&&this.pad.buttons[0].pressed&&this[jRef]<2){body.setVelocityY(-380);this[jRef]++;}
+      if(this.pad.buttons[1]&&this.pad.buttons[1].pressed&&this[cARef]){this[cARef]=false;this.spawnHB(id,false);this.time.delayedCall(220,()=>this[cARef]=true);}
+    }
+  }
+}
+
+// ── RESULTS SCENE ─────────────────────────────────────
+class ResultsScene extends Phaser.Scene {
+  constructor(){super("ResultsScene");}
+  create(){
+    ensureTextures(this); addCRT(this);
+    this.add.rectangle(0,0,GW,GH,0x050308).setOrigin(0);
+    const winner=Match.winner||"P1";
+    const wcfg=winner==="P1"?Match.p1:Match.p2;
+
+    if(wcfg){
+      const pk=wcfg.name.toLowerCase().replace(/ /g,"_")+"_beta";
+      const useKey=this.textures.exists(pk)?pk:"brawlers_master";
+      const frame=this.textures.exists(pk)?null:wcfg.frame;
+      const img=frame!==null?this.add.image(GW/2,GH/2-60,useKey,frame):this.add.image(GW/2,GH/2-60,useKey);
+      img.setDisplaySize(110,110).setAlpha(0.9);
+      this.tweens.add({targets:img,scaleX:1.07,scaleY:1.07,yoyo:true,repeat:-1,duration:900});
+    }
+
+    this.add.text(GW/2,GH/2+8,"SECTOR CLEARED",{fontFamily:"Press Start 2P",fontSize:"18px",color:"#FFD700",stroke:"#000000",strokeThickness:4}).setOrigin(0.5);
+    this.add.text(GW/2,GH/2+42,winner+" WINS",{fontFamily:"Press Start 2P",fontSize:"12px",color:wcfg?.color||"#FFFFFF"}).setOrigin(0.5);
+    const cta=this.add.text(GW/2,GH/2+72,"📖 READ THE LEGEND → books2read.com/u/4EOxZ0",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#55AAFF"}).setOrigin(0.5).setInteractive({useHandCursor:true});
+    cta.on("pointerdown",()=>window.open("https://books2read.com/u/4EOxZ0","_blank"));
+    this.tweens.add({targets:cta,alpha:0.5,duration:900,yoyo:true,repeat:-1});
+    this.add.text(GW/2,GH-22,"ANY KEY / TAP = REMATCH    ESC = TITLE",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#444444"}).setOrigin(0.5);
+    this.input.keyboard.on("keydown",e=>{
+      if(e.key==="Escape"){Match.p1=null;Match.p2=null;Match.stage=null;Match.winner=null;this.scene.start("StartScreen");}
+      else this.scene.start("BattleScene");
+    });
+    this.input.on("pointerdown",()=>this.scene.start("BattleScene"));
+  }
+}
+
+// ── BOOT ──────────────────────────────────────────────
+new Phaser.Game({
+  type:Phaser.AUTO,
+  width:GW, height:GH,
+  parent:"game-container",
+  backgroundColor:"#050308",
+  scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},
+  physics:{default:"arcade",arcade:{gravity:{y:0},debug:false}},
+  scene:[StartScreen,BrawlerScene,StageSelectScene,BattleScene,ResultsScene],
+  input:{gamepad:true}
+});
+</script>
+</body>
+</html>
