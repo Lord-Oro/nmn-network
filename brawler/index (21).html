@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>NMN: MINE WARFARE — Beta v1.3 Final</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{background:#050308;width:100%;height:100%;overflow:hidden;}
+    #gc{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;}
+    #mc{display:none;position:fixed;bottom:0;left:0;right:0;height:170px;pointer-events:none;z-index:999;}
+    #mc.on{display:block;}
+    .mb{
+      position:absolute;width:58px;height:58px;border-radius:50%;
+      border:3px solid #FFD700;background:rgba(5,3,8,0.85);
+      color:#FFD700;font-size:11px;font-weight:bold;
+      display:flex;align-items:center;justify-content:center;
+      pointer-events:all;user-select:none;-webkit-user-select:none;
+      font-family:"Press Start 2P",monospace;
+      box-shadow:0 0 10px rgba(255,215,0,0.4);
+    }
+    #ml{left:18px;bottom:58px;} #mr{left:90px;bottom:58px;}
+    #mj{left:54px;bottom:116px;} #ma{right:18px;bottom:110px;} #mf{right:84px;bottom:78px;}
+  </style>
+</head>
+<body>
+<div id="gc"></div>
+<div id="mc">
+  <div class="mb" id="ml">◀</div>
+  <div class="mb" id="mr">▶</div>
+  <div class="mb" id="mj">▲</div>
+  <div class="mb" id="ma">🥊</div>
+  <div class="mb" id="mf">⚡</div>
+</div>
+<script>
+// ═══════════════════════════════════════════════════════════════════
+//  NMN: MINE WARFARE — Beta V1.3 FINAL
+//
+//  ARCHITECT NOTES FOR FUTURE CLAUDE INSTANCES:
+//
+//  PHYSICS CONTRACT (sacred — do not break):
+//  - world.pause() → delayedCall(65ms) → world.resume() → setVelocity()
+//    This exact order prevents the freeze bug. Velocity AFTER resume.
+//  - Stun = boolean flag only. Never set body.moves = false.
+//    Stun locks INPUT, not momentum. Character must still fly on knockback.
+//  - setCollideWorldBounds(false) on all fighters — blast zones are manual.
+//
+//  RESPAWN CONTRACT (P1 and P2 treated IDENTICALLY):
+//  - respawnOrEnd(id) handles both 'p1' and 'p2' via the same code path
+//  - On blast: deduct 1 life, check if lives>0
+//    YES → reset dmg to 0, teleport to SPAWN[id], invincibility flash
+//    NO  → Match.winner = other player, showSignalLost()
+//  - SPAWN.p1 = {x:200, y:GH-140}, SPAWN.p2 = {x:600, y:GH-140}
+//
+//  KNOCKBACK FORMULA:
+//    scale = 1 + (currentDamagePercent * 0.03)
+//    vx = BASE_X * scale * dirX   (BASE_X: 280 melee, 160 proj)
+//    vy = BASE_Y * scale           (BASE_Y: -260 melee, -140 proj)
+//    0% → scale 1.0 (nudge), 100% → scale 4.0, 150% → scale 5.5 (KO)
+//
+//  SLASH VISUALS:
+//  - Gold arc (graphics.arc) at attacker position, 100ms lifetime
+//  - P1 slash: orange ember particles scatter on arc
+//  - P2/AI slash: cyan crackle lines on arc
+//  - NO full-screen flash ever. goldSpark() at impact point only.
+//
+//  PROJECTILES:
+//  - P1 fire: orange rect, flicker orange↔yellow, ember trail dots
+//  - P2 lightning: cyan rect, aggressive flicker cyan↔white, crackle trail
+//  - Both destroyed on hit or when exiting blast bounds
+//
+//  CAMERA:
+//  - camTarget (invisible rect) lerps to midpoint of P1+P2 each frame
+//  - Zoom lerps: dist<180→1.22x, dist>420→0.82x, else 1.0x
+//  - Clamped between 0.82 and 1.22 — players never leave frame
+//
+//  CONVERSION LINKS:
+//  - Juni/default: https://books2read.com/u/4EOxZ0
+//  - Olydia/Outbreak: https://books2read.com/u/31NrLw
+//  - Results shows both CTAs (cross-pollination = double traffic)
+//
+//  DEEP-PIT:
+//  - Shadow platform at y=GH+88. One-time overlap trigger per match.
+//  - Reinforcement AI spawns from above, red tinted, targets highest-dmg player
+// ═══════════════════════════════════════════════════════════════════
+
+const GW=800, GH=450;
+const BLAST={minX:-200,maxX:1000,minY:-200,maxY:800};
+const SPAWN={p1:{x:200,y:GH-140},p2:{x:600,y:GH-140}};
+const MP={l:false,r:false,j:false,a:false,f:false};
+
+const ROSTER=[
+  {name:"Juni",           free:true, frame:0,color:"#00FF88",lore:"Enter if you dare; face Anubis in the endless expanse of the sands of time.",url:"https://books2read.com/u/4EOxZ0"},
+  {name:"Pyro",           free:true, frame:1,color:"#FF6600",lore:"Born from the forge. His tusks run hotter than the mine walls.",url:"https://books2read.com/u/4EOxZ0"},
+  {name:"Glitch Elephant",free:true, frame:2,color:"#AA55FF",lore:"A signal corrupted mid-transmission. Exists in two places at once.",url:"https://books2read.com/u/4EOxZ0"},
+  {name:"Static Lion",    free:true, frame:3,color:"#55AAFF",lore:"The roar that breaks frequencies. His mane is pure interference.",url:"https://books2read.com/u/4EOxZ0"},
+  {name:"Olydia",         free:false,frame:4,color:"#9933CC",lore:"Transmission incoming; signal from the stars above: Respond Now.",url:"https://books2read.com/u/31NrLw"},
+  {name:"Helios",         free:false,frame:5,color:"#FFD700",lore:"UNLOCK: Read the Legend.",url:"https://books2read.com/u/4EOxZ0"},
+  {name:"Wanderer",       free:false,frame:6,color:"#336699",lore:"UNLOCK: Become a Patron.",url:"https://patreon.com/Lordminadeoro"},
+  {name:"Orid",           free:false,frame:7,color:"#884422",lore:"UNLOCK: Read the Legend.",url:"https://books2read.com/u/4EOxZ0"},
+  {name:"Notty",          free:false,frame:8,color:"#FF55AA",lore:"UNLOCK: Become a Patron.",url:"https://patreon.com/Lordminadeoro"},
+  {name:"???",            free:false,frame:9,color:"#444444",lore:"UNLOCK: Enter the Mine.",url:"https://nonsensemedianetwork.com"}
+];
+const FREE_FOUR=ROSTER.filter(r=>r.free);
+const STAGES=[
+  {key:"mana_forest", label:"MANA FOREST", bgKey:"bg_deep_forest"},
+  {key:"glitch_mines",label:"GLITCH MINES",bgKey:"forest_bg"}
+];
+const Match={p1:null,p2:null,stage:null,winner:null,mode:"solo"};
+
+// ── SAFE TEXTURE FACTORY ──────────────────────────────
+function ensureTex(scene){
+  const mkBG=(key,c1,c2)=>{
+    if(scene.textures.exists(key))return;
+    const c=scene.textures.createCanvas(key,GW,GH);
+    const ctx=c.getContext();
+    const g=ctx.createLinearGradient(0,0,0,GH);
+    g.addColorStop(0,c1);g.addColorStop(1,c2);
+    ctx.fillStyle=g;ctx.fillRect(0,0,GW,GH);c.refresh();
+  };
+  mkBG("bg_deep_forest","#0a1a0a","#050308");
+  mkBG("forest_bg","#0d0a1a","#050308");
+  if(!scene.textures.exists("brawlers_master")){
+    const cols=["#00FF88","#FF6600","#AA55FF","#55AAFF","#9933CC","#FFD700","#336699","#884422","#FF55AA","#222"];
+    const c=scene.textures.createCanvas("brawlers_master",128*10,128);
+    const ctx=c.getContext();
+    cols.forEach((col,i)=>{
+      ctx.fillStyle=col;ctx.fillRect(i*128+4,4,120,120);
+      ctx.strokeStyle="#FFD700";ctx.lineWidth=2;ctx.strokeRect(i*128+4,4,120,120);
+    });
+    c.refresh();
+    const tex=scene.textures.get("brawlers_master");
+    for(let i=0;i<10;i++)tex.add(i,0,i*128,0,128,128);
+  }
+  if(!scene.textures.exists("signal_lost")){
+    const c=scene.textures.createCanvas("signal_lost",GW,GH);
+    const ctx=c.getContext();
+    ctx.fillStyle="#050308";ctx.fillRect(0,0,GW,GH);
+    ctx.fillStyle="#FF2222";ctx.font="bold 52px monospace";
+    ctx.textAlign="center";ctx.fillText("SIGNAL LOST",GW/2,GH/2);c.refresh();
+  }
+}
+
+function addCRT(scene){
+  const g=scene.add.graphics().setDepth(9000).setScrollFactor(0).setAlpha(0.05);
+  for(let y=0;y<GH;y+=3){g.lineStyle(1,0x000000,1);g.beginPath();g.moveTo(0,y);g.lineTo(GW,y);g.strokePath();}
+}
+
+// Gold spark — ONLY visual feedback on hit. Never a full-screen flash.
+function goldSpark(scene,x,y){
+  const g=scene.add.graphics().setDepth(600);
+  const cols=[0xFFD700,0xFF8800,0xFFFFAA,0xFF5500];
+  for(let i=0;i<12;i++){
+    const ang=Math.random()*Math.PI*2, len=5+Math.random()*18;
+    g.fillStyle(cols[i%cols.length],1);
+    g.fillRect(x+Math.cos(ang)*len,y+Math.sin(ang)*len,3+Math.random()*3,3);
+  }
+  scene.tweens.add({targets:g,alpha:0,duration:220,onComplete:()=>g.destroy()});
+}
+
+// Gold arc slash — P1=ember, P2/AI=cyan crackle
+function arcSlash(scene,x,y,dir,isP1){
+  const g=scene.add.graphics().setDepth(580);
+  const col=isP1?0xFF8800:0x00CCFF;
+  g.lineStyle(5,col,0.9);
+  g.beginPath();
+  g.arc(x+dir*38,y-10,28,Phaser.Math.DegToRad(-70),Phaser.Math.DegToRad(70),false);
+  g.strokePath();
+  // Inner arc thinner
+  g.lineStyle(2,isP1?0xFFFF00:0xAAFFFF,0.6);
+  g.beginPath();
+  g.arc(x+dir*38,y-10,20,Phaser.Math.DegToRad(-55),Phaser.Math.DegToRad(55),false);
+  g.strokePath();
+
+  // Scatter particles off the arc
+  for(let i=0;i<8;i++){
+    const ang=Phaser.Math.DegToRad(Phaser.Math.Between(-70,70));
+    const r=Phaser.Math.Between(22,34);
+    const px=x+dir*38+Math.cos(ang)*r;
+    const py=y-10+Math.sin(ang)*r;
+    const dot=scene.add.rectangle(px,py,isP1?5:4,isP1?4:6,isP1?0xFF6600:0x00FFFF,0.9).setDepth(581);
+    scene.tweens.add({targets:dot,x:px+dir*(Math.random()*20),y:py-(Math.random()*14),alpha:0,duration:isP1?180:120,onComplete:()=>dot.destroy()});
+  }
+  scene.tweens.add({targets:g,alpha:0,duration:110,onComplete:()=>g.destroy()});
+}
+
+// ── START SCREEN ──────────────────────────────────────
+class StartScreen extends Phaser.Scene{
+  constructor(){super("StartScreen");}
+  preload(){
+    this.load.image("title_img","logo.jpg");
+    this.load.image("bg_deep_forest","bg_deep_forest.jpg");
+    this.load.image("forest_bg","forest_bg.jpg");
+    this.load.image("signal_lost","signal_lost.jpg");
+    this.load.spritesheet("brawlers_master","brawlers_master.jpg",{frameWidth:128,frameHeight:128});
+    ["juni","pyro","olydia","helios","wanderer","orid"].forEach(n=>this.load.image(n+"_beta",n+"_beta.jpg"));
+    this.load.on("loaderror",f=>console.warn("Fallback active:",f.key));
+  }
+  create(){
+    ensureTex(this);addCRT(this);
+    this.add.image(GW/2,GH/2,"bg_deep_forest").setDisplaySize(GW,GH).setAlpha(0.35);
+    const scan=this.add.rectangle(GW/2,0,GW,2,0xFFD700,0.2).setDepth(1).setScrollFactor(0);
+    this.tweens.add({targets:scan,y:GH,duration:2800,repeat:-1});
+    if(this.textures.exists("title_img")&&this.textures.get("title_img").source[0].width>1)
+      this.add.image(GW/2,GH/2-90,"title_img").setScale(0.42).setDepth(2);
+    this.add.text(GW/2,GH/2-18,"NMN: MINE WARFARE",{fontFamily:"Press Start 2P",fontSize:"18px",color:"#FFD700",stroke:"#000",strokeThickness:4}).setOrigin(0.5).setDepth(2);
+    this.add.text(GW/2,GH/2+16,"BETA v1.3 FINAL",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#555"}).setOrigin(0.5).setDepth(2);
+    const b=this.add.text(GW/2,GH/2+68,"PRESS ANY KEY / TAP TO START",{fontFamily:"Press Start 2P",fontSize:"10px",color:"#FFD700"}).setOrigin(0.5).setDepth(2);
+    this.tweens.add({targets:b,alpha:0,duration:700,yoyo:true,repeat:-1});
+    this.add.text(GW/2,GH-14,"nonsensemedianetwork.com  |  @LordOroNMN",{fontFamily:"Press Start 2P",fontSize:"6px",color:"#333"}).setOrigin(0.5).setDepth(2);
+    const go=()=>this.scene.start("BrawlerScene");
+    this.input.keyboard.on("keydown",go);
+    this.input.on("pointerdown",go);
+  }
+}
+
+// ── ROSTER ────────────────────────────────────────────
+class BrawlerScene extends Phaser.Scene{
+  constructor(){super("BrawlerScene");}
+  create(){
+    ensureTex(this);addCRT(this);
+    Match.p1=null;Match.p2=null;Match.stage=null;Match.winner=null;Match.mode="solo";
+    this.scoutIdx=-1;this.p1Done=false;this.p2Done=false;
+    this.add.rectangle(0,0,GW,GH,0x050308).setOrigin(0);
+    this.add.rectangle(0,0,GW,38,0x0a0a0a,0.92).setOrigin(0);
+    this.add.text(GW/2,10,"SELECT BRAWLERS",{fontFamily:"Press Start 2P",fontSize:"11px",color:"#FFD700"}).setOrigin(0.5,0);
+    const soloBtn=this.add.text(GW/2-80,GH-56,"SOLO MISSION",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#050308",backgroundColor:"#FFD700",padding:{x:8,y:4}}).setOrigin(0.5).setInteractive({useHandCursor:true});
+    const coopBtn=this.add.text(GW/2+80,GH-56,"LOCAL CO-OP",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#FFD700",backgroundColor:"#111",padding:{x:8,y:4}}).setOrigin(0.5).setInteractive({useHandCursor:true});
+    const setMode=m=>{
+      Match.mode=m;
+      soloBtn.setStyle({color:m==="solo"?"#050308":"#FFD700",backgroundColor:m==="solo"?"#FFD700":"#111"});
+      coopBtn.setStyle({color:m==="coop"?"#050308":"#FFD700",backgroundColor:m==="coop"?"#FFD700":"#111"});
+      this.intelTxt.setText(m==="solo"?"SOLO: Pick P1 — CPU will fight you.":"CO-OP: Scout once, select P1 then P2.").setColor("#FFD700");
+    };
+    soloBtn.on("pointerdown",()=>setMode("solo"));
+    coopBtn.on("pointerdown",()=>setMode("coop"));
+    this.add.rectangle(GW/2,56,GW-16,26,0x111).setOrigin(0.5);
+    this.intelTxt=this.add.text(GW/2,56,"SOLO: Pick P1 — CPU will fight you.",{fontFamily:"Press Start 2P",fontSize:"6px",color:"#FFD700",align:"center",wordWrap:{width:GW-28}}).setOrigin(0.5);
+    this.p1Lbl=this.add.text(16,GH-36,"P1: ---",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#00FF88"});
+    this.p2Lbl=this.add.text(GW-16,GH-36,"P2: ---",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#FF5555"}).setOrigin(1,0);
+    this.startBtn=this.add.text(GW/2,GH-18,"▶ START FORGE ◀",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#050308",backgroundColor:"#FFD700",padding:{x:10,y:4}}).setOrigin(0.5).setVisible(false).setInteractive({useHandCursor:true});
+    this.startBtn.on("pointerdown",()=>this.scene.start("StageSelectScene"));
+    const cols=5,cellW=150,cellH=82,sx=GW/2-(cols*cellW)/2+cellW/2,sy=80;
+    ROSTER.forEach((entry,i)=>{
+      const col=i%cols,row=Math.floor(i/cols),x=sx+col*cellW,y=sy+row*cellH+cellH/2;
+      const bc=entry.free?0x00ff88:0x444444;
+      const panel=this.add.rectangle(x,y,cellW-10,cellH-8,0x0d0d0d).setStrokeStyle(2,bc).setInteractive({useHandCursor:true});
+      const pk=entry.name.toLowerCase().replace(/ /g,"_")+"_beta";
+      const uk=this.textures.exists(pk)?pk:"brawlers_master";
+      const fr=this.textures.exists(pk)?null:entry.frame;
+      (fr!==null?this.add.image(x,y-14,uk,fr):this.add.image(x,y-14,uk)).setDisplaySize(36,36);
+      this.add.text(x,y+18,entry.name,{fontFamily:"Press Start 2P",fontSize:"5px",color:entry.free?entry.color:"#555",align:"center",wordWrap:{width:cellW-14}}).setOrigin(0.5);
+      if(!entry.free)this.add.text(x,y+30,"LOCKED",{fontFamily:"Press Start 2P",fontSize:"5px",color:"#FF4444"}).setOrigin(0.5);
+      panel.on("pointerover",()=>panel.setStrokeStyle(2,0xFFD700));
+      panel.on("pointerout", ()=>panel.setStrokeStyle(2,bc));
+      panel.on("pointerdown",()=>{
+        if(!entry.free){
+          if(this.scoutIdx===i){if(entry.url)window.open(entry.url,"_blank");}
+          else{this.scoutIdx=i;this.intelTxt.setText("🔒 "+entry.name+": "+entry.lore).setColor("#FF8888");}
+          return;
+        }
+        if(this.scoutIdx!==i){this.scoutIdx=i;this.intelTxt.setText("★ "+entry.name+"  "+entry.lore).setColor(entry.color);return;}
+        if(!this.p1Done){
+          Match.p1=entry;this.p1Done=true;
+          this.p1Lbl.setText("P1: "+entry.name).setColor(entry.color);
+          panel.setStrokeStyle(3,0x00ff88);this.scoutIdx=-1;
+          if(Match.mode==="solo"){
+            const cpu=Phaser.Utils.Array.GetRandom(FREE_FOUR.filter(r=>r!==entry));
+            Match.p2=cpu;this.p2Done=true;
+            this.p2Lbl.setText("CPU: "+cpu.name).setColor(cpu.color);
+            this.intelTxt.setText("CPU: "+cpu.name+" — HIT START FORGE").setColor("#FF5555");
+            this.startBtn.setVisible(true);
+          } else {
+            this.intelTxt.setText("P1 LOCKED — SCOUT P2 NOW").setColor("#00FF88");
+          }
+        } else if(!this.p2Done&&entry!==Match.p1){
+          Match.p2=entry;this.p2Done=true;
+          this.p2Lbl.setText("P2: "+entry.name).setColor(entry.color);
+          panel.setStrokeStyle(3,0xFF5555);this.scoutIdx=-1;
+          this.intelTxt.setText("BOTH READY — HIT START FORGE").setColor("#FFD700");
+          this.startBtn.setVisible(true);
+        }
+      });
+    });
+  }
+}
+
+// ── STAGE SELECT ──────────────────────────────────────
+class StageSelectScene extends Phaser.Scene{
+  constructor(){super("StageSelectScene");}
+  create(){
+    ensureTex(this);addCRT(this);
+    this.add.rectangle(0,0,GW,GH,0x050308).setOrigin(0);
+    this.add.text(GW/2,20,"SELECT STAGE",{fontFamily:"Press Start 2P",fontSize:"12px",color:"#FFD700"}).setOrigin(0.5);
+    STAGES.forEach((stage,i)=>{
+      const x=GW/2+(i===0?-190:190),y=GH/2;
+      this.add.image(x,y,stage.bgKey).setDisplaySize(320,160).setAlpha(0.55);
+      const panel=this.add.rectangle(x,y,320,160,0x000000,0).setStrokeStyle(2,0xFFD700).setInteractive({useHandCursor:true});
+      this.add.text(x,y-14,stage.label,{fontFamily:"Press Start 2P",fontSize:"10px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
+      this.add.text(x,y+12,i===0?"STABLE / VERDANT":"UNSTABLE / CORRUPTED",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#AAA"}).setOrigin(0.5);
+      panel.on("pointerover",()=>panel.setStrokeStyle(3,0xFFFFFF));
+      panel.on("pointerout", ()=>panel.setStrokeStyle(2,0xFFD700));
+      panel.on("pointerdown",()=>{Match.stage=stage.key;this.scene.start("BattleScene");});
+    });
+  }
+}
+
+// ── BATTLE SCENE ──────────────────────────────────────
+class BattleScene extends Phaser.Scene{
+  constructor(){super("BattleScene");}
+
+  create(){
+    ensureTex(this);
+    const stage=STAGES.find(s=>s.key===Match.stage)||STAGES[0];
+    this.physics.world.gravity.y=700;
+    this.physics.world.setBounds(BLAST.minX,BLAST.minY,BLAST.maxX-BLAST.minX,BLAST.maxY-BLAST.minY);
+
+    // BG fixed to camera
+    this.add.image(GW/2,GH/2,stage.bgKey).setDisplaySize(GW*1.4,GH*1.4).setAlpha(0.55).setScrollFactor(0);
+    this.add.image(GW/2,GH/2,stage.bgKey).setDisplaySize(GW*1.05,GH*1.05).setAlpha(0.18).setScrollFactor(0).setTint(0x8899ff);
+    addCRT(this);
+    if(Match.stage==="mana_forest"){
+      try{this.add.particles(0,0,"brawlers_master",{frame:0,x:{min:0,max:GW},y:GH,lifespan:3500,speedY:{min:-30,max:-80},scale:{start:0.06,end:0},alpha:{start:0.4,end:0},quantity:1,frequency:350,tint:0x88FFaa});}catch(e){}
+    }
+
+    // ── PLATFORMS ──
+    this.platforms=this.physics.add.staticGroup();
+    const mkP=(px,py,pw,ph=14,col=0x3a2a0a)=>{
+      const p=this.add.rectangle(px,py,pw,ph,col);
+      this.add.rectangle(px,py-ph/2-2,pw,3,0xFFD700,0.3);
+      this.physics.add.existing(p,true);
+      this.platforms.add(p);return p;
+    };
+    mkP(GW/2,GH-55,520,18);
+    mkP(170,GH-160,160);mkP(630,GH-160,160);mkP(GW/2,GH-245,180);
+    this.shadowPlat=mkP(GW/2,GH+88,140,14,0x440000);
+    this.shadowPlat.setAlpha(0.7);
+    this.reinforcementTriggered=false;
+
+    // ── PLAYERS ──
+    this.p1=this.mkSp(SPAWN.p1.x,SPAWN.p1.y,Match.p1||ROSTER[0]);
+    this.p2=this.mkSp(SPAWN.p2.x,SPAWN.p2.y,Match.p2||ROSTER[1]);
+    this.p2.setFlipX(true);
+    this.physics.add.collider(this.p1,this.platforms);
+    this.physics.add.collider(this.p2,this.platforms);
+
+    // ── STATE — single object, no split flags ──
+    this.S={
+      p1Dmg:0,p2Dmg:0,p1Lives:3,p2Lives:3,
+      p1Stun:false,p2Stun:false,
+      p1AtkCD:false,p2AtkCD:false,
+      p1Jumps:0,p2Jumps:0,
+      hitStop:false,gameOver:false,
+      cpuAtkTimer:0,cpuFireTimer:0,cpuJumps:0,cpuAtkCD:false,
+      rAtkTimer:0,rFireTimer:0,rJumps:0,rAtkCD:false
+    };
+    this.reinforcementAI=null;
+
+    // ── GROUPS ──
+    this.proj1=this.physics.add.group();
+    this.proj2=this.physics.add.group();
+    this.projR=this.physics.add.group();
+    this.hb1=this.physics.add.group();
+    this.hb2=this.physics.add.group();
+    this.hbR=this.physics.add.group();
+
+    // Melee overlaps
+    this.physics.add.overlap(this.hb1,this.p2,(hb)=>{if(!hb.active)return;const p={x:hb.x,y:hb.y};hb.destroy();this.hit("p1","p2",22,p,true);});
+    this.physics.add.overlap(this.hb2,this.p1,(hb)=>{if(!hb.active)return;const p={x:hb.x,y:hb.y};hb.destroy();this.hit("p2","p1",22,p,true);});
+    // Projectile overlaps
+    this.physics.add.overlap(this.proj1,this.p2,(pr)=>{if(!pr.active)return;const p={x:pr.x,y:pr.y};pr.destroy();this.hit("p1","p2",10,p,false);});
+    this.physics.add.overlap(this.proj2,this.p1,(pr)=>{if(!pr.active)return;const p={x:pr.x,y:pr.y};pr.destroy();this.hit("p2","p1",10,p,false);});
+    // Shadow platform
+    this.physics.add.overlap(this.p1,this.shadowPlat,()=>this.spawnReinforcement());
+    this.physics.add.overlap(this.p2,this.shadowPlat,()=>this.spawnReinforcement());
+
+    // ── KEYS ──
+    this.k1=this.input.keyboard.addKeys({left:Phaser.Input.Keyboard.KeyCodes.A,right:Phaser.Input.Keyboard.KeyCodes.D,up:Phaser.Input.Keyboard.KeyCodes.W,atk:Phaser.Input.Keyboard.KeyCodes.J,fire:Phaser.Input.Keyboard.KeyCodes.L});
+    this.k2=this.input.keyboard.addKeys({left:Phaser.Input.Keyboard.KeyCodes.LEFT,right:Phaser.Input.Keyboard.KeyCodes.RIGHT,up:Phaser.Input.Keyboard.KeyCodes.UP,atk:Phaser.Input.Keyboard.KeyCodes.NUMPAD_ONE,fire:Phaser.Input.Keyboard.KeyCodes.NUMPAD_THREE});
+    this.pad=null;this.input.gamepad.once("connected",p=>{this.pad=p;});
+
+    // Mobile bindings
+    if(this.sys.game.device.input.touch){
+      document.getElementById("mc").classList.add("on");
+      [["ml","l"],["mr","r"],["mj","j"],["ma","a"],["mf","f"]].forEach(([id,prop])=>{
+        const el=document.getElementById(id);
+        el.addEventListener("touchstart",e=>{e.preventDefault();MP[prop]=true;},{passive:false});
+        el.addEventListener("touchend",  e=>{e.preventDefault();MP[prop]=false;},{passive:false});
+      });
+    }
+
+    // ── HUD ──
+    this.buildHUD();
+
+    // ── CAMERA ──
+    this.camTarget=this.add.rectangle(GW/2,GH/2,1,1,0,0).setDepth(-1);
+    this.cameras.main.setBounds(BLAST.minX,BLAST.minY,BLAST.maxX-BLAST.minX,BLAST.maxY-BLAST.minY);
+    this.cameras.main.startFollow(this.camTarget,true,0.1,0.1);
+    this.targetZoom=1.0;
+  }
+
+  mkSp(x,y,cfg){
+    const pk=cfg.name.toLowerCase().replace(/ /g,"_")+"_beta";
+    const uk=this.textures.exists(pk)?pk:"brawlers_master";
+    const fr=this.textures.exists(pk)?null:cfg.frame;
+    const sp=fr!==null?this.physics.add.sprite(x,y,uk,fr):this.physics.add.sprite(x,y,uk);
+    sp.setDisplaySize(52,52).setCollideWorldBounds(false);
+    sp.body.setMaxVelocityY(1000);sp.setData("cfg",cfg);return sp;
+  }
+
+  buildHUD(){
+    const D=9999;
+    const p1c=(Match.p1||ROSTER[0]).color,p2c=(Match.p2||ROSTER[1]).color;
+    this.add.rectangle(0,0,215,44,0x050308,0.9).setOrigin(0).setDepth(D).setScrollFactor(0);
+    this.add.rectangle(GW,0,215,44,0x050308,0.9).setOrigin(1,0).setDepth(D).setScrollFactor(0);
+    this.p1NT=this.add.text(10,5,(Match.p1||ROSTER[0]).name,{fontFamily:"Press Start 2P",fontSize:"7px",color:p1c}).setDepth(D).setScrollFactor(0);
+    this.p1DT=this.add.text(10,17,"0%",{fontFamily:"Press Start 2P",fontSize:"14px",color:"#FFF"}).setDepth(D).setScrollFactor(0);
+    this.p1HT=this.add.text(10,35,"♥♥♥",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#FF4444"}).setDepth(D).setScrollFactor(0);
+    this.p2NT=this.add.text(GW-10,5,(Match.p2||ROSTER[1]).name,{fontFamily:"Press Start 2P",fontSize:"7px",color:p2c}).setOrigin(1,0).setDepth(D).setScrollFactor(0);
+    this.p2DT=this.add.text(GW-10,17,"0%",{fontFamily:"Press Start 2P",fontSize:"14px",color:"#FFF"}).setOrigin(1,0).setDepth(D).setScrollFactor(0);
+    this.p2HT=this.add.text(GW-10,35,"♥♥♥",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#FF4444"}).setOrigin(1,0).setDepth(D).setScrollFactor(0);
+    this.add.text(GW/2,6,(Match.stage||"STAGE").toUpperCase().replace("_"," "),{fontFamily:"Press Start 2P",fontSize:"7px",color:"#FFD700"}).setOrigin(0.5,0).setDepth(D).setScrollFactor(0);
+    if(Match.mode==="solo") this.p2NT.setText("CPU: "+(Match.p2||ROSTER[1]).name);
+  }
+
+  // ── HIT — physics contract: velocity AFTER world.resume ──
+  hit(atkId,tgtId,power,pos,isMelee){
+    const S=this.S;
+    if(S.gameOver||S.hitStop) return;
+    if(tgtId==="p2") S.p2Dmg+=power; else S.p1Dmg+=power;
+    const dmg=tgtId==="p2"?S.p2Dmg:S.p1Dmg;
+    const tgt=tgtId==="p2"?this.p2:this.p1;
+    const atk=atkId==="p1"?this.p1:atkId==="p2"?this.p2:this.reinforcementAI;
+    if(pos) goldSpark(this,pos.x,pos.y);
+    const scale=Math.min(6,1+(dmg*0.03));
+    const dirX=(atk&&tgt.x>=atk.x)?1:-1;
+    const vx=(isMelee?280:160)*scale*dirX;
+    const vy=(isMelee?-260:-140)*scale;
+    this.cameras.main.shake(isMelee?75:45,Math.min(0.012,0.003*scale));
+    S.hitStop=true;
+    this.physics.world.pause();
+    this.time.delayedCall(65,()=>{
+      this.physics.world.resume();
+      S.hitStop=false;
+      if(tgt.active&&tgt.body) tgt.body.setVelocity(vx,vy);
+      if(tgtId==="p1") S.p1Stun=true; else S.p2Stun=true;
+      this.time.delayedCall(280,()=>{if(tgtId==="p1")S.p1Stun=false;else S.p2Stun=false;});
+    });
+    // Red tint on target only
+    this.tweens.add({targets:tgt,tintTopLeft:{from:0xFF2222,to:0xFFFFFF},tintBottomLeft:{from:0xFF2222,to:0xFFFFFF},tintTopRight:{from:0xFF2222,to:0xFFFFFF},tintBottomRight:{from:0xFF2222,to:0xFFFFFF},duration:200});
+    this.refreshHUD();
+  }
+
+  // Arc slash visual + hitbox spawn
+  spawnMelee(owner){
+    const sp=owner==="p1"?this.p1:owner==="p2"?this.p2:this.reinforcementAI;
+    const grp=owner==="p1"?this.hb1:owner==="p2"?this.hb2:this.hbR;
+    if(!sp||!sp.active) return;
+    const dir=sp.flipX?-1:1;
+    const isP1=owner==="p1";
+    arcSlash(this,sp.x,sp.y,dir,isP1);
+    const hb=this.add.rectangle(sp.x+dir*42,sp.y,52,28,0xFFD700,0);
+    this.physics.add.existing(hb);
+    hb.body.setAllowGravity(false).setImmovable(true);
+    grp.add(hb);
+    this.tweens.add({targets:hb,alpha:0,duration:90,onComplete:()=>hb.active&&hb.destroy()});
+  }
+
+  // Projectile with heavy vapor trail
+  spawnProjectile(owner){
+    const sp=owner==="p1"?this.p1:owner==="p2"?this.p2:this.reinforcementAI;
+    const grp=owner==="p1"?this.proj1:owner==="p2"?this.proj2:this.projR;
+    if(!sp||!sp.active) return;
+    const dir=sp.flipX?-1:1;
+    const isP1=owner==="p1";
+    const col=isP1?0xFF5500:0x00CCFF;
+    const col2=isP1?0xFFAA00:0xFFFFFF;
+    const pr=this.add.rectangle(sp.x+dir*40,sp.y-4,isP1?22:18,isP1?10:12,col,0.95);
+    this.physics.add.existing(pr);
+    pr.body.setAllowGravity(false);
+    pr.body.setVelocityX(dir*(isP1?560:580));
+    grp.add(pr);
+    // Aggressive flicker
+    this.tweens.add({targets:pr,fillColor:{from:col,to:col2},duration:isP1?55:30,yoyo:true,repeat:-1});
+    // Dense vapor trail — 18 dots for smoke-like feel
+    let trailCount=0;
+    const trailEvent=this.time.addEvent({
+      delay:25,repeat:18,
+      callback:()=>{
+        if(!pr.active) return;
+        const spread=isP1?8:5;
+        const dot=this.add.rectangle(
+          pr.x-dir*(8+trailCount*1.5),
+          pr.y+(Math.random()*spread-spread/2),
+          isP1?7:5, isP1?5:7,
+          isP1?0xFF6600:0x00AAFF, 0.8
+        ).setDepth(pr.depth-1);
+        trailCount++;
+        this.tweens.add({targets:dot,alpha:0,scaleX:0,scaleY:0,duration:isP1?220:160,onComplete:()=>dot.destroy()});
+      }
+    });
+    this.time.delayedCall(1400,()=>{if(pr.active)pr.destroy();});
+  }
+
+  // ══════════════════════════════════════════════════
+  //  RESPAWN CONTRACT — P1 AND P2 IDENTICAL CODE PATH
+  //  This is the fix for the P1 soul-anchor bug.
+  //  Both IDs go through the same logic with no bias.
+  // ══════════════════════════════════════════════════
+  respawnOrEnd(id){
+    const S=this.S;
+    if(S.gameOver) return;
+    const isP1=id==="p1";
+    const sp=isP1?this.p1:this.p2;
+    const spX=isP1?SPAWN.p1.x:SPAWN.p2.x;
+    const spY=isP1?SPAWN.p1.y:SPAWN.p2.y;
+
+    // Deduct life — same for both
+    if(isP1) S.p1Lives--; else S.p2Lives--;
+    const livesLeft=isP1?S.p1Lives:S.p2Lives;
+
+    this.cameras.main.shake(280,0.016);
+
+    if(livesLeft<=0){
+      // No lives left — end match
+      S.gameOver=true;
+      Match.winner=isP1?"P2":"P1";
+      this.showSignalLost();
+      return;
+    }
+
+    // Lives remain — RESPAWN (same for p1 and p2, no bias)
+    if(isP1) S.p1Dmg=0; else S.p2Dmg=0;
+    if(isP1) S.p1Stun=false; else S.p2Stun=false;
+    if(isP1) S.p1AtkCD=false; else S.p2AtkCD=false;
+
+    // Full sprite resurrection — covers every death state
+    sp.setActive(true);
+    sp.setVisible(true);
+    sp.setAlpha(1);
+    sp.clearTint();
+    if(sp.body){
+      sp.body.setEnable(true);
+      sp.body.setVelocity(0,0);
+      sp.body.setAcceleration(0,0);
+    }
+    sp.setPosition(spX,spY);
+    this.tweens.killTweensOf(sp);
+    this.tweens.add({targets:sp,alpha:0.3,duration:110,yoyo:true,repeat:7,
+      onComplete:()=>{ sp.setAlpha(1); }
+    });
+
+    // Respawn label floats up
+    const lbl=this.add.text(spX,spY-48,(isP1?"P1":"P2")+" BACK",
+      {fontFamily:"Press Start 2P",fontSize:"8px",color:isP1?"#00FF88":"#FF5555"}).setOrigin(0.5).setDepth(500);
+    this.tweens.add({targets:lbl,y:spY-88,alpha:0,duration:900,onComplete:()=>lbl.destroy()});
+
+    this.refreshHUD();
+  }
+
+  showSignalLost(){
+    document.getElementById("mc").classList.remove("on");
+    const sl=this.textures.exists("signal_lost")
+      ?this.add.image(GW/2,GH/2,"signal_lost").setDisplaySize(GW,GH).setAlpha(0).setDepth(8000).setScrollFactor(0)
+      :this.add.rectangle(GW/2,GH/2,GW,GH,0x050308,0).setDepth(8000).setScrollFactor(0);
+    this.tweens.add({targets:sl,alpha:0.88,duration:400});
+    this.add.text(GW/2,GH/2-24,"SIGNAL LOST",{fontFamily:"Press Start 2P",fontSize:"22px",color:"#FF2222",stroke:"#000",strokeThickness:4}).setDepth(8001).setOrigin(0.5).setScrollFactor(0);
+    this.add.text(GW/2,GH/2+14,Match.winner+" WINS THE SECTOR",{fontFamily:"Press Start 2P",fontSize:"10px",color:"#FFD700"}).setDepth(8001).setOrigin(0.5).setScrollFactor(0);
+    this.time.delayedCall(1900,()=>this.scene.start("ResultsScene"));
+  }
+
+  spawnReinforcement(){
+    if(this.reinforcementTriggered||this.S.gameOver) return;
+    this.reinforcementTriggered=true;
+    const txt=this.add.text(GW/2,GH/2-70,"⚡ REINFORCEMENT INCOMING ⚡",
+      {fontFamily:"Press Start 2P",fontSize:"11px",color:"#FF2222",stroke:"#000",strokeThickness:3}).setOrigin(0.5).setDepth(500).setScrollFactor(0);
+    this.tweens.add({targets:txt,alpha:0,delay:1600,duration:600,onComplete:()=>txt.destroy()});
+    this.cameras.main.shake(280,0.014);
+    const rCfg=FREE_FOUR.find(r=>r!==Match.p1&&r!==Match.p2)||FREE_FOUR[0];
+    const pk=rCfg.name.toLowerCase().replace(/ /g,"_")+"_beta";
+    const uk=this.textures.exists(pk)?pk:"brawlers_master";
+    const fr=this.textures.exists(pk)?null:rCfg.frame;
+    const ra=fr!==null?this.physics.add.sprite(GW/2,-60,uk,fr):this.physics.add.sprite(GW/2,-60,uk);
+    ra.setDisplaySize(52,52).setCollideWorldBounds(false).setTint(0xFF3333);
+    ra.body.setMaxVelocityY(1000);
+    this.reinforcementAI=ra;
+    this.physics.add.collider(ra,this.platforms);
+    this.physics.add.overlap(this.hbR,this.p1,(hb)=>{if(!hb.active)return;const p={x:hb.x,y:hb.y};hb.destroy();this.hit("r","p1",16,p,true);});
+    this.physics.add.overlap(this.hbR,this.p2,(hb)=>{if(!hb.active)return;const p={x:hb.x,y:hb.y};hb.destroy();this.hit("r","p2",16,p,true);});
+    this.physics.add.overlap(this.projR,this.p1,(pr)=>{if(!pr.active)return;const p={x:pr.x,y:pr.y};pr.destroy();this.hit("r","p1",8,p,false);});
+    this.physics.add.overlap(this.projR,this.p2,(pr)=>{if(!pr.active)return;const p={x:pr.x,y:pr.y};pr.destroy();this.hit("r","p2",8,p,false);});
+  }
+
+  // CPU AI — solo mode P2
+  runCPU(dt){
+    const S=this.S;
+    if(S.p2Stun||S.hitStop||!this.p2.active||!this.p2.body) return;
+    const tgt=this.p1;if(!tgt.active)return;
+    const dx=tgt.x-this.p2.x,dist=Math.abs(dx);
+    if(dist>40) this.p2.body.setVelocityX(dx>0?195:-195);
+    else this.p2.body.setVelocityX(0);
+    this.p2.setFlipX(dx<0);
+    if(this.p2.body.blocked.down) S.cpuJumps=0;
+    S.cpuAtkTimer+=dt;
+    if(S.cpuAtkTimer>1000&&S.cpuJumps<2){
+      if(tgt.y-this.p2.y<-55||Math.random()<0.3){this.p2.body.setVelocityY(-380);S.cpuJumps++;S.cpuAtkTimer=0;}
+    }
+    if(dist<72&&!S.cpuAtkCD){S.cpuAtkCD=true;this.spawnMelee("p2");this.time.delayedCall(480,()=>S.cpuAtkCD=false);}
+    S.cpuFireTimer+=dt;
+    if(dist>80&&dist<380&&S.cpuFireTimer>1700){S.cpuFireTimer=0;this.spawnProjectile("p2");}
+  }
+
+  // Reinforcement AI — targets highest-damage player
+  runReinforcement(dt){
+    const S=this.S,ra=this.reinforcementAI;
+    if(!ra||!ra.active||!ra.body) return;
+    const tgt=S.p1Dmg>=S.p2Dmg?this.p1:this.p2;
+    if(!tgt.active) return;
+    const dx=tgt.x-ra.x,dist=Math.abs(dx);
+    if(dist>40) ra.body.setVelocityX(dx>0?200:-200);
+    else ra.body.setVelocityX(0);
+    ra.setFlipX(dx<0);
+    if(ra.body.blocked.down) S.rJumps=0;
+    S.rAtkTimer+=dt;
+    if(S.rAtkTimer>950&&S.rJumps<2){
+      if(tgt.y-ra.y<-55||Math.random()<0.28){ra.body.setVelocityY(-380);S.rJumps++;S.rAtkTimer=0;}
+    }
+    if(dist<70&&!S.rAtkCD){S.rAtkCD=true;this.spawnMelee("reinforcement");this.time.delayedCall(450,()=>S.rAtkCD=false);}
+    S.rFireTimer+=dt;
+    if(dist>80&&dist<380&&S.rFireTimer>1500){S.rFireTimer=0;this.spawnProjectile("reinforcement");}
+    if(ra.x<BLAST.minX||ra.x>BLAST.maxX||ra.y>BLAST.maxY) ra.destroy();
+  }
+
+  checkBlast(){
+    if(this.S.hitStop) return;
+    // ── BOTH PLAYERS USE IDENTICAL LOGIC via respawnOrEnd ──
+    [["p1",this.p1],["p2",this.p2]].forEach(([id,sp])=>{
+      if(!sp.active) return;
+      if(sp.x<BLAST.minX||sp.x>BLAST.maxX||sp.y<BLAST.minY||sp.y>BLAST.maxY){
+        this.respawnOrEnd(id);
+      }
+    });
+    // Clean projectiles
+    [this.proj1,this.proj2,this.projR].forEach(g=>{
+      g.getChildren().forEach(pr=>{if(pr.x<BLAST.minX||pr.x>BLAST.maxX||pr.y>BLAST.maxY+50)pr.destroy();});
+    });
+  }
+
+  refreshHUD(){
+    const S=this.S;
+    this.p1DT.setText(S.p1Dmg+"%");this.p2DT.setText(S.p2Dmg+"%");
+    const clr=p=>p>80?"#FF4444":p>40?"#FFAA00":"#FFFFFF";
+    this.p1DT.setColor(clr(S.p1Dmg));this.p2DT.setColor(clr(S.p2Dmg));
+    const h=n=>"♥".repeat(Math.max(0,n))+"♡".repeat(Math.max(0,3-n));
+    this.p1HT.setText(h(S.p1Lives));this.p2HT.setText(h(S.p2Lives));
+  }
+
+  moveP1(){
+    const S=this.S,sp=this.p1;
+    if(!sp.active||!sp.body||S.hitStop) return;
+    const b=sp.body,k=this.k1;
+    if(b.blocked.down) S.p1Jumps=0;
+    if(!S.p1Stun){
+      const gL=k.left.isDown||MP.l,gR=k.right.isDown||MP.r;
+      const gJ=Phaser.Input.Keyboard.JustDown(k.up)||MP.j;
+      const gA=Phaser.Input.Keyboard.JustDown(k.atk)||MP.a;
+      const gF=Phaser.Input.Keyboard.JustDown(k.fire)||MP.f;
+      if(gL){b.setVelocityX(-210);sp.setFlipX(true);}
+      else if(gR){b.setVelocityX(210);sp.setFlipX(false);}
+      else b.setVelocityX(b.velocity.x*0.70);
+      if(gJ&&S.p1Jumps<2){b.setVelocityY(-390);S.p1Jumps++;MP.j=false;}
+      if(gA&&!S.p1AtkCD){S.p1AtkCD=true;this.spawnMelee("p1");this.time.delayedCall(210,()=>S.p1AtkCD=false);MP.a=false;}
+      if(gF&&!S.p1AtkCD){S.p1AtkCD=true;this.spawnProjectile("p1");this.time.delayedCall(290,()=>S.p1AtkCD=false);MP.f=false;}
+    }
+  }
+
+  moveP2(){
+    const S=this.S,sp=this.p2;
+    if(!sp.active||!sp.body||S.hitStop) return;
+    const b=sp.body,k=this.k2;
+    if(b.blocked.down) S.p2Jumps=0;
+    if(!S.p2Stun){
+      if(k.left.isDown){b.setVelocityX(-210);sp.setFlipX(true);}
+      else if(k.right.isDown){b.setVelocityX(210);sp.setFlipX(false);}
+      else b.setVelocityX(b.velocity.x*0.70);
+      if(Phaser.Input.Keyboard.JustDown(k.up)&&S.p2Jumps<2){b.setVelocityY(-390);S.p2Jumps++;}
+      if(Phaser.Input.Keyboard.JustDown(k.atk)&&!S.p2AtkCD){S.p2AtkCD=true;this.spawnMelee("p2");this.time.delayedCall(210,()=>S.p2AtkCD=false);}
+      if(Phaser.Input.Keyboard.JustDown(k.fire)&&!S.p2AtkCD){S.p2AtkCD=true;this.spawnProjectile("p2");this.time.delayedCall(290,()=>S.p2AtkCD=false);}
+      if(this.pad){
+        const ax=this.pad.axes.length>0?this.pad.axes[0].getValue():0;
+        if(Math.abs(ax)>0.2) b.setVelocityX(ax*252);
+        if(this.pad.buttons[0]?.pressed&&S.p2Jumps<2){b.setVelocityY(-390);S.p2Jumps++;}
+        if(this.pad.buttons[1]?.pressed&&!S.p2AtkCD){S.p2AtkCD=true;this.spawnMelee("p2");this.time.delayedCall(210,()=>S.p2AtkCD=false);}
+      }
+    }
+  }
+
+  updateCamera(){
+    const p1x=this.p1.active?this.p1.x:GW/2,p1y=this.p1.active?this.p1.y:GH/2;
+    const p2x=this.p2.active?this.p2.x:GW/2,p2y=this.p2.active?this.p2.y:GH/2;
+    const mx=(p1x+p2x)/2,my=(p1y+p2y)/2;
+    this.camTarget.x+=(mx-this.camTarget.x)*0.08;
+    this.camTarget.y+=(my-this.camTarget.y)*0.08;
+    const dist=Phaser.Math.Distance.Between(p1x,p1y,p2x,p2y);
+    // Clamped strictly between 0.82 and 1.22
+    const raw=dist<180?1.22:dist>420?0.82:1.0;
+    this.targetZoom=Phaser.Math.Clamp(raw,0.82,1.22);
+    const cur=this.cameras.main.zoom;
+    this.cameras.main.setZoom(cur+(this.targetZoom-cur)*0.04);
+  }
+
+  update(time,dt){
+    const S=this.S;
+    if(S.gameOver) return;
+    this.moveP1();
+    if(Match.mode==="solo") this.runCPU(dt); else this.moveP2();
+    if(this.reinforcementAI&&this.reinforcementAI.active) this.runReinforcement(dt);
+    this.checkBlast();
+    this.updateCamera();
+  }
+}
+
+// ── RESULTS ───────────────────────────────────────────
+class ResultsScene extends Phaser.Scene{
+  constructor(){super("ResultsScene");}
+  create(){
+    ensureTex(this);addCRT(this);
+    this.add.rectangle(0,0,GW,GH,0x050308).setOrigin(0);
+    const winner=Match.winner||"P1";
+    const wcfg=winner==="P1"?Match.p1:Match.p2;
+    if(wcfg){
+      const pk=wcfg.name.toLowerCase().replace(/ /g,"_")+"_beta";
+      const uk=this.textures.exists(pk)?pk:"brawlers_master";
+      const fr=this.textures.exists(pk)?null:wcfg.frame;
+      const img=fr!==null?this.add.image(GW/2,GH/2-68,uk,fr):this.add.image(GW/2,GH/2-68,uk);
+      img.setDisplaySize(110,110).setAlpha(0.9);
+      this.tweens.add({targets:img,scaleX:1.07,scaleY:1.07,yoyo:true,repeat:-1,duration:900});
+    }
+    this.add.text(GW/2,GH/2+8,"SECTOR CLEARED",{fontFamily:"Press Start 2P",fontSize:"18px",color:"#FFD700",stroke:"#000",strokeThickness:4}).setOrigin(0.5);
+    this.add.text(GW/2,GH/2+40,winner+" WINS",{fontFamily:"Press Start 2P",fontSize:"12px",color:wcfg?.color||"#FFF"}).setOrigin(0.5);
+
+    // CONVERSION: winner's lore + link
+    const isOlydia=wcfg?.name==="Olydia";
+    const lore1=isOlydia?"Transmission incoming; signal from the stars above: Respond Now.":"Enter if you dare; face Anubis in the endless expanse of the sands of time.";
+    const url1=isOlydia?"https://books2read.com/u/31NrLw":"https://books2read.com/u/4EOxZ0";
+    const cta1=this.add.text(GW/2,GH/2+64,"★ "+lore1,{fontFamily:"Press Start 2P",fontSize:"6px",color:isOlydia?"#AA66FF":"#00FF88",align:"center",wordWrap:{width:GW-40}}).setOrigin(0.5).setInteractive({useHandCursor:true});
+    cta1.on("pointerdown",()=>window.open(url1,"_blank"));
+    this.tweens.add({targets:cta1,alpha:0.5,duration:1000,yoyo:true,repeat:-1});
+
+    // Cross-pollination: always show the OTHER book
+    const url2=isOlydia?"https://books2read.com/u/4EOxZ0":"https://books2read.com/u/31NrLw";
+    const lbl2=isOlydia?"📖 Also: Juni the Immortal →":"📡 Also: Outbreak from the Stars →";
+    const cta2=this.add.text(GW/2,GH/2+90,lbl2,{fontFamily:"Press Start 2P",fontSize:"6px",color:"#555"}).setOrigin(0.5).setInteractive({useHandCursor:true});
+    cta2.on("pointerover",()=>cta2.setColor("#AAA"));cta2.on("pointerout",()=>cta2.setColor("#555"));
+    cta2.on("pointerdown",()=>window.open(url2,"_blank"));
+
+    this.add.text(GW/2,GH-28,"Do you want to test your luck again?",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#888"}).setOrigin(0.5);
+    this.add.text(GW/2,GH-14,"ANY KEY / TAP = REMATCH    ESC = TITLE",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#444"}).setOrigin(0.5);
+    this.input.keyboard.on("keydown",e=>{
+      if(e.key==="Escape"){Match.p1=null;Match.p2=null;Match.stage=null;Match.winner=null;this.scene.start("StartScreen");}
+      else this.scene.start("BattleScene");
+    });
+    this.input.on("pointerdown",()=>this.scene.start("BattleScene"));
+  }
+}
+
+// ── BOOT ──────────────────────────────────────────────
+new Phaser.Game({
+  type:Phaser.AUTO,width:GW,height:GH,parent:"gc",backgroundColor:"#050308",
+  scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},
+  physics:{default:"arcade",arcade:{gravity:{y:0},debug:false}},
+  scene:[StartScreen,BrawlerScene,StageSelectScene,BattleScene,ResultsScene],
+  input:{gamepad:true}
+});
+</script>
+</body>
+</html>
