@@ -2,152 +2,758 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>NMN: THE FORGE BETA V1.0</title>
-  <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-P5WL9XNDY8');
-  </script>
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>NMN: MINE WARFARE</title>
+
+  <link rel="icon" type="image/jpeg" href="logo.jpg" />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
   <style>
-    body { margin: 0; background: #000; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; touch-action: none; }
-    #game-wrapper { position: relative; width: 800px; height: 400px; }
-    canvas { border: 2px solid #FFD700; image-rendering: pixelated; max-width: 100%; height: auto; }
-    #victory-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
-    #victory-overlay.active { display: flex; }
-    .btn { font-family: 'Press Start 2P', cursive; padding: 15px; border: none; cursor: pointer; margin-top: 10px; width: 280px; font-size: 10px; }
+    body {
+      margin: 0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      touch-action: none;
+      font-family: 'Share Tech Mono', monospace;
+      color: #FFD700;
+    }
+    #game-wrapper {
+      position: relative;
+      width: 960px;
+      max-width: 100%;
+      aspect-ratio: 16 / 9;
+    }
+    canvas {
+      border: 2px solid #FFD700;
+      image-rendering: pixelated;
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
   </style>
 </head>
 <body>
-<div id="game-wrapper">
-  <div id="phaser-game">
-    <div id="victory-overlay">
-      <h2 style="font-family:'Press Start 2P'; color:#FFD700; font-size: 16px; text-align:center;">SECTOR CLEARED</h2>
-      <button class="btn" style="background:#FFD700;" onclick="window.open('https://books2read.com/u/4EOxZ0', '_blank')">📖 READ THE LEGEND</button>
-      <button class="btn" style="background:#333; color:#FFD700;" onclick="location.reload()">↺ RESTART</button>
-    </div>
+  <div id="game-wrapper">
+    <div id="phaser-game"></div>
   </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
-<script>
-class BrawlerScene extends Phaser.Scene {
-  constructor() { super('BrawlerScene'); }
 
-  preload() {
-    console.log("Preloading Assets...");
-    this.load.image('bg', 'forest_bg.jpg');
-    this.load.image('logo', 'logo.jpg');
-    
-    // THE PLUG: Using 'juni_beta.jpg' as a 128x128 placeholder sheet.
-    // We will slice it as 1 frame per image for now.
-    this.load.spritesheet('brawlers_master', 'juni_beta.jpg', { 
-        frameWidth: 128, 
-        frameHeight: 128 
-    });
-  }
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
 
-  create() {
-    // Background and initial state
-    this.add.image(400, 200, 'bg').setDisplaySize(800, 400).setAlpha(0.3);
-    this.state = 'ROSTER';
-    this.pHealth = 100; this.eHealth = 100;
+  <script>
+  // ============================================================
+  // GLOBAL CONSTANTS & ROSTER
+  // ============================================================
+  const GAME_WIDTH = 960;
+  const GAME_HEIGHT = 540;
 
-    // Roster UI (Simplest Free Four Setup)
-    const freeFour = ['JUNI', 'PYRO', 'GLITCH', 'STATIC'];
-    this.add.rectangle(400, 200, 750, 150, 0x1a1510).setStrokeStyle(2, 0xFFD700);
-    this.add.text(400, 150, 'SELECT YOUR BRAWLER', { font: '14px "Press Start 2P"', fill: '#FFD700' }).setOrigin(0.5);
+  const FREE_BRAWLERS = [
+    { id: 'juni',   name: 'JUNI',           tint: 0xC38CFF, weight: 1.3, speed: 0.9 },
+    { id: 'pyro',   name: 'PYRO',          tint: 0xFF8844, weight: 0.8, speed: 1.3 },
+    { id: 'glitch', name: 'GLITCH ELEPHANT', tint: 0x66CCFF, weight: 1.0, speed: 1.1 },
+    { id: 'static', name: 'STATIC LION',   tint: 0xFFD700, weight: 1.1, speed: 1.0 }
+  ];
 
-    this.rosterGroup = this.add.group();
-    freeFour.forEach((name, i) => {
-      let x = 150 + (i * 170);
-      let box = this.add.rectangle(x, 230, 140, 60, 0x0a0a0a).setStrokeStyle(1, 0xFFD700).setInteractive();
-      let nameTxt = this.add.text(x, 230, name, { font: '12px Courier', fill: '#FFF' }).setOrigin(0.5);
-      
-      box.on('pointerdown', () => this.startBattle(i));
-      this.rosterGroup.addMultiple([box, nameTxt]);
-    });
+  const LOCKED_BRAWLERS = [
+    { id: 'olydia',  name: 'OLYDIA',  url: 'https://books2read.com' },
+    { id: 'helios',  name: 'HELIOS',  url: 'https://books2read.com' },
+    { id: 'wanderer',name: 'WANDERER',url: 'https://books2read.com' },
+    { id: 'orid',    name: 'ORID',    url: 'https://books2read.com' },
+    { id: 'notty',   name: 'NOTTY',   url: 'https://patreon.com' }
+  ];
 
-    // Control setup
-    this.cursors = this.input.keyboard.createCursorKeys();
-    this.space = this.input.keyboard.addKey('SPACE');
-  }
+  // ============================================================
+  // START SCREEN
+  // ============================================================
+  class StartScreen extends Phaser.Scene {
+    constructor() { super('StartScreen'); }
 
-  startBattle(idx) {
-    this.state = 'BATTLE';
-    this.rosterGroup.clear(true, true);
+    preload() {
+      this.load.image('logo', 'logo.jpg');
+      this.load.image('forest_bg', 'forest_bg.jpg');
+    }
 
-    // Blast Zone Definition: Rect( -100, -100, 1000, 600)
-    // Center Command: Phaser.Geom.Rectangle is ready to use.
-    this.blastZoneBounds = new Phaser.Geom.Rectangle(-100, -100, 1000, 600);
+    create() {
+      if (this.textures.exists('forest_bg')) {
+        this.add.image(GAME_WIDTH/2, GAME_HEIGHT/2, 'forest_bg')
+          .setDisplaySize(GAME_WIDTH, GAME_HEIGHT)
+          .setAlpha(0.25);
+      } else {
+        this.add.rectangle(GAME_WIDTH/2, GAME_HEIGHT/2, GAME_WIDTH, GAME_HEIGHT, 0x001010);
+      }
 
-    // Spawn player and enemy on two legs from the juni_beta.jpg sheet
-    this.player = this.physics.add.sprite(200, 300, 'brawlers_master', 0);
-    this.player.setOrigin(0.5, 1).setDisplaySize(96, 96).setCollideWorldBounds(true);
-    // Setting bipedal movement with no animation loop for Beta
-    this.player.body.setAllowGravity(true);
+      if (this.textures.exists('logo')) {
+        this.add.image(GAME_WIDTH/2, GAME_HEIGHT/2 - 80, 'logo').setScale(0.5);
+      }
 
-    this.enemy = this.physics.add.sprite(600, 300, 'brawlers_master', 0);
-    this.enemy.setOrigin(0.5, 1).setDisplaySize(96, 96).setCollideWorldBounds(true).setTint(0xffaaaa);
-    this.enemy.body.setAllowGravity(true);
+      const title = this.add.text(GAME_WIDTH/2, GAME_HEIGHT/2 - 10,
+        'NMN: MINE WARFARE', {
+          fontFamily: '"Press Start 2P"',
+          fontSize: '18px',
+          fill: '#FFD700'
+        }).setOrigin(0.5);
 
-    // Setting up the arena
-    this.add.rectangle(400, 395, 800, 10, 0x000).setAlpha(0); // Ground (invisible)
-    const platform = this.add.rectangle(400, 390, 600, 20, 0xFFD700);
-    this.physics.add.existing(platform, true);
-    this.physics.add.collider([this.player, this.enemy], platform);
+      const startTxt = this.add.text(GAME_WIDTH/2, GAME_HEIGHT/2 + 70,
+        'PRESS ANY KEY TO ENTER THE FORGE', {
+          fontFamily: '"Press Start 2P"',
+          fontSize: '12px',
+          fill: '#FFD700'
+        }).setOrigin(0.5);
 
-    this.input.keyboard.on('keydown-SPACE', () => this.executeAttack());
-  }
+      this.tweens.add({
+        targets: startTxt,
+        alpha: 0,
+        duration: 800,
+        yoyo: true,
+        repeat: -1
+      });
 
-  executeAttack() {
-    if (this.state !== 'BATTLE') return;
-    // Basic melee logic: when P1 hits P2, apply knockback multiplier based on health
-    let dist = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.enemy.x, this.enemy.y);
-    if (dist < 100) {
-        // Multiplier grows as enemy "health" (eHealth) decreases (e.g., starts at 1x, grows to 3x)
-        const knockbackMultiplier = 1 + (100 - this.eHealth) / 20; 
-        const velocityX = dist > 0 ? 500 * knockbackMultiplier : -500 * knockbackMultiplier;
-        
-        this.enemy.setVelocity(velocityX, -300 * knockbackMultiplier);
-        this.cameras.main.shake(200, 0.01);
-        this.eHealth -= 10;
-        console.log(`P2 % Damage: ${100 - this.eHealth}%`);
+      this.input.keyboard.once('keydown', () => this.scene.start('RosterScene'));
+      this.input.once('pointerdown', () => this.scene.start('RosterScene'));
     }
   }
 
-  update() {
-    if (this.state !== 'BATTLE') return;
+  // ============================================================
+  // ROSTER SCENE
+  // ============================================================
+  class RosterScene extends Phaser.Scene {
+    constructor() { super('RosterScene'); }
 
-    // Center Command: Input handling for independent movement is ready.
-    this.player.setVelocityX(0);
-    if (this.cursors.left.isDown) this.player.setVelocityX(-250);
-    if (this.cursors.right.isDown) this.player.setVelocityX(250);
-    if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.player.body.blocked.down) this.player.setVelocityY(-650);
+    create() {
+      this.add.rectangle(GAME_WIDTH/2, GAME_HEIGHT/2, GAME_WIDTH-80, GAME_HEIGHT-80, 0x050505)
+        .setStrokeStyle(2, 0xFFD700);
 
-    // AI Aggro logic (keep enemy moving toward player)
-    const aiSpeed = 150;
-    if (this.enemy.x < this.player.x) this.enemy.setVelocityX(aiSpeed);
-    else this.enemy.setVelocityX(-aiSpeed);
+      this.add.text(GAME_WIDTH/2, 60, 'SELECT YOUR BRAWLER', {
+        fontFamily: '"Press Start 2P"',
+        fontSize: '16px',
+        fill: '#FFD700'
+      }).setOrigin(0.5);
 
-    // The Blast Zone Check (Data Log v1.0 standard)
-    if (!this.blastZoneBounds.contains(this.player.x, this.player.y)) this.triggerKO('PLAYER 1');
-    if (!this.blastZoneBounds.contains(this.enemy.x, this.enemy.y)) this.triggerKO('PLAYER 2 (ENEMY)');
+      const gridCols = 5;
+      const gridRows = 2;
+      const startX = 140;
+      const startY = 150;
+      const cellW = 160;
+      const cellH = 150;
+
+      const allSlots = [];
+      FREE_BRAWLERS.forEach(b => allSlots.push({ ...b, locked: false }));
+      LOCKED_BRAWLERS.forEach(b => allSlots.push({ ...b, locked: true }));
+      while (allSlots.length < 10) {
+        allSlots.push({ id: 'empty', name: '---', locked: true, empty: true });
+      }
+
+      this.lockOverlay = this.add.container(0, 0).setVisible(false);
+      const overlayBg = this.add.rectangle(GAME_WIDTH/2, GAME_HEIGHT/2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.9);
+      const overlayText = this.add.text(GAME_WIDTH/2, GAME_HEIGHT/2 - 20, 'READ TO UNLOCK', {
+        fontFamily: '"Press Start 2P"',
+        fontSize: '16px',
+        fill: '#FFD700'
+      }).setOrigin(0.5);
+      const overlaySub = this.add.text(GAME_WIDTH/2, GAME_HEIGHT/2 + 20, 'OPENING LEGEND PAGE...', {
+        fontFamily: '"Share Tech Mono"',
+        fontSize: '14px',
+        fill: '#FFFFFF'
+      }).setOrigin(0.5);
+      this.lockOverlay.add([overlayBg, overlayText, overlaySub]);
+
+      allSlots.forEach((slot, index) => {
+        const col = index % gridCols;
+        const row = Math.floor(index / gridCols);
+        const x = startX + col * cellW;
+        const y = startY + row * cellH;
+
+        const box = this.add.rectangle(x, y, 140, 110, slot.locked ? 0x111111 : 0x000000)
+          .setStrokeStyle(2, slot.locked ? 0x555555 : 0xFFD700)
+          .setInteractive({ useHandCursor: true });
+
+        this.add.text(x, y + 30, slot.name, {
+          fontFamily: '"Share Tech Mono"',
+          fontSize: '14px',
+          fill: slot.locked ? '#777777' : '#FFFFFF',
+          align: 'center'
+        }).setOrigin(0.5);
+
+        if (slot.locked && !slot.empty) {
+          this.add.text(x, y - 20, '📖', {
+            fontFamily: '"Press Start 2P"',
+            fontSize: '18px',
+            fill: '#FFD700'
+          }).setOrigin(0.5);
+        }
+
+        box.on('pointerdown', () => {
+          if (slot.locked && !slot.empty) {
+            this.lockOverlay.setVisible(true);
+            if (slot.url) window.open(slot.url, '_blank');
+            this.time.delayedCall(1200, () => this.lockOverlay.setVisible(false));
+          } else if (!slot.locked) {
+            this.scene.start('StageSelect', { player1Brawler: slot });
+          }
+        });
+      });
+    }
   }
 
-  triggerKO(label) {
-    this.state = 'KO';
-    console.log(`KO! ${label} has been blasted.`);
-    this.cameras.main.fade(500, 0, 0, 0);
-    this.time.delayedCall(1000, () => this.scene.restart());
-  }
-}
+  // ============================================================
+  // STAGE SELECT
+  // ============================================================
+  class StageSelect extends Phaser.Scene {
+    constructor() { super('StageSelect'); }
 
-const config = { type: Phaser.AUTO, width: 800, height: 400, parent: 'phaser-game', scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH }, physics: { default: 'arcade', arcade: { gravity: { y: 1500 } } }, scene: BrawlerScene };
-new Phaser.Game(config);
-</script>
+    init(data) {
+      this.player1Brawler = data.player1Brawler || FREE_BRAWLERS[0];
+    }
+
+    create() {
+      this.add.rectangle(GAME_WIDTH/2, GAME_HEIGHT/2, GAME_WIDTH-80, GAME_HEIGHT-80, 0x050505)
+        .setStrokeStyle(2, 0xFFD700);
+
+      this.add.text(GAME_WIDTH/2, 80, 'SELECT STAGE', {
+        fontFamily: '"Press Start 2P"',
+        fontSize: '16px',
+        fill: '#FFD700'
+      }).setOrigin(0.5);
+
+      const stages = [
+        { id: 'mana_forest', name: 'MANA FOREST' },
+        { id: 'glitch_mines', name: 'GLITCH MINES (WIP)' }
+      ];
+
+      stages.forEach((stage, i) => {
+        const x = GAME_WIDTH/2;
+        const y = 200 + i * 140;
+
+        const box = this.add.rectangle(x, y, 360, 100, 0x000000)
+          .setStrokeStyle(2, 0xFFD700)
+          .setInteractive({ useHandCursor: true });
+
+        this.add.text(x, y, stage.name, {
+          fontFamily: '"Share Tech Mono"',
+          fontSize: '20px',
+          fill: '#FFFFFF'
+        }).setOrigin(0.5);
+
+        box.on('pointerdown', () => {
+          this.scene.start('BattleScene', {
+            player1Brawler: this.player1Brawler,
+            stageId: stage.id
+          });
+        });
+      });
+    }
+  }
+
+  // ============================================================
+  // BATTLE SCENE (SAFE + FULL FX)
+  // ============================================================
+  class BattleScene extends Phaser.Scene {
+    constructor() { super('BattleScene'); }
+
+    init(data) {
+      this.player1Brawler = data.player1Brawler || FREE_BRAWLERS[0];
+      this.stageId = data.stageId || 'mana_forest';
+    }
+
+    preload() {
+      // Parallax layers (may not exist yet — SAFE)
+      this.load.image('bg_deep_forest', 'bg_deep_forest.jpg');
+      this.load.image('bg_mid_mana_trees', 'bg_mid_mana_trees.jpg');
+      this.load.image('bg_fore_platform', 'bg_fore_platform.png');
+
+      // Fighters & FX (you will add these files)
+      this.load.spritesheet('brawlers_master', 'brawlers_master.png', {
+        frameWidth: 128,
+        frameHeight: 128
+      });
+
+      this.load.spritesheet('signal_lost', 'signal_lost.png', {
+        frameWidth: 64,
+        frameHeight: 64
+      });
+    }
+
+    create() {
+      // --- Blast Zone Rect: x[-100,1100], y[-100,700] ---
+      this.blastZone = new Phaser.Geom.Rectangle(-100, -100, 1200, 800);
+
+      // --- Enhanced Parallax Background (SAFE FALLBACKS) ---
+      if (this.textures.exists('bg_deep_forest')) {
+        this.bgDeep = this.add.tileSprite(
+          GAME_WIDTH/2, GAME_HEIGHT/2,
+          GAME_WIDTH, GAME_HEIGHT,
+          'bg_deep_forest'
+        ).setScrollFactor(0).setAlpha(0.7);
+      } else {
+        this.bgDeep = this.add.tileSprite(
+          GAME_WIDTH/2, GAME_HEIGHT/2,
+          GAME_WIDTH, GAME_HEIGHT,
+          null
+        );
+        this.add.rectangle(GAME_WIDTH/2, GAME_HEIGHT/2, GAME_WIDTH, GAME_HEIGHT, 0x000810);
+      }
+
+      if (this.textures.exists('bg_mid_mana_trees')) {
+        this.bgMid = this.add.tileSprite(
+          GAME_WIDTH/2, GAME_HEIGHT/2,
+          GAME_WIDTH, GAME_HEIGHT,
+          'bg_mid_mana_trees'
+        ).setScrollFactor(0).setAlpha(0.9);
+      } else {
+        this.bgMid = this.add.tileSprite(
+          GAME_WIDTH/2, GAME_HEIGHT/2,
+          GAME_WIDTH, GAME_HEIGHT,
+          null
+        );
+      }
+
+      if (this.textures.exists('bg_fore_platform')) {
+        this.bgFore = this.add.tileSprite(
+          GAME_WIDTH/2, GAME_HEIGHT/2,
+          GAME_WIDTH, GAME_HEIGHT,
+          'bg_fore_platform'
+        ).setScrollFactor(0).setAlpha(1.0);
+      } else {
+        this.bgFore = this.add.tileSprite(
+          GAME_WIDTH/2, GAME_HEIGHT/2,
+          GAME_WIDTH, GAME_HEIGHT,
+          null
+        );
+      }
+
+      // --- CRT / Scanline Overlay ---
+      this.crtGraphics = this.add.graphics().setScrollFactor(0);
+      this.drawCRTOverlay();
+
+      // --- FX Animations (if sheet exists) ---
+      if (this.textures.exists('signal_lost')) {
+        this.anims.create({
+          key: 'signal_lost_fx',
+          frames: this.anims.generateFrameNumbers('signal_lost', { start: 0, end: 5 }),
+          frameRate: 14,
+          repeat: 0
+        });
+      }
+
+      // --- Atmospheric Mana Dust (SAFE) ---
+      if (this.textures.exists('signal_lost')) {
+        const dustParticles = this.add.particles('signal_lost');
+        this.manaDustEmitter = dustParticles.createEmitter({
+          frame: 0,
+          x: { min: -50, max: GAME_WIDTH + 50 },
+          y: { min: 0, max: GAME_HEIGHT },
+          speedX: { min: -10, max: 10 },
+          speedY: { min: -5, max: 5 },
+          scale: { start: 0.15, end: 0 },
+          alpha: { start: 0.4, end: 0 },
+          lifespan: 4000,
+          quantity: 1,
+          frequency: 180,
+          tint: [0x00ff88, 0xffd700]
+        });
+      }
+
+      // --- Mana Pulse (Mid Layer) ---
+      this.tweens.add({
+        targets: this.bgMid,
+        alpha: { from: 0.7, to: 1.0 },
+        duration: 2200,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+      });
+
+      // --- Rune Flicker (Foreground Layer) ---
+      this.time.addEvent({
+        delay: 600,
+        loop: true,
+        callback: () => {
+          const flicker = Phaser.Math.Between(0, 100);
+          if (flicker < 35) {
+            this.tweens.add({
+              targets: this.bgFore,
+              alpha: { from: 1.0, to: 0.6 },
+              duration: 80,
+              yoyo: true,
+              repeat: 2
+            });
+          }
+        }
+      });
+
+      // --- Physics World ---
+      this.physics.world.setBounds(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+      // --- Platform (collision only, visual is bg_fore_platform) ---
+      const platform = this.add.rectangle(GAME_WIDTH/2, GAME_HEIGHT - 60, 500, 20, 0x000000, 0);
+      this.physics.add.existing(platform, true);
+
+      // --- Fighters ---
+      this.player1 = this.createFighter(360, GAME_HEIGHT - 100, this.player1Brawler);
+      this.player2 = this.createFighter(600, GAME_HEIGHT - 100, { tint: 0xffaaaa, weight: 1.0, speed: 1.0 });
+
+      this.physics.add.collider(this.player1, platform);
+      this.physics.add.collider(this.player2, platform);
+
+      // --- Damage Percent ---
+      this.p1Percent = 0;
+      this.p2Percent = 0;
+
+      // --- Control Flags ---
+      this.p1CanControl = true;
+      this.p2CanControl = true;
+      this.p1StunTimer = null;
+      this.p2StunTimer = null;
+
+      // --- UI ---
+      this.p1Text = this.add.text(40, 20, 'P1: 0%', {
+        fontFamily: '"Press Start 2P"',
+        fontSize: '14px',
+        fill: '#FFFFFF'
+      }).setScrollFactor(0);
+
+      this.p2Text = this.add.text(GAME_WIDTH - 40, 20, 'P2: 0%', {
+        fontFamily: '"Press Start 2P"',
+        fontSize: '14px',
+        fill: '#FFFFFF'
+      }).setOrigin(1, 0).setScrollFactor(0);
+
+      // --- Input ---
+      this.cursors = this.input.keyboard.createCursorKeys();
+      this.keys = this.input.keyboard.addKeys({
+        W: Phaser.Input.Keyboard.KeyCodes.W,
+        A: Phaser.Input.Keyboard.KeyCodes.A,
+        D: Phaser.Input.Keyboard.KeyCodes.D,
+        J: Phaser.Input.Keyboard.KeyCodes.J,
+        K: Phaser.Input.Keyboard.KeyCodes.K,
+        NUM1: Phaser.Input.Keyboard.KeyCodes.NUMPAD_ONE,
+        NUM2: Phaser.Input.Keyboard.KeyCodes.NUMPAD_TWO
+      });
+
+      this.gamepad = null;
+      this.input.gamepad.once('connected', pad => {
+        this.gamepad = pad;
+      });
+
+      this.lastHitTime = 0;
+      this.input.keyboard.on('keydown-J', () => this.handleAttack('P1', 'light'));
+      this.input.keyboard.on('keydown-K', () => this.handleAttack('P1', 'special'));
+      this.input.keyboard.on('keydown-NUMPAD_ONE', () => this.handleAttack('P2', 'light'));
+      this.input.keyboard.on('keydown-NUMPAD_TWO', () => this.handleAttack('P2', 'special'));
+
+      this.p1KOs = 0;
+      this.p2KOs = 0;
+      this.roundOver = false;
+    }
+
+    createFighter(x, y, meta) {
+      const spriteKey = this.textures.exists('brawlers_master') ? 'brawlers_master' : null;
+      const s = this.physics.add.sprite(x, y, spriteKey, 0);
+      s.setDisplaySize(96, 96);
+      s.setOrigin(0.5, 1);
+      if (meta.tint) s.setTint(meta.tint);
+      s.body.setGravityY(1500);
+      s.body.setMaxVelocity(800, 1200);
+      s.nmnWeight = meta.weight || 1.0;
+      s.nmnSpeed = meta.speed || 1.0;
+      return s;
+    }
+
+    drawCRTOverlay() {
+      this.crtGraphics.clear();
+      this.crtGraphics.fillStyle(0x000000, 0.15);
+      this.crtGraphics.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+      this.crtGraphics.lineStyle(1, 0x000000, 0.35);
+      for (let y = 0; y < GAME_HEIGHT; y += 4) {
+        this.crtGraphics.beginPath();
+        this.crtGraphics.moveTo(0, y);
+        this.crtGraphics.lineTo(GAME_WIDTH, y);
+        this.crtGraphics.strokePath();
+      }
+
+      this.crtGraphics.lineStyle(2, 0x00ffcc, 0.15);
+      this.crtGraphics.strokeRect(4, 4, GAME_WIDTH - 8, GAME_HEIGHT - 8);
+    }
+
+    handleAttack(attackerId, type) {
+      if (this.roundOver) return;
+
+      const now = this.time.now;
+      if (now - this.lastHitTime < 80) return;
+
+      let attacker, defender, defenderId;
+      if (attackerId === 'P1') {
+        if (!this.p1CanControl) return;
+        attacker = this.player1;
+        defender = this.player2;
+        defenderId = 'P2';
+      } else {
+        if (!this.p2CanControl) return;
+        attacker = this.player2;
+        defender = this.player1;
+        defenderId = 'P1';
+      }
+
+      const dist = Phaser.Math.Distance.Between(attacker.x, attacker.y, defender.x, defender.y);
+      if (dist > 120) return;
+
+      const basePower = (type === 'light') ? 400 : 650;
+      const multiplier = (type === 'light') ? 1.0 : 1.4;
+
+      let defenderPercent = (defenderId === 'P1') ? this.p1Percent : this.p2Percent;
+      defenderPercent += (type === 'light') ? 8 : 14;
+      defenderPercent = Math.min(defenderPercent, 999);
+
+      if (defenderId === 'P1') this.p1Percent = defenderPercent;
+      else this.p2Percent = defenderPercent;
+
+      const knockback = this.calculateKnockback(basePower, defenderPercent, multiplier, defender.nmnWeight || 1.0);
+      const direction = (defender.x >= attacker.x) ? 1 : -1;
+
+      defender.setVelocity(
+        direction * knockback,
+        -Math.abs(knockback * 0.6)
+      );
+
+      this.applyHitStun(defenderId, 300);
+      this.applyHitStop(60);
+      this.cameras.main.shake(120, 0.01);
+
+      this.spawnImpactFX(defender.x, defender.y - 40);
+
+      this.lastHitTime = now;
+    }
+
+    calculateKnockback(basePower, percent, multiplier, weight) {
+      const scaled = (percent / 100);
+      const exponential = Math.pow(1 + scaled, 1.4);
+      const weightFactor = 1 / weight;
+      return basePower * exponential * multiplier * 0.01 * weightFactor;
+    }
+
+    applyHitStun(playerId, duration) {
+      if (playerId === 'P1') {
+        this.p1CanControl = false;
+        if (this.p1StunTimer) this.p1StunTimer.remove(false);
+        this.p1StunTimer = this.time.delayedCall(duration, () => {
+          this.p1CanControl = true;
+        });
+      } else {
+        this.p2CanControl = false;
+        if (this.p2StunTimer) this.p2StunTimer.remove(false);
+        this.p2StunTimer = this.time.delayedCall(duration, () => {
+          this.p2CanControl = true;
+        });
+      }
+    }
+
+    applyHitStop(duration) {
+      const world = this.physics.world;
+      const prevTimeScale = world.timeScale;
+      world.timeScale = 0;
+      this.time.delayedCall(duration, () => {
+        world.timeScale = prevTimeScale;
+      });
+    }
+
+    spawnImpactFX(x, y) {
+      if (!this.textures.exists('signal_lost')) return;
+      const spark = this.add.sprite(x, y, 'signal_lost', 0);
+      spark.setScale(0.7).setTint(0xffd700);
+      this.time.delayedCall(200, () => spark.destroy());
+    }
+
+    spawnSignalLostFX(x, y) {
+      if (!this.textures.exists('signal_lost')) return;
+      const fx = this.add.sprite(x, y, 'signal_lost');
+      if (this.anims.exists('signal_lost_fx')) fx.play('signal_lost_fx');
+      fx.setScale(2);
+      this.time.delayedCall(500, () => fx.destroy());
+    }
+
+    update(time, delta) {
+      if (this.roundOver) return;
+
+      // Parallax scroll based on average horizontal velocity
+      const avgVelX = (this.player1.body.velocity.x + this.player2.body.velocity.x) / 2;
+      const factor = delta * 0.001;
+      this.bgDeep.tilePositionX += avgVelX * 0.2 * factor;
+      this.bgMid.tilePositionX  += avgVelX * 0.5 * factor;
+      this.bgFore.tilePositionX += avgVelX * 1.0 * factor;
+
+      // --- Player 1 (WASD) ---
+      if (this.p1CanControl) {
+        const p1 = this.player1;
+        p1.setVelocityX(0);
+
+        if (this.keys.A.isDown) p1.setVelocityX(-260 * (p1.nmnSpeed || 1.0));
+        else if (this.keys.D.isDown) p1.setVelocityX(260 * (p1.nmnSpeed || 1.0));
+
+        if (this.keys.W.isDown && p1.body.blocked.down) {
+          p1.setVelocityY(-700);
+        }
+      }
+
+      // --- Player 2 (Arrows + Gamepad) ---
+      let p2MoveX = 0;
+      let p2Jump = false;
+
+      if (this.p2CanControl) {
+        if (this.cursors.left.isDown) p2MoveX -= 1;
+        if (this.cursors.right.isDown) p2MoveX += 1;
+        if (this.cursors.up.isDown) p2Jump = true;
+
+        if (this.gamepad) {
+          const axisX = this.gamepad.axes.length > 0 ? this.gamepad.axes[0].getValue() : 0;
+          if (Math.abs(axisX) > 0.2) p2MoveX = axisX;
+
+          if (this.gamepad.buttons[0] && this.gamepad.buttons[0].pressed) {
+            p2Jump = true;
+          }
+          if (this.gamepad.buttons[1] && this.gamepad.buttons[1].pressed) {
+            this.handleAttack('P2', 'light');
+          }
+          if (this.gamepad.buttons[2] && this.gamepad.buttons[2].pressed) {
+            this.handleAttack('P2', 'special');
+          }
+        }
+
+        const p2 = this.player2;
+        p2.setVelocityX(p2MoveX * 260);
+        if (p2Jump && p2.body.blocked.down) {
+          p2.setVelocityY(-700);
+        }
+      }
+
+      // --- Blast Zone Check ---
+      this.checkBlastZone('P1', this.player1);
+      this.checkBlastZone('P2', this.player2);
+
+      // --- UI ---
+      this.p1Text.setText('P1: ' + Math.floor(this.p1Percent) + '%');
+      this.p2Text.setText('P2: ' + Math.floor(this.p2Percent) + '%');
+    }
+
+    checkBlastZone(playerId, sprite) {
+      if (!this.blastZone.contains(sprite.x, sprite.y)) {
+        this.handleKO(playerId, sprite.x, sprite.y);
+      }
+    }
+
+    handleKO(playerId, x, y) {
+      if (this.roundOver) return;
+      this.roundOver = true;
+
+      this.spawnSignalLostFX(x, y);
+      this.cameras.main.flash(300, 255, 255, 255);
+
+      let winner;
+      if (playerId === 'P1') {
+        this.p2KOs += 1;
+        winner = 'PLAYER 2';
+      } else {
+        this.p1KOs += 1;
+        winner = 'PLAYER 1';
+      }
+
+      this.time.delayedCall(800, () => {
+        this.scene.start('ResultsScene', {
+          winner,
+          p1Percent: this.p1Percent,
+          p2Percent: this.p2Percent,
+          p1KOs: this.p1KOs,
+          p2KOs: this.p2KOs
+        });
+      });
+    }
+  }
+
+  // ============================================================
+  // RESULTS SCENE
+  // ============================================================
+  class ResultsScene extends Phaser.Scene {
+    constructor() { super('ResultsScene'); }
+
+    init(data) {
+      this.winner = data.winner || 'PLAYER ?';
+      this.p1Percent = data.p1Percent || 0;
+      this.p2Percent = data.p2Percent || 0;
+      this.p1KOs = data.p1KOs || 0;
+      this.p2KOs = data.p2KOs || 0;
+    }
+
+    create() {
+      this.add.rectangle(GAME_WIDTH/2, GAME_HEIGHT/2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.9);
+
+      this.add.text(GAME_WIDTH/2, 120, 'SECTOR CLEARED', {
+        fontFamily: '"Press Start 2P"',
+        fontSize: '20px',
+        fill: '#FFD700'
+      }).setOrigin(0.5);
+
+      this.add.text(GAME_WIDTH/2, 180, this.winner, {
+        fontFamily: '"Press Start 2P"',
+        fontSize: '16px',
+        fill: '#FFFFFF'
+      }).setOrigin(0.5);
+
+      this.add.text(GAME_WIDTH/2, 240,
+        `P1: ${Math.floor(this.p1Percent)}%   KOs: ${this.p1KOs}\nP2: ${Math.floor(this.p2Percent)}%   KOs: ${this.p2KOs}`,
+        {
+          fontFamily: '"Share Tech Mono"',
+          fontSize: '16px',
+          fill: '#FFFFFF',
+          align: 'center'
+        }).setOrigin(0.5);
+
+      const btnRestart = this.add.text(GAME_WIDTH/2, 320, '↺ REMATCH', {
+        fontFamily: '"Press Start 2P"',
+        fontSize: '14px',
+        fill: '#FFD700',
+        backgroundColor: '#222222'
+      }).setOrigin(0.5).setPadding(8, 6, 8, 6).setInteractive({ useHandCursor: true });
+
+      const btnTitle = this.add.text(GAME_WIDTH/2, 370, '⟲ RETURN TO FORGE', {
+        fontFamily: '"Press Start 2P"',
+        fontSize: '12px',
+        fill: '#FFFFFF',
+        backgroundColor: '#111111'
+      }).setOrigin(0.5).setPadding(8, 6, 8, 6).setInteractive({ useHandCursor: true });
+
+      btnRestart.on('pointerdown', () => this.scene.start('RosterScene'));
+      btnTitle.on('pointerdown', () => this.scene.start('StartScreen'));
+    }
+  }
+
+  // ============================================================
+  // GAME CONFIG
+  // ============================================================
+  const config = {
+    type: Phaser.AUTO,
+    width: GAME_WIDTH,
+    height: GAME_HEIGHT,
+    parent: 'phaser-game',
+    backgroundColor: '#000000',
+    physics: {
+      default: 'arcade',
+      arcade: {
+        gravity: { y: 0 },
+        debug: false
+      }
+    },
+    scene: [StartScreen, RosterScene, StageSelect, BattleScene, ResultsScene],
+    scale: {
+      mode: Phaser.Scale.FIT,
+      autoCenter: Phaser.Scale.CENTER_BOTH
+    }
+  };
+
+  new Phaser.Game(config);
+  </script>
 </body>
 </html>
