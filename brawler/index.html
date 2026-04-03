@@ -17,23 +17,24 @@
       color:#FFD700;font-size:18px;font-weight:bold;
       display:flex;align-items:center;justify-content:center;
       pointer-events:all;user-select:none;
-      font-family:monospace;box-shadow:0 0 15px rgba(255,215,0,0.3);
+      font-family:monospace;box-shadow:0 0-15px rgba(255,215,0,0.3);
     }
-    /* Mobile Layout Fixes */
     #ml{left:20px;bottom:10px;} #mr{left:100px;bottom:10px;}
     #mj{left:60px;bottom:80px;} #ma{right:20px;bottom:80px;} #mf{right:80px;bottom:10px;}
   </style>
 </head>
 <body>
 <div id="gc"></div>
-<div id="mc"><div class="mb" id="ml">◀</div><div class="mb" id="mr">▶</div><div class="mb" id="mj">▲</div><div class="mb" id="ma">🥊</div><div class="mb" id="mf">⚡</div></div>
+<div id="mc">
+  <div class="mb" id="ml">◀</div><div class="mb" id="mr">▶</div>
+  <div class="mb" id="mj">▲</div><div class="mb" id="ma">🥊</div><div class="mb" id="mf">⚡</div>
+</div>
 <script>
 const GW=800, GH=450;
 const BLAST={minX:-300,maxX:1100,minY:-300,maxY:900};
 const SPAWN={p1:{x:220,y:GH-160},p2:{x:580,y:GH-160}};
 const MP={l:false,r:false,j:false,a:false,f:false};
 
-// Mobile Input
 (function(){
   const isTouch="ontouchstart" in window||navigator.maxTouchPoints>0;
   if(isTouch) document.getElementById("mc").classList.add("on");
@@ -46,12 +47,20 @@ const MP={l:false,r:false,j:false,a:false,f:false};
   bind("ml","l");bind("mr","r");bind("mj","j");bind("ma","a");bind("mf","f");
 })();
 
+const ROSTER=[
+  {name:"Juni", free:true, color:"#00FF88", lore:"Enter if you dare; face Anubis in the endless expanse."},
+  {name:"Pyro", free:true, color:"#FF6600", lore:"Born from the forge. His tusks run hotter than the mine walls."},
+  {name:"Olydia", free:false, color:"#9933CC", lore:"Transmission incoming; signal from the stars."},
+  {name:"Helios", free:false, color:"#FFD700", lore:"UNLOCK: Read the Legend."}
+];
+
 const Match={p1:null,p2:null,winner:null};
 
-function mkSp(scene, x, y, name) {
+function mkSp(scene, x, y, entry) {
+  const name = entry.name.toLowerCase();
   let sp = scene.physics.add.sprite(x, y, name + "_sheet");
   sp.play(name + "_idle");
-  // The 128px Calibration
+  // 128px Hitbox Tuning
   sp.body.setSize(45, 95).setOffset(42, 33);
   sp.setCollideWorldBounds(false);
   sp.setDragX(name === "pyro" ? 500 : 1000);
@@ -69,28 +78,50 @@ class StartScreen extends Phaser.Scene {
   create(){
     this.add.image(GW/2,GH/2,"bg").setDisplaySize(GW,GH).setAlpha(0.4);
     if(this.textures.exists("logo")) this.add.image(GW/2, GH/2-80, "logo").setScale(0.5);
-    this.add.text(GW/2,GH/2+20,"NMN Presents:\nNONSENSICAL BRAWLERS",{align:'center',fontFamily:'monospace',fontSize:'26px',fill:'#FFD700',stroke:'#000',strokeThickness:4}).setOrigin(0.5);
-    this.add.text(GW/2,GH/2+100,"[ CLICK OR TAP TO START ]",{fontFamily:'monospace',fontSize:'14px',fill:'#FFF'}).setOrigin(0.5);
-    this.input.once("pointerdown",()=>this.scene.start("BattleScene"));
+    this.add.text(GW/2,GH/2+20,"NMN Presents:\nNONSENSICAL BRAWLERS",{align:'center',fontFamily:'monospace',fontSize:'26px',fill:'#FFD700'}).setOrigin(0.5);
+    this.input.once("pointerdown",()=>this.scene.start("BrawlerScene"));
+  }
+}
+
+class BrawlerScene extends Phaser.Scene {
+  constructor(){super("BrawlerScene");}
+  create(){
+    this.add.image(GW/2,GH/2,"bg").setDisplaySize(GW,GH).setAlpha(0.2);
+    this.add.text(GW/2,40,"SELECT YOUR BRAWLER",{fontFamily:'monospace',fontSize:'20px',fill:'#FFD700'}).setOrigin(0.5);
+    
+    ROSTER.forEach((b, i) => {
+      let btn = this.add.text(GW/2, 120 + (i*40), b.name + (b.free ? "" : " [LOCKED]"), {
+        fontFamily:'monospace', fontSize:'18px', fill: b.free ? b.color : '#555'
+      }).setOrigin(0.5).setInteractive();
+      
+      if(b.free) {
+        btn.on("pointerdown", () => {
+          Match.p1 = b;
+          Match.p2 = ROSTER[1-i]; // Simple swap for beta
+          this.scene.start("BattleScene");
+        });
+      }
+    });
   }
 }
 
 class BattleScene extends Phaser.Scene {
   constructor(){super("BattleScene");}
   create(){
-    // Setup Animations
+    // Animations
     this.anims.create({ key:'juni_idle', frames:this.anims.generateFrameNumbers('juni_sheet',{start:0,end:2}), frameRate:6, repeat:-1 });
     this.anims.create({ key:'pyro_idle', frames:this.anims.generateFrameNumbers('pyro_sheet',{start:0,end:2}), frameRate:8, repeat:-1 });
     this.anims.create({ key:'juni_fire', frames:this.anims.generateFrameNumbers('juni_sheet',{start:12,end:14}), frameRate:12, repeat:0 });
     this.anims.create({ key:'pyro_fire', frames:this.anims.generateFrameNumbers('pyro_sheet',{start:12,end:16}), frameRate:12, repeat:0 });
+    this.anims.create({ key:'juni_atk', frames:this.anims.generateFrameNumbers('juni_sheet',{start:7,end:11}), frameRate:15, repeat:0 });
 
     this.add.image(GW/2,GH/2,"bg").setDisplaySize(GW,GH).setAlpha(0.2);
     this.platforms=this.physics.add.staticGroup();
     this.platforms.add(this.add.rectangle(GW/2,GH-20,600,20,0x3a2a0a));
     this.physics.add.existing(this.platforms.children.entries[0],true);
 
-    this.p1=mkSp(this,SPAWN.p1.x,SPAWN.p1.y,"juni");
-    this.p2=mkSp(this,SPAWN.p2.x,SPAWN.p2.y,"pyro");
+    this.p1=mkSp(this,SPAWN.p1.x,SPAWN.p1.y,Match.p1);
+    this.p2=mkSp(this,SPAWN.p2.x,SPAWN.p2.y,Match.p2);
     this.p2.setFlipX(true);
 
     this.physics.add.collider([this.p1,this.p2],this.platforms);
@@ -99,8 +130,7 @@ class BattleScene extends Phaser.Scene {
   }
 
   update(){
-    const sp=this.p1, S=this.S;
-    const name="juni";
+    const sp=this.p1, S=this.S, name=Match.p1.name.toLowerCase();
     if(sp.body.blocked.down) S.p1Jumps=0;
 
     const gL=this.k1.left.isDown||MP.l, gR=this.k1.right.isDown||MP.r;
@@ -110,6 +140,14 @@ class BattleScene extends Phaser.Scene {
 
     if((Phaser.Input.Keyboard.JustDown(this.k1.up)||MP.j)&&S.p1Jumps<2){sp.body.setVelocityY(-400);S.p1Jumps++;MP.j=false;}
     
+    // Melee (Punch)
+    if((Phaser.Input.Keyboard.JustDown(this.k1.atk)||MP.a)&&!S.p1AtkCD){
+        S.p1AtkCD=true; sp.play(name+"_atk");
+        this.time.delayedCall(300, ()=>{ S.p1AtkCD=false; sp.play(name+"_idle"); });
+        MP.a=false;
+    }
+    
+    // Range (Fire)
     if((Phaser.Input.Keyboard.JustDown(this.k1.fire)||MP.f)&&!S.p1AtkCD){
         S.p1AtkCD=true; sp.play(name+"_fire");
         this.time.delayedCall(400, ()=>{ S.p1AtkCD=false; sp.play(name+"_idle"); });
@@ -122,7 +160,7 @@ new Phaser.Game({
   type:Phaser.AUTO, width:GW, height:GH, parent:"gc", backgroundColor:"#050308",
   scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},
   physics:{default:"arcade",arcade:{gravity:{y:900}}},
-  scene:[StartScreen,BattleScene]
+  scene:[StartScreen,BrawlerScene,BattleScene]
 });
 </script>
 </body>
