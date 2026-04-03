@@ -14,7 +14,262 @@
     .mb{
       position:absolute;width:58px;height:58px;border-radius:50%;
       border:3px solid #FFD700;background:rgba(5,3,8,0.88);
+      color:#FFD700;font-size:<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>NMN: MINE WARFARE — v1.4</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{background:#050308;width:100%;height:100%;overflow:hidden;}
+    #gc{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;}
+    #mc{display:none;position:fixed;bottom:0;left:0;right:0;height:170px;pointer-events:none;z-index:999;}
+    #mc.on{display:block;}
+    .mb{
+      position:absolute;width:58px;height:58px;border-radius:50%;
+      border:3px solid #FFD700;background:rgba(5,3,8,0.88);
       color:#FFD700;font-size:11px;font-weight:bold;
+      display:flex;align-items:center;justify-content:center;
+      pointer-events:all;user-select:none;-webkit-user-select:none;
+      font-family:"Press Start 2P",monospace;
+      box-shadow:0 0 12px rgba(255,215,0,0.45);
+    }
+    #ml{left:18px;bottom:58px;} #mr{left:90px;bottom:58px;}
+    #mj{left:54px;bottom:116px;} #ma{right:18px;bottom:110px;} #mf{right:84px;bottom:78px;}
+  </style>
+</head>
+<body>
+<div id="gc"></div>
+<div id="mc">
+  <div class="mb" id="ml">◀</div>
+  <div class="mb" id="mr">▶</div>
+  <div class="mb" id="mj">▲</div>
+  <div class="mb" id="ma">🥊</div>
+  <div class="mb" id="mf">⚡</div>
+</div>
+<script>
+const GW=800, GH=450;
+const BLAST={minX:-300,maxX:1100,minY:-300,maxY:900};
+const SPAWN={p1:{x:220,y:GH-160},p2:{x:580,y:GH-160}};
+const MP={l:false,r:false,j:false,a:false,f:false};
+
+(function(){
+  const isTouch="ontouchstart" in window||navigator.maxTouchPoints>0;
+  if(isTouch) document.getElementById("mc").classList.add("on");
+  const bind=(id,key)=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    el.addEventListener("touchstart",e=>{e.preventDefault();MP[key]=true;},{passive:false});
+    el.addEventListener("touchend",  e=>{e.preventDefault();MP[key]=false;},{passive:false});
+  };
+  bind("ml","l");bind("mr","r");bind("mj","j");bind("ma","a");bind("mf","f");
+})();
+
+const ROSTER=[
+  {name:"Juni",           free:true, frame:0,color:"#00FF88",lore:"Enter if you dare; face Anubis in the endless expanse of the sands of time.",url:"https://books2read.com/u/4EOxZ0"},
+  {name:"Pyro",           free:true, frame:1,color:"#FF6600",lore:"Born from the forge. His tusks run hotter than the mine walls.",url:"https://books2read.com/u/4EOxZ0"},
+  {name:"Glitch Elephant",free:true, frame:2,color:"#AA55FF",lore:"A signal corrupted mid-transmission.",url:"https://books2read.com/u/4EOxZ0"},
+  {name:"Static Lion",    free:true, frame:3,color:"#55AAFF",lore:"The roar that breaks frequencies.",url:"https://books2read.com/u/4EOxZ0"},
+  {name:"Olydia",         free:false,frame:4,color:"#9933CC",lore:"Transmission incoming; signal from the stars.",url:"https://books2read.com/u/31NrLw"},
+  {name:"Helios",         free:false,frame:5,color:"#FFD700",lore:"UNLOCK: Read the Legend.",url:"https://books2read.com/u/4EOxZ0"},
+  {name:"Wanderer",       free:false,frame:6,color:"#336699",lore:"UNLOCK: Become a Patron.",url:"https://patreon.com/Lordminadeoro"},
+  {name:"Orid",           free:false,frame:7,color:"#884422",lore:"UNLOCK: Read the Legend.",url:"https://books2read.com/u/4EOxZ0"},
+  {name:"Notty",          free:false,frame:8,color:"#FF55AA",lore:"UNLOCK: Become a Patron.",url:"https://patreon.com/Lordminadeoro"},
+  {name:"???",            free:false,frame:9,color:"#444444",lore:"UNLOCK: Enter the Mine.",url:"https://nonsensemedianetwork.com"}
+];
+const FREE_FOUR=ROSTER.filter(r=>r.free);
+const STAGES=[
+  {key:"mana_forest", label:"MANA FOREST", bgKey:"bg_deep_forest"},
+  {key:"glitch_mines",label:"GLITCH MINES",bgKey:"forest_bg"}
+];
+const Match={p1:null,p2:null,stage:null,winner:null,mode:"solo"};
+
+function ensureTex(scene){
+  const mkBG=(key,c1,c2)=>{
+    if(scene.textures.exists(key)) return;
+    const c=scene.textures.createCanvas(key,GW,GH);
+    const ctx=c.getContext();
+    const g=ctx.createLinearGradient(0,0,0,GH);
+    g.addColorStop(0,c1);g.addColorStop(1,c2);
+    ctx.fillStyle=g;ctx.fillRect(0,0,GW,GH);c.refresh();
+  };
+  mkBG("bg_deep_forest","#0a1a0a","#050308");
+  mkBG("forest_bg","#0d0a1a","#050308");
+
+  if(!scene.textures.exists("brawlers")){
+    const size=48;
+    const cols=[0x00ff88,0xff6600,0xaa55ff,0x55aaff,0x9933cc,0xffd700,0x336699,0x884422,0xff55aa,0x444444];
+    const g=scene.make.graphics({x:0,y:0,add:false});
+    g.fillStyle(0x111111,1);g.fillRect(0,0,size*10,size);
+    cols.forEach((c,i)=>{
+      g.fillStyle(c,1);g.fillRect(i*size+2,2,size-4,size-4);
+      g.lineStyle(2,0xFFD700,0.6);g.strokeRect(i*size+2,2,size-4,size-4);
+    });
+    g.generateTexture("brawlers",size*10,size);
+    g.destroy();
+  }
+}
+
+function addCRT(scene){
+  const rt=scene.add.rectangle(GW/2,GH/2,GW,GH,0x000000,0.1).setScrollFactor(0).setDepth(9000);
+  scene.tweens.add({targets:rt,alpha:{from:0.06,to:0.16},duration:280,yoyo:true,repeat:-1});
+}
+
+function goldSpark(scene,x,y){
+  const g=scene.add.graphics().setDepth(600);
+  [0xFFD700,0xFF8800,0xFFFF88,0xFF5500].forEach((col,i)=>{
+    const ang=Math.random()*Math.PI*2,len=5+Math.random()*16;
+    g.fillStyle(col,1);
+    g.fillRect(x+Math.cos(ang)*len,y+Math.sin(ang)*len,3+Math.random()*3,3);
+  });
+  scene.tweens.add({targets:g,alpha:0,duration:200,onComplete:()=>g.destroy()});
+}
+
+function arcSlash(scene,x,y,dir,isP1){
+  const g=scene.add.graphics().setDepth(580);
+  const col=isP1?0xFF8800:0x00CCFF;
+  g.lineStyle(5,col,0.9);
+  g.beginPath();
+  g.arc(x+dir*36,y-8,26,Phaser.Math.DegToRad(-70),Phaser.Math.DegToRad(70),false);
+  g.strokePath();
+  scene.tweens.add({targets:g,alpha:0,duration:100,onComplete:()=>g.destroy()});
+}
+
+function getPortraitKey(scene,entry){
+  const pk=entry.name.toLowerCase().replace(/ /g,"_")+"_beta";
+  return scene.textures.exists(pk)?pk:null;
+}
+
+function mkSp(scene,x,y,entry){
+  let sp;
+  const name = entry.name.toLowerCase();
+  if(name === "juni" || name === "pyro"){
+    sp = scene.physics.add.sprite(x, y, name + "_sheet");
+    sp.play(name + "_idle");
+    sp.body.setSize(40, 90).setOffset(44, 38);
+  } else {
+    sp = scene.physics.add.sprite(x,y,"brawlers");
+    sp.setFrame(entry.frame||0);
+    sp.setDisplaySize(48,48);
+    sp.body.setSize(30,40).setOffset((sp.width-30)/2, sp.height-40);
+  }
+  sp.setCollideWorldBounds(false);
+  sp.setBounce(0);
+  sp.setDragX(name === "pyro" ? 300 : 800);
+  sp.body.setMaxVelocity(600,800);
+  sp.setDepth(10);
+  return sp;
+}
+
+class StartScreen extends Phaser.Scene{
+  constructor(){super("StartScreen");}
+  preload(){
+    this.load.image("title_img","logo.jpg");
+    this.load.image("bg_deep_forest","bg_deep_forest.jpg");
+    this.load.image("forest_bg","forest_bg.jpg");
+    this.load.image("signal_lost","signal_lost.jpg");
+    this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
+    this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
+    ["olydia","helios","wanderer","orid"].forEach(n=>this.load.image(n+"_beta",n+"_beta.jpg"));
+  }
+  create(){
+    ensureTex(this);addCRT(this);
+    const bgKey="bg_deep_forest";
+    this.add.image(GW/2,GH/2,bgKey).setDisplaySize(GW,GH).setAlpha(0.35);
+    this.add.text(GW/2,GH/2-18,"NMN: MINE WARFARE",{fontFamily:"Press Start 2P",fontSize:"18px",color:"#FFD700"}).setOrigin(0.5);
+    const go=()=>this.scene.start("BrawlerScene");
+    this.input.keyboard.once("keydown",go);
+    this.input.once("pointerdown",go);
+  }
+}
+
+class BrawlerScene extends Phaser.Scene{
+  constructor(){super("BrawlerScene");}
+  create(){
+    ensureTex(this);addCRT(this);
+    Match.p1=null;Match.p2=null;Match.p1Done=false;Match.p2Done=false;
+    this.add.text(GW/2,10,"SELECT BRAWLER",{fontFamily:"Press Start 2P",fontSize:"11px",color:"#FFD700"}).setOrigin(0.5,0);
+    
+    this.intelTxt=this.add.text(GW/2,56,"SOLO: Pick P1",{fontFamily:"Press Start 2P",fontSize:"6px",color:"#FFD700"}).setOrigin(0.5);
+    this.startBtn=this.add.text(GW/2,GH-18,"START FORGE",{fontFamily:"Press Start 2P",fontSize:"9px",backgroundColor:"#FFD700"}).setOrigin(0.5).setVisible(false).setInteractive();
+    this.startBtn.on("pointerdown",()=>this.scene.start("StageSelectScene"));
+
+    const cols=5,cellW=150,cellH=82,sx=100,sy=100;
+    ROSTER.forEach((entry,i)=>{
+      const col=i%cols,row=Math.floor(i/cols),x=sx+col*cellW,y=sy+row*cellH;
+      const panel=this.add.rectangle(x,y,cellW-10,cellH-8,0x0d0d0d).setStrokeStyle(2,0x444).setInteractive();
+      this.add.text(x,y,entry.name,{fontFamily:"Press Start 2P",fontSize:"5px",color:"#FFF"}).setOrigin(0.5);
+      
+      panel.on("pointerdown",()=>{
+        if(!Match.p1Done){
+           Match.p1=entry; Match.p1Done=true;
+           const cpu=Phaser.Utils.Array.GetRandom(FREE_FOUR.filter(r=>r!==entry));
+           Match.p2=cpu;
+           this.startBtn.setVisible(true);
+        }
+      });
+    });
+  }
+}
+
+class StageSelectScene extends Phaser.Scene{
+  constructor(){super("StageSelectScene");}
+  create(){
+    this.scene.start("BattleScene");
+  }
+}
+
+class BattleScene extends Phaser.Scene{
+  constructor(){super("BattleScene");}
+  create(){
+    ensureTex(this);
+    this.physics.world.gravity.y=700;
+    
+    // ANIMATIONS
+    this.anims.create({ key: 'juni_idle', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 0, end: 2 }), frameRate: 6, repeat: -1 });
+    this.anims.create({ key: 'juni_fire', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 12, end: 14 }), frameRate: 10, repeat: 0 });
+    this.anims.create({ key: 'pyro_idle', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 0, end: 2 }), frameRate: 8, repeat: -1 });
+    this.anims.create({ key: 'pyro_fire', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 12, end: 16 }), frameRate: 12, repeat: 0 });
+
+    this.platforms=this.physics.add.staticGroup();
+    this.platforms.add(this.add.rectangle(GW/2,GH-20,GW,40,0x3a2a0a));
+    this.physics.add.existing(this.platforms.children.entries[0],true);
+
+    this.p1=mkSp(this,SPAWN.p1.x,SPAWN.p1.y,Match.p1||ROSTER[0]);
+    this.p2=mkSp(this,SPAWN.p2.x,SPAWN.p2.y,Match.p2||ROSTER[1]);
+    this.p2.setFlipX(true);
+
+    this.physics.add.collider([this.p1,this.p2],this.platforms);
+    this.S={p1Dmg:0,p2Dmg:0,p1Lives:3,p2Lives:3,p1Stun:false,p2Stun:false,p1Jumps:0,p2Jumps:0,p1AtkCD:false,p2AtkCD:false,gameOver:false};
+    
+    this.k1=this.input.keyboard.addKeys({left:'A',right:'D',up:'W',atk:'J',fire:'L'});
+    addCRT(this);
+  }
+
+  update(time,dt){
+    if(this.S.gameOver) return;
+    const sp=this.p1, S=this.S;
+    if(sp.body.blocked.down) S.p1Jumps=0;
+    if(this.k1.left.isDown){sp.body.setVelocityX(-210);sp.setFlipX(true);}
+    else if(this.k1.right.isDown){sp.body.setVelocityX(210);sp.setFlipX(false);}
+    else sp.body.setVelocityX(sp.body.velocity.x*0.7);
+    if(Phaser.Input.Keyboard.JustDown(this.k1.up)&&S.p1Jumps<2){sp.body.setVelocityY(-390);S.p1Jumps++;}
+  }
+}
+
+class ResultsScene extends Phaser.Scene{ constructor(){super("ResultsScene");} create(){} }
+
+new Phaser.Game({
+  type:Phaser.AUTO, width:GW, height:GH, parent:"gc", backgroundColor:"#050308",
+  scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},
+  physics:{default:"arcade",arcade:{gravity:{y:0},debug:false}},
+  scene:[StartScreen,BrawlerScene,StageSelectScene,BattleScene,ResultsScene]
+});
+</script>
+</body>
+</html>;font-weight:bold;
       display:flex;align-items:center;justify-content:center;
       pointer-events:all;user-select:none;-webkit-user-select:none;
       font-family:"Press Start 2P",monospace;
