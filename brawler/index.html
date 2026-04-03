@@ -221,14 +221,18 @@ function mkSp(scene,x,y,entry){
 // ── START SCREEN ──────────────────────────────────────
 class StartScreen extends Phaser.Scene{
   constructor(){super("StartScreen");}
-  preload(){
+preload(){
     this.load.image("title_img","logo.jpg");
     this.load.image("bg_deep_forest","bg_deep_forest.jpg");
     this.load.image("forest_bg","forest_bg.jpg");
     this.load.image("signal_lost","signal_lost.jpg");
-    this.load.spritesheet("brawlers_sheet","brawlers_master.jpg",{frameWidth:128,frameHeight:128});
-    ["juni","pyro","olydia","helios","wanderer","orid"].forEach(n=>this.load.image(n+"_beta",n+"_beta.jpg"));
-    this.load.on("loaderror",f=>console.warn("Fallback:",f.key));
+    
+    // THE NEW EXTRACTION: 128px Spritesheets
+    this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
+    this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
+    
+    // Fallbacks for other roster members
+    ["olydia","helios","wanderer","orid"].forEach(n => this.load.image(n + "_beta", n + "_beta.jpg"));
   }
   create(){
     ensureTex(this);addCRT(this);
