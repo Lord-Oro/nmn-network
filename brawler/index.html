@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/><title>NMN: BRAWLERS v9.3.3 - THE FORGE</title>
+    <meta charset="UTF-8"/><title>NMN: BRAWLERS v9.4 - ARENA UPDATE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
     <style>
@@ -26,19 +26,19 @@
 const GW = 800, GH = 450;
 const Match = { 
     p1: "Juni", p2: "Pyro", p1Pct: 0, p2Pct: 0, 
-    p1Lives: 3, p2Lives: 3, countdown: true 
+    diff: "Easy", map: "bg", countdown: true 
 };
 
 class StartScreen extends Phaser.Scene {
     constructor() { super("StartScreen"); }
     preload() {
-        // Core Assets
         this.load.image("promo", "brawler_promo.jpg");
-        this.load.image("bg", "bg_deep_forest.jpg");
+        this.load.image("bg", "bg_deep_forest.jpg"); // Forest Map
+        this.load.image("mine", "brawlers_master.jpg"); // Mine Map
         this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
         
-        // Placeholders matching manifest
+        // Beta placeholders from manifest
         this.load.image("wanderer_beta", "wanderer_beta.jpg");
         this.load.image("nela_beta", "nela_beta.jpg");
         this.load.image("orid_beta", "orid_beta.jpg");
@@ -54,6 +54,18 @@ class BrawlerScene extends Phaser.Scene {
     constructor() { super("BrawlerScene"); }
     create() {
         this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.4);
+        
+        // Difficulty Setting
+        const diffs = ["Easy", "Mid", "Hard"];
+        diffs.forEach((d, i) => {
+            let t = this.add.text(100 + (i * 100), 40, d, { fontSize: '18px', fill: Match.diff === d ? '#0F0' : '#FFF' }).setInteractive();
+            t.on("pointerdown", () => { Match.diff = d; this.scene.restart(); });
+        });
+
+        // Map Selection
+        this.add.text(550, 40, "MAP: " + (Match.map === 'bg' ? 'FOREST' : 'MINE'), { fontSize: '18px', fill: '#FFD700' }).setInteractive()
+            .on("pointerdown", () => { Match.map = (Match.map === 'bg' ? 'mine' : 'bg'); this.scene.restart(); });
+
         const roster = [
             { name: "Juni", img: "juni_sheet", active: true },
             { name: "Pyro", img: "pyro_sheet", active: true },
@@ -65,16 +77,16 @@ class BrawlerScene extends Phaser.Scene {
 
         roster.forEach((char, i) => {
             let x = 150 + (i % 3) * 250;
-            let y = 120 + Math.floor(i / 3) * 180;
-            let btn = this.add.image(x, y, char.img).setDisplaySize(120, 120);
+            let y = 150 + Math.floor(i / 3) * 160;
+            // Random beta placeholder for locked chars
+            let btn = this.add.image(x, y, char.img).setDisplaySize(110, 110);
             
             if (!char.active) {
-                btn.setTint(0x555555);
-                this.add.text(x, y + 70, "COMING SOON", { fontSize: '14px', fill: '#F00' }).setOrigin(0.5);
+                btn.setTint(0x444444);
+                this.add.text(x, y + 65, "LOCKED", { fontSize: '14px', fill: '#F00' }).setOrigin(0.5);
             } else {
                 btn.setInteractive({ useHandCursor: true }).on("pointerdown", () => {
                     Match.p1 = char.name; 
-                    Match.p2 = (char.name === "Juni" ? "Pyro" : "Juni");
                     this.scene.start("BattleScene");
                 });
             }
@@ -85,39 +97,38 @@ class BrawlerScene extends Phaser.Scene {
 class BattleScene extends Phaser.Scene {
     constructor() { super("BattleScene"); }
     create() {
-        this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.2);
+        this.add.image(GW/2, GH/2, Match.map).setDisplaySize(GW, GH).setAlpha(0.3); // Map choice
         this.platforms = this.physics.add.staticGroup();
         this.platforms.add(this.add.rectangle(GW/2, GH-20, 800, 20, 0x3a2a0a).setAlpha(0.5));
 
+        // Facing each other at drop
+        this.p1 = this.physics.add.sprite(200, -100, "juni_sheet").setFlipX(false);
+        this.p2 = this.physics.add.sprite(600, -100, "pyro_sheet").setFlipX(true); 
+
         this.setupAnims();
-        this.p1 = this.physics.add.sprite(200, GH-150, Match.p1.toLowerCase() + "_sheet");
-        this.p2 = this.physics.add.sprite(600, GH-150, Match.p2.toLowerCase() + "_sheet");
-        
         this.p1.body.setSize(45, 100).setOffset(41.5, 28);
         this.p2.body.setSize(60, 60).setOffset(34, 34);
 
-        this.hpGfx = this.add.graphics();
-        this.countTxt = this.add.text(GW/2, GH/2, '', { fontSize: '80px', fill: '#FFD700' }).setOrigin(0.5);
+        this.countTxt = this.add.text(GW/2, GH/2, '', { fontSize: '80px', fill: '#FFD700' }).setOrigin(0.5).setDepth(100);
         this.startCountdown();
 
-        this.bullets = this.physics.add.group();
+        this.keys = this.input.keyboard.addKeys({ W:'W', A:'A', D:'D' });
         this.physics.add.collider([this.p1, this.p2], this.platforms);
-        this.physics.add.overlap(this.bullets, this.p2, (target, bullet) => { 
-            bullet.destroy(); 
-            this.handleHit(2, 10); 
-        });
-
-        this.keys = this.input.keyboard.addKeys({ W:'W', A:'A', D:'D', K:'K' });
     }
 
     startCountdown() {
-        Match.countdown = true; let count = 3;
+        Match.countdown = true;
+        let count = 3;
         const timer = this.time.addEvent({
             delay: 1000, repeat: 3,
             callback: () => {
                 if (count > 0) { this.countTxt.setText(count); count--; }
                 else if (count === 0) { this.countTxt.setText("BRAWL!"); count--; }
-                else { this.countTxt.setText(""); Match.countdown = false; timer.remove(); }
+                else { 
+                    this.countTxt.setText(""); 
+                    Match.countdown = false; // RELEASE LOCK
+                    timer.remove(); 
+                }
             }
         });
     }
@@ -127,17 +138,8 @@ class BattleScene extends Phaser.Scene {
         this.anims.create({ key: 'p_idle', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 0, end: 3 }), frameRate: 8, repeat: -1 });
     }
 
-    handleHit(num, dmg) {
-        if (Match.countdown) return;
-        const v = (num === 2) ? this.p2 : this.p1;
-        Match[num === 2 ? 'p2Pct' : 'p1Pct'] += dmg;
-        v.setVelocityX((this.p1.x < this.p2.x ? 1 : -1) * (200 + Match[num === 2 ? 'p2Pct' : 'p1Pct']));
-        v.setTint(0xff0000);
-        this.time.delayedCall(200, () => v.clearTint());
-    }
-
     update() {
-        if (Match.countdown) return;
+        if (Match.countdown) return; // Wait for "BRAWL!"
         const p1 = this.p1, ks = this.keys;
         if (ks.A.isDown) { p1.setVelocityX(-260); p1.setFlipX(true); }
         else if (ks.D.isDown) { p1.setVelocityX(260); p1.setFlipX(false); }
