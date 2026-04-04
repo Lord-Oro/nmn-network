@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/><title>NMN: BRAWLERS v5.2 - SELECT SCREEN FINAL</title>
+    <meta charset="UTF-8"/><title>NMN: BRAWLERS v5.3 - SOLID SPRITES</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
     <style>
@@ -47,15 +47,20 @@ const MP = { l: false, r: false, j: false, a: false, s: false, f: false };
 
 const Match = { p1: "Juni", p2: "Pyro" };
 
+// CONSTANT PHYSICS CALIBRATION
+function calibrate(sp) {
+    sp.setOrigin(0.5, 0.5);
+    // This exact box prevents the "hopping" between animations
+    sp.body.setSize(44, 96).setOffset(42, 32);
+    sp.setCollideWorldBounds(true);
+    sp.setDragX(2500);
+}
+
 function mkSp(scene, x, y, name) {
     let key = name.toLowerCase() + "_sheet";
-    // Check if texture exists, otherwise use placeholder
     const textureKey = scene.textures.exists(key) ? key : "placeholder";
     let sp = scene.physics.add.sprite(x, y, textureKey);
-    sp.setOrigin(0.5, 0.5); 
-    sp.body.setSize(45, 95).setOffset(42, 33);
-    sp.setCollideWorldBounds(true);
-    sp.setDragX(2000);
+    calibrate(sp);
     return sp;
 }
 
@@ -67,11 +72,9 @@ class StartScreen extends Phaser.Scene {
         this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
         
-        // CREATE PLACEHOLDER TEXTURE
-        let graphics = this.make.graphics({x: 0, y: 0, add: false});
-        graphics.fillStyle(0x444444, 1);
-        graphics.fillRect(0, 0, 128, 128);
-        graphics.generateTexture("placeholder", 128, 128);
+        let g = this.make.graphics({x: 0, y: 0, add: false});
+        g.fillStyle(0x444444, 1); g.fillRect(0, 0, 128, 128);
+        g.generateTexture("placeholder", 128, 128);
     }
     create() {
         this.add.image(GW/2, GH/2, "promo").setDisplaySize(GW, GH);
@@ -83,38 +86,12 @@ class BrawlerScene extends Phaser.Scene {
     constructor() { super("BrawlerScene"); }
     create() {
         this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.3);
-        this.add.text(GW/2, 50, "SELECT BRAWLER", {fontFamily:'monospace',fontSize:'32px',fill:'#FFD700'}).setOrigin(0.5);
-        
-        const roster = [
-            { name: "Juni", color: "#00FF88", active: true },
-            { name: "Pyro", color: "#FF4400", active: true },
-            { name: "Wanderer", color: "#555555", active: false },
-            { name: "Nela", color: "#555555", active: false },
-            { name: "Orid", color: "#555555", active: false },
-            { name: "Helios", color: "#555555", active: false }
-        ];
-
+        const roster = [{name:"Juni", color:"#00FF88"}, {name:"Pyro", color:"#FF4400"}];
         roster.forEach((b, i) => {
-            let col = i % 2;
-            let row = Math.floor(i / 2);
-            let x = 250 + (col * 300);
-            let y = 150 + (row * 100);
-
-            let t = this.add.text(x, y, b.name.toUpperCase(), {
-                fontFamily: 'monospace', fontSize: '28px', fill: b.color, backgroundColor: '#000000AA', padding: { x: 10, y: 5 }
-            }).setOrigin(0.5).setInteractive({ useHandCursor: b.active });
-
-            if (b.active) {
-                t.on('pointerover', () => t.setStyle({ fill: '#FFF' }));
-                t.on('pointerout', () => t.setStyle({ fill: b.color }));
-                t.on("pointerdown", () => { 
-                    Match.p1 = b.name; 
-                    Match.p2 = (b.name === "Juni" ? "Pyro" : "Juni"); 
-                    this.scene.start("BattleScene"); 
-                });
-            } else {
-                this.add.text(x, y + 25, "LOCKED", {fontFamily:'monospace', fontSize:'12px', fill:'#FF0000'}).setOrigin(0.5);
-            }
+            let t = this.add.text(GW/2, 180 + (i * 80), b.name.toUpperCase(), {
+                fontFamily: 'monospace', fontSize: '40px', fill: b.color, backgroundColor: '#000000AA', padding: 10
+            }).setOrigin(0.5).setInteractive();
+            t.on("pointerdown", () => { Match.p1 = b.name; Match.p2 = (b.name === "Juni" ? "Pyro" : "Juni"); this.scene.start("BattleScene"); });
         });
     }
 }
@@ -122,10 +99,8 @@ class BrawlerScene extends Phaser.Scene {
 class BattleScene extends Phaser.Scene {
     constructor() { super("BattleScene"); }
     create() {
-        const p1n = Match.p1.toLowerCase();
-        const p2n = Match.p2.toLowerCase();
+        const p1n = Match.p1.toLowerCase(), p2n = Match.p2.toLowerCase();
 
-        // ONLY CREATE ANIMS FOR ACTIVE SHEETS
         [p1n, p2n].forEach(n => {
             if (this.textures.exists(n+'_sheet')) {
                 this.anims.create({ key: n+'_idle', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 0, end: 2 }), frameRate: 6, repeat: -1 });
@@ -144,48 +119,55 @@ class BattleScene extends Phaser.Scene {
         
         this.physics.add.collider([this.p1, this.p2], this.platforms);
         this.keys = this.input.keyboard.addKeys({ left: 'A', right: 'D', jump: 'W', punch: 'J', shield: 'K', fire: 'L' });
-        this.p1State = { jumps: 0, busy: false };
+        this.s = { jumps: 0, busy: false };
     }
 
     update() {
-        const p1 = this.p1, p2 = this.p2, ks = this.keys, s = this.p1State;
-        const name = Match.p1.toLowerCase();
+        const p1 = this.p1, p2 = this.p2, ks = this.keys, s = this.s, name = Match.p1.toLowerCase();
         const grounded = p1.body.blocked.down;
-        const hasAnim = this.textures.exists(name + '_sheet');
 
+        // MIRROR LOCK
         p1.setFlipX(p1.x > p2.x);
         p2.setFlipX(p2.x > p1.x);
 
         if (grounded) s.jumps = 0;
 
-        if (!s.busy && hasAnim) {
-            if (ks.shield.isDown || MP.s) {
-                p1.setVelocityX(0); p1.play(name + '_shd', true);
-            } else {
+        if (!s.busy) {
+            if (ks.shield.isDown || MP.s) { p1.setVelocityX(0); p1.play(name + '_shd', true); }
+            else {
+                // Movement Logic
                 if (ks.left.isDown || MP.l) { p1.setVelocityX(-260); if (grounded) p1.play(name + '_idle', true); }
                 else if (ks.right.isDown || MP.r) { p1.setVelocityX(260); if (grounded) p1.play(name + '_idle', true); }
                 else { p1.setVelocityX(0); if (grounded) p1.play(name + '_idle', true); }
 
-                if (Phaser.Input.Keyboard.JustDown(ks.jump) || MP.j) {
-                    if (s.jumps < 2) { p1.setVelocityY(-580); p1.play(name + '_jump', true); s.jumps++; }
+                // Jump Mechanic (Frames 3-5)
+                if ((Phaser.Input.Keyboard.JustDown(ks.jump) || MP.j) && s.jumps < 2) {
+                    p1.setVelocityY(-580); p1.play(name + '_jump', true); s.jumps++;
                     MP.j = false;
                 }
                 if (!grounded && p1.anims.currentAnim && p1.anims.currentAnim.key !== name + '_jump') p1.play(name + '_jump', true);
 
+                // Punch (J)
                 if (Phaser.Input.Keyboard.JustDown(ks.punch) || MP.a) {
                     s.busy = true; p1.play(name + '_atk');
-                    this.time.delayedCall(300, () => s.busy = false);
+                    this.time.delayedCall(300, () => { s.busy = false; calibrate(p1); });
                     MP.a = false;
                 }
+                
+                // Fire (L) - THE PROJECTILE FIX
                 if (Phaser.Input.Keyboard.JustDown(ks.fire) || MP.f) {
                     s.busy = true; p1.play(name + '_fire');
                     this.time.delayedCall(200, () => {
+                        // Slicing: Tell Phaser to grab only Frame 13 of the spritesheet
                         let b = this.physics.add.sprite(p1.x, p1.y, name + '_sheet', 13);
-                        b.body.setAllowGravity(false); b.setFlipX(p1.flipX);
+                        b.body.setAllowGravity(false);
+                        b.setFlipX(p1.flipX);
+                        // Bullet Hitbox (small and focused)
+                        b.body.setSize(30, 30);
                         b.setVelocityX(p1.flipX ? -600 : 600);
                         this.time.delayedCall(1000, () => b.destroy());
                     });
-                    this.time.delayedCall(500, () => s.busy = false);
+                    this.time.delayedCall(500, () => { s.busy = false; calibrate(p1); });
                     MP.f = false;
                 }
             }
