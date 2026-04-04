@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/><title>NMN: BRAWLERS v9.4 - ARENA UPDATE</title>
+    <meta charset="UTF-8"/><title>NMN: BRAWLERS v9.5 - TACTICAL ENTRY</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
     <style>
@@ -33,12 +33,10 @@ class StartScreen extends Phaser.Scene {
     constructor() { super("StartScreen"); }
     preload() {
         this.load.image("promo", "brawler_promo.jpg");
-        this.load.image("bg", "bg_deep_forest.jpg"); // Forest Map
-        this.load.image("mine", "brawlers_master.jpg"); // Mine Map
+        this.load.image("bg", "bg_deep_forest.jpg");
+        this.load.image("mine", "brawlers_master.jpg");
         this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
-        
-        // Beta placeholders from manifest
         this.load.image("wanderer_beta", "wanderer_beta.jpg");
         this.load.image("nela_beta", "nela_beta.jpg");
         this.load.image("orid_beta", "orid_beta.jpg");
@@ -55,16 +53,14 @@ class BrawlerScene extends Phaser.Scene {
     create() {
         this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.4);
         
-        // Difficulty Setting
+        // DIFFICULTY BUTTONS WITH BORDERS
         const diffs = ["Easy", "Mid", "Hard"];
         diffs.forEach((d, i) => {
-            let t = this.add.text(100 + (i * 100), 40, d, { fontSize: '18px', fill: Match.diff === d ? '#0F0' : '#FFF' }).setInteractive();
+            let x = 200 + (i * 200);
+            let box = this.add.rectangle(x, 50, 120, 40, 0x000000, 0.5).setStrokeStyle(2, Match.diff === d ? 0x00FF00 : 0xFFD700);
+            let t = this.add.text(x, 50, d.toUpperCase(), { fontSize: '20px', fill: Match.diff === d ? '#0F0' : '#FFF' }).setOrigin(0.5).setInteractive();
             t.on("pointerdown", () => { Match.diff = d; this.scene.restart(); });
         });
-
-        // Map Selection
-        this.add.text(550, 40, "MAP: " + (Match.map === 'bg' ? 'FOREST' : 'MINE'), { fontSize: '18px', fill: '#FFD700' }).setInteractive()
-            .on("pointerdown", () => { Match.map = (Match.map === 'bg' ? 'mine' : 'bg'); this.scene.restart(); });
 
         const roster = [
             { name: "Juni", img: "juni_sheet", active: true },
@@ -77,37 +73,54 @@ class BrawlerScene extends Phaser.Scene {
 
         roster.forEach((char, i) => {
             let x = 150 + (i % 3) * 250;
-            let y = 150 + Math.floor(i / 3) * 160;
-            // Random beta placeholder for locked chars
+            let y = 180 + Math.floor(i / 3) * 160;
             let btn = this.add.image(x, y, char.img).setDisplaySize(110, 110);
-            
-            if (!char.active) {
-                btn.setTint(0x444444);
-                this.add.text(x, y + 65, "LOCKED", { fontSize: '14px', fill: '#F00' }).setOrigin(0.5);
-            } else {
+            if (!char.active) { btn.setTint(0x444444); } 
+            else {
                 btn.setInteractive({ useHandCursor: true }).on("pointerdown", () => {
                     Match.p1 = char.name; 
-                    this.scene.start("BattleScene");
+                    this.scene.start("MapSelectScene"); // NEW SEQUENCE
                 });
             }
         });
     }
 }
 
+class MapSelectScene extends Phaser.Scene {
+    constructor() { super("MapSelectScene"); }
+    create() {
+        this.add.text(GW/2, 50, "SELECT YOUR ARENA", { fontSize: '32px', fill: '#FFD700' }).setOrigin(0.5);
+        
+        // Forest Option
+        let forest = this.add.image(200, 250, "bg").setDisplaySize(300, 200).setInteractive();
+        this.add.text(200, 370, "DEEP FOREST", { fontSize: '20px', fill: '#FFF' }).setOrigin(0.5);
+        forest.on("pointerdown", () => { Match.map = "bg"; this.scene.start("BattleScene"); });
+
+        // Mine Option
+        let mine = this.add.image(600, 250, "mine").setDisplaySize(300, 200).setInteractive();
+        this.add.text(600, 370, "SACRED MINE", { fontSize: '20px', fill: '#FFF' }).setOrigin(0.5);
+        mine.on("pointerdown", () => { Match.map = "mine"; this.scene.start("BattleScene"); });
+    }
+}
+
 class BattleScene extends Phaser.Scene {
     constructor() { super("BattleScene"); }
     create() {
-        this.add.image(GW/2, GH/2, Match.map).setDisplaySize(GW, GH).setAlpha(0.3); // Map choice
+        this.add.image(GW/2, GH/2, Match.map).setDisplaySize(GW, GH).setAlpha(0.3);
         this.platforms = this.physics.add.staticGroup();
         this.platforms.add(this.add.rectangle(GW/2, GH-20, 800, 20, 0x3a2a0a).setAlpha(0.5));
 
-        // Facing each other at drop
+        // Facining each other + Dropping
         this.p1 = this.physics.add.sprite(200, -100, "juni_sheet").setFlipX(false);
         this.p2 = this.physics.add.sprite(600, -100, "pyro_sheet").setFlipX(true); 
 
         this.setupAnims();
         this.p1.body.setSize(45, 100).setOffset(41.5, 28);
         this.p2.body.setSize(60, 60).setOffset(34, 34);
+
+        // FREEZE PHYSICS UNTIL BRAWL
+        this.p1.body.setAllowGravity(false);
+        this.p2.body.setAllowGravity(false);
 
         this.countTxt = this.add.text(GW/2, GH/2, '', { fontSize: '80px', fill: '#FFD700' }).setOrigin(0.5).setDepth(100);
         this.startCountdown();
@@ -123,12 +136,15 @@ class BattleScene extends Phaser.Scene {
             delay: 1000, repeat: 3,
             callback: () => {
                 if (count > 0) { this.countTxt.setText(count); count--; }
-                else if (count === 0) { this.countTxt.setText("BRAWL!"); count--; }
-                else { 
-                    this.countTxt.setText(""); 
-                    Match.countdown = false; // RELEASE LOCK
-                    timer.remove(); 
+                else if (count === 0) { 
+                    this.countTxt.setText("BRAWL!"); 
+                    // ACTIVATE PHYSICS
+                    this.p1.body.setAllowGravity(true);
+                    this.p2.body.setAllowGravity(true);
+                    Match.countdown = false; 
+                    count--; 
                 }
+                else { this.countTxt.setText(""); timer.remove(); }
             }
         });
     }
@@ -139,7 +155,7 @@ class BattleScene extends Phaser.Scene {
     }
 
     update() {
-        if (Match.countdown) return; // Wait for "BRAWL!"
+        if (Match.countdown) return; 
         const p1 = this.p1, ks = this.keys;
         if (ks.A.isDown) { p1.setVelocityX(-260); p1.setFlipX(true); }
         else if (ks.D.isDown) { p1.setVelocityX(260); p1.setFlipX(false); }
@@ -152,7 +168,7 @@ class BattleScene extends Phaser.Scene {
 new Phaser.Game({
     type: Phaser.AUTO, width: GW, height: GH, parent: "gc", backgroundColor: "#050308",
     pixelArt: true, physics: { default: "arcade", arcade: { gravity: { y: 1400 } } },
-    scene: [StartScreen, BrawlerScene, BattleScene]
+    scene: [StartScreen, BrawlerScene, MapSelectScene, BattleScene]
 });
 </script>
 </body>
