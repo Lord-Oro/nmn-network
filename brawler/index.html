@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/><title>NMN: BRAWLERS v6.0 - SURGICAL SLICE</title>
+    <meta charset="UTF-8"/><title>NMN: BRAWLERS v6.3 - HITBOX & ASSET FIX</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
     <style>
@@ -10,15 +10,15 @@
         #gc { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
         #mc { position: fixed; bottom: 20px; left: 0; right: 0; height: 160px; pointer-events: none; z-index: 999; }
         .mb {
-            position: absolute; width: 65px; height: 65px; border-radius: 50%;
+            position: absolute; width: 68px; height: 68px; border-radius: 50%;
             border: 3px solid #FFD700; background: rgba(5,3,8,0.9);
-            color: #FFD700; font-size: 20px; font-weight: bold;
+            color: #FFD700; font-size: 22px; font-weight: bold;
             display: flex; align-items: center; justify-content: center;
             pointer-events: all; user-select: none; font-family: monospace;
         }
-        #ml { left: 20px; bottom: 10px; } #mr { left: 95px; bottom: 10px; }
-        #mj { left: 57px; bottom: 85px; } 
-        #ma { right: 20px; bottom: 85px; } #ms { right: 20px; bottom: 10px; } #mf { right: 95px; bottom: 10px; }
+        #ml { left: 20px; bottom: 10px; } #mr { left: 100px; bottom: 10px; }
+        #mj { left: 60px; bottom: 90px; } 
+        #ma { right: 20px; bottom: 90px; } #ms { right: 20px; bottom: 10px; } #mf { right: 100px; bottom: 10px; }
     </style>
 </head>
 <body>
@@ -45,24 +45,30 @@ const MP = { l: false, r: false, j: false, a: false, s: false, f: false };
 
 const Match = { p1: "Juni", p2: "Pyro" };
 
-// PHYSICS LOCKDOWN: Ensures feet are glued to floor
-function lockHitbox(sp) {
-    sp.setOrigin(0.5, 0.5);
-    sp.body.setSize(44, 96).setOffset(42, 32);
+// ==========================================
+// 1. HITBOX CODE (THE CALIBRATION)
+// ==========================================
+function lockBody(sp) {
+    sp.setOrigin(0.5, 0.5); 
+    // setSize(width, height) - setOffset(x, y)
+    // This defines the "solid" part of the 128x128 frame.
+    sp.body.setSize(45, 100).setOffset(41.5, 28); 
     sp.setCollideWorldBounds(true);
-    sp.setDragX(3000);
 }
 
 class StartScreen extends Phaser.Scene {
     constructor() { super("StartScreen"); }
     preload() {
+        // ==========================================
+        // 2. GITHUB ASSET LOADING
+        // ==========================================
         this.load.image("promo", "brawler_promo.jpg");
-        this.load.image("bg", "bg_deep_forest.jpg");
-        // STRICT SLICING: 128x128 grid
+        this.load.image("bg_forest", "bg_deep_forest.jpg"); // Fixed key for background
         this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
     }
     create() {
+        // Start Screen Background
         this.add.image(GW/2, GH/2, "promo").setDisplaySize(GW, GH);
         this.input.once("pointerdown", () => this.scene.start("BrawlerScene"));
     }
@@ -71,9 +77,11 @@ class StartScreen extends Phaser.Scene {
 class BrawlerScene extends Phaser.Scene {
     constructor() { super("BrawlerScene"); }
     create() {
-        this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.3);
+        // Background added FIRST to stay in the back
+        this.add.image(GW/2, GH/2, "bg_forest").setDisplaySize(GW, GH).setAlpha(0.4);
+        
         ["Juni", "Pyro"].forEach((name, i) => {
-            let t = this.add.text(GW/2, 180 + (i * 80), name.toUpperCase(), {
+            let t = this.add.text(GW/2, 200 + (i * 80), name.toUpperCase(), {
                 fontFamily: 'monospace', fontSize: '42px', fill: '#00FF88', backgroundColor: '#000000AA', padding: 10
             }).setOrigin(0.5).setInteractive();
             t.on("pointerdown", () => { Match.p1 = name; Match.p2 = (name === "Juni" ? "Pyro" : "Juni"); this.scene.start("BattleScene"); });
@@ -83,82 +91,108 @@ class BrawlerScene extends Phaser.Scene {
 
 class BattleScene extends Phaser.Scene {
     constructor() { super("BattleScene"); }
-    create() {
-        const p1n = Match.p1.toLowerCase(), p2n = Match.p2.toLowerCase();
 
-        // Animation Creation
-        [p1n, p2n].forEach(n => {
-            this.anims.create({ key: n+'_idle', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 0, end: 2 }), frameRate: 6, repeat: -1 });
-            this.anims.create({ key: n+'_jump', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 3, end: 5 }), frameRate: 10, repeat: 0 });
-            this.anims.create({ key: n+'_atk', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 7, end: 11 }), frameRate: 15, repeat: 0 });
-            this.anims.create({ key: n+'_fire', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 12, end: 14 }), frameRate: 12, repeat: 0 });
-            this.anims.create({ key: n+'_shd', frames: [{key: n+'_sheet', frame: 6}] });
-        });
+    create() {
+        const p1n = Match.p1.toLowerCase();
+        const p2n = Match.p2.toLowerCase();
+
+        // ==========================================
+        // 3. BACKGROUND ASSET PLACEMENT
+        // ==========================================
+        // Added first at depth 0
+        this.add.image(GW/2, GH/2, "bg_forest").setDisplaySize(GW, GH).setAlpha(0.25).setDepth(0);
 
         this.platforms = this.physics.add.staticGroup();
-        this.platforms.add(this.add.rectangle(GW/2, GH-20, 750, 20, 0x3a2a0a).setAlpha(0.2));
+        this.platforms.add(this.add.rectangle(GW/2, GH-20, 800, 20, 0x3a2a0a).setAlpha(0.5));
 
-        this.p1 = this.physics.add.sprite(SPAWN.p1.x, SPAWN.p1.y, p1n + "_sheet", 0);
-        this.p2 = this.physics.add.sprite(SPAWN.p2.x, SPAWN.p2.y, p2n + "_sheet", 0);
-        
-        lockHitbox(this.p1);
-        lockHitbox(this.p2);
+        // Players added AFTER background to sit in front
+        this.p1 = this.physics.add.sprite(SPAWN.p1.x, SPAWN.p1.y, p1n + "_sheet", 0).setDepth(1);
+        this.p2 = this.physics.add.sprite(SPAWN.p2.x, SPAWN.p2.y, p2n + "_sheet", 0).setDepth(1);
+
+        lockBody(this.p1);
+        lockBody(this.p2);
 
         this.physics.add.collider([this.p1, this.p2], this.platforms);
         this.keys = this.input.keyboard.addKeys({ left: 'A', right: 'D', jump: 'W', punch: 'J', shield: 'K', fire: 'L' });
-        this.s = { jumps: 0, busy: false };
+        this.s = { jumps: 0, locked: false, lastAnim: "" };
 
-        // INITIAL IDLE KICKSTART
-        this.p1.play(p1n + '_idle');
-        this.p2.play(p2n + '_idle');
+        // [ANIMATIONS]
+        [p1n, p2n].forEach(n => {
+            this.anims.create({ key: n+'_idle', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 0, end: 2 }), frameRate: 6, repeat: -1 });
+            this.anims.create({ key: n+'_jump', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 3, end: 5 }), frameRate: 10 });
+            this.anims.create({ key: n+'_shd', frames: [{key: n+'_sheet', frame: 6}] });
+            this.anims.create({ key: n+'_atk', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 7, end: 11 }), frameRate: 15 });
+            this.anims.create({ key: n+'_fire', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 12, end: 14 }), frameRate: 12 });
+        });
+
+        this.p1.play(p1n + "_idle");
+        this.p2.play(p2n + "_idle");
     }
 
     update() {
-        const p1 = this.p1, p2 = this.p2, ks = this.keys, s = this.s, name = Match.p1.toLowerCase();
+        const p1 = this.p1, p2 = this.p2, ks = this.keys, s = this.s;
+        const name = Match.p1.toLowerCase();
         const grounded = p1.body.blocked.down;
 
-        // MIRROR LOCK (Full Flip)
+        // Mirror Flipping
         p1.setFlipX(p1.x > p2.x);
         p2.setFlipX(p2.x > p1.x);
 
         if (grounded) s.jumps = 0;
+        if (s.locked) return;
 
-        if (!s.busy) {
-            if (ks.shield.isDown || MP.s) {
-                p1.setVelocityX(0); p1.play(name + '_shd', true);
-            } else {
-                // Movement Logic
-                if (ks.left.isDown || MP.l) { p1.setVelocityX(-260); if (grounded) p1.play(name + '_idle', true); }
-                else if (ks.right.isDown || MP.r) { p1.setVelocityX(260); if (grounded) p1.play(name + '_idle', true); }
-                else { p1.setVelocityX(0); if (grounded) p1.play(name + '_idle', true); }
+        // Controls
+        if (ks.shield.isDown || MP.s) {
+            p1.setVelocityX(0);
+            this.playAnim(p1, name + "_shd");
+            return;
+        }
 
-                // Jump Mechanic (Frames 3-5)
-                if ((Phaser.Input.Keyboard.JustDown(ks.jump) || MP.j) && s.jumps < 2) {
-                    p1.setVelocityY(-600); p1.play(name + '_jump', true); s.jumps++;
-                }
-                if (!grounded && p1.anims.getName() !== name + '_jump') p1.play(name + '_jump', true);
+        if (ks.left.isDown || MP.l) {
+            p1.setVelocityX(-260);
+            if (grounded) this.playAnim(p1, name + "_idle");
+        }
+        else if (ks.right.isDown || MP.r) {
+            p1.setVelocityX(260);
+            if (grounded) this.playAnim(p1, name + "_idle");
+        }
+        else {
+            p1.setVelocityX(0);
+            if (grounded) this.playAnim(p1, name + "_idle");
+        }
 
-                // Punch (J)
-                if (Phaser.Input.Keyboard.JustDown(ks.punch) || MP.a) {
-                    s.busy = true; p1.play(name + '_atk');
-                    this.time.delayedCall(300, () => { s.busy = false; lockHitbox(p1); });
-                }
-                
-                // FIXED PROJECTILE (Explicit Frame 13)
-                if (Phaser.Input.Keyboard.JustDown(ks.fire) || MP.f) {
-                    s.busy = true; p1.play(name + '_fire');
-                    this.time.delayedCall(250, () => {
-                        let b = this.physics.add.sprite(p1.x, p1.y, name + '_sheet', 13);
-                        b.body.setAllowGravity(false);
-                        b.setFlipX(p1.flipX);
-                        // HITBOX FOR PROJECTILE ONLY
-                        b.body.setSize(24, 24).setOffset(52, 52); 
-                        b.setVelocityX(p1.flipX ? -700 : 700);
-                        this.time.delayedCall(1000, () => b.destroy());
-                    });
-                    this.time.delayedCall(500, () => { s.busy = false; lockHitbox(p1); });
-                }
-            }
+        if ((Phaser.Input.Keyboard.JustDown(ks.jump) || MP.j) && s.jumps < 2) {
+            p1.setVelocityY(-600);
+            this.playAnim(p1, name + "_jump");
+            s.jumps++;
+        }
+
+        if (Phaser.Input.Keyboard.JustDown(ks.punch) || MP.a) {
+            s.locked = true;
+            this.playAnim(p1, name + "_atk");
+            this.time.delayedCall(300, () => { s.locked = false; lockBody(p1); });
+        }
+
+        if (Phaser.Input.Keyboard.JustDown(ks.fire) || MP.f) {
+            s.locked = true;
+            this.playAnim(p1, name + "_fire");
+            this.time.delayedCall(200, () => {
+                // Spawning frame 13 specifically
+                let proj = this.physics.add.sprite(p1.x, p1.y, name + "_sheet", 13);
+                proj.body.setAllowGravity(false);
+                proj.setFlipX(p1.flipX);
+                proj.body.setSize(30, 30).setOffset(49, 49);
+                proj.setVelocityX(p1.flipX ? -750 : 750);
+                this.time.delayedCall(1000, () => proj.destroy());
+            });
+            this.time.delayedCall(500, () => { s.locked = false; lockBody(p1); });
+        }
+    }
+
+    playAnim(sp, key) {
+        if (this.s.lastAnim !== key) {
+            sp.play(key, true);
+            this.s.lastAnim = key;
         }
     }
 }
@@ -166,7 +200,7 @@ class BattleScene extends Phaser.Scene {
 new Phaser.Game({
     type: Phaser.AUTO, width: GW, height: GH, parent: "gc", backgroundColor: "#050308",
     pixelArt: true, render: { roundPixels: true },
-    physics: { default: "arcade", arcade: { gravity: { y: 1800 } } },
+    physics: { default: "arcade", arcade: { gravity: { y: 1600 } } },
     scene: [StartScreen, BrawlerScene, BattleScene]
 });
 </script>
