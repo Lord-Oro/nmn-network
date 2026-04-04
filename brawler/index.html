@@ -1,86 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/><title>NMN: BRAWLERS v9.7 - EXTRACTION</title>
+    <meta charset="UTF-8"/><title>NMN: BRAWLERS v9.9.1 - FINAL EXTRACTION</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #050308; width: 100vw; height: 100vh; overflow: hidden; touch-action: none; }
         #gc { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-        #mc { position: fixed; bottom: 20px; left: 0; right: 0; height: 160px; pointer-events: none; z-index: 999; }
-        .mb { position: absolute; width: 68px; height: 68px; border-radius: 50%; border: 3px solid #FFD700; background: rgba(5,3,8,0.9); color: #FFD700; font-size: 22px; font-weight: bold; display: flex; align-items: center; justify-content: center; pointer-events: all; user-select: none; font-family: monospace; }
-        #ml { left: 20px; bottom: 10px; } #mr { left: 100px; bottom: 10px; } #mj { left: 60px; bottom: 90px; }
-        #ma { right: 20px; bottom: 90px; } #ms { right: 20px; bottom: 10px; } #mf { right: 100px; bottom: 10px; }
     </style>
 </head>
 <body>
 <div id="gc"></div>
-<div id="mc">
-    <div class="mb" id="ml">◀</div><div class="mb" id="mr">▶</div>
-    <div class="mb" id="mj">▲</div><div class="mb" id="ma">🥊</div>
-    <div class="mb" id="ms">🛡️</div><div class="mb" id="mf">⚡</div>
-</div>
-
 <script>
 const GW = 800, GH = 450;
 const Match = { 
     p1: "Juni", p2: "Pyro", p1Pct: 0, p2Pct: 0, 
-    p1Burst: 3, countdown: true, active: false, map: "bg" 
+    active: false, countdown: true, map: "bg" 
 };
 
 class StartScreen extends Phaser.Scene {
     constructor() { super("StartScreen"); }
     preload() {
-        this.load.image("promo", "brawler_promo.jpg");
         this.load.image("bg", "bg_deep_forest.jpg");
-        this.load.image("mine", "forest_bg.jpg");
+        this.load.image("mine", "brawlers_master.jpg");
         this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
-        // Placeholders
-        ["wanderer", "nela", "orid", "helios"].forEach(n => this.load.image(n + "_beta", n + "_beta.jpg"));
     }
     create() {
-        this.add.image(GW/2, GH/2, "promo").setDisplaySize(GW, GH);
-        this.input.once("pointerdown", () => this.scene.start("BrawlerScene"));
-    }
-}
-
-class BrawlerScene extends Phaser.Scene {
-    constructor() { super("BrawlerScene"); }
-    create() {
-        this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.4);
-        const roster = [
-            { name: "Juni", img: "juni_sheet", active: true },
-            { name: "Pyro", img: "pyro_sheet", active: true },
-            { name: "Wanderer", img: "wanderer_beta", active: false },
-            { name: "Nela", img: "nela_beta", active: false },
-            { name: "Orid", img: "orid_beta", active: false },
-            { name: "Helios", img: "helios_beta", active: false }
-        ];
-
-        roster.forEach((char, i) => {
-            let x = 150 + (i % 3) * 250, y = 150 + Math.floor(i / 3) * 160;
-            let btn = this.add.image(x, y, char.img).setDisplaySize(110, 110);
-            if (!char.active) btn.setTint(0x444444);
-            else btn.setInteractive({useHandCursor:true}).on("pointerdown", () => {
-                Match.p1 = char.name; this.scene.start("MapSelectScene");
-            });
-            this.add.text(x, y + 65, char.active ? char.name : "COMING SOON", { fontSize: '14px', fill: char.active ? '#FFD700' : '#F00' }).setOrigin(0.5);
-        });
-    }
-}
-
-class MapSelectScene extends Phaser.Scene {
-    constructor() { super("MapSelectScene"); }
-    create() {
-        this.add.text(GW/2, 50, "SELECT ARENA", { fontSize: '32px', fill: '#FFD700' }).setOrigin(0.5);
-        const maps = [{id: "bg", name: "FOREST", x: 250}, {id: "mine", name: "MINE", x: 550}];
-        maps.forEach(m => {
-            let img = this.add.image(m.x, 220, m.id).setDisplaySize(250, 150).setInteractive();
-            this.add.text(m.x, 320, m.name, { fontSize: '24px', fill: '#FFF' }).setOrigin(0.5);
-            img.on("pointerdown", () => { Match.map = m.id; this.scene.start("BattleScene"); });
-        });
+        this.add.text(GW/2, GH/2, "NMN BRAWLERS\nCLICK TO ENTER", { align: 'center', fontSize: '32px', fill: '#FFD700' }).setOrigin(0.5);
+        this.input.once("pointerdown", () => this.scene.start("BattleScene"));
     }
 }
 
@@ -89,30 +38,37 @@ class BattleScene extends Phaser.Scene {
     create() {
         this.add.image(GW/2, GH/2, Match.map).setDisplaySize(GW, GH).setAlpha(0.3);
         this.platforms = this.physics.add.staticGroup();
-        this.platforms.add(this.add.rectangle(GW/2, GH-20, 800, 20, 0x3a2a0a).setAlpha(0.5));
+        this.platforms.add(this.add.rectangle(GW/2, GH-50, 400, 20, 0x3a2a0a)); // Main Arena
 
         this.setupAnims();
-        this.p1 = this.physics.add.sprite(200, -200, "juni_sheet").setFlipX(false);
-        this.p2 = this.physics.add.sprite(600, -200, "pyro_sheet").setFlipX(true);
+        this.p1 = this.physics.add.sprite(200, -100, "juni_sheet").setFlipX(false);
+        this.p2 = this.physics.add.sprite(600, -100, "pyro_sheet").setFlipX(true);
         this.p1.body.setAllowGravity(false); this.p2.body.setAllowGravity(false);
 
-        this.bullets = this.physics.add.group();
-        this.txt1 = this.add.text(20, 20, 'JUNI: 0%', { fontSize: '20px', fill: '#FFD700' });
-        this.countTxt = this.add.text(GW/2, GH/2, '3', { fontSize: '80px', fill: '#FFD700' }).setOrigin(0.5);
-        
-        this.keys = this.input.keyboard.addKeys({ W:'W', A:'A', D:'D', J:'J', K:'K', BURST:'SEMICOLON' });
-        this.physics.add.collider([this.p1, this.p2], this.platforms, () => { if(!Match.countdown) Match.active = true; });
-        this.physics.add.overlap(this.bullets, this.p2, (target, bullet) => { bullet.destroy(); this.handleHit(2, 10); });
+        this.txt1 = this.add.text(20, 20, 'PLAYER: 0%', { fontSize: '20px', fill: '#FFD700' });
+        this.txt2 = this.add.text(GW-200, 20, 'AI: 0%', { fontSize: '20px', fill: '#FF0000' });
 
+        this.countTxt = this.add.text(GW/2, GH/2, '3', { fontSize: '80px', fill: '#FFD700' }).setOrigin(0.5).setDepth(100);
+        
+        this.keys = this.input.keyboard.addKeys({ W:'W', A:'A', D:'D', J:'J', K:'K' });
+        this.physics.add.collider([this.p1, this.p2], this.platforms);
+        
         this.startCountdown();
     }
 
     startCountdown() {
-        Match.countdown = true; Match.active = false; let c = 3;
+        let c = 3;
         const t = this.time.addEvent({ delay: 1000, repeat: 3, callback: () => {
             if (c > 0) { this.countTxt.setText(c); c--; }
-            else if (c === 0) { this.countTxt.setText("BRAWL!"); this.p1.body.setAllowGravity(true); this.p2.body.setAllowGravity(true); Match.countdown = false; c--; }
-            else { this.countTxt.setText(""); t.remove(); }
+            else if (c === 0) {
+                this.countTxt.setText("BRAWL!");
+                this.p1.body.setAllowGravity(true); this.p2.body.setAllowGravity(true);
+                Match.countdown = false; Match.active = true; // FORCE ACTIVE
+                c--;
+            } else {
+                this.countTxt.destroy(); // PERMANENT REMOVAL
+                t.remove();
+            }
         }});
     }
 
@@ -120,44 +76,57 @@ class BattleScene extends Phaser.Scene {
         this.anims.create({ key: 'j_idle', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
         this.anims.create({ key: 'j_atk', frames: [12, 14, 13], frameRate: 15 });
         this.anims.create({ key: 'p_idle', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 0, end: 3 }), frameRate: 8, repeat: -1 });
+        this.anims.create({ key: 'p_atk', frames: [10, 11, 12], frameRate: 15 });
     }
 
     handleHit(num, dmg) {
         if (!Match.active) return;
-        Match[num === 2 ? 'p2Pct' : 'p1Pct'] += dmg;
         const v = (num === 2) ? this.p2 : this.p1;
-        v.setVelocityX((this.p1.x < this.p2.x ? 1 : -1) * (200 + Match.p2Pct));
+        Match[num === 2 ? 'p2Pct' : 'p1Pct'] += dmg;
+        v.setVelocityX((this.p1.x < this.p2.x ? 1 : -1) * (150 + Match[num === 2 ? 'p2Pct' : 'p1Pct']));
         v.setTint(0xff0000); this.time.delayedCall(200, () => v.clearTint());
-        this.txt1.setText(`JUNI: ${Match.p1Pct}%`);
+        this.updateHUD();
+    }
+
+    updateHUD() {
+        this.txt1.setText(`PLAYER: ${Match.p1Pct}%`);
+        this.txt2.setText(`AI: ${Match.p2Pct}%`);
     }
 
     update() {
         if (!Match.active) return;
-        const p1 = this.p1, ks = this.keys;
+        const p1 = this.p1, p2 = this.p2, ks = this.keys;
+
+        // PLAYER MOVEMENT
         if (ks.A.isDown) { p1.setVelocityX(-260); p1.setFlipX(true); }
         else if (ks.D.isDown) { p1.setVelocityX(260); p1.setFlipX(false); }
         else { p1.setVelocityX(0); p1.play('j_idle', true); }
-        
-        if (Phaser.Input.Keyboard.JustDown(ks.W)) p1.setVelocityY(-550);
-        
-        if (Phaser.Input.Keyboard.JustDown(ks.J)) { 
-            p1.play('j_atk'); 
-            if (Phaser.Math.Distance.Between(p1.x, p1.y, this.p2.x, this.p2.y) < 80) this.handleHit(2, 5); 
+        if (Phaser.Input.Keyboard.JustDown(ks.W) && p1.body.blocked.down) p1.setVelocityY(-600);
+        if (Phaser.Input.Keyboard.JustDown(ks.J)) {
+            p1.play('j_atk');
+            if (Phaser.Math.Distance.Between(p1.x, p1.y, p2.x, p2.y) < 80) this.handleHit(2, 5);
         }
 
-        if (Phaser.Input.Keyboard.JustDown(ks.K)) {
-            let b = this.bullets.create(p1.x, p1.y, 'juni_sheet', 10);
-            b.body.setAllowGravity(false); b.setVelocityX(p1.flipX ? -750 : 750);
+        // AI LOGIC: STALK & STRIKE
+        const dist = Phaser.Math.Distance.Between(p2.x, p2.y, p1.x, p1.y);
+        if (dist > 70) {
+            this.physics.moveToObject(p2, p1, 150);
+            p2.setFlipX(p2.x > p1.x);
+            p2.play('p_idle', true);
+        } else {
+            p2.setVelocityX(0);
+            if (!p2.anims.isPlaying || p2.anims.currentAnim.key !== 'p_atk') {
+                p2.play('p_atk');
+                this.handleHit(1, 4); // AI Attacking Player
+            }
         }
-        
-        this.p2.play('p_idle', true);
     }
 }
 
 new Phaser.Game({
     type: Phaser.AUTO, width: GW, height: GH, parent: "gc", backgroundColor: "#050308",
     pixelArt: true, physics: { default: "arcade", arcade: { gravity: { y: 1400 } } },
-    scene: [StartScreen, BrawlerScene, MapSelectScene, BattleScene]
+    scene: [StartScreen, BattleScene]
 });
 </script>
 </body>
