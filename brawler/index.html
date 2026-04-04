@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/><title>NMN: BRAWLERS v9.2 - EOD STABLE</title>
+    <meta charset="UTF-8"/><title>NMN: BRAWLERS v9.3 - SACRED MINE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
     <style>
@@ -9,16 +9,9 @@
         body { background: #050308; width: 100vw; height: 100vh; overflow: hidden; touch-action: none; }
         #gc { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
         #mc { position: fixed; bottom: 20px; left: 0; right: 0; height: 160px; pointer-events: none; z-index: 999; }
-        .mb {
-            position: absolute; width: 68px; height: 68px; border-radius: 50%;
-            border: 3px solid #FFD700; background: rgba(5,3,8,0.9);
-            color: #FFD700; font-size: 22px; font-weight: bold;
-            display: flex; align-items: center; justify-content: center;
-            pointer-events: all; user-select: none; font-family: monospace;
-        }
-        #ml { left: 20px; bottom: 10px; } #mr { left: 100px; bottom: 10px; }
-        #mj { left: 60px; bottom: 90px; } #ma { right: 20px; bottom: 90px; }
-        #ms { right: 20px; bottom: 10px; } #mf { right: 100px; bottom: 10px; }
+        .mb { position: absolute; width: 68px; height: 68px; border-radius: 50%; border: 3px solid #FFD700; background: rgba(5,3,8,0.9); color: #FFD700; font-size: 22px; font-weight: bold; display: flex; align-items: center; justify-content: center; pointer-events: all; user-select: none; font-family: monospace; }
+        #ml { left: 20px; bottom: 10px; } #mr { left: 100px; bottom: 10px; } #mj { left: 60px; bottom: 90px; }
+        #ma { right: 20px; bottom: 90px; } #ms { right: 20px; bottom: 10px; } #mf { right: 100px; bottom: 10px; }
     </style>
 </head>
 <body>
@@ -45,169 +38,170 @@ const MP = { l: false, r: false, j: false, a: false, s: false, f: false };
     bind("ml", "l"); bind("mr", "r"); bind("mj", "j"); bind("ma", "a"); bind("ms", "s"); bind("mf", "f");
 })();
 
-const Match = { p1: "Juni", p2: "Pyro", p1HP: 100, p2HP: 100, gameOver: false };
-
-function calibrate(sp, type) {
-    sp.setOrigin(0.5, 0.5);
-    if (type === 'juni') { sp.body.setSize(45, 100).setOffset(41.5, 28); } 
-    else { sp.body.setSize(60, 60).setOffset(34, 34); }
-    sp.setCollideWorldBounds(true);
-    sp.setDragX(2000);
-}
-
-class StartScreen extends Phaser.Scene {
-    constructor() { super("StartScreen"); }
-    preload() {
-        this.load.image("promo", "brawler_promo.jpg");
-        this.load.image("bg", "bg_deep_forest.jpg");
-        this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
-        this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
-    }
-    create() {
-        this.add.image(GW/2, GH/2, "promo").setDisplaySize(GW, GH);
-        this.input.once("pointerdown", () => this.scene.start("BrawlerScene"));
-    }
-}
-
-class BrawlerScene extends Phaser.Scene {
-    constructor() { super("BrawlerScene"); }
-    create() {
-        this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.4);
-        const roster = ["Juni", "Pyro", "Wanderer", "Nela", "Orid", "Helios"];
-        roster.forEach((name, i) => {
-            let active = i < 2;
-            let t = this.add.text(GW/2, 100 + (i * 55), active ? name.toUpperCase() : name.toUpperCase() + " (🔒)", {
-                fontFamily: 'monospace', fontSize: '30px', fill: active ? '#FFD700' : '#555',
-                backgroundColor: '#000000AA', padding: 10
-            }).setOrigin(0.5).setInteractive();
-            if (active) t.on("pointerdown", () => { 
-                Match.p1 = name; Match.p2 = (name === "Juni" ? "Pyro" : "Juni"); 
-                Match.p1HP = 100; Match.p2HP = 100; Match.gameOver = false;
-                this.scene.start("BattleScene"); 
-            });
-        });
-    }
-}
+const Match = { 
+    p1: "Juni", p2: "Pyro", 
+    p1Pct: 0, p2Pct: 0, 
+    p1Lives: 3, p2Lives: 3, 
+    p1Burst: 3, p2Burst: 3,
+    gameOver: false 
+};
 
 class BattleScene extends Phaser.Scene {
     constructor() { super("BattleScene"); }
 
-    create() {
-        const p1n = Match.p1.toLowerCase(), p2n = Match.p2.toLowerCase();
-        this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.3).setDepth(0);
+    preload() {
+        this.load.image("bg", "bg_deep_forest.jpg");
+        this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
+        this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
+    }
 
-        this.hp1 = this.add.graphics().setDepth(5);
-        this.hp2 = this.add.graphics().setDepth(5);
+    create() {
+        this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.3);
+        
+        // HUD - Lives and Percentage
+        this.txt1 = this.add.text(20, 20, `JUNI: 0% | ORE: 3`, { fontSize: '20px', fill: '#FFD700', fontFamily: 'monospace' });
+        this.txt2 = this.add.text(GW-280, 20, `PYRO: 0% | ORE: 3`, { fontSize: '20px', fill: '#FFD700', fontFamily: 'monospace' });
 
         this.platforms = this.physics.add.staticGroup();
         this.platforms.add(this.add.rectangle(GW/2, GH-20, 800, 20, 0x3a2a0a).setAlpha(0.5));
 
-        // JUNI ANIMS
-        this.anims.create({ key: 'juni_idle', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
-        this.anims.create({ key: 'juni_jump', frames: [{key: 'juni_sheet', frame: 4}] });
-        this.anims.create({ key: 'juni_atk', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 7, end: 10 }), frameRate: 15 });
-        this.anims.create({ key: 'juni_fire', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 11, end: 13 }), frameRate: 12 });
-        this.anims.create({ key: 'juni_shd', frames: [{key: 'juni_sheet', frame: 19}] });
+        this.setupAnims();
 
-        // PYRO ANIMS
-        this.anims.create({ key: 'pyro_idle', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 0, end: 4 }), frameRate: 8, repeat: -1 });
-        this.anims.create({ key: 'pyro_atk', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 5, end: 9 }), frameRate: 15 });
-        this.anims.create({ key: 'pyro_fire', frames: [{key: 'pyro_sheet', frame: 10}] });
-        this.anims.create({ key: 'pyro_shd', frames: [{key: 'pyro_sheet', frame: 6}] });
-
-        this.p1 = this.physics.add.sprite(SPAWN.p1.x, SPAWN.p1.y, p1n + "_sheet", 0).setDepth(2);
-        this.p2 = this.physics.add.sprite(SPAWN.p2.x, SPAWN.p2.y, p2n + "_sheet", 0).setDepth(2);
+        this.p1 = this.physics.add.sprite(SPAWN.p1.x, SPAWN.p1.y, "juni_sheet");
+        this.p2 = this.physics.add.sprite(SPAWN.p2.x, SPAWN.p2.y, "pyro_sheet");
         
-        calibrate(this.p1, p1n);
-        calibrate(this.p2, p2n);
+        this.p1.setOrigin(0.5, 0.5).body.setSize(45, 100).setOffset(41.5, 28);
+        this.p2.setOrigin(0.5, 0.5).body.setSize(60, 60).setOffset(34, 34);
 
         this.bullets = this.physics.add.group();
         this.physics.add.collider([this.p1, this.p2], this.platforms);
         
-        // HIT DETECTION
+        // Projectile Hit
         this.physics.add.overlap(this.bullets, this.p2, (target, bullet) => {
             bullet.destroy();
-            this.handleHit(2, 12);
+            this.handleHit(2, Phaser.Math.Between(5, 15)); // Projectile 5-15%
         });
 
-        this.keys = this.input.keyboard.addKeys({ left: 'A', right: 'D', jump: 'W', punch: 'J', shield: 'K', fire: 'L' });
-        this.s = { p1Jumps: 0, busy: false, stun: false };
+        this.keys = this.input.keyboard.addKeys({ 
+            left: 'A', right: 'D', jump: 'W', 
+            melee: 'J', fire: 'K', shield: 'L', burst: 'SEMICOLON' 
+        });
 
-        this.drawHP();
+        this.s = { p1Jumps: 0, busy: false, stun: false, combo: 0 };
     }
 
-    drawHP() {
-        this.hp1.clear().fillStyle(0x000000, 0.5).fillRect(20, 20, 204, 24);
-        this.hp1.fillStyle(Match.p1HP > 30 ? 0x00ff00 : 0xff0000).fillRect(22, 22, Match.p1HP * 2, 20);
-        
-        this.hp2.clear().fillStyle(0x000000, 0.5).fillRect(GW - 224, 20, 204, 24);
-        this.hp2.fillStyle(Match.p2HP > 30 ? 0x00ff00 : 0xff0000).fillRect(GW - 222, 22, Match.p2HP * 2, 20);
+    setupAnims() {
+        // JUNI
+        this.anims.create({ key: 'j_idle', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
+        this.anims.create({ key: 'j_jump', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 4, end: 6 }), frameRate: 10 });
+        this.anims.create({ key: 'j_fire', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 7, end: 9 }), frameRate: 12 });
+        this.anims.create({ key: 'j_melee', frames: [{key:'juni_sheet', frame:12}, {key:'juni_sheet', frame:14}, {key:'juni_sheet', frame:13}], frameRate: 10 });
+        this.anims.create({ key: 'j_shd', frames: [{key: 'juni_sheet', frame: 18}] });
+        this.anims.create({ key: 'j_burst', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 15, end: 17 }), frameRate: 10 });
+
+        // PYRO
+        this.anims.create({ key: 'p_idle', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 0, end: 3 }), frameRate: 8, repeat: -1 });
+        this.anims.create({ key: 'p_jump', frames: [{key:'pyro_sheet', frame:4}, {key:'pyro_sheet', frame:5}], frameRate: 10 });
+        this.anims.create({ key: 'p_fire', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 7, end: 9 }), frameRate: 12 });
+        this.anims.create({ key: 'p_melee', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 10, end: 12 }), frameRate: 10 });
+        this.anims.create({ key: 'p_shd', frames: [{key: 'pyro_sheet', frame: 20}] });
     }
 
     handleHit(victimNum, damage) {
         if (Match.gameOver) return;
         const victim = (victimNum === 2) ? this.p2 : this.p1;
+        const pctKey = (victimNum === 2) ? 'p2Pct' : 'p1Pct';
+        
+        Match[pctKey] += damage;
+        
+        // Knockback scaling
         const pushDir = (this.p1.x < this.p2.x) ? 1 : -1;
-
-        Match.p2HP -= damage;
+        const multiplier = (Match[pctKey] / 100) + 1;
+        
         this.s.stun = true;
         victim.setTint(0xff0000);
-        victim.setVelocityX(pushDir * 420);
-        victim.setVelocityY(-250);
+        victim.setVelocityX(pushDir * (200 * multiplier));
+        victim.setVelocityY(-150 * multiplier);
+        
         this.time.delayedCall(300, () => { victim.clearTint(); this.s.stun = false; });
+        this.updateHUD();
 
-        this.drawHP();
-        if (Match.p2HP <= 0) {
-             Match.gameOver = true;
-             this.add.text(GW/2, GH/2, "KO!", { fontSize: '64px', fill: '#FFD700' }).setOrigin(0.5);
-             this.time.delayedCall(2000, () => this.scene.start("BrawlerScene"));
+        // Check Out of Bounds / 500%
+        if (Match[pctKey] >= 500 || victim.x < 0 || victim.x > GW) {
+            this.respawn(victimNum);
         }
+    }
+
+    respawn(num) {
+        const key = (num === 2) ? 'p2Lives' : 'p1Lives';
+        const pct = (num === 2) ? 'p2Pct' : 'p1Pct';
+        const v = (num === 2) ? this.p2 : this.p1;
+
+        Match[key]--;
+        Match[pct] = 0;
+        v.setPosition(num === 2 ? 600 : 200, GH - 200);
+        v.setVelocity(0, 0);
+        
+        this.updateHUD();
+        if (Match[key] <= 0) this.endGame(num === 2 ? "Juni" : "Pyro");
+    }
+
+    updateHUD() {
+        this.txt1.setText(`JUNI: ${Match.p1Pct}% | ORE: ${Match.p1Lives}`);
+        this.txt2.setText(`PYRO: ${Match.p2Pct}% | ORE: ${Match.p2Lives}`);
+    }
+
+    endGame(winner) {
+        Match.gameOver = true;
+        this.add.text(GW/2, GH/2, winner + " WINS!", { fontSize: '48px', fill: '#FFD700' }).setOrigin(0.5);
     }
 
     update() {
         if (Match.gameOver) return;
-        const p1 = this.p1, p2 = this.p2, ks = this.keys, s = this.s, name = Match.p1.toLowerCase();
-        const grounded = p1.body.blocked.down;
+        const p1 = this.p1, p2 = this.p2, ks = this.keys, s = this.s;
 
         p1.setFlipX(p1.x > p2.x);
         p2.setFlipX(p2.x > p1.x);
 
-        // AI Sandbag Recovery
-        if (!s.stun) {
-            const dist = Math.abs(p2.x - SPAWN.p2.x);
-            if (dist > 100) { p2.setVelocityX(p2.x > SPAWN.p2.x ? -100 : 100); p2.play(Match.p2.toLowerCase()+'_idle', true); }
-            else { p2.setVelocityX(0); p2.play(Match.p2.toLowerCase()+'_idle', true); }
-        }
-
-        if (grounded) s.p1Jumps = 0;
-
         if (!s.busy) {
-            if (ks.shield.isDown || MP.s) { p1.setVelocityX(0); p1.play(name + '_shd', true); return; }
-            
-            if (ks.left.isDown || MP.l) { p1.setVelocityX(-260); if (grounded) p1.play(name + '_idle', true); }
-            else if (ks.right.isDown || MP.r) { p1.setVelocityX(260); if (grounded) p1.play(name + '_idle', true); }
-            else { p1.setVelocityX(0); if (grounded) p1.play(name + '_idle', true); }
+            // MOVEMENT
+            if (ks.left.isDown) p1.setVelocityX(-260);
+            else if (ks.right.isDown) p1.setVelocityX(260);
+            else { p1.setVelocityX(0); p1.play('j_idle', true); }
 
-            if (Phaser.Input.Keyboard.JustDown(ks.jump) || MP.j) {
-                if (s.p1Jumps < 2) { p1.setVelocityY(-600); if (name === 'juni') p1.play('juni_jump'); s.p1Jumps++; }
+            // JUMP
+            if (Phaser.Input.Keyboard.JustDown(ks.jump)) {
+                p1.setVelocityY(-600);
+                p1.play('j_jump');
             }
 
-            if (Phaser.Input.Keyboard.JustDown(ks.punch) || MP.a) {
-                s.busy = true; p1.play(name + '_atk');
-                if (Phaser.Math.Distance.Between(p1.x, p1.y, p2.x, p2.y) < 100) this.handleHit(2, 8);
-                this.time.delayedCall(300, () => { s.busy = false; p1.play(name + '_idle'); });
+            // MELEE (J)
+            if (Phaser.Input.Keyboard.JustDown(ks.melee)) {
+                s.busy = true;
+                p1.play('j_melee');
+                if (Phaser.Math.Distance.Between(p1.x, p1.y, p2.x, p2.y) < 100) this.handleHit(2, Phaser.Math.Between(3, 7));
+                this.time.delayedCall(400, () => s.busy = false);
             }
 
-            if (Phaser.Input.Keyboard.JustDown(ks.fire) || MP.f) {
-                s.busy = true; p1.play(name + '_fire');
+            // RANGE (K)
+            if (Phaser.Input.Keyboard.JustDown(ks.fire)) {
+                s.busy = true;
+                p1.play('j_fire');
                 this.time.delayedCall(250, () => {
-                    let f = (name === 'juni') ? 15 : 10;
-                    let b = this.bullets.create(p1.x, p1.y, name + '_sheet', f);
+                    let b = this.bullets.create(p1.x, p1.y, 'juni_sheet', 10);
                     b.body.setAllowGravity(false);
-                    b.setFlipX(p1.flipX);
                     b.setVelocityX(p1.flipX ? -750 : 750);
                 });
-                this.time.delayedCall(500, () => { s.busy = false; p1.play(name + '_idle'); });
+                this.time.delayedCall(500, () => s.busy = false);
+            }
+
+            // BURST (;)
+            if (Phaser.Input.Keyboard.JustDown(ks.burst) && Match.p1Burst > 0) {
+                Match.p1Burst--;
+                s.busy = true;
+                p1.play('j_burst');
+                if (Phaser.Math.Distance.Between(p1.x, p1.y, p2.x, p2.y) < 150) this.handleHit(2, 20);
+                this.time.delayedCall(600, () => s.busy = false);
             }
         }
     }
@@ -215,9 +209,8 @@ class BattleScene extends Phaser.Scene {
 
 new Phaser.Game({
     type: Phaser.AUTO, width: GW, height: GH, parent: "gc", backgroundColor: "#050308",
-    pixelArt: true, render: { roundPixels: true },
-    physics: { default: "arcade", arcade: { gravity: { y: 1600 } } },
-    scene: [StartScreen, BrawlerScene, BattleScene]
+    pixelArt: true, physics: { default: "arcade", arcade: { gravity: { y: 1600 } } },
+    scene: [BattleScene]
 });
 </script>
 </body>
