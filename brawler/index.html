@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/><title>NMN: BRAWLERS v9.3.2 - SACRED MINE</title>
+    <meta charset="UTF-8"/><title>NMN: BRAWLERS v9.3.3 - THE FORGE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
     <style>
@@ -12,11 +12,9 @@
         .mb { position: absolute; width: 68px; height: 68px; border-radius: 50%; border: 3px solid #FFD700; background: rgba(5,3,8,0.9); color: #FFD700; font-size: 22px; font-weight: bold; display: flex; align-items: center; justify-content: center; pointer-events: all; user-select: none; font-family: monospace; }
         #ml { left: 20px; bottom: 10px; } #mr { left: 100px; bottom: 10px; } #mj { left: 60px; bottom: 90px; }
         #ma { right: 20px; bottom: 90px; } #ms { right: 20px; bottom: 10px; } #mf { right: 100px; bottom: 10px; }
-        #pause-btn { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 10px 20px; background: #FFD700; color: #000; font-weight: bold; cursor: pointer; z-index: 1000; border-radius: 5px; font-family: monospace; }
     </style>
 </head>
 <body>
-<div id="pause-btn" onclick="window.dispatchEvent(new Event('togglePause'))">PAUSE / PROMO</div>
 <div id="gc"></div>
 <div id="mc">
     <div class="mb" id="ml">◀</div><div class="mb" id="mr">▶</div>
@@ -27,61 +25,56 @@
 <script>
 const GW = 800, GH = 450;
 const Match = { 
-    p1: "Juni", p2: "Pyro", p1Pct: 0, p2Pct: 0, p1Lives: 3, p2Lives: 3, 
-    p1Burst: 3, p2Burst: 3, gameOver: false, paused: false, countdown: true 
+    p1: "Juni", p2: "Pyro", p1Pct: 0, p2Pct: 0, 
+    p1Lives: 3, p2Lives: 3, countdown: true 
 };
 
-// --- SCENE 1: START SCREEN ---
 class StartScreen extends Phaser.Scene {
     constructor() { super("StartScreen"); }
     preload() {
+        // Core Assets
         this.load.image("promo", "brawler_promo.jpg");
         this.load.image("bg", "bg_deep_forest.jpg");
-        this.load.image("elephant", "elephant_beta.jpg"); // Placeholder for locked
         this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
+        
+        // Placeholders matching manifest
+        this.load.image("wanderer_beta", "wanderer_beta.jpg");
+        this.load.image("nela_beta", "nela_beta.jpg");
+        this.load.image("orid_beta", "orid_beta.jpg");
+        this.load.image("helios_beta", "helios_beta.jpg");
     }
     create() {
         this.add.image(GW/2, GH/2, "promo").setDisplaySize(GW, GH);
-        this.add.text(GW/2, GH-50, "PRESS ANY KEY TO ENTER THE MINE", { fontSize: '20px', fill: '#FFD700', fontFamily: 'monospace' }).setOrigin(0.5);
         this.input.once("pointerdown", () => this.scene.start("BrawlerScene"));
     }
 }
 
-// --- SCENE 2: SELECT SCREEN ---
 class BrawlerScene extends Phaser.Scene {
     constructor() { super("BrawlerScene"); }
     create() {
         this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.4);
         const roster = [
-            { name: "Juni", price: "FREE", lore: "The Emerald Guardian" },
-            { name: "Pyro", price: "FREE", lore: "The Ruby Flare" },
-            { name: "Wanderer", price: "$0.99", lore: "Lost in the Sector 4 Leak" },
-            { name: "Nela", price: "$1.99", lore: "The Lioness of Goyang" },
-            { name: "Orid", price: "$1.99", lore: "The Oathbreaker" },
-            { name: "Helios", price: "$0.99", lore: "Sun-Touched Archivist" }
+            { name: "Juni", img: "juni_sheet", active: true },
+            { name: "Pyro", img: "pyro_sheet", active: true },
+            { name: "Wanderer", img: "wanderer_beta", active: false },
+            { name: "Nela", img: "nela_beta", active: false },
+            { name: "Orid", img: "orid_beta", active: false },
+            { name: "Helios", img: "helios_beta", active: false }
         ];
 
         roster.forEach((char, i) => {
-            let active = i < 2;
-            let xPos = 150 + (i % 3) * 250;
-            let yPos = 120 + Math.floor(i / 3) * 180;
-
-            // Character Card
-            let card = this.add.container(xPos, yPos);
-            let img = this.add.image(0, 0, active ? char.name.toLowerCase() + "_sheet" : "elephant").setDisplaySize(100, 100);
-            if (!active) img.setTint(0x555555);
+            let x = 150 + (i % 3) * 250;
+            let y = 120 + Math.floor(i / 3) * 180;
+            let btn = this.add.image(x, y, char.img).setDisplaySize(120, 120);
             
-            let nameTxt = this.add.text(0, 60, char.name.toUpperCase(), { fontSize: '18px', fill: '#FFD700', fontWeight: 'bold' }).setOrigin(0.5);
-            let loreTxt = this.add.text(0, 80, char.lore, { fontSize: '10px', fill: '#AAA', align: 'center' }).setOrigin(0.5);
-            let priceTxt = this.add.text(0, 100, active ? "SELECT" : `COMING SOON - ${char.price}`, { fontSize: '12px', fill: active ? '#0F0' : '#F00' }).setOrigin(0.5);
-
-            card.add([img, nameTxt, loreTxt, priceTxt]);
-            
-            if (active) {
-                img.setInteractive({ useHandCursor: true });
-                img.on("pointerdown", () => {
-                    Match.p1 = char.name; Match.p2 = (char.name === "Juni" ? "Pyro" : "Juni");
+            if (!char.active) {
+                btn.setTint(0x555555);
+                this.add.text(x, y + 70, "COMING SOON", { fontSize: '14px', fill: '#F00' }).setOrigin(0.5);
+            } else {
+                btn.setInteractive({ useHandCursor: true }).on("pointerdown", () => {
+                    Match.p1 = char.name; 
+                    Match.p2 = (char.name === "Juni" ? "Pyro" : "Juni");
                     this.scene.start("BattleScene");
                 });
             }
@@ -89,10 +82,8 @@ class BrawlerScene extends Phaser.Scene {
     }
 }
 
-// --- SCENE 3: BATTLE ---
 class BattleScene extends Phaser.Scene {
     constructor() { super("BattleScene"); }
-
     create() {
         this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.2);
         this.platforms = this.physics.add.staticGroup();
@@ -105,24 +96,18 @@ class BattleScene extends Phaser.Scene {
         this.p1.body.setSize(45, 100).setOffset(41.5, 28);
         this.p2.body.setSize(60, 60).setOffset(34, 34);
 
-        this.hpGfx = this.add.graphics().setDepth(10);
-        this.txt1 = this.add.text(20, 20, 'JUNI: 0%', { fontSize: '20px', fill: '#FFD700', fontFamily: 'monospace' });
-        this.txt2 = this.add.text(GW-180, 20, 'PYRO: 0%', { fontSize: '20px', fill: '#FFD700', fontFamily: 'monospace' });
-
-        this.countTxt = this.add.text(GW/2, GH/2, '', { fontSize: '80px', fill: '#FFD700', stroke: '#000', strokeThickness: 6 }).setOrigin(0.5);
+        this.hpGfx = this.add.graphics();
+        this.countTxt = this.add.text(GW/2, GH/2, '', { fontSize: '80px', fill: '#FFD700' }).setOrigin(0.5);
         this.startCountdown();
 
         this.bullets = this.physics.add.group();
         this.physics.add.collider([this.p1, this.p2], this.platforms);
-        this.physics.add.overlap(this.bullets, this.p2, (target, bullet) => { bullet.destroy(); this.handleHit(2, Phaser.Math.Between(5, 15)); });
+        this.physics.add.overlap(this.bullets, this.p2, (target, bullet) => { 
+            bullet.destroy(); 
+            this.handleHit(2, 10); 
+        });
 
-        this.p1Jumps = 0;
-        this.keys = this.input.keyboard.addKeys({ W:'W', A:'A', D:'D', J:'J', K:'K', L:'L', SEMI:'SEMICOLON' });
-        
-        this.pauseOverlay = this.add.rectangle(GW/2, GH/2, GW, GH, 0x000000, 0.8).setVisible(false).setDepth(100);
-        this.pauseTxt = this.add.text(GW/2, GH/2, 'MINE PAUSED\n\nCHECK OUT THE ARCHIVES:\nlinktr.ee/NMN_LordOro', { align: 'center', fontSize: '24px', fill: '#FFD700', fontFamily: 'monospace' }).setOrigin(0.5).setVisible(false).setDepth(101);
-
-        window.addEventListener('togglePause', () => this.togglePause());
+        this.keys = this.input.keyboard.addKeys({ W:'W', A:'A', D:'D', K:'K' });
     }
 
     startCountdown() {
@@ -137,66 +122,27 @@ class BattleScene extends Phaser.Scene {
         });
     }
 
-    togglePause() {
-        Match.paused = !Match.paused;
-        this.physics.world.paused = Match.paused;
-        this.pauseOverlay.setVisible(Match.paused);
-        this.pauseTxt.setVisible(Match.paused);
-    }
-
     setupAnims() {
-        // JUNI - Updated mapping
         this.anims.create({ key: 'j_idle', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
-        this.anims.create({ key: 'j_jump', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 4, end: 6 }), frameRate: 10 });
-        this.anims.create({ key: 'j_fire', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 7, end: 9 }), frameRate: 12 });
-        // PYRO
         this.anims.create({ key: 'p_idle', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 0, end: 3 }), frameRate: 8, repeat: -1 });
     }
 
-    handleHit(victimNum, damage) {
-        if (Match.gameOver || Match.paused || Match.countdown) return;
-        const victim = (victimNum === 2) ? this.p2 : this.p1;
-        const pctKey = (victimNum === 2) ? 'p2Pct' : 'p1Pct';
-        Match[pctKey] += damage;
-        const multiplier = (Match[pctKey] / 250);
-        const pushDir = (this.p1.x < this.p2.x) ? 1 : -1;
-        victim.setTint(0xff0000);
-        victim.setVelocityX(pushDir * (150 + (100 * multiplier)));
-        victim.setVelocityY(-100 * (1 + multiplier));
-        this.time.delayedCall(200, () => victim.clearTint());
-        this.updateHUD();
-        if (victim.x < -50 || victim.x > GW + 50 || victim.y > GH) this.respawn(victimNum);
-    }
-
-    updateHUD() {
-        this.txt1.setText(`JUNI: ${Match.p1Pct}%`);
-        this.txt2.setText(`PYRO: ${Match.p2Pct}%`);
-        this.hpGfx.clear().fillStyle(0x00ff00).fillRect(20, 50, Math.max(0, 200 - (Match.p1Pct/2.5)), 15);
-        this.hpGfx.fillStyle(0xff0000).fillRect(GW-220, 50, Math.max(0, 200 - (Match.p2Pct/2.5)), 15);
-    }
-
-    respawn(num) {
-        const pct = (num === 2) ? 'p2Pct' : 'p1Pct';
-        const lives = (num === 2) ? 'p2Lives' : 'p1Lives';
-        Match[lives]--; Match[pct] = 0;
+    handleHit(num, dmg) {
+        if (Match.countdown) return;
         const v = (num === 2) ? this.p2 : this.p1;
-        v.setPosition(num === 2 ? 600 : 200, 200).setVelocity(0, 0);
-        this.updateHUD();
+        Match[num === 2 ? 'p2Pct' : 'p1Pct'] += dmg;
+        v.setVelocityX((this.p1.x < this.p2.x ? 1 : -1) * (200 + Match[num === 2 ? 'p2Pct' : 'p1Pct']));
+        v.setTint(0xff0000);
+        this.time.delayedCall(200, () => v.clearTint());
     }
 
     update() {
-        if (Match.gameOver || Match.paused || Match.countdown) return;
+        if (Match.countdown) return;
         const p1 = this.p1, ks = this.keys;
-
         if (ks.A.isDown) { p1.setVelocityX(-260); p1.setFlipX(true); }
         else if (ks.D.isDown) { p1.setVelocityX(260); p1.setFlipX(false); }
         else { p1.setVelocityX(0); p1.play('j_idle', true); }
-
-        if (p1.body.blocked.down) this.p1Jumps = 0;
-        if (Phaser.Input.Keyboard.JustDown(ks.W) && this.p1Jumps < 2) {
-            p1.setVelocityY(-550); p1.play('j_jump'); this.p1Jumps++;
-        }
-        
+        if (Phaser.Input.Keyboard.JustDown(ks.W)) p1.setVelocityY(-550);
         this.p2.play('p_idle', true);
     }
 }
