@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/><title>NMN: BRAWLERS v6.4 - COORDINATE LOCK</title>
+    <meta charset="UTF-8"/><title>NMN: BRAWLERS v6.5 - MANUAL GRID</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
     <style>
@@ -17,8 +17,7 @@
             pointer-events: all; user-select: none; font-family: monospace;
         }
         #ml { left: 20px; bottom: 10px; } #mr { left: 100px; bottom: 10px; }
-        #mj { left: 60px; bottom: 90px; } 
-        #ma { right: 20px; bottom: 90px; } #ms { right: 20px; bottom: 10px; } #mf { right: 100px; bottom: 10px; }
+        #mj { left: 60px; bottom: 90px; } #ma { right: 20px; bottom: 90px; } #ms { right: 20px; bottom: 10px; } #mf { right: 100px; bottom: 10px; }
     </style>
 </head>
 <body>
@@ -45,7 +44,6 @@ const MP = { l: false, r: false, j: false, a: false, s: false, f: false };
 
 const Match = { p1: "Juni", p2: "Pyro" };
 
-// HITBOX: Locked to bottom 100px of the 128px frame
 function lockBody(sp) {
     sp.setOrigin(0.5, 0.5); 
     sp.body.setSize(45, 100).setOffset(41.5, 28); 
@@ -57,9 +55,9 @@ class StartScreen extends Phaser.Scene {
     preload() {
         this.load.image("promo", "brawler_promo.jpg");
         this.load.image("bg_forest", "bg_deep_forest.jpg");
-        // DATA VALIDATION: frameWidth/Height must be exactly 128
-        this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
-        this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
+        // LOADING AS SPRITESHEET WITH STRICT DIMENSIONS
+        this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128, margin: 0, spacing: 0 });
+        this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128, margin: 0, spacing: 0 });
     }
     create() {
         this.add.image(GW/2, GH/2, "promo").setDisplaySize(GW, GH);
@@ -87,13 +85,11 @@ class BattleScene extends Phaser.Scene {
         const p1n = Match.p1.toLowerCase();
         const p2n = Match.p2.toLowerCase();
 
-        // LAYER 0: Background
         this.add.image(GW/2, GH/2, "bg_forest").setDisplaySize(GW, GH).setAlpha(0.3).setDepth(0);
 
         this.platforms = this.physics.add.staticGroup();
         this.platforms.add(this.add.rectangle(GW/2, GH-20, 800, 20, 0x3a2a0a).setAlpha(0.5));
 
-        // LAYER 1: Players
         this.p1 = this.physics.add.sprite(SPAWN.p1.x, SPAWN.p1.y, p1n + "_sheet", 0).setDepth(1);
         this.p2 = this.physics.add.sprite(SPAWN.p2.x, SPAWN.p2.y, p2n + "_sheet", 0).setDepth(1);
 
@@ -104,8 +100,7 @@ class BattleScene extends Phaser.Scene {
         this.keys = this.input.keyboard.addKeys({ left: 'A', right: 'D', jump: 'W', punch: 'J', shield: 'K', fire: 'L' });
         this.s = { jumps: 0, locked: false, lastAnim: "" };
 
-        // [SPECIFIC FRAME DEFINITIONS]
-        // This is where we tell Phaser exactly which frame is which
+        // ANIMATIONS: Using generateFrameNumbers ensures the engine slices the sheet
         [p1n, p2n].forEach(n => {
             this.anims.create({ key: n+'_idle', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 0, end: 2 }), frameRate: 6, repeat: -1 });
             this.anims.create({ key: n+'_jump', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 3, end: 5 }), frameRate: 10 });
@@ -164,12 +159,12 @@ class BattleScene extends Phaser.Scene {
             s.locked = true;
             this.playAnim(p1, name + "_fire");
             this.time.delayedCall(200, () => {
-                // THE PROJECTILE LOCK: Force Frame 13 and set size to 128x128
+                // SPAWNING PROJECTILE: This line forces index 13
                 let proj = this.physics.add.sprite(p1.x, p1.y, name + "_sheet", 13);
                 proj.body.setAllowGravity(false);
                 proj.setFlipX(p1.flipX);
-                // Hitbox logic for the projectile itself
-                proj.body.setSize(40, 40).setOffset(44, 44);
+                // Force a small 32x32 hitzone so even if the sheet renders, it behaves correctly
+                proj.body.setSize(32, 32).setOffset(48, 48);
                 proj.setVelocityX(p1.flipX ? -750 : 750);
                 this.time.delayedCall(1000, () => proj.destroy());
             });
