@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/><title>NMN: BRAWLERS V11.2 - FORGED COMPLETE</title>
+    <meta charset="UTF-8"/><title>NMN: BRAWLERS V11.3 - ZERO FRICTION</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
     <style>
@@ -24,13 +24,9 @@
 
 <script>
 const GW = 800, GH = 450;
-const Match = { 
-    p1: "Juni", p2: "Pyro", p1Pct: 0, p2Pct: 0, p1Lives: 3, p2Lives: 3, 
-    p1Burst: 3, active: false, map: "bg_eyes" 
-};
+const Match = { p1: "Juni", p2: "Pyro", p1Pct: 0, p2Pct: 0, p1Lives: 3, p2Lives: 3, map: "bg_eyes" };
 const MP = { l:false, r:false, j:false, a:false, s:false, f:false };
 
-// --- TOUCH CONTROLS ---
 (function(){
     const bind = (id, k) => { 
         const el = document.getElementById(id); 
@@ -97,7 +93,7 @@ class OriginHub extends Phaser.Scene {
         this.add.image(GW/2, GH/2, "hub_bg").setDisplaySize(GW, GH).setAlpha(0.2);
         this.add.text(GW/2, 40, "HERO'S ORIGIN HUB", { fontSize: '28px', fill: '#FFD700' }).setOrigin(0.5);
         const bks = ["juni_en", "outbreak_en", "tabbies_en", "pyro_en"];
-        bks.forEach((b, i) => { this.add.image(120 + (i*180), 200, b).setDisplaySize(140, 220); });
+        bks.forEach((b, i) => { this.add.image(120 + (i*180), 200, b).setDisplaySize(140, 220).setInteractive().on("pointerdown", () => window.open("https://linktr.ee/NMN_LordOro", "_blank")); });
         this.add.image(GW-80, GH-50, "link_tree").setDisplaySize(100, 60).setInteractive().on("pointerdown", () => window.open("https://linktr.ee/NMN_LordOro", "_blank"));
         this.add.text(40, 40, "◀ BACK").setInteractive().on("pointerdown", () => this.scene.start("BrawlerScene"));
     }
@@ -107,8 +103,6 @@ class BattleScene extends Phaser.Scene {
     constructor() { super("BattleScene"); }
     create() {
         this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW, GH).setAlpha(0.3);
-        
-        // --- 3 PLATFORM ARENA RESTORED ---
         this.platforms = this.physics.add.staticGroup();
         this.platforms.add(this.add.rectangle(GW/2, GH-50, 400, 20, 0x3a2a0a));
         this.platforms.add(this.add.rectangle(150, GH-180, 200, 20, 0x3a2a0a));
@@ -117,32 +111,20 @@ class BattleScene extends Phaser.Scene {
         this.anims.create({ key: 'j_idle', frames: this.anims.generateFrameNumbers('j_sheet', { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
         this.anims.create({ key: 'p_idle', frames: this.anims.generateFrameNumbers('p_sheet', { start: 0, end: 3 }), frameRate: 8, repeat: -1 });
 
-        this.p1 = this.physics.add.sprite(200, 100, Match.p1 === "Juni" ? "j_sheet" : "p_sheet");
+        // INSTANT SPAWN & CONTROLLABLE
+        this.p1 = this.physics.add.sprite(200, 100, Match.p1 === "Juni" ? "j_sheet" : "p_sheet").setFlipX(false);
         this.p2 = this.physics.add.sprite(600, 100, Match.p1 === "Juni" ? "p_sheet" : "j_sheet").setFlipX(true);
-        this.p1.body.setAllowGravity(false); this.p2.body.setAllowGravity(false);
+        this.p1.body.setAllowGravity(true); this.p2.body.setAllowGravity(true);
 
         this.bullets = this.physics.add.group();
         this.h1 = this.add.text(20, 20, `${Match.p1.toUpperCase()}: 0%`, { fontSize:'20px', fill:'#0F0' });
         this.h2 = this.add.text(GW-200, 20, `${Match.p2.toUpperCase()}: 0%`, { fontSize:'20px', fill:'#F00' });
         
         this.keys = this.input.keyboard.addKeys({ W:'W', A:'A', D:'D', J:'J', K:'K', L:'L', SEMI:'SEMICOLON' });
-        this.physics.add.collider([this.p1, this.p2], this.platforms, () => { if(!Match.countdown) Match.active = true; });
-
-        this.ct = this.add.text(GW/2, GH/2, '3', { fontSize:'80px', fill:'#FFD700' }).setOrigin(0.5);
-        this.startCountdown();
-    }
-
-    startCountdown() {
-        let c = 3;
-        const t = this.time.addEvent({ delay: 1000, repeat: 3, callback: () => {
-            if (c > 0) { this.ct.setText(c); c--; }
-            else if (c === 0) { this.ct.setText("BRAWL!"); this.p1.body.setAllowGravity(true); this.p2.body.setAllowGravity(true); Match.countdown = false; c--; }
-            else { this.ct.destroy(); t.remove(); }
-        }});
+        this.physics.add.collider([this.p1, this.p2], this.platforms);
     }
 
     handleHit(num, dmg) {
-        if (!Match.active) return;
         Match[num === 2 ? 'p2Pct' : 'p1Pct'] += dmg;
         const v = (num === 2) ? this.p2 : this.p1;
         v.setVelocityX((this.p1.x < this.p2.x ? 1 : -1) * (150 + Match[num === 2 ? 'p2Pct' : 'p1Pct']));
@@ -153,7 +135,6 @@ class BattleScene extends Phaser.Scene {
 
     update() {
         if (this.p1.y > GH + 100) { this.p1.setPosition(200, 0); Match.p1Pct = 0; }
-        if (!Match.active) return;
         
         const p = this.p1, ks = this.keys, pre = Match.p1 === "Juni" ? 'j' : 'p';
 
