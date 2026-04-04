@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/><title>NMN: BRAWLERS v9.9.9 - GOLDEN HAMMER</title>
+    <meta charset="UTF-8"/><title>NMN: BRAWLERS V9.9.9 - FINAL MASTER</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #050308; width: 100vw; height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace; }
+        body { background: #050308; width: 100vw; height: 100vh; overflow: hidden; }
         #gc { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
@@ -14,123 +14,102 @@
 <div id="gc"></div>
 <script>
 const GW = 800, GH = 450;
-const Match = { 
-    p1: "Juni", p2: "Pyro", p1Pct: 0, p2Pct: 0, 
-    p1Lives: 3, p2Lives: 3, p1Burst: 3, 
-    active: false, countdown: true, map: "bg_eyes" 
-};
+const Match = { p1: "Juni", p2: "Pyro", p1Pct: 0, p2Pct: 0, p1Lives: 3, p2Lives: 3 };
 
-// --- SCENE 1: START ---
 class StartScreen extends Phaser.Scene {
     constructor() { super("StartScreen"); }
     preload() {
-        this.load.image("bg_eyes", "oros_game_eyes_.jpg"); // Master BG
-        this.load.image("logo_tree", "link_tree.jpg"); // Linktree Image
+        this.load.image("bg_eyes", "oros_game_eyes_.jpg"); 
+        this.load.image("link_tree", "link_tree.jpg");
         this.load.image("juni_cov", "juni_en.jpeg");
-        this.load.image("pyro_cov", "pyro_en.jpeg");
-        this.load.image("tabbies_cov", "tabbies_en.jpeg");
         this.load.image("outbreak_cov", "outbreak_en.jpeg");
+        this.load.image("tabbies_cov", "tabbies_en.jpeg");
+        this.load.image("pyro_cov", "pyro_en.jpeg");
+        // Placeholders
+        ["wanderer", "nela", "orid", "helios"].forEach(n => this.load.image(n + "_beta", n + "_beta.jpg"));
         this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
     }
     create() {
-        this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW, GH).setAlpha(0.6);
-        this.add.text(GW/2, GH/2 - 40, "NONSENSE MEDIA NETWORK\nGOLDEN HAMMER EDITION", { align:'center', fontSize:'32px', fill:'#FFD700' }).setOrigin(0.5);
-        this.add.text(GW/2, GH/2 + 60, "CLICK TO ENTER THE MINE", { fontSize:'18px', fill:'#FFF' }).setOrigin(0.5);
+        this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW, GH);
+        this.add.text(GW/2, GH/2, "NMN BRAWLERS\nCLICK TO START", { align:'center', fontSize:'32px', fill:'#FFD700' }).setOrigin(0.5);
         this.input.once("pointerdown", () => this.scene.start("BrawlerScene"));
     }
 }
 
-// --- SCENE 2: THE ARCHIVES (STORY HUB) ---
-class StoryHub extends Phaser.Scene {
-    constructor() { super("StoryHub"); }
-    create() {
-        this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW, GH).setAlpha(0.2);
-        this.add.text(GW/2, 40, "THE ARCHIVES: CHOOSE YOUR EXTRACTION", { fontSize:'24px', fill:'#FFD700' }).setOrigin(0.5);
-
-        const books = [
-            { id: "juni_cov", link: "https://books2read.com/u/4EOxZ0", x: 120 },
-            { id: "outbreak_cov", link: "https://books2read.com/u/31NrLw", x: 300 },
-            { id: "tabbies_cov", link: "https://a.co/d/06X2Jjee", x: 480 },
-            { id: "pyro_cov", link: "https://a.co/d/036X5lJP", x: 660 }
-        ];
-
-        books.forEach(b => {
-            let cov = this.add.image(b.x, 200, b.id).setDisplaySize(140, 220).setInteractive({useHandCursor: true});
-            this.add.text(b.x, 330, "BUY NOW", { fontSize:'14px', backgroundColor:'#FFD700', fill:'#000', padding:5 }).setOrigin(0.5);
-            cov.on("pointerdown", () => window.open(b.link, "_blank"));
-        });
-
-        // LORD ORO BI SYSTEMS HUB
-        let logo = this.add.image(GW/2 - 100, GH - 50, "logo_tree").setDisplaySize(50, 30).setInteractive({useHandCursor: true});
-        this.add.text(GW/2 - 60, GH - 50, "GET TO KNOW LORD ORO", { fontSize:'14px', fill:'#FFD700' }).setOrigin(0, 0.5);
-        logo.on("pointerdown", () => window.open("https://linktr.ee/NMN_LordOro", "_blank"));
-
-        this.add.text(50, 40, "◀ BACK", { fontSize:'18px', fill:'#FFF' }).setInteractive().on("pointerdown", () => this.scene.start("BrawlerScene"));
-    }
-}
-
-// --- SCENE 3: SELECT SCREEN ---
 class BrawlerScene extends Phaser.Scene {
     constructor() { super("BrawlerScene"); }
     create() {
-        this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW, GH).setAlpha(0.4);
-        this.add.text(GW/2, 60, "SELECT CHARACTER", { fontSize:'28px', fill:'#FFD700' }).setOrigin(0.5);
-        
-        ["Juni", "Pyro"].forEach((name, i) => {
-            let x = 300 + (i * 200);
-            this.add.text(x, 200, name.toUpperCase(), { fontSize:'32px', fill:'#FFF', backgroundColor:'#000', padding:10 }).setOrigin(0.5).setInteractive()
-                .on("pointerdown", () => { Match.p1 = name; Match.p2 = (name === "Juni" ? "Pyro" : "Juni"); this.scene.start("BattleScene"); });
-        });
+        this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW, GH).setAlpha(0.5);
+        const roster = [
+            { name: "Juni", img: "juni_sheet", active: true },
+            { name: "Pyro", img: "pyro_sheet", active: true },
+            { name: "Wanderer", img: "wanderer_beta", active: false },
+            { name: "Nela", img: "nela_beta", active: false },
+            { name: "Orid", img: "orid_beta", active: false },
+            { name: "Helios", img: "helios_beta", active: false }
+        ];
 
-        let hubBtn = this.add.rectangle(GW/2, GH-100, 450, 50, 0x000, 0.8).setStrokeStyle(2, 0xFFD700).setInteractive();
-        this.add.text(GW/2, GH-100, "VIEW HERO'S STORY & ARCHIVES", { fontSize:'18px', fill:'#FFD700' }).setOrigin(0.5);
-        hubBtn.on("pointerdown", () => this.scene.start("StoryHub"));
+        roster.forEach((char, i) => {
+            let x = 150 + (i % 3) * 250, y = 150 + Math.floor(i / 3) * 160;
+            let btn = this.add.image(x, y, char.img).setDisplaySize(110, 110).setInteractive();
+            if (!char.active) btn.setTint(0x444444);
+            else btn.on("pointerdown", () => { Match.p1 = char.name; Match.p2 = (char.name === "Juni" ? "Pyro" : "Juni"); this.scene.start("BattleScene"); });
+            this.add.text(x, y + 65, char.name, { fontSize: '14px', fill: char.active ? '#FFD700' : '#F00' }).setOrigin(0.5);
+        });
+        
+        let h = this.add.text(GW/2, GH-40, "VIEW HERO'S STORY", { fontSize:'18px', fill:'#FFD700', backgroundColor:'#000', padding:5 }).setOrigin(0.5).setInteractive();
+        h.on("pointerdown", () => this.scene.start("StoryHub"));
     }
 }
 
-// --- SCENE 4: BATTLE ---
+class StoryHub extends Phaser.Scene {
+    constructor() { super("StoryHub"); }
+    create() {
+        this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW, GH).setAlpha(0.3);
+        const books = [{id: "juni_cov", x:120}, {id: "outbreak_cov", x:300}, {id: "tabbies_cov", x:480}, {id: "pyro_cov", x:660}];
+        books.forEach(b => { this.add.image(b.x, 200, b.id).setDisplaySize(140, 220); });
+        this.add.image(GW/2, GH-50, "link_tree").setDisplaySize(100, 50).setInteractive().on("pointerdown", () => window.open("https://linktr.ee/NMN_LordOro", "_blank"));
+        this.add.text(40, 40, "BACK", { fill:'#FFD700' }).setInteractive().on("pointerdown", () => this.scene.start("BrawlerScene"));
+    }
+}
+
 class BattleScene extends Phaser.Scene {
     constructor() { super("BattleScene"); }
     create() {
-        this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW, GH).setAlpha(0.2);
+        this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW, GH).setAlpha(0.3);
         this.platforms = this.physics.add.staticGroup();
-        this.platforms.add(this.add.rectangle(GW/2, GH-50, 400, 20, 0x3a2a0a)); // Center Platform
+        this.platforms.add(this.add.rectangle(GW/2, GH-50, 600, 20, 0x3a2a0a));
         
-        this.p1 = this.physics.add.sprite(200, -100, Match.p1.toLowerCase() + "_sheet");
-        this.p2 = this.physics.add.sprite(600, -100, Match.p2.toLowerCase() + "_sheet");
-        this.p1.body.setAllowGravity(false); this.p2.body.setAllowGravity(false); // Drop Lock
+        // --- FACING EACH OTHER ---
+        this.p1 = this.physics.add.sprite(200, 0, Match.p1.toLowerCase() + "_sheet").setFlipX(false);
+        this.p2 = this.physics.add.sprite(600, 0, Match.p2.toLowerCase() + "_sheet").setFlipX(true);
+        this.physics.add.collider([this.p1, this.p2], this.platforms);
+        
+        // --- HUD RESTORATION ---
+        this.txt1 = this.add.text(20, 20, `${Match.p1.toUpperCase()}: 0%`, { fontSize: '20px', fill: '#0F0' });
+        this.txt2 = this.add.text(GW-200, 20, `${Match.p2.toUpperCase()}: 0%`, { fontSize: '20px', fill: '#F00' });
 
-        this.txt1 = this.add.text(20, 20, `JUNI: 0% | ORE: 3`, { fontSize: '18px', fill: '#FFD700' });
-        this.txt2 = this.add.text(GW-220, 20, `PYRO: 0% | ORE: 3`, { fontSize: '18px', fill: '#FF0000' });
-
-        this.countTxt = this.add.text(GW/2, GH/2, '3', { fontSize: '80px', fill: '#FFD700' }).setOrigin(0.5);
-        this.startCountdown();
-
-        this.keys = this.input.keyboard.addKeys({ W:'W', A:'A', D:'D', J:'J', K:'K', L:'L', SEMI:'SEMICOLON' });
-        this.physics.add.collider([this.p1, this.p2], this.platforms, () => { if(!Match.countdown) Match.active = true; });
-    }
-
-    startCountdown() {
-        let c = 3;
-        const t = this.time.addEvent({ delay: 1000, repeat: 3, callback: () => {
-            if (c > 0) { this.countTxt.setText(c); c--; }
-            else if (c === 0) { 
-                this.countTxt.setText("BRAWL!"); 
-                this.p1.body.setAllowGravity(true); this.p2.body.setAllowGravity(true);
-                Match.countdown = false; c--; 
-            } else { this.countTxt.destroy(); t.remove(); }
-        }});
+        this.keys = this.input.keyboard.addKeys({ W:'W', A:'A', D:'D', J:'J' });
+        this.add.text(GW/2, GH/2, "BRAWL!", { fontSize:'64px', fill:'#FFD700' }).setOrigin(0.5).setAlpha(0).setDepth(100);
+        this.time.delayedCall(500, () => { this.tweens.add({ targets: this.children.list.find(c => c.text === "BRAWL!"), alpha: 1, duration: 500, yoyo: true }); });
     }
 
     update() {
-        if (!Match.active) return;
         const p1 = this.p1, ks = this.keys;
         if (ks.A.isDown) p1.setVelocityX(-260).setFlipX(true);
         else if (ks.D.isDown) p1.setVelocityX(260).setFlipX(false);
         else p1.setVelocityX(0);
-
         if (Phaser.Input.Keyboard.JustDown(ks.W) && p1.body.blocked.down) p1.setVelocityY(-600);
+        
+        if (Phaser.Input.Keyboard.JustDown(ks.J)) {
+            if (Phaser.Math.Distance.Between(p1.x, p1.y, this.p2.x, this.p2.y) < 80) {
+                Match.p2Pct += 5;
+                this.txt2.setText(`${Match.p2.toUpperCase()}: ${Match.p2Pct}%`);
+                this.p2.setTint(0xff0000);
+                this.time.delayedCall(200, () => this.p2.clearTint());
+            }
+        }
     }
 }
 
