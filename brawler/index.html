@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/><title>NMN: BRAWLERS v5.4 - DEEP SLICE</title>
+    <meta charset="UTF-8"/><title>NMN: BRAWLERS v6.0 - SURGICAL SLICE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
     <style>
@@ -18,9 +18,7 @@
         }
         #ml { left: 20px; bottom: 10px; } #mr { left: 95px; bottom: 10px; }
         #mj { left: 57px; bottom: 85px; } 
-        #ma { right: 20px; bottom: 85px; } 
-        #ms { right: 20px; bottom: 10px; } 
-        #mf { right: 95px; bottom: 10px; }
+        #ma { right: 20px; bottom: 85px; } #ms { right: 20px; bottom: 10px; } #mf { right: 95px; bottom: 10px; }
     </style>
 </head>
 <body>
@@ -47,13 +45,12 @@ const MP = { l: false, r: false, j: false, a: false, s: false, f: false };
 
 const Match = { p1: "Juni", p2: "Pyro" };
 
-// PHYSICS LOCKDOWN
+// PHYSICS LOCKDOWN: Ensures feet are glued to floor
 function lockHitbox(sp) {
     sp.setOrigin(0.5, 0.5);
-    // Hard-coded to fit the bottom of your 128x128 Piskel export
     sp.body.setSize(44, 96).setOffset(42, 32);
     sp.setCollideWorldBounds(true);
-    sp.setDragX(2500);
+    sp.setDragX(3000);
 }
 
 class StartScreen extends Phaser.Scene {
@@ -61,7 +58,7 @@ class StartScreen extends Phaser.Scene {
     preload() {
         this.load.image("promo", "brawler_promo.jpg");
         this.load.image("bg", "bg_deep_forest.jpg");
-        // Ensure frameWidth/Height is strictly 128
+        // STRICT SLICING: 128x128 grid
         this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
     }
@@ -75,12 +72,11 @@ class BrawlerScene extends Phaser.Scene {
     constructor() { super("BrawlerScene"); }
     create() {
         this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.3);
-        const roster = [{name:"Juni", color:"#00FF88"}, {name:"Pyro", color:"#FF4400"}];
-        roster.forEach((b, i) => {
-            let t = this.add.text(GW/2, 180 + (i * 80), b.name.toUpperCase(), {
-                fontFamily: 'monospace', fontSize: '40px', fill: b.color, backgroundColor: '#000000AA', padding: 10
+        ["Juni", "Pyro"].forEach((name, i) => {
+            let t = this.add.text(GW/2, 180 + (i * 80), name.toUpperCase(), {
+                fontFamily: 'monospace', fontSize: '42px', fill: '#00FF88', backgroundColor: '#000000AA', padding: 10
             }).setOrigin(0.5).setInteractive();
-            t.on("pointerdown", () => { Match.p1 = b.name; Match.p2 = (b.name === "Juni" ? "Pyro" : "Juni"); this.scene.start("BattleScene"); });
+            t.on("pointerdown", () => { Match.p1 = name; Match.p2 = (name === "Juni" ? "Pyro" : "Juni"); this.scene.start("BattleScene"); });
         });
     }
 }
@@ -90,19 +86,20 @@ class BattleScene extends Phaser.Scene {
     create() {
         const p1n = Match.p1.toLowerCase(), p2n = Match.p2.toLowerCase();
 
+        // Animation Creation
         [p1n, p2n].forEach(n => {
             this.anims.create({ key: n+'_idle', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 0, end: 2 }), frameRate: 6, repeat: -1 });
             this.anims.create({ key: n+'_jump', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 3, end: 5 }), frameRate: 10, repeat: 0 });
             this.anims.create({ key: n+'_atk', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 7, end: 11 }), frameRate: 15, repeat: 0 });
             this.anims.create({ key: n+'_fire', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 12, end: 14 }), frameRate: 12, repeat: 0 });
-            this.anims.create({ key: n+'_shd', frames: [{key: n+'_sheet', frame: 6}], frameRate: 1 });
+            this.anims.create({ key: n+'_shd', frames: [{key: n+'_sheet', frame: 6}] });
         });
 
         this.platforms = this.physics.add.staticGroup();
-        this.platforms.add(this.add.rectangle(GW/2, GH-20, 700, 20, 0x3a2a0a).setAlpha(0.2));
+        this.platforms.add(this.add.rectangle(GW/2, GH-20, 750, 20, 0x3a2a0a).setAlpha(0.2));
 
-        this.p1 = this.physics.add.sprite(SPAWN.p1.x, SPAWN.p1.y, p1n + "_sheet");
-        this.p2 = this.physics.add.sprite(SPAWN.p2.x, SPAWN.p2.y, p2n + "_sheet");
+        this.p1 = this.physics.add.sprite(SPAWN.p1.x, SPAWN.p1.y, p1n + "_sheet", 0);
+        this.p2 = this.physics.add.sprite(SPAWN.p2.x, SPAWN.p2.y, p2n + "_sheet", 0);
         
         lockHitbox(this.p1);
         lockHitbox(this.p2);
@@ -110,46 +107,54 @@ class BattleScene extends Phaser.Scene {
         this.physics.add.collider([this.p1, this.p2], this.platforms);
         this.keys = this.input.keyboard.addKeys({ left: 'A', right: 'D', jump: 'W', punch: 'J', shield: 'K', fire: 'L' });
         this.s = { jumps: 0, busy: false };
+
+        // INITIAL IDLE KICKSTART
+        this.p1.play(p1n + '_idle');
+        this.p2.play(p2n + '_idle');
     }
 
     update() {
         const p1 = this.p1, p2 = this.p2, ks = this.keys, s = this.s, name = Match.p1.toLowerCase();
         const grounded = p1.body.blocked.down;
 
+        // MIRROR LOCK (Full Flip)
         p1.setFlipX(p1.x > p2.x);
         p2.setFlipX(p2.x > p1.x);
 
         if (grounded) s.jumps = 0;
 
         if (!s.busy) {
-            if (ks.shield.isDown || MP.s) { p1.setVelocityX(0); p1.play(name + '_shd', true); }
-            else {
+            if (ks.shield.isDown || MP.s) {
+                p1.setVelocityX(0); p1.play(name + '_shd', true);
+            } else {
+                // Movement Logic
                 if (ks.left.isDown || MP.l) { p1.setVelocityX(-260); if (grounded) p1.play(name + '_idle', true); }
                 else if (ks.right.isDown || MP.r) { p1.setVelocityX(260); if (grounded) p1.play(name + '_idle', true); }
                 else { p1.setVelocityX(0); if (grounded) p1.play(name + '_idle', true); }
 
+                // Jump Mechanic (Frames 3-5)
                 if ((Phaser.Input.Keyboard.JustDown(ks.jump) || MP.j) && s.jumps < 2) {
-                    p1.setVelocityY(-580); p1.play(name + '_jump', true); s.jumps++;
+                    p1.setVelocityY(-600); p1.play(name + '_jump', true); s.jumps++;
                 }
-                if (!grounded && p1.anims.currentAnim && p1.anims.currentAnim.key !== name + '_jump') p1.play(name + '_jump', true);
+                if (!grounded && p1.anims.getName() !== name + '_jump') p1.play(name + '_jump', true);
 
+                // Punch (J)
                 if (Phaser.Input.Keyboard.JustDown(ks.punch) || MP.a) {
                     s.busy = true; p1.play(name + '_atk');
                     this.time.delayedCall(300, () => { s.busy = false; lockHitbox(p1); });
                 }
                 
-                // FIXED FIRE: Force Frame 13 only
+                // FIXED PROJECTILE (Explicit Frame 13)
                 if (Phaser.Input.Keyboard.JustDown(ks.fire) || MP.f) {
                     s.busy = true; p1.play(name + '_fire');
-                    this.time.delayedCall(200, () => {
-                        // We use the specific key and index 13
+                    this.time.delayedCall(250, () => {
                         let b = this.physics.add.sprite(p1.x, p1.y, name + '_sheet', 13);
                         b.body.setAllowGravity(false);
                         b.setFlipX(p1.flipX);
-                        // Make the projectile hitbox tiny so it doesn't carry the "whole body" physics
-                        b.body.setSize(32, 32).setOffset(48, 48); 
-                        b.setVelocityX(p1.flipX ? -650 : 650);
-                        this.time.delayedCall(800, () => b.destroy());
+                        // HITBOX FOR PROJECTILE ONLY
+                        b.body.setSize(24, 24).setOffset(52, 52); 
+                        b.setVelocityX(p1.flipX ? -700 : 700);
+                        this.time.delayedCall(1000, () => b.destroy());
                     });
                     this.time.delayedCall(500, () => { s.busy = false; lockHitbox(p1); });
                 }
@@ -161,7 +166,7 @@ class BattleScene extends Phaser.Scene {
 new Phaser.Game({
     type: Phaser.AUTO, width: GW, height: GH, parent: "gc", backgroundColor: "#050308",
     pixelArt: true, render: { roundPixels: true },
-    physics: { default: "arcade", arcade: { gravity: { y: 1600 } } },
+    physics: { default: "arcade", arcade: { gravity: { y: 1800 } } },
     scene: [StartScreen, BrawlerScene, BattleScene]
 });
 </script>
