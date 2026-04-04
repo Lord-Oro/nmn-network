@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/><title>NMN: BRAWLERS v6.5 - MANUAL GRID</title>
+    <meta charset="UTF-8"/><title>NMN: BRAWLERS v8.0 - DIVERGENT</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
     <style>
@@ -17,7 +17,8 @@
             pointer-events: all; user-select: none; font-family: monospace;
         }
         #ml { left: 20px; bottom: 10px; } #mr { left: 100px; bottom: 10px; }
-        #mj { left: 60px; bottom: 90px; } #ma { right: 20px; bottom: 90px; } #ms { right: 20px; bottom: 10px; } #mf { right: 100px; bottom: 10px; }
+        #mj { left: 60px; bottom: 90px; } #ma { right: 20px; bottom: 90px; } 
+        #ms { right: 20px; bottom: 10px; } #mf { right: 100px; bottom: 10px; }
     </style>
 </head>
 <body>
@@ -44,10 +45,16 @@ const MP = { l: false, r: false, j: false, a: false, s: false, f: false };
 
 const Match = { p1: "Juni", p2: "Pyro" };
 
-function lockBody(sp) {
-    sp.setOrigin(0.5, 0.5); 
-    sp.body.setSize(45, 100).setOffset(41.5, 28); 
+// PHYSICS CALIBRATION
+function calibrate(sp, type) {
+    sp.setOrigin(0.5, 0.5);
+    if (type === 'juni') {
+        sp.body.setSize(45, 100).setOffset(41.5, 28); // Human Hitbox
+    } else {
+        sp.body.setSize(60, 60).setOffset(34, 34); // Ball Hitbox
+    }
     sp.setCollideWorldBounds(true);
+    sp.setDragX(2000);
 }
 
 class StartScreen extends Phaser.Scene {
@@ -55,9 +62,8 @@ class StartScreen extends Phaser.Scene {
     preload() {
         this.load.image("promo", "brawler_promo.jpg");
         this.load.image("bg_forest", "bg_deep_forest.jpg");
-        // LOADING AS SPRITESHEET WITH STRICT DIMENSIONS
-        this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128, margin: 0, spacing: 0 });
-        this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128, margin: 0, spacing: 0 });
+        this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
+        this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
     }
     create() {
         this.add.image(GW/2, GH/2, "promo").setDisplaySize(GW, GH);
@@ -82,100 +88,74 @@ class BattleScene extends Phaser.Scene {
     constructor() { super("BattleScene"); }
 
     create() {
-        const p1n = Match.p1.toLowerCase();
-        const p2n = Match.p2.toLowerCase();
-
+        const p1n = Match.p1.toLowerCase(), p2n = Match.p2.toLowerCase();
         this.add.image(GW/2, GH/2, "bg_forest").setDisplaySize(GW, GH).setAlpha(0.3).setDepth(0);
 
         this.platforms = this.physics.add.staticGroup();
         this.platforms.add(this.add.rectangle(GW/2, GH-20, 800, 20, 0x3a2a0a).setAlpha(0.5));
 
+        // Create separate animation maps for Juni vs Pyro
+        this.anims.create({ key: 'juni_idle', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
+        this.anims.create({ key: 'juni_jump', frames: [{key: 'juni_sheet', frame: 4}] });
+        this.anims.create({ key: 'juni_atk', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 7, end: 10 }), frameRate: 15 });
+        this.anims.create({ key: 'juni_fire', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 11, end: 13 }), frameRate: 12 });
+
+        this.anims.create({ key: 'pyro_idle', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 0, end: 4 }), frameRate: 8, repeat: -1 });
+        this.anims.create({ key: 'pyro_atk', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 5, end: 9 }), frameRate: 15 });
+        this.anims.create({ key: 'pyro_fire', frames: [{key: 'pyro_sheet', frame: 10}] });
+
         this.p1 = this.physics.add.sprite(SPAWN.p1.x, SPAWN.p1.y, p1n + "_sheet", 0).setDepth(1);
         this.p2 = this.physics.add.sprite(SPAWN.p2.x, SPAWN.p2.y, p2n + "_sheet", 0).setDepth(1);
-
-        lockBody(this.p1);
-        lockBody(this.p2);
+        
+        calibrate(this.p1, p1n);
+        calibrate(this.p2, p2n);
 
         this.physics.add.collider([this.p1, this.p2], this.platforms);
         this.keys = this.input.keyboard.addKeys({ left: 'A', right: 'D', jump: 'W', punch: 'J', shield: 'K', fire: 'L' });
-        this.s = { jumps: 0, locked: false, lastAnim: "" };
+        this.s = { jumps: 0, busy: false };
 
-        // ANIMATIONS: Using generateFrameNumbers ensures the engine slices the sheet
-        [p1n, p2n].forEach(n => {
-            this.anims.create({ key: n+'_idle', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 0, end: 2 }), frameRate: 6, repeat: -1 });
-            this.anims.create({ key: n+'_jump', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 3, end: 5 }), frameRate: 10 });
-            this.anims.create({ key: n+'_shd', frames: [{key: n+'_sheet', frame: 6}] });
-            this.anims.create({ key: n+'_atk', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 7, end: 11 }), frameRate: 15 });
-            this.anims.create({ key: n+'_fire', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 12, end: 14 }), frameRate: 12 });
-        });
-
-        this.p1.play(p1n + "_idle");
-        this.p2.play(p2n + "_idle");
+        this.p1.play(p1n + '_idle');
+        this.p2.play(p2n + '_idle');
     }
 
     update() {
-        const p1 = this.p1, p2 = this.p2, ks = this.keys, s = this.s;
-        const name = Match.p1.toLowerCase();
+        const p1 = this.p1, p2 = this.p2, ks = this.keys, s = this.s, name = Match.p1.toLowerCase();
         const grounded = p1.body.blocked.down;
 
         p1.setFlipX(p1.x > p2.x);
         p2.setFlipX(p2.x > p1.x);
 
         if (grounded) s.jumps = 0;
-        if (s.locked) return;
 
-        if (ks.shield.isDown || MP.s) {
-            p1.setVelocityX(0);
-            this.playAnim(p1, name + "_shd");
-            return;
-        }
+        if (!s.busy) {
+            if (ks.left.isDown || MP.l) { p1.setVelocityX(-260); if (grounded) p1.play(name + '_idle', true); }
+            else if (ks.right.isDown || MP.r) { p1.setVelocityX(260); if (grounded) p1.play(name + '_idle', true); }
+            else { p1.setVelocityX(0); if (grounded) p1.play(name + '_idle', true); }
 
-        if (ks.left.isDown || MP.l) {
-            p1.setVelocityX(-260);
-            if (grounded) this.playAnim(p1, name + "_idle");
-        }
-        else if (ks.right.isDown || MP.r) {
-            p1.setVelocityX(260);
-            if (grounded) this.playAnim(p1, name + "_idle");
-        }
-        else {
-            p1.setVelocityX(0);
-            if (grounded) this.playAnim(p1, name + "_idle");
-        }
+            if ((Phaser.Input.Keyboard.JustDown(ks.jump) || MP.j) && s.jumps < 2) {
+                p1.setVelocityY(-600); if (name === 'juni') p1.play('juni_jump'); s.jumps++;
+            }
 
-        if ((Phaser.Input.Keyboard.JustDown(ks.jump) || MP.j) && s.jumps < 2) {
-            p1.setVelocityY(-600);
-            this.playAnim(p1, name + "_jump");
-            s.jumps++;
-        }
-
-        if (Phaser.Input.Keyboard.JustDown(ks.punch) || MP.a) {
-            s.locked = true;
-            this.playAnim(p1, name + "_atk");
-            this.time.delayedCall(300, () => { s.locked = false; lockBody(p1); });
-        }
-
-        if (Phaser.Input.Keyboard.JustDown(ks.fire) || MP.f) {
-            s.locked = true;
-            this.playAnim(p1, name + "_fire");
-            this.time.delayedCall(200, () => {
-                // SPAWNING PROJECTILE: This line forces index 13
-                let proj = this.physics.add.sprite(p1.x, p1.y, name + "_sheet", 13);
-                proj.body.setAllowGravity(false);
-                proj.setFlipX(p1.flipX);
-                // Force a small 32x32 hitzone so even if the sheet renders, it behaves correctly
-                proj.body.setSize(32, 32).setOffset(48, 48);
-                proj.setVelocityX(p1.flipX ? -750 : 750);
-                this.time.delayedCall(1000, () => proj.destroy());
-            });
-            this.time.delayedCall(500, () => { s.locked = false; lockBody(p1); });
-        }
-    }
-
-    playAnim(sp, key) {
-        if (this.s.lastAnim !== key) {
-            sp.play(key, true);
-            this.s.lastAnim = key;
+            // Punch (J)
+            if (Phaser.Input.Keyboard.JustDown(ks.punch) || MP.a) {
+                s.busy = true; p1.play(name + '_atk');
+                this.time.delayedCall(300, () => { s.busy = false; p1.play(name + '_idle'); });
+            }
+            
+            // Fire (L) - THE DIVERGENT PROJECTILES
+            if (Phaser.Input.Keyboard.JustDown(ks.fire) || MP.f) {
+                s.busy = true; p1.play(name + '_fire');
+                this.time.delayedCall(200, () => {
+                    // JUNI shoots frame 15 (Crystal), PYRO shoots frame 10 (Fireball)
+                    let f = (name === 'juni') ? 15 : 10;
+                    let b = this.physics.add.sprite(p1.x, p1.y, name + '_sheet', f);
+                    b.body.setAllowGravity(false);
+                    b.setFlipX(p1.flipX);
+                    b.setVelocityX(p1.flipX ? -750 : 750);
+                    this.time.delayedCall(1000, () => b.destroy());
+                });
+                this.time.delayedCall(500, () => { s.busy = false; p1.play(name + '_idle'); });
+            }
         }
     }
 }
