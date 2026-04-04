@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/><title>NMN: BRAWLERS v6.3 - HITBOX & ASSET FIX</title>
+    <meta charset="UTF-8"/><title>NMN: BRAWLERS v6.4 - COORDINATE LOCK</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
     <style>
@@ -45,13 +45,9 @@ const MP = { l: false, r: false, j: false, a: false, s: false, f: false };
 
 const Match = { p1: "Juni", p2: "Pyro" };
 
-// ==========================================
-// 1. HITBOX CODE (THE CALIBRATION)
-// ==========================================
+// HITBOX: Locked to bottom 100px of the 128px frame
 function lockBody(sp) {
     sp.setOrigin(0.5, 0.5); 
-    // setSize(width, height) - setOffset(x, y)
-    // This defines the "solid" part of the 128x128 frame.
     sp.body.setSize(45, 100).setOffset(41.5, 28); 
     sp.setCollideWorldBounds(true);
 }
@@ -59,16 +55,13 @@ function lockBody(sp) {
 class StartScreen extends Phaser.Scene {
     constructor() { super("StartScreen"); }
     preload() {
-        // ==========================================
-        // 2. GITHUB ASSET LOADING
-        // ==========================================
         this.load.image("promo", "brawler_promo.jpg");
-        this.load.image("bg_forest", "bg_deep_forest.jpg"); // Fixed key for background
+        this.load.image("bg_forest", "bg_deep_forest.jpg");
+        // DATA VALIDATION: frameWidth/Height must be exactly 128
         this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
     }
     create() {
-        // Start Screen Background
         this.add.image(GW/2, GH/2, "promo").setDisplaySize(GW, GH);
         this.input.once("pointerdown", () => this.scene.start("BrawlerScene"));
     }
@@ -77,9 +70,7 @@ class StartScreen extends Phaser.Scene {
 class BrawlerScene extends Phaser.Scene {
     constructor() { super("BrawlerScene"); }
     create() {
-        // Background added FIRST to stay in the back
         this.add.image(GW/2, GH/2, "bg_forest").setDisplaySize(GW, GH).setAlpha(0.4);
-        
         ["Juni", "Pyro"].forEach((name, i) => {
             let t = this.add.text(GW/2, 200 + (i * 80), name.toUpperCase(), {
                 fontFamily: 'monospace', fontSize: '42px', fill: '#00FF88', backgroundColor: '#000000AA', padding: 10
@@ -96,16 +87,13 @@ class BattleScene extends Phaser.Scene {
         const p1n = Match.p1.toLowerCase();
         const p2n = Match.p2.toLowerCase();
 
-        // ==========================================
-        // 3. BACKGROUND ASSET PLACEMENT
-        // ==========================================
-        // Added first at depth 0
-        this.add.image(GW/2, GH/2, "bg_forest").setDisplaySize(GW, GH).setAlpha(0.25).setDepth(0);
+        // LAYER 0: Background
+        this.add.image(GW/2, GH/2, "bg_forest").setDisplaySize(GW, GH).setAlpha(0.3).setDepth(0);
 
         this.platforms = this.physics.add.staticGroup();
         this.platforms.add(this.add.rectangle(GW/2, GH-20, 800, 20, 0x3a2a0a).setAlpha(0.5));
 
-        // Players added AFTER background to sit in front
+        // LAYER 1: Players
         this.p1 = this.physics.add.sprite(SPAWN.p1.x, SPAWN.p1.y, p1n + "_sheet", 0).setDepth(1);
         this.p2 = this.physics.add.sprite(SPAWN.p2.x, SPAWN.p2.y, p2n + "_sheet", 0).setDepth(1);
 
@@ -116,7 +104,8 @@ class BattleScene extends Phaser.Scene {
         this.keys = this.input.keyboard.addKeys({ left: 'A', right: 'D', jump: 'W', punch: 'J', shield: 'K', fire: 'L' });
         this.s = { jumps: 0, locked: false, lastAnim: "" };
 
-        // [ANIMATIONS]
+        // [SPECIFIC FRAME DEFINITIONS]
+        // This is where we tell Phaser exactly which frame is which
         [p1n, p2n].forEach(n => {
             this.anims.create({ key: n+'_idle', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 0, end: 2 }), frameRate: 6, repeat: -1 });
             this.anims.create({ key: n+'_jump', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 3, end: 5 }), frameRate: 10 });
@@ -134,14 +123,12 @@ class BattleScene extends Phaser.Scene {
         const name = Match.p1.toLowerCase();
         const grounded = p1.body.blocked.down;
 
-        // Mirror Flipping
         p1.setFlipX(p1.x > p2.x);
         p2.setFlipX(p2.x > p1.x);
 
         if (grounded) s.jumps = 0;
         if (s.locked) return;
 
-        // Controls
         if (ks.shield.isDown || MP.s) {
             p1.setVelocityX(0);
             this.playAnim(p1, name + "_shd");
@@ -177,11 +164,12 @@ class BattleScene extends Phaser.Scene {
             s.locked = true;
             this.playAnim(p1, name + "_fire");
             this.time.delayedCall(200, () => {
-                // Spawning frame 13 specifically
+                // THE PROJECTILE LOCK: Force Frame 13 and set size to 128x128
                 let proj = this.physics.add.sprite(p1.x, p1.y, name + "_sheet", 13);
                 proj.body.setAllowGravity(false);
                 proj.setFlipX(p1.flipX);
-                proj.body.setSize(30, 30).setOffset(49, 49);
+                // Hitbox logic for the projectile itself
+                proj.body.setSize(40, 40).setOffset(44, 44);
                 proj.setVelocityX(p1.flipX ? -750 : 750);
                 this.time.delayedCall(1000, () => proj.destroy());
             });
