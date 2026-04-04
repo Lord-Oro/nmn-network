@@ -1,40 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/><title>NMN: Nonsensical Brawlers v3.0 - PROMO + LOCK</title>
+    <meta charset="UTF-8"/><title>NMN: BRAWLERS v5.0 - FULL MIRROR</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #050308; width: 100vw; height: 100vh; overflow: hidden; touch-action: none; }
         #gc { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-        #mc { position: fixed; bottom: 20px; left: 0; right: 0; height: 140px; pointer-events: none; z-index: 999; }
+        #mc { position: fixed; bottom: 20px; left: 0; right: 0; height: 160px; pointer-events: none; z-index: 999; }
         .mb {
-            position: absolute; width: 72px; height: 72px; border-radius: 50%;
-            border: 3px solid #FFD700; background: rgba(5,3,8,0.95);
-            color: #FFD700; font-size: 24px; font-weight: bold;
+            position: absolute; width: 65px; height: 65px; border-radius: 50%;
+            border: 3px solid #FFD700; background: rgba(5,3,8,0.9);
+            color: #FFD700; font-size: 20px; font-weight: bold;
             display: flex; align-items: center; justify-content: center;
             pointer-events: all; user-select: none; font-family: monospace;
         }
-        #ml { left: 30px; bottom: 10px; } #mr { left: 115px; bottom: 10px; }
-        #mj { left: 72px; bottom: 90px; } 
-        #ma { right: 30px; bottom: 90px; } 
-        #mf { right: 105px; bottom: 10px; }
+        #ml { left: 20px; bottom: 10px; } #mr { left: 95px; bottom: 10px; }
+        #mj { left: 57px; bottom: 85px; } 
+        #ma { right: 20px; bottom: 85px; } /* J - Punch */
+        #ms { right: 20px; bottom: 10px; } /* K - Shield */
+        #mf { right: 95px; bottom: 10px; } /* L - Fire */
     </style>
 </head>
 <body>
 <div id="gc"></div>
 <div id="mc">
     <div class="mb" id="ml">◀</div><div class="mb" id="mr">▶</div>
-    <div class="mb" id="mj">▲</div><div class="mb" id="ma">🥊</div><div class="mb" id="mf">⚡</div>
+    <div class="mb" id="mj">▲</div><div class="mb" id="ma">🥊</div><div class="mb" id="ms">🛡️</div><div class="mb" id="mf">⚡</div>
 </div>
 
 <script>
 const GW = 800, GH = 450;
 const SPAWN = { p1: { x: 200, y: GH - 150 }, p2: { x: 600, y: GH - 150 } };
-const MP = { l: false, r: false, j: false, a: false, f: false };
+const MP = { l: false, r: false, j: false, a: false, s: false, f: false };
 
-// Touch Input Binding
 (function() {
     const bind = (id, key) => {
         const el = document.getElementById(id);
@@ -42,51 +42,32 @@ const MP = { l: false, r: false, j: false, a: false, f: false };
         el.addEventListener("touchstart", e => { e.preventDefault(); MP[key] = true; });
         el.addEventListener("touchend", e => { e.preventDefault(); MP[key] = false; });
     };
-    bind("ml", "l"); bind("mr", "r"); bind("mj", "j"); bind("ma", "a"); bind("mf", "f");
+    bind("ml", "l"); bind("mr", "r"); bind("mj", "j"); bind("ma", "a"); bind("ms", "s"); bind("mf", "f");
 })();
 
 const Match = { p1: "Juni", p2: "Pyro" };
 
-// Make Sprite Function (Bottom-Aligned Calibration)
 function mkSp(scene, x, y, name) {
     let key = name.toLowerCase() + "_sheet";
     let sp = scene.physics.add.sprite(x, y, key);
-    
-    // CALIBRATION MATH: size (48, 100) + offset (40, 28) = feet at pixel 128
-    sp.body.setSize(48, 100).setOffset(40, 28);
-    
+    sp.setOrigin(0.5, 0.5); 
+    // Hitbox calibration for 128px sheet
+    sp.body.setSize(45, 95).setOffset(42, 33);
     sp.setCollideWorldBounds(true);
-    sp.setDragX(2500); // Massive drag for instant stops
-    sp.setBounce(0);   // ZERO bounce prevents micro-vibrations
-    sp.body.setAllowRotation(false);
+    sp.setDragX(2000);
     return sp;
 }
 
-// ==========================================
-// NEW START SCREEN: INTEGRATES PROMO IMAGE
-// ==========================================
 class StartScreen extends Phaser.Scene {
     constructor() { super("StartScreen"); }
     preload() {
-        // LOAD THE PROMO IMAGE
-        this.load.image("brawler_promo", "brawler_promo.jpg");
-        
-        // Load gameplay sheets during start screen
+        this.load.image("promo", "brawler_promo.jpg");
         this.load.image("bg", "bg_deep_forest.jpg");
         this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
     }
     create() {
-        // Add the promo image at full scale
-        let promo = this.add.image(GW/2, GH/2, "brawler_promo");
-        promo.setDisplaySize(GW, GH);
-        
-        // Overlays the start text
-        this.add.text(GW/2, GH - 60, "CLICK TO START", {
-            align: 'center', fontFamily: 'monospace', fontSize: '28px', fill: '#FFD700',
-            stroke: '#000000', strokeThickness: 4
-        }).setOrigin(0.5);
-        
+        this.add.image(GW/2, GH/2, "promo").setDisplaySize(GW, GH);
         this.input.once("pointerdown", () => this.scene.start("BrawlerScene"));
     }
 }
@@ -94,14 +75,14 @@ class StartScreen extends Phaser.Scene {
 class BrawlerScene extends Phaser.Scene {
     constructor() { super("BrawlerScene"); }
     create() {
-        this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.3);
-        const roster = ["Juni", "Pyro", "The Wanderer", "Nela", "Orid", "Helios"];
-        
-        roster.forEach((name, i) => {
-            let t = this.add.text(GW/2, 120 + (i * 45), name, {
-                fontFamily: 'monospace', fontSize: '24px', fill: i < 2 ? '#00FF88' : '#666'
-            }).setOrigin(0.5).setInteractive();
-            if (i < 2) t.on("pointerdown", () => { Match.p1 = name; this.scene.start("BattleScene"); });
+        this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.2);
+        ["Juni", "Pyro"].forEach((name, i) => {
+            let t = this.add.text(GW/2, 180 + (i * 70), name, {fontFamily:'monospace',fontSize:'36px',fill:'#00FF88'}).setOrigin(0.5).setInteractive();
+            t.on("pointerdown", () => { 
+                Match.p1 = name; 
+                Match.p2 = (name === "Juni" ? "Pyro" : "Juni"); 
+                this.scene.start("BattleScene"); 
+            });
         });
     }
 }
@@ -109,127 +90,106 @@ class BrawlerScene extends Phaser.Scene {
 class BattleScene extends Phaser.Scene {
     constructor() { super("BattleScene"); }
     create() {
-        const name = Match.p1.toLowerCase();
-        
-        // =========================================
-        // ANIMATION SETS
-        // =========================================
-        this.anims.create({ key: 'juni_idle', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 0, end: 2 }), frameRate: 6, repeat: -1 });
-        this.anims.create({ key: 'pyro_idle', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 0, end: 2 }), frameRate: 8, repeat: -1 });
-        
-        this.anims.create({ key: 'juni_jump', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 3, end: 5 }), frameRate: 10, repeat: 0 });
-        this.anims.create({ key: 'pyro_jump', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 3, end: 5 }), frameRate: 10, repeat: 0 });
+        const p1n = Match.p1.toLowerCase();
+        const p2n = Match.p2.toLowerCase();
 
-        this.anims.create({ key: 'juni_atk', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 7, end: 11 }), frameRate: 15, repeat: 0 });
-        this.anims.create({ key: 'juni_fire', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 12, end: 14 }), frameRate: 12, repeat: 0 });
-        this.anims.create({ key: 'pyro_fire', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 12, end: 16 }), frameRate: 12, repeat: 0 });
+        // ANIMATION SUITE
+        [p1n, p2n].forEach(n => {
+            this.anims.create({ key: n+'_idle', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 0, end: 2 }), frameRate: 6, repeat: -1 });
+            this.anims.create({ key: n+'_jump', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 3, end: 5 }), frameRate: 10, repeat: 0 });
+            this.anims.create({ key: n+'_atk', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 7, end: 11 }), frameRate: 15, repeat: 0 });
+            this.anims.create({ key: n+'_fire', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 12, end: 14 }), frameRate: 12, repeat: 0 });
+            this.anims.create({ key: n+'_shd', frames: [{key: n+'_sheet', frame: 6}], frameRate: 1 });
+        });
 
-        // GROUND PLATFORM
         this.platforms = this.physics.add.staticGroup();
-        const ground = this.add.rectangle(GW/2, GH-20, 600, 20, 0x3a2a0a).setAlpha(0.2);
-        this.platforms.add(ground);
+        this.platforms.add(this.add.rectangle(GW/2, GH-20, 600, 20, 0x3a2a0a).setAlpha(0.2));
 
         this.p1 = mkSp(this, SPAWN.p1.x, SPAWN.p1.y, Match.p1);
-        this.p1.play(name + "_idle");
-        this.physics.add.collider(this.p1, this.platforms);
-
-        // Input Setup
-        this.keys = this.input.keyboard.addKeys({ left: 'A', right: 'D', jump: 'W', atk: 'J', fire: 'L' });
+        this.p2 = mkSp(this, SPAWN.p2.x, SPAWN.p2.y, Match.p2);
         
-        // STATE MACHINE
-        this.state = {
-            jumps: 0,
-            status: 'FREE' // FREE, BUSY
-        };
+        this.physics.add.collider([this.p1, this.p2], this.platforms);
+
+        this.keys = this.input.keyboard.addKeys({ left: 'A', right: 'D', jump: 'W', punch: 'J', shield: 'K', fire: 'L' });
+        this.p1State = { jumps: 0, busy: false };
     }
 
     update() {
-        const sp = this.p1;
-        const ks = this.keys;
+        const p1 = this.p1, p2 = this.p2, ks = this.keys, s = this.p1State;
         const name = Match.p1.toLowerCase();
+        const grounded = p1.body.blocked.down;
 
-        // Floor Detection and Animation Recovery
-        const isGrounded = sp.body.blocked.down || sp.body.touching.down;
-        if (isGrounded) {
-            this.state.jumps = 0;
-            // Recover from Jump pose if FREE and grounded
-            if (this.state.status === 'FREE' && sp.anims.currentAnim.key.includes('jump')) {
-                sp.play(name + "_idle", true);
-            }
-        }
+        // 1. FULL CHARACTER MIRROR: Entire sprite flips based on opponent position
+        p1.setFlipX(p1.x > p2.x);
+        p2.setFlipX(p2.x > p1.x);
 
-        // ==========================================
-        // INPUT LOOP (Only active if not BUSY)
-        // ==========================================
-        if (this.state.status === 'FREE') {
-            // MOVEMENT (Snapped to Whole Pixels)
-            if (ks.left.isDown || MP.l) {
-                sp.setVelocityX(-290);
-                sp.setFlipX(true);
-            } else if (ks.right.isDown || MP.r) {
-                sp.setVelocityX(290);
-                sp.setFlipX(false);
-            } else {
-                sp.setVelocityX(0); // Snap stop for stability
-            }
+        if (grounded) s.jumps = 0;
 
-            // JUMP (UP/W only)
-            if ((Phaser.Input.Keyboard.JustDown(ks.jump) || MP.j) && this.state.jumps < 2) {
-                sp.setVelocityY(-570);
-                sp.play(name + "_jump", true);
-                this.state.jumps++;
-                MP.j = false;
-            }
+        if (!s.busy) {
+            // SHIELD (K)
+            if (ks.shield.isDown || MP.s) {
+                p1.setVelocityX(0);
+                p1.play(name + '_shd', true);
+            } 
+            else {
+                // MOVEMENT
+                if (ks.left.isDown || MP.l) { 
+                    p1.setVelocityX(-260); 
+                    if (grounded) p1.play(name + '_idle', true); 
+                }
+                else if (ks.right.isDown || MP.r) { 
+                    p1.setVelocityX(260); 
+                    if (grounded) p1.play(name + '_idle', true); 
+                }
+                else { 
+                    p1.setVelocityX(0); 
+                    if (grounded) p1.play(name + '_idle', true); 
+                }
 
-            // =========================================
-            // ACTION TRIGGER: Lock input and stop movement
-            // =========================================
-            if ((Phaser.Input.Keyboard.JustDown(ks.atk) || MP.a)) {
-                this.state.status = 'BUSY';
-                MP.a = false;
-                
-                // Immediately stop all horizontal movement before playing action frame
-                sp.setVelocityX(0);
-                sp.play(name + "_atk");
-                
-                // RECOVERY SYSTEM (Kills Jitter on finish)
-                this.time.delayedCall(300, () => {
-                    this.state.status = 'FREE';
-                    
-                    // Critical Floor Lock: Re-snap to zero and force floor detection
-                    sp.setVelocityX(0); 
-                    if (!isGrounded) sp.setVelocityY(sp.body.velocity.y * 0.5); // Soft dampen jump height
-                    
-                    sp.play(isGrounded ? name + "_idle" : name + "_jump", true);
-                });
+                // JUMP (W) - Now uses Jump Frames (3-5)
+                if (Phaser.Input.Keyboard.JustDown(ks.jump) || MP.j) {
+                    if (s.jumps < 2) { 
+                        p1.setVelocityY(-580); 
+                        p1.play(name + '_jump', true);
+                        s.jumps++; 
+                    }
+                    MP.j = false;
+                }
+
+                // If in air but not playing jump anim, force jump pose
+                if (!grounded && p1.anims.currentAnim.key !== name + '_jump') {
+                    p1.play(name + '_jump', true);
+                }
+
+                // PUNCH (J)
+                if (Phaser.Input.Keyboard.JustDown(ks.punch) || MP.a) {
+                    s.busy = true; p1.play(name + '_atk');
+                    this.time.delayedCall(300, () => s.busy = false);
+                    MP.a = false;
+                }
+
+                // FIRE (L) - Spawns Actual Frame 13 Projectile
+                if (Phaser.Input.Keyboard.JustDown(ks.fire) || MP.f) {
+                    s.busy = true; p1.play(name + '_fire');
+                    this.time.delayedCall(200, () => {
+                        let bullet = this.physics.add.sprite(p1.x, p1.y, name + '_sheet', 13);
+                        bullet.body.setAllowGravity(false);
+                        bullet.setFlipX(p1.flipX);
+                        bullet.setVelocityX(p1.flipX ? -600 : 600);
+                        this.time.delayedCall(1000, () => bullet.destroy());
+                    });
+                    this.time.delayedCall(500, () => s.busy = false);
+                    MP.f = false;
+                }
             }
         }
     }
 }
 
-// ANTI-JITTER MASTER CONFIGURATION
 new Phaser.Game({
-    type: Phaser.AUTO, 
-    width: GW, height: GH, 
-    parent: "gc", 
-    backgroundColor: "#050308",
-    pixelArt: true, // Crucial for pixel-perfect stability
-    render: {
-        antialias: false,
-        pixelArt: true,
-        roundPixels: true // Prevents sub-pixel jitter
-    },
-    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    physics: { 
-        default: "arcade", 
-        arcade: { 
-            gravity: { y: 1500 }, 
-            debug: false,
-            overlapBias: 10, // Prevents floor penetration
-            tileBias: 10,
-            fps: 60
-        } 
-    },
+    type: Phaser.AUTO, width: GW, height: GH, parent: "gc", backgroundColor: "#050308",
+    pixelArt: true, render: { roundPixels: true },
+    physics: { default: "arcade", arcade: { gravity: { y: 1600 } } },
     scene: [StartScreen, BrawlerScene, BattleScene]
 });
 </script>
