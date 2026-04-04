@@ -1,165 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <title>NMN Presents: Nonsensical Brawlers</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box;}
-    html,body{background:#050308;width:100%;height:100%;overflow:hidden;touch-action:none;}
-    #gc{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;}
-    #mc{display:block;position:fixed;bottom:20px;left:0;right:0;height:140px;pointer-events:none;z-index:999;}
-    .mb{
-      position:absolute;width:68px;height:68px;border-radius:50%;
-      border:3px solid #FFD700;background:rgba(5,3,8,0.9);
-      color:#FFD700;font-size:20px;font-weight:bold;
-      display:flex;align-items:center;justify-content:center;
-      pointer-events:all;user-select:none;
-      font-family:monospace;box-shadow:0 0 15px rgba(255,215,0,0.3);
-    }
-    #ml{left:30px;bottom:10px;} #mr{left:110px;bottom:10px;}
-    #mj{left:70px;bottom:85px;} #ma{right:30px;bottom:85px;} #mf{right:100px;bottom:10px;}
-  </style>
+    <meta charset="UTF-8"/>
+    <title>NMN Presents: Nonsensical Brawlers v1.8</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #050308; width: 100vw; height: 100vh; overflow: hidden; touch-action: none; }
+        #gc { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+        #mc { position: fixed; bottom: 20px; left: 0; right: 0; height: 140px; pointer-events: none; z-index: 999; }
+        .mb {
+            position: absolute; width: 68px; height: 68px; border-radius: 50%;
+            border: 3px solid #FFD700; background: rgba(5,3,8,0.9);
+            color: #FFD700; font-size: 22px; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            pointer-events: all; user-select: none; font-family: monospace;
+        }
+        #ml { left: 30px; bottom: 10px; } #mr { left: 110px; bottom: 10px; }
+        #mj { left: 70px; bottom: 85px; } #ma { right: 30px; bottom: 85px; } #mf { right: 100px; bottom: 10px; }
+    </style>
 </head>
 <body>
 <div id="gc"></div>
 <div id="mc">
-  <div class="mb" id="ml">◀</div><div class="mb" id="mr">▶</div>
-  <div class="mb" id="mj">▲</div><div class="mb" id="ma">🥊</div><div class="mb" id="mf">⚡</div>
+    <div class="mb" id="ml">◀</div><div class="mb" id="mr">▶</div>
+    <div class="mb" id="mj">▲</div><div class="mb" id="ma">🥊</div><div class="mb" id="mf">⚡</div>
 </div>
-<script>
-const GW=800, GH=450;
-const BLAST={minX:-300,maxX:1100,minY:-300,maxY:900};
-const SPAWN={p1:{x:220,y:GH-160},p2:{x:580,y:GH-160}};
-const MP={l:false,r:false,j:false,a:false,f:false};
 
-(function(){
-  const bind=(id,key)=>{
-    const el=document.getElementById(id);
-    if(!el) return;
-    el.addEventListener("touchstart",e=>{e.preventDefault();MP[key]=true;});
-    el.addEventListener("touchend",  e=>{e.preventDefault();MP[key]=false;});
-  };
-  bind("ml","l");bind("mr","r");bind("mj","j");bind("ma","a");bind("mf","f");
+<script>
+const GW = 800, GH = 450;
+const SPAWN = { p1: { x: 200, y: GH - 150 }, p2: { x: 600, y: GH - 150 } };
+const MP = { l: false, r: false, j: false, a: false, f: false };
+
+// Touch Input Binding
+(function() {
+    const bind = (id, key) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener("touchstart", e => { e.preventDefault(); MP[key] = true; });
+        el.addEventListener("touchend", e => { e.preventDefault(); MP[key] = false; });
+    };
+    bind("ml", "l"); bind("mr", "r"); bind("mj", "j"); bind("ma", "a"); bind("mf", "f");
 })();
 
-const ROSTER=[
-  {name:"Juni", free:true, color:"#00FF88", projectileColor:0x00FF88},
-  {name:"Pyro", free:true, color:"#FF6600", projectileColor:0xFF6600},
-  {name:"Elephant_1", free:false, color:"#555"},
-  {name:"Elephant_2", free:false, color:"#555"}
-];
+const Match = { p1: "Juni", p2: "Pyro" };
 
-const Match={p1:null,p2:null};
-
-function mkSp(scene, x, y, entry) {
-  const name = entry.name.toLowerCase();
-  let sp = scene.physics.add.sprite(x, y, name.includes("elephant") ? "brawlers" : name + "_sheet");
-  if(!name.includes("elephant")) sp.play(name + "_idle");
-  sp.body.setSize(45, 95).setOffset(42, 33);
-  sp.setCollideWorldBounds(false);
-  sp.setDragX(1000);
-  return sp;
+function mkSp(scene, x, y, name) {
+    let key = name.toLowerCase() + "_sheet";
+    let sp = scene.physics.add.sprite(x, y, key);
+    
+    // CALIBRATION: Bottom-aligned 128px math
+    // size (45, 100) + offset (42, 28) = feet at exactly pixel 128
+    sp.body.setSize(45, 100).setOffset(42, 28);
+    
+    sp.setCollideWorldBounds(true);
+    sp.setDragX(1200);
+    sp.play(name.toLowerCase() + "_idle");
+    return sp;
 }
 
 class StartScreen extends Phaser.Scene {
-  constructor(){super("StartScreen");}
-  preload(){
-    this.load.image("bg", "bg_deep_forest.jpg");
-    this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
-    this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
-    // Placeholder Elephant texture
-    const g=this.make.graphics({x:0,y:0,add:false});
-    g.fillStyle(0x444444); g.fillRect(0,0,48,48);
-    g.generateTexture("brawlers",48,48);
-  }
-  create(){
-    this.add.image(GW/2,GH/2,"bg").setDisplaySize(GW,GH).setAlpha(0.4);
-    this.add.text(GW/2,GH/2,"NMN PRESENTS:\nNONSENSICAL BRAWLERS",{align:'center',fontFamily:'monospace',fontSize:'32px',fill:'#FFD700'}).setOrigin(0.5);
-    this.input.once("pointerdown",()=>this.scene.start("BrawlerScene"));
-  }
+    constructor() { super("StartScreen"); }
+    preload() {
+        this.load.image("bg", "bg_deep_forest.jpg");
+        this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
+        this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
+    }
+    create() {
+        this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.5);
+        this.add.text(GW/2, GH/2, "NMN PRESENTS:\nBRAWLERS v1.8", {
+            align: 'center', fontFamily: 'monospace', fontSize: '40px', fill: '#FFD700'
+        }).setOrigin(0.5);
+        this.input.once("pointerdown", () => this.scene.start("BrawlerScene"));
+    }
 }
 
 class BrawlerScene extends Phaser.Scene {
-  constructor(){super("BrawlerScene");}
-  create(){
-    this.add.image(GW/2,GH/2,"bg").setDisplaySize(GW,GH).setAlpha(0.2);
-    ROSTER.forEach((b, i) => {
-      let txt = this.add.text(GW/2, 120 + (i*50), b.name, {fontFamily:'monospace',fontSize:'20px',fill:b.free?b.color:'#444'}).setOrigin(0.5).setInteractive();
-      if(b.free) txt.on("pointerdown", () => { Match.p1=b; Match.p2=ROSTER[1]; this.scene.start("BattleScene"); });
-    });
-  }
+    constructor() { super("BrawlerScene"); }
+    create() {
+        this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.2);
+        const roster = ["Juni", "Pyro", "Elephant_1", "Elephant_2"];
+        roster.forEach((name, i) => {
+            // FIXED TYPO: (i * 50)
+            let t = this.add.text(GW/2, 150 + (i * 50), name, {
+                fontFamily: 'monospace', fontSize: '28px', fill: i < 2 ? '#00FF88' : '#555'
+            }).setOrigin(0.5).setInteractive();
+            
+            if (i < 2) {
+                t.on("pointerdown", () => { Match.p1 = name; this.scene.start("BattleScene"); });
+            }
+        });
+    }
 }
 
 class BattleScene extends Phaser.Scene {
-  constructor(){super("BattleScene");}
-  create(){
-    // ANIMATIONS: Dynamic frame lengths
-    this.anims.create({ key:'juni_idle', frames:this.anims.generateFrameNumbers('juni_sheet',{start:0,end:2}), frameRate:6, repeat:-1 });
-    this.anims.create({ key:'pyro_idle', frames:this.anims.generateFrameNumbers('pyro_sheet',{start:0,end:2}), frameRate:8, repeat:-1 });
-    this.anims.create({ key:'juni_fire', frames:this.anims.generateFrameNumbers('juni_sheet',{start:12,end:14}), frameRate:12, repeat:0 });
-    this.anims.create({ key:'pyro_fire', frames:this.anims.generateFrameNumbers('pyro_sheet',{start:12,end:16}), frameRate:12, repeat:0 });
-    this.anims.create({ key:'juni_atk',  frames:this.anims.generateFrameNumbers('juni_sheet',{start:7,end:11}), frameRate:15, repeat:0 });
-    this.anims.create({ key:'pyro_atk',  frames:this.anims.generateFrameNumbers('pyro_sheet',{start:7,end:11}), frameRate:15, repeat:0 });
+    constructor() { super("BattleScene"); }
+    create() {
+        const p1Key = Match.p1.toLowerCase();
+        
+        // Animations
+        this.anims.create({ key: 'juni_idle', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 0, end: 2 }), frameRate: 6, repeat: -1 });
+        this.anims.create({ key: 'pyro_idle', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 0, end: 2 }), frameRate: 8, repeat: -1 });
+        this.anims.create({ key: 'juni_atk', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 7, end: 11 }), frameRate: 15, repeat: 0 });
+        this.anims.create({ key: 'juni_fire', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 12, end: 14 }), frameRate: 12, repeat: 0 });
+        this.anims.create({ key: 'pyro_fire', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 12, end: 16 }), frameRate: 12, repeat: 0 });
 
-    this.platforms=this.physics.add.staticGroup();
-    this.platforms.add(this.add.rectangle(GW/2,GH-20,600,20,0x3a2a0a));
-    this.physics.add.existing(this.platforms.children.entries[0],true);
+        this.platforms = this.physics.add.staticGroup();
+        this.platforms.add(this.add.rectangle(GW/2, GH-20, 650, 20, 0xffffff, 0.1));
 
-    this.p1=mkSp(this,SPAWN.p1.x,SPAWN.p1.y,Match.p1);
-    this.p2=mkSp(this,SPAWN.p2.x,SPAWN.p2.y,Match.p2);
-    this.p2.setFlipX(true);
+        this.p1 = mkSp(this, SPAWN.p1.x, SPAWN.p1.y, Match.p1);
+        this.physics.add.collider(this.p1, this.platforms);
 
-    this.physics.add.collider([this.p1,this.p2],this.platforms);
-    this.projGrp = this.physics.add.group();
-    this.k1=this.input.keyboard.addKeys({left:'A',right:'D',up:'W',atk:'J',fire:'L'});
-    this.S={p1Jumps:0, p1AtkCD:false};
-  }
-
-  spawnProj(owner){
-    const dir = owner.flipX ? -1 : 1;
-    const p = this.add.rectangle(owner.x + (dir*40), owner.y, 20, 10, Match.p1.projectileColor);
-    this.physics.add.existing(p);
-    p.body.setAllowGravity(false).setVelocityX(dir * 500);
-    this.projGrp.add(p);
-    this.time.delayedCall(1500, () => p.destroy());
-  }
-
-  update(){
-    const sp=this.p1, S=this.S, name=Match.p1.name.toLowerCase();
-    if(sp.body.blocked.down) S.p1Jumps=0;
-
-    // ADDITIVE VELOCITY: Jump + Move simultaneously
-    const gL=this.k1.left.isDown||MP.l, gR=this.k1.right.isDown||MP.r;
-    if(gL){ sp.body.setVelocityX(-220); sp.setFlipX(true); }
-    else if(gR){ sp.body.setVelocityX(220); sp.setFlipX(false); }
-    else sp.body.setVelocityX(sp.body.velocity.x * 0.8);
-
-    if((Phaser.Input.Keyboard.JustDown(this.k1.up)||MP.j)&&S.p1Jumps<2){ 
-        sp.body.setVelocityY(-450); S.p1Jumps++; MP.j=false; 
+        this.keys = this.input.keyboard.addKeys({ left: 'A', right: 'D', up: 'W', atk: 'J', fire: 'L' });
+        this.state = { jumps: 0, busy: false };
     }
 
-    // ACTIONS
-    if((Phaser.Input.Keyboard.JustDown(this.k1.atk)||MP.a)&&!S.p1AtkCD){
-        S.p1AtkCD=true; sp.play(name+"_atk");
-        this.time.delayedCall(350, ()=>{ S.p1AtkCD=false; sp.play(name+"_idle"); });
-        MP.a=false;
+    update() {
+        const sp = this.p1;
+        const ks = this.keys;
+
+        if (sp.body.blocked.down) this.state.jumps = 0;
+
+        // Additive Movement (Non-blocking)
+        if (ks.left.isDown || MP.l) {
+            sp.setVelocityX(-250);
+            sp.setFlipX(true);
+        } else if (ks.right.isDown || MP.r) {
+            sp.setVelocityX(250);
+            sp.setFlipX(false);
+        }
+
+        // Jump Logic (Double Jump)
+        if ((Phaser.Input.Keyboard.JustDown(ks.up) || MP.j) && this.state.jumps < 2) {
+            sp.setVelocityY(-500);
+            this.state.jumps++;
+            MP.j = false;
+        }
+
+        // Action Logic
+        if ((Phaser.Input.Keyboard.JustDown(ks.atk) || MP.a) && !this.state.busy) {
+            this.state.busy = true;
+            sp.play(Match.p1.toLowerCase() + "_atk");
+            this.time.delayedCall(300, () => { this.state.busy = false; sp.play(Match.p1.toLowerCase() + "_idle"); });
+            MP.a = false;
+        }
     }
-    if((Phaser.Input.Keyboard.JustDown(this.k1.fire)||MP.f)&&!S.p1AtkCD){
-        S.p1AtkCD=true; sp.play(name+"_fire");
-        this.time.delayedCall(250, () => this.spawnProj(sp));
-        this.time.delayedCall(500, ()=>{ S.p1AtkCD=false; sp.play(name+"_idle"); });
-        MP.f=false;
-    }
-  }
 }
 
 new Phaser.Game({
-  type:Phaser.AUTO, width:GW, height:GH, parent:"gc", backgroundColor:"#050308",
-  scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},
-  physics:{default:"arcade",arcade:{gravity:{y:950}}},
-  scene:[StartScreen,BrawlerScene,BattleScene]
+    type: Phaser.AUTO, width: GW, height: GH, parent: "gc", backgroundColor: "#050308",
+    physics: { default: "arcade", arcade: { gravity: { y: 1200 }, debug: false } },
+    scene: [StartScreen, BrawlerScene, BattleScene]
 });
 </script>
 </body>
