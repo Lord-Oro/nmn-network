@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/><title>NMN: BRAWLERS v2.0 - ZERO JITTER</title>
+    <meta charset="UTF-8"/><title>NMN: Nonsensical Brawlers v3.0 - PROMO + LOCK</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
     <style>
@@ -34,6 +34,7 @@ const GW = 800, GH = 450;
 const SPAWN = { p1: { x: 200, y: GH - 150 }, p2: { x: 600, y: GH - 150 } };
 const MP = { l: false, r: false, j: false, a: false, f: false };
 
+// Touch Input Binding
 (function() {
     const bind = (id, key) => {
         const el = document.getElementById(id);
@@ -46,34 +47,46 @@ const MP = { l: false, r: false, j: false, a: false, f: false };
 
 const Match = { p1: "Juni", p2: "Pyro" };
 
+// Make Sprite Function (Bottom-Aligned Calibration)
 function mkSp(scene, x, y, name) {
     let key = name.toLowerCase() + "_sheet";
     let sp = scene.physics.add.sprite(x, y, key);
     
-    // ANTI-HOP CALIBRATION
-    // We set a slightly wider box (48px) and lock height to 100px.
-    // Offset Y of 28 ensures feet are at 128px (the bottom edge).
+    // CALIBRATION MATH: size (48, 100) + offset (40, 28) = feet at pixel 128
     sp.body.setSize(48, 100).setOffset(40, 28);
     
     sp.setCollideWorldBounds(true);
-    sp.setDragX(2000); // Massive drag for instant stops
-    sp.setBounce(0);
+    sp.setDragX(2500); // Massive drag for instant stops
+    sp.setBounce(0);   // ZERO bounce prevents micro-vibrations
     sp.body.setAllowRotation(false);
     return sp;
 }
 
+// ==========================================
+// NEW START SCREEN: INTEGRATES PROMO IMAGE
+// ==========================================
 class StartScreen extends Phaser.Scene {
     constructor() { super("StartScreen"); }
     preload() {
+        // LOAD THE PROMO IMAGE
+        this.load.image("brawler_promo", "brawler_promo.jpg");
+        
+        // Load gameplay sheets during start screen
         this.load.image("bg", "bg_deep_forest.jpg");
         this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
     }
     create() {
-        this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.5);
-        this.add.text(GW/2, GH/2, "NMN: BRAWLERS\nVER. 2.0 STABLE", {
-            align: 'center', fontFamily: 'monospace', fontSize: '38px', fill: '#FFD700'
+        // Add the promo image at full scale
+        let promo = this.add.image(GW/2, GH/2, "brawler_promo");
+        promo.setDisplaySize(GW, GH);
+        
+        // Overlays the start text
+        this.add.text(GW/2, GH - 60, "CLICK TO START", {
+            align: 'center', fontFamily: 'monospace', fontSize: '28px', fill: '#FFD700',
+            stroke: '#000000', strokeThickness: 4
         }).setOrigin(0.5);
+        
         this.input.once("pointerdown", () => this.scene.start("BrawlerScene"));
     }
 }
@@ -81,11 +94,12 @@ class StartScreen extends Phaser.Scene {
 class BrawlerScene extends Phaser.Scene {
     constructor() { super("BrawlerScene"); }
     create() {
-        this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.2);
-        const roster = ["Juni", "Pyro", "Elephant_1", "Elephant_2"];
+        this.add.image(GW/2, GH/2, "bg").setDisplaySize(GW, GH).setAlpha(0.3);
+        const roster = ["Juni", "Pyro", "The Wanderer", "Nela", "Orid", "Helios"];
+        
         roster.forEach((name, i) => {
-            let t = this.add.text(GW/2, 140 + (i * 50), name, {
-                fontFamily: 'monospace', fontSize: '26px', fill: i < 2 ? '#00FF88' : '#444'
+            let t = this.add.text(GW/2, 120 + (i * 45), name, {
+                fontFamily: 'monospace', fontSize: '24px', fill: i < 2 ? '#00FF88' : '#666'
             }).setOrigin(0.5).setInteractive();
             if (i < 2) t.on("pointerdown", () => { Match.p1 = name; this.scene.start("BattleScene"); });
         });
@@ -97,23 +111,36 @@ class BattleScene extends Phaser.Scene {
     create() {
         const name = Match.p1.toLowerCase();
         
-        // ANIMATION DEFINITIONS
+        // =========================================
+        // ANIMATION SETS
+        // =========================================
         this.anims.create({ key: 'juni_idle', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 0, end: 2 }), frameRate: 6, repeat: -1 });
         this.anims.create({ key: 'pyro_idle', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 0, end: 2 }), frameRate: 8, repeat: -1 });
+        
         this.anims.create({ key: 'juni_jump', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 3, end: 5 }), frameRate: 10, repeat: 0 });
+        this.anims.create({ key: 'pyro_jump', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 3, end: 5 }), frameRate: 10, repeat: 0 });
+
         this.anims.create({ key: 'juni_atk', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 7, end: 11 }), frameRate: 15, repeat: 0 });
         this.anims.create({ key: 'juni_fire', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 12, end: 14 }), frameRate: 12, repeat: 0 });
+        this.anims.create({ key: 'pyro_fire', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 12, end: 16 }), frameRate: 12, repeat: 0 });
 
+        // GROUND PLATFORM
         this.platforms = this.physics.add.staticGroup();
-        // The floor must be solid and clean
-        const ground = this.add.rectangle(GW/2, GH-20, 600, 20, 0x3a2a0a);
+        const ground = this.add.rectangle(GW/2, GH-20, 600, 20, 0x3a2a0a).setAlpha(0.2);
         this.platforms.add(ground);
 
         this.p1 = mkSp(this, SPAWN.p1.x, SPAWN.p1.y, Match.p1);
+        this.p1.play(name + "_idle");
         this.physics.add.collider(this.p1, this.platforms);
 
+        // Input Setup
         this.keys = this.input.keyboard.addKeys({ left: 'A', right: 'D', jump: 'W', atk: 'J', fire: 'L' });
-        this.state = { jumps: 0, isBusy: false };
+        
+        // STATE MACHINE
+        this.state = {
+            jumps: 0,
+            status: 'FREE' // FREE, BUSY
+        };
     }
 
     update() {
@@ -121,67 +148,85 @@ class BattleScene extends Phaser.Scene {
         const ks = this.keys;
         const name = Match.p1.toLowerCase();
 
-        // Floor Detection
+        // Floor Detection and Animation Recovery
         const isGrounded = sp.body.blocked.down || sp.body.touching.down;
         if (isGrounded) {
             this.state.jumps = 0;
-            // Return to idle if we just landed
-            if (!this.state.isBusy && sp.anims.getName().includes('jump')) {
+            // Recover from Jump pose if FREE and grounded
+            if (this.state.status === 'FREE' && sp.anims.currentAnim.key.includes('jump')) {
                 sp.play(name + "_idle", true);
             }
         }
 
-        // Movement (Snapped to whole numbers to prevent jitter)
-        if (ks.left.isDown || MP.l) {
-            sp.setVelocityX(-280);
-            sp.setFlipX(true);
-        } else if (ks.right.isDown || MP.r) {
-            sp.setVelocityX(280);
-            sp.setFlipX(false);
-        } else {
-            sp.setVelocityX(0); // Snap to stop to prevent micro-sliding
-        }
+        // ==========================================
+        // INPUT LOOP (Only active if not BUSY)
+        // ==========================================
+        if (this.state.status === 'FREE') {
+            // MOVEMENT (Snapped to Whole Pixels)
+            if (ks.left.isDown || MP.l) {
+                sp.setVelocityX(-290);
+                sp.setFlipX(true);
+            } else if (ks.right.isDown || MP.r) {
+                sp.setVelocityX(290);
+                sp.setFlipX(false);
+            } else {
+                sp.setVelocityX(0); // Snap stop for stability
+            }
 
-        // Jump (UP/W only)
-        if ((Phaser.Input.Keyboard.JustDown(ks.jump) || MP.j) && this.state.jumps < 2) {
-            sp.setVelocityY(-550);
-            sp.play(name + "_jump", true);
-            this.state.jumps++;
-            MP.j = false;
-        }
+            // JUMP (UP/W only)
+            if ((Phaser.Input.Keyboard.JustDown(ks.jump) || MP.j) && this.state.jumps < 2) {
+                sp.setVelocityY(-570);
+                sp.play(name + "_jump", true);
+                this.state.jumps++;
+                MP.j = false;
+            }
 
-        // Action J (Punch)
-        if ((Phaser.Input.Keyboard.JustDown(ks.atk) || MP.a) && !this.state.isBusy) {
-            this.state.isBusy = true;
-            sp.play(name + "_atk");
-            this.time.delayedCall(300, () => { 
-                this.state.isBusy = false; 
-                sp.play(isGrounded ? name + "_idle" : name + "_jump", true); 
-            });
-            MP.a = false;
+            // =========================================
+            // ACTION TRIGGER: Lock input and stop movement
+            // =========================================
+            if ((Phaser.Input.Keyboard.JustDown(ks.atk) || MP.a)) {
+                this.state.status = 'BUSY';
+                MP.a = false;
+                
+                // Immediately stop all horizontal movement before playing action frame
+                sp.setVelocityX(0);
+                sp.play(name + "_atk");
+                
+                // RECOVERY SYSTEM (Kills Jitter on finish)
+                this.time.delayedCall(300, () => {
+                    this.state.status = 'FREE';
+                    
+                    // Critical Floor Lock: Re-snap to zero and force floor detection
+                    sp.setVelocityX(0); 
+                    if (!isGrounded) sp.setVelocityY(sp.body.velocity.y * 0.5); // Soft dampen jump height
+                    
+                    sp.play(isGrounded ? name + "_idle" : name + "_jump", true);
+                });
+            }
         }
     }
 }
 
-// THE STABILIZER CONFIG
+// ANTI-JITTER MASTER CONFIGURATION
 new Phaser.Game({
     type: Phaser.AUTO, 
     width: GW, height: GH, 
     parent: "gc", 
     backgroundColor: "#050308",
-    pixelArt: true, // Crucial for pixel stability
+    pixelArt: true, // Crucial for pixel-perfect stability
     render: {
         antialias: false,
         pixelArt: true,
-        roundPixels: true // Prevents sub-pixel "hopping"
+        roundPixels: true // Prevents sub-pixel jitter
     },
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
     physics: { 
         default: "arcade", 
         arcade: { 
-            gravity: { y: 1400 }, 
+            gravity: { y: 1500 }, 
             debug: false,
-            overlapBias: 8, // Prevents falling through floors
+            overlapBias: 10, // Prevents floor penetration
+            tileBias: 10,
             fps: 60
         } 
     },
