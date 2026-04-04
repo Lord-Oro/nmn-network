@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/><title>NMN: BRAWLERS V9.9.9 - FINAL MASTER</title>
+    <meta charset="UTF-8"/><title>NMN: BRAWLERS V10.1 - MANIFEST MASTER</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #050308; width: 100vw; height: 100vh; overflow: hidden; }
+        body { background: #050308; width: 100vw; height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace; }
         #gc { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
@@ -14,25 +14,28 @@
 <div id="gc"></div>
 <script>
 const GW = 800, GH = 450;
-const Match = { p1: "Juni", p2: "Pyro", p1Pct: 0, p2Pct: 0, p1Lives: 3, p2Lives: 3 };
+const Match = { p1: "Juni", p2: "Pyro", p1Pct: 0, p2Pct: 0 };
 
 class StartScreen extends Phaser.Scene {
     constructor() { super("StartScreen"); }
     preload() {
-        this.load.image("bg_eyes", "oros_game_eyes_.jpg"); 
+        // --- EXACT FILENAMES FROM MANIFEST ---
+        this.load.image("bg_eyes", "oros_game_eyes.jpg"); 
         this.load.image("link_tree", "link_tree.jpg");
         this.load.image("juni_cov", "juni_en.jpeg");
         this.load.image("outbreak_cov", "outbreak_en.jpeg");
         this.load.image("tabbies_cov", "tabbies_en.jpeg");
         this.load.image("pyro_cov", "pyro_en.jpeg");
-        // Placeholders
-        ["wanderer", "nela", "orid", "helios"].forEach(n => this.load.image(n + "_beta", n + "_beta.jpg"));
+        
         this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
+        
+        // Beta Placeholders
+        ["wanderer", "nela", "orid", "helios", "pyro", "juni"].forEach(n => this.load.image(n + "_beta", n + "_beta.jpg"));
     }
     create() {
         this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW, GH);
-        this.add.text(GW/2, GH/2, "NMN BRAWLERS\nCLICK TO START", { align:'center', fontSize:'32px', fill:'#FFD700' }).setOrigin(0.5);
+        this.add.text(GW/2, GH/2, "NMN BRAWLERS\nCLICK TO START", { align:'center', fontSize:'32px', fill:'#FFD700', stroke:'#000', strokeThickness:4 }).setOrigin(0.5);
         this.input.once("pointerdown", () => this.scene.start("BrawlerScene"));
     }
 }
@@ -41,9 +44,11 @@ class BrawlerScene extends Phaser.Scene {
     constructor() { super("BrawlerScene"); }
     create() {
         this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW, GH).setAlpha(0.5);
+        this.add.text(GW/2, 40, "SELECT CHARACTER", { fontSize:'28px', fill:'#FFD700' }).setOrigin(0.5);
+        
         const roster = [
-            { name: "Juni", img: "juni_sheet", active: true },
-            { name: "Pyro", img: "pyro_sheet", active: true },
+            { name: "Juni", img: "juni_beta", active: true },
+            { name: "Pyro", img: "pyro_beta", active: true },
             { name: "Wanderer", img: "wanderer_beta", active: false },
             { name: "Nela", img: "nela_beta", active: false },
             { name: "Orid", img: "orid_beta", active: false },
@@ -51,15 +56,18 @@ class BrawlerScene extends Phaser.Scene {
         ];
 
         roster.forEach((char, i) => {
-            let x = 150 + (i % 3) * 250, y = 150 + Math.floor(i / 3) * 160;
+            let x = 150 + (i % 3) * 250, y = 160 + Math.floor(i / 3) * 150;
             let btn = this.add.image(x, y, char.img).setDisplaySize(110, 110).setInteractive();
             if (!char.active) btn.setTint(0x444444);
-            else btn.on("pointerdown", () => { Match.p1 = char.name; Match.p2 = (char.name === "Juni" ? "Pyro" : "Juni"); this.scene.start("BattleScene"); });
-            this.add.text(x, y + 65, char.name, { fontSize: '14px', fill: char.active ? '#FFD700' : '#F00' }).setOrigin(0.5);
+            else btn.on("pointerdown", () => { 
+                Match.p1 = char.name; 
+                Match.p2 = (char.name === "Juni" ? "Pyro" : "Juni");
+                this.scene.start("BattleScene"); 
+            });
+            this.add.text(x, y + 65, char.name.toUpperCase(), { fontSize: '14px', fill: char.active ? '#FFD700' : '#F00' }).setOrigin(0.5);
         });
         
-        let h = this.add.text(GW/2, GH-40, "VIEW HERO'S STORY", { fontSize:'18px', fill:'#FFD700', backgroundColor:'#000', padding:5 }).setOrigin(0.5).setInteractive();
-        h.on("pointerdown", () => this.scene.start("StoryHub"));
+        this.add.text(GW/2, GH-30, "VIEW HERO'S STORY", { fill:'#FFD700', backgroundColor:'#000', padding:5 }).setOrigin(0.5).setInteractive().on("pointerdown", () => this.scene.start("StoryHub"));
     }
 }
 
@@ -67,8 +75,8 @@ class StoryHub extends Phaser.Scene {
     constructor() { super("StoryHub"); }
     create() {
         this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW, GH).setAlpha(0.3);
-        const books = [{id: "juni_cov", x:120}, {id: "outbreak_cov", x:300}, {id: "tabbies_cov", x:480}, {id: "pyro_cov", x:660}];
-        books.forEach(b => { this.add.image(b.x, 200, b.id).setDisplaySize(140, 220); });
+        const books = [{id:"juni_cov", x:120}, {id:"outbreak_cov", x:300}, {id:"tabbies_cov", x:480}, {id:"pyro_cov", x:660}];
+        books.forEach(b => { this.add.image(b.x, 200, b.id).setDisplaySize(140, 220).setInteractive().on("pointerdown", () => window.open("https://linktr.ee/NMN_LordOro", "_blank")); });
         this.add.image(GW/2, GH-50, "link_tree").setDisplaySize(100, 50).setInteractive().on("pointerdown", () => window.open("https://linktr.ee/NMN_LordOro", "_blank"));
         this.add.text(40, 40, "BACK", { fill:'#FFD700' }).setInteractive().on("pointerdown", () => this.scene.start("BrawlerScene"));
     }
@@ -77,39 +85,39 @@ class StoryHub extends Phaser.Scene {
 class BattleScene extends Phaser.Scene {
     constructor() { super("BattleScene"); }
     create() {
-        this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW, GH).setAlpha(0.3);
+        this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW, GH).setAlpha(0.2);
         this.platforms = this.physics.add.staticGroup();
         this.platforms.add(this.add.rectangle(GW/2, GH-50, 600, 20, 0x3a2a0a));
         
-        // --- FACING EACH OTHER ---
+        // --- ANIMATION REGISTRY ---
+        this.anims.create({ key: 'juni_idle', frames: this.anims.generateFrameNumbers('juni_sheet', { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
+        this.anims.create({ key: 'pyro_idle', frames: this.anims.generateFrameNumbers('pyro_sheet', { start: 0, end: 3 }), frameRate: 8, repeat: -1 });
+
         this.p1 = this.physics.add.sprite(200, 0, Match.p1.toLowerCase() + "_sheet").setFlipX(false);
         this.p2 = this.physics.add.sprite(600, 0, Match.p2.toLowerCase() + "_sheet").setFlipX(true);
         this.physics.add.collider([this.p1, this.p2], this.platforms);
         
-        // --- HUD RESTORATION ---
-        this.txt1 = this.add.text(20, 20, `${Match.p1.toUpperCase()}: 0%`, { fontSize: '20px', fill: '#0F0' });
-        this.txt2 = this.add.text(GW-200, 20, `${Match.p2.toUpperCase()}: 0%`, { fontSize: '20px', fill: '#F00' });
+        this.h1 = this.add.text(20, 20, `${Match.p1.toUpperCase()}: 0%`, { fontSize:'20px', fill:'#0F0' });
+        this.h2 = this.add.text(GW-200, 20, `${Match.p2.toUpperCase()}: 0%`, { fontSize:'20px', fill:'#F00' });
 
-        this.keys = this.input.keyboard.addKeys({ W:'W', A:'A', D:'D', J:'J' });
-        this.add.text(GW/2, GH/2, "BRAWL!", { fontSize:'64px', fill:'#FFD700' }).setOrigin(0.5).setAlpha(0).setDepth(100);
-        this.time.delayedCall(500, () => { this.tweens.add({ targets: this.children.list.find(c => c.text === "BRAWL!"), alpha: 1, duration: 500, yoyo: true }); });
+        this.keys = this.input.keyboard.addKeys({ W:'W', A:'A', D:'D' });
+        let brawl = this.add.text(GW/2, GH/2, "BRAWL!", { fontSize:'64px', fill:'#FFD700' }).setOrigin(0.5);
+        this.time.delayedCall(1000, () => brawl.destroy());
     }
 
     update() {
-        const p1 = this.p1, ks = this.keys;
+        const p1 = this.p1, p2 = this.p2, ks = this.keys;
+        const p1Name = Match.p1.toLowerCase(), p2Name = Match.p2.toLowerCase();
+
         if (ks.A.isDown) p1.setVelocityX(-260).setFlipX(true);
         else if (ks.D.isDown) p1.setVelocityX(260).setFlipX(false);
-        else p1.setVelocityX(0);
+        else {
+            p1.setVelocityX(0);
+            p1.play(p1Name + '_idle', true);
+        }
         if (Phaser.Input.Keyboard.JustDown(ks.W) && p1.body.blocked.down) p1.setVelocityY(-600);
         
-        if (Phaser.Input.Keyboard.JustDown(ks.J)) {
-            if (Phaser.Math.Distance.Between(p1.x, p1.y, this.p2.x, this.p2.y) < 80) {
-                Match.p2Pct += 5;
-                this.txt2.setText(`${Match.p2.toUpperCase()}: ${Match.p2Pct}%`);
-                this.p2.setTint(0xff0000);
-                this.time.delayedCall(200, () => this.p2.clearTint());
-            }
-        }
+        p2.play(p2Name + '_idle', true);
     }
 }
 
