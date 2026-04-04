@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>NMN: BRAWLERS — Golden Ore Edition</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{background:#050308;width:100%;height:100%;overflow:hidden;}
+    #gc{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;}
+    #mc{display:none;position:fixed;bottom:0;left:0;right:0;height:160px;pointer-events:none;z-index:999;}
+    #mc.on{display:block;}
+    .mb{
+      position:absolute;width:60px;height:60px;border-radius:50%;
+      border:3px solid #FFD700;background:rgba(0,0,0,0.8);
+      color:#FFD700;font-size:18px;font-weight:bold;
+      display:flex;align-items:center;justify-content:center;
+      pointer-events:all;user-select:none;-webkit-user-select:none;
+    }
+    #ml{left:20px;bottom:10px;}  #mr{left:90px;bottom:10px;}
+    #mj{left:55px;bottom:80px;} #ma{right:20px;bottom:80px;}
+    #ms{right:20px;bottom:10px;} #mf{right:90px;bottom:10px;}
+  </style>
+</head>
+<body>
+<div id="gc"></div>
+<div id="mc">
+  <div class="mb" id="ml">◀</div><div class="mb" id="mr">▶</div>
+  <div class="mb" id="mj">▲</div><div class="mb" id="ma">🥊</div>
+  <div class="mb" id="ms">🛡️</div><div class="mb" id="mf">⚡</div>
+</div>
+<script>
+// ═══════════════════════════════════════════════════════════════════
+//  NMN: BRAWLERS — GOLDEN ORE EDITION (v11.5)
+//  Architect: Lord Oro | Engineering: Claude | Creative: Gemini
+//
+//  BRAND ANCHOR: bg_eyes (oros_game_eyes.jpg) on every scene
+//  ASSET KEYS (never rename):
+//    j_sheet = juni_sheet.png  (128x128 frames)
+//    p_sheet = pyro_sheet.png  (128x128 frames)
+//    bg_eyes, brawler_promo, hub_bg (logo.jpg), link_tree
+//    Book covers: juni_en, outbreak_en, tabbies_en, pyro_en (.jpeg)
+//    Beta portraits: wanderer_beta, olydia_beta, orid_beta, helios_beta (.jpg)
+//
+//  MASTER ANIMATION LIST (canon — do not change without explicit intent):
+//  Juni  — idle:0-3 | jump:4,5,6 | melee:12,14,13 | range:7,8,9→10
+//          burst:15,16,17 | shield:18 | damage:19,20,21 | launch:15,16,17
+//  Pyro  — idle:0-3 | jump:4,4,5 | melee:10,11,12 | range:7,8,9→15
+//          burst:6 | shield:20 | damage:21,22 | launch:23,24
+//
+//  CONVERSION LINKS (hard-coded, do not change):
+//    Juni:    https://books2read.com/u/4EOxZ0
+//    Outbreak:https://books2read.com/u/31NrLw
+//    Tabbies: https://a.co/d/06X2Jjee
+//    Pyro:    https://a.co/d/036X5lJP
+//    Linktree:https://linktr.ee/NMN_LordOro
+//
+//  PHYSICS: gravity y:1400 (Golden Ore spec — do not change)
+//  SCENES: StartScreen → BrawlerScene → BattleScene
+//          BrawlerScene → OriginHub → CreatorBio → OriginHub
+// ═══════════════════════════════════════════════════════════════════
+
+const GW = 800, GH = 450;
+
+const BLAST = { minX:-260, maxX:1060, minY:-260, maxY:820 };
+const SPAWN  = { p1:{x:200,y:GH-160}, p2:{x:600,y:GH-160} };
+
+const Match = {
+  p1:"Juni", p2:"Pyro",
+  p1Pct:0,   p2Pct:0,
+  p1Lives:3, p2Lives:3,
+  map:"bg_eyes",
+  paused:false,
+  winner:null
+};
+
+// Mobile input state
+const MP = { l:false, r:false, j:false, a:false, s:false, f:false };
+
+// Mobile wiring — runs before Phaser boots
+(function(){
+  const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+  if(isTouch) document.getElementById("mc").classList.add("on");
+  const bind = (id,k) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.onpointerdown = e => { e.preventDefault(); MP[k]=true; };
+    el.onpointerup   = e => { e.preventDefault(); MP[k]=false; };
+  };
+  bind("ml","l"); bind("mr","r"); bind("mj","j");
+  bind("ma","a"); bind("ms","s"); bind("mf","f");
+})();
+
+// ── BOOK LINKS ────────────────────────────────────────
+const BOOK_LINKS = {
+  juni_en:     "https://books2read.com/u/4EOxZ0",
+  outbreak_en: "https://books2read.com/u/31NrLw",
+  tabbies_en:  "https://a.co/d/06X2Jjee",
+  pyro_en:     "https://a.co/d/036X5lJP"
+};
+const LINKTREE = "https://linktr.ee/NMN_LordOro";
+
+// ── HELPERS ───────────────────────────────────────────
+function addGoldSpark(scene, x, y) {
+  const g = scene.add.graphics().setDepth(600);
+  [0xFFD700,0xFF8800,0xFFFF88].forEach(col => {
+    for(let i=0;i<5;i++){
+      const ang=Math.random()*Math.PI*2, len=4+Math.random()*14;
+      g.fillStyle(col,1);
+      g.fillRect(x+Math.cos(ang)*len, y+Math.sin(ang)*len, 3, 3);
+    }
+  });
+  scene.tweens.add({targets:g,alpha:0,duration:220,onComplete:()=>g.destroy()});
+}
+
+// ── START SCREEN ──────────────────────────────────────
+class StartScreen extends Phaser.Scene {
+  constructor(){ super("StartScreen"); }
+
+  preload(){
+    this.load.image("promo",    "brawler_promo.jpg");
+    this.load.image("bg_eyes",  "oros_game_eyes.jpg");
+    this.load.image("hub_bg",   "logo.jpg");
+    this.load.image("link_tree","link_tree.jpg");
+    this.load.spritesheet("j_sheet","juni_sheet.png",{frameWidth:128,frameHeight:128});
+    this.load.spritesheet("p_sheet","pyro_sheet.png",{frameWidth:128,frameHeight:128});
+    ["juni_en","outbreak_en","tabbies_en","pyro_en"].forEach(b=>
+      this.load.image(b, b+".jpeg")
+    );
+    ["wanderer","olydia","orid","helios"].forEach(n=>
+      this.load.image(n+"_beta", n+"_beta.jpg")
+    );
+    this.load.image("signal_lost","signal_lost.jpg");
+    this.load.on("loaderror", f=>console.warn("Asset fallback:", f.key));
+
+    // Loading bar
+    const bar  = this.add.rectangle(GW/2, GH/2+20, 2, 8, 0xFFD700);
+    const track= this.add.rectangle(GW/2, GH/2+20, 402, 10, 0x222222);
+    track.setDepth(0); bar.setDepth(1);
+    this.load.on("progress", v => { bar.width = 2+(398*v); });
+    this.load.on("complete", ()=>{ bar.destroy(); track.destroy(); });
+  }
+
+  create(){
+    // Promo splash
+    if(this.textures.exists("promo") && this.textures.get("promo").source[0].width > 1)
+      this.add.image(GW/2, GH/2, "promo").setDisplaySize(GW, GH);
+    else
+      this.add.rectangle(0,0,GW,GH,0x050308).setOrigin(0);
+
+    this.add.text(GW/2, GH/2+60, "GOLDEN ORE EDITION", {
+      fontFamily:"Press Start 2P", fontSize:"14px", color:"#FFD700",
+      stroke:"#000", strokeThickness:3
+    }).setOrigin(0.5);
+
+    const blink = this.add.text(GW/2, GH/2+100, "CLICK / TAP TO START", {
+      fontFamily:"Press Start 2P", fontSize:"10px", color:"#FFFFFF"
+    }).setOrigin(0.5);
+    this.tweens.add({targets:blink, alpha:0, duration:600, yoyo:true, repeat:-1});
+
+    // Input requires click/tap (browser keyboard policy)
+    this.input.once("pointerdown", ()=> this.scene.start("BrawlerScene"));
+  }
+}
+
+// ── BRAWLER SELECT ────────────────────────────────────
+class BrawlerScene extends Phaser.Scene {
+  constructor(){ super("BrawlerScene"); }
+
+  create(){
+    // Reset match state on return
+    Match.p1="Juni"; Match.p2="Pyro";
+    Match.p1Pct=0; Match.p2Pct=0;
+    Match.p1Lives=3; Match.p2Lives=3;
+    Match.paused=false; Match.winner=null;
+
+    this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW,GH).setAlpha(0.5);
+
+    this.add.text(GW/2, 36, "SELECT CHARACTER", {
+      fontFamily:"Press Start 2P", fontSize:"16px", color:"#FFD700",
+      stroke:"#000", strokeThickness:3
+    }).setOrigin(0.5);
+
+    this.add.text(GW/2, 66, "CLICK ONCE TO SCOUT — CLICK AGAIN TO BATTLE", {
+      fontFamily:"Press Start 2P", fontSize:"7px", color:"#888888"
+    }).setOrigin(0.5);
+
+    const roster = [
+      { name:"Juni",     img:"j_sheet",      frame:0, active:true,  url:BOOK_LINKS.juni_en,     color:"#00FF88" },
+      { name:"Pyro",     img:"p_sheet",      frame:0, active:true,  url:BOOK_LINKS.pyro_en,     color:"#FF6600" },
+      { name:"Wanderer", img:"wanderer_beta", frame:null,active:false,url:LINKTREE,              color:"#336699" },
+      { name:"Olydia",   img:"olydia_beta",  frame:null,active:false,url:BOOK_LINKS.outbreak_en,color:"#9933CC" },
+      { name:"Orid",     img:"orid_beta",    frame:null,active:false,url:BOOK_LINKS.juni_en,    color:"#884422" },
+      { name:"Helios",   img:"helios_beta",  frame:null,active:false,url:BOOK_LINKS.juni_en,    color:"#FFD700" },
+    ];
+
+    this.scoutIdx = -1;
+
+    // Intel bar
+    this.add.rectangle(GW/2, 94, GW-20, 24, 0x111111).setOrigin(0.5);
+    this.intelTxt = this.add.text(GW/2, 94, "Select a warrior to begin", {
+      fontFamily:"Press Start 2P", fontSize:"6px", color:"#888888", align:"center",
+      wordWrap:{width:GW-30}
+    }).setOrigin(0.5);
+
+    roster.forEach((c, i) => {
+      const col = i%3, row = Math.floor(i/3);
+      const x = 150 + col*250, y = 180 + row*140;
+
+      const panel = this.add.rectangle(x, y, 120, 120, 0x111111)
+        .setStrokeStyle(2, c.active ? 0xFFD700 : 0x444444)
+        .setInteractive({useHandCursor:true});
+
+      // Portrait
+      const icon = this.add.image(x, y-8, c.img, c.frame ?? 0)
+        .setDisplaySize(90, 90);
+      if(!c.active) icon.setTint(0x444444);
+
+      this.add.text(x, y+54, c.name.toUpperCase(), {
+        fontFamily:"Press Start 2P", fontSize:"7px",
+        color: c.active ? c.color : "#555555"
+      }).setOrigin(0.5);
+
+      if(!c.active){
+        this.add.text(x, y+68, "LOCKED", {
+          fontFamily:"Press Start 2P", fontSize:"6px", color:"#FF4444"
+        }).setOrigin(0.5);
+      }
+
+      panel.on("pointerover",  ()=> panel.setStrokeStyle(2, 0xFFFFFF));
+      panel.on("pointerout",   ()=> panel.setStrokeStyle(2, c.active?0xFFD700:0x444444));
+
+      panel.on("pointerdown", ()=> {
+        if(!c.active){
+          if(this.scoutIdx === i){ window.open(c.url,"_blank"); }
+          else {
+            this.scoutIdx = i;
+            this.intelTxt.setText("🔒 LOCKED: "+c.name+" — Click again to unlock this warrior.").setColor("#FF8888");
+          }
+          return;
+        }
+        if(this.scoutIdx !== i){
+          this.scoutIdx = i;
+          this.intelTxt.setText("★ "+c.name.toUpperCase()+" — Click again to enter the mine.").setColor(c.color);
+          return;
+        }
+        // Second click — go battle
+        Match.p1 = c.name;
+        Match.p2 = c.name === "Juni" ? "Pyro" : "Juni";
+        this.scene.start("BattleScene");
+      });
+    });
+
+    // Hero's Origin Hub button
+    const hub = this.add.text(GW/2, GH-20, "📖 HERO'S ORIGIN HUB", {
+      fontFamily:"Press Start 2P", fontSize:"9px", color:"#050308",
+      backgroundColor:"#FFD700", padding:{x:10,y:5}
+    }).setOrigin(0.5).setInteractive({useHandCursor:true});
+    hub.on("pointerdown", ()=> this.scene.start("OriginHub"));
+  }
+}
+
+// ── ORIGIN HUB ────────────────────────────────────────
+class OriginHub extends Phaser.Scene {
+  constructor(){ super("OriginHub"); }
+
+  create(){
+    this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW,GH).setAlpha(0.4);
+
+    this.add.text(GW/2, 36, "HERO'S ORIGIN HUB", {
+      fontFamily:"Press Start 2P", fontSize:"14px", color:"#FFD700",
+      stroke:"#000", strokeThickness:3
+    }).setOrigin(0.5);
+
+    this.add.text(GW/2, 64, "Where do all the brawlers come from? From Lord Oro's mine or mind...", {
+      fontFamily:"Press Start 2P", fontSize:"6px", color:"#AAAAAA",
+      align:"center", wordWrap:{width:GW-40}
+    }).setOrigin(0.5);
+
+    const books = [
+      { key:"juni_en",     title:"JUNI THE IMMORTAL",         url:BOOK_LINKS.juni_en     },
+      { key:"outbreak_en", title:"OUTBREAK FROM THE STARS",   url:BOOK_LINKS.outbreak_en },
+      { key:"tabbies_en",  title:"ALL TABBIES HAVE A PLACE",  url:BOOK_LINKS.tabbies_en  },
+      { key:"pyro_en",     title:"PYRO & HELIOS",              url:BOOK_LINKS.pyro_en     },
+    ];
+
+    books.forEach((b, i) => {
+      const x = 110 + i*185, y = 220;
+      const img = this.add.image(x, y, b.key)
+        .setDisplaySize(140, 200)
+        .setInteractive({useHandCursor:true});
+      img.on("pointerover",  ()=> img.setTint(0xFFD700));
+      img.on("pointerout",   ()=> img.clearTint());
+      img.on("pointerdown",  ()=> window.open(b.url, "_blank"));
+      this.add.text(x, y+112, b.title, {
+        fontFamily:"Press Start 2P", fontSize:"5px", color:"#FFD700",
+        align:"center", wordWrap:{width:140}
+      }).setOrigin(0.5);
+    });
+
+    // LinkTree
+    const lt = this.add.image(GW-70, GH-36, "link_tree")
+      .setDisplaySize(100,50)
+      .setInteractive({useHandCursor:true});
+    lt.on("pointerdown", ()=> window.open(LINKTREE, "_blank"));
+
+    // Creator Bio button
+    const bio = this.add.text(GW/2, GH-20, "ABOUT LORD ORO", {
+      fontFamily:"Press Start 2P", fontSize:"8px", color:"#FFD700"
+    }).setOrigin(0.5).setInteractive({useHandCursor:true});
+    bio.on("pointerdown", ()=> this.scene.start("CreatorBio"));
+
+    // Back
+    this.add.text(30, 30, "◀ BACK", {
+      fontFamily:"Press Start 2P", fontSize:"8px", color:"#AAAAAA"
+    }).setInteractive({useHandCursor:true})
+      .on("pointerdown", ()=> this.scene.start("BrawlerScene"));
+  }
+}
+
+// ── CREATOR BIO ───────────────────────────────────────
+class CreatorBio extends Phaser.Scene {
+  constructor(){ super("CreatorBio"); }
+
+  create(){
+    this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW,GH).setAlpha(0.3);
+
+    this.add.text(GW/2, 50, "ABOUT THE CREATOR: LORD ORO", {
+      fontFamily:"Press Start 2P", fontSize:"11px", color:"#FFD700",
+      stroke:"#000", strokeThickness:3
+    }).setOrigin(0.5);
+
+    this.add.text(GW/2, 170,
+      "Lord Oro is the architect of\nNonsense Media Network,\na creative visionary using AI\nto bridge the gap between\nepic literature and interactive combat.\n\nMy sword is my pen.\nThe mine is open.",
+      {
+        fontFamily:"Press Start 2P", fontSize:"9px", color:"#FFFFFF",
+        align:"center", lineSpacing:8
+      }
+    ).setOrigin(0.5);
+
+    // Linktree
+    const lt = this.add.image(GW/2, GH-60, "link_tree")
+      .setDisplaySize(180, 70)
+      .setInteractive({useHandCursor:true});
+    lt.on("pointerdown", ()=> window.open(LINKTREE, "_blank"));
+    this.add.text(GW/2, GH-20, "linktr.ee/NMN_LordOro", {
+      fontFamily:"Press Start 2P", fontSize:"7px", color:"#55AAFF"
+    }).setOrigin(0.5);
+
+    // Back
+    this.add.text(30, 30, "◀ BACK", {
+      fontFamily:"Press Start 2P", fontSize:"8px", color:"#AAAAAA"
+    }).setInteractive({useHandCursor:true})
+      .on("pointerdown", ()=> this.scene.start("OriginHub"));
+  }
+}
+
+// ── BATTLE SCENE ──────────────────────────────────────
+class BattleScene extends Phaser.Scene {
+  constructor(){ super("BattleScene"); }
+
+  create(){
+    // ── BG (Eyes brand anchor) ──
+    this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW,GH).setAlpha(0.3).setScrollFactor(0);
+
+    // ── PHYSICS ──
+    this.physics.world.gravity.y = 1400;   // Golden Ore spec
+
+    // ── PLATFORMS ──
+    this.platforms = this.physics.add.staticGroup();
+    const mkP = (px,py,pw,ph=18,col=0x3a2a0a) => {
+      const p = this.add.rectangle(px,py,pw,ph,col);
+      this.add.rectangle(px, py-ph/2-1, pw, 3, 0xFFD700, 0.35);
+      this.physics.add.existing(p, true);
+      this.platforms.add(p);
+    };
+    mkP(GW/2, GH-55,  520, 20);   // main stage
+    mkP(150,  GH-180, 200);        // left shelf
+    mkP(650,  GH-180, 200);        // right shelf
+
+    // ── ANIMATIONS ──
+    const makeAnims = (prefix, sheet) => {
+      const safe = (key,start,end,rate,loop) => {
+        if(!this.anims.exists(key))
+          this.anims.create({key, frames:this.anims.generateFrameNumbers(sheet,{start,end}), frameRate:rate, repeat:loop?-1:0});
+      };
+      safe(prefix+"_idle",  0, 3, 6,  true);
+      safe(prefix+"_jump",  4, 6, 8,  false);
+      safe(prefix+"_melee", 12,13,14, false);   // plays 12→13 for Juni; close enough for shared key
+      safe(prefix+"_range", 7, 9, 10, false);
+      safe(prefix+"_burst", 15,17,10, false);
+      safe(prefix+"_dmg",   19,21,12, false);
+    };
+    makeAnims("j","j_sheet");
+    makeAnims("p","p_sheet");
+
+    // ── SPAWN PLAYERS ──
+    const p1Sheet = Match.p1==="Juni" ? "j_sheet" : "p_sheet";
+    const p2Sheet = Match.p1==="Juni" ? "p_sheet" : "j_sheet";
+    const p1Pre   = Match.p1==="Juni" ? "j" : "p";
+    const p2Pre   = Match.p1==="Juni" ? "p" : "j";
+
+    this.p1 = this.physics.add.sprite(SPAWN.p1.x, SPAWN.p1.y, p1Sheet);
+    this.p2 = this.physics.add.sprite(SPAWN.p2.x, SPAWN.p2.y, p2Sheet).setFlipX(true);
+    this.p1Pre = p1Pre; this.p2Pre = p2Pre;
+
+    [this.p1, this.p2].forEach(sp => {
+      sp.setCollideWorldBounds(false);
+      sp.setDisplaySize(80, 80);
+      sp.body.setSize(38, 52).setOffset((sp.width-38)/2, sp.height-52);
+      sp.setBounce(0);
+    });
+
+    this.physics.add.collider([this.p1, this.p2], this.platforms);
+
+    // ── STATE ──
+    this.S = {
+      p1Stun:false, p2Stun:false,
+      p1AtkCD:false, p2AtkCD:false,
+      p1Jumps:0,  p2Jumps:0,
+      hitStop:false, gameOver:false
+    };
+    this.reinforcementTriggered = false;
+
+    // ── HITBOX GROUPS ──
+    this.meleeGrp = this.physics.add.group();
+    this.projGrp  = this.physics.add.group();
+
+    this.physics.add.overlap(this.meleeGrp, this.p2, (hit,player)=>{
+      if(!hit||!hit.active||hit.getData("owner")==="p2") return;
+      addGoldSpark(this, hit.x, hit.y);
+      this.resolveHit("p1","p2",hit,false);
+    });
+    this.physics.add.overlap(this.meleeGrp, this.p1, (hit,player)=>{
+      if(!hit||!hit.active||hit.getData("owner")==="p1") return;
+      addGoldSpark(this, hit.x, hit.y);
+      this.resolveHit("p2","p1",hit,false);
+    });
+    this.physics.add.overlap(this.projGrp, this.p2, (hit,player)=>{
+      if(!hit||!hit.active||hit.getData("owner")==="p2") return;
+      addGoldSpark(this, hit.x, hit.y);
+      this.resolveHit("p1","p2",hit,true);
+    });
+    this.physics.add.overlap(this.projGrp, this.p1, (hit,player)=>{
+      if(!hit||!hit.active||hit.getData("owner")==="p1") return;
+      addGoldSpark(this, hit.x, hit.y);
+      this.resolveHit("p2","p1",hit,true);
+    });
+
+    // ── HUD ──
+    this.buildHUD();
+
+    // ── KEYS ──
+    this.keys = this.input.keyboard.addKeys({
+      W:"W", A:"A", D:"D", J:"J", K:"K", L:"L",
+      SEMI:"SEMICOLON", P:"P"
+    });
+
+    // ── PAUSE MENU ──
+    this.pauseContainer = this.add.container(GW/2, GH/2).setDepth(9500).setVisible(false);
+    const pBg  = this.add.rectangle(0, 0, 320, 180, 0x050308, 0.95).setStrokeStyle(2, 0xFFD700);
+    const pTxt = this.add.text(0, -50, "⏸  PAUSED", {fontFamily:"Press Start 2P",fontSize:"14px",color:"#FFD700"}).setOrigin(0.5);
+    const qBtn = this.add.text(0, 20, "◀ QUIT TO MENU", {
+      fontFamily:"Press Start 2P",fontSize:"10px",color:"#050308",
+      backgroundColor:"#FFD700",padding:{x:12,y:6}
+    }).setOrigin(0.5).setInteractive({useHandCursor:true});
+    qBtn.on("pointerdown", ()=>{ Match.paused=false; this.scene.start("BrawlerScene"); });
+    this.pauseContainer.add([pBg, pTxt, qBtn]);
+
+    // Camera
+    this.camX = GW/2; this.targetZoom = 1.0;
+    this.cameras.main.centerOn(GW/2, GH/2);
+
+    // Gamepad
+    this.pad = null;
+    this.input.gamepad.once("connected", p=>{ this.pad=p; });
+
+    // AI timer
+    this.cpuAtkTimer = 0; this.cpuFireTimer = 0; this.cpuJumps = 0; this.cpuAtkCD = false;
+  }
+
+  // ── HUD ──────────────────────────────────────────────
+  buildHUD(){
+    const D = 9999;
+    this.add.rectangle(0,0,220,46,0x050308,0.92).setOrigin(0).setDepth(D).setScrollFactor(0);
+    this.add.rectangle(GW,0,220,46,0x050308,0.92).setOrigin(1,0).setDepth(D).setScrollFactor(0);
+    const p1c = Match.p1==="Juni" ? "#00FF88" : "#FF6600";
+    const p2c = Match.p1==="Juni" ? "#FF6600" : "#00FF88";
+    this.add.text(10,5,Match.p1.toUpperCase(),{fontFamily:"Press Start 2P",fontSize:"7px",color:p1c}).setDepth(D).setScrollFactor(0);
+    this.p1DT = this.add.text(10,17,"0%",{fontFamily:"Press Start 2P",fontSize:"14px",color:"#FFF"}).setDepth(D).setScrollFactor(0);
+    this.p1HT = this.add.text(10,35,"♥♥♥",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#FF4444"}).setDepth(D).setScrollFactor(0);
+    this.add.text(GW-10,5,"CPU: "+Match.p2.toUpperCase(),{fontFamily:"Press Start 2P",fontSize:"7px",color:p2c}).setOrigin(1,0).setDepth(D).setScrollFactor(0);
+    this.p2DT = this.add.text(GW-10,17,"0%",{fontFamily:"Press Start 2P",fontSize:"14px",color:"#FFF"}).setOrigin(1,0).setDepth(D).setScrollFactor(0);
+    this.p2HT = this.add.text(GW-10,35,"♥♥♥",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#FF4444"}).setOrigin(1,0).setDepth(D).setScrollFactor(0);
+    this.add.text(GW/2,6,"P = PAUSE",{fontFamily:"Press Start 2P",fontSize:"6px",color:"#444"}).setOrigin(0.5,0).setDepth(D).setScrollFactor(0);
+  }
+
+  refreshHUD(){
+    this.p1DT.setText(Match.p1Pct+"%");
+    this.p2DT.setText(Match.p2Pct+"%");
+    const clr = p => p>80?"#FF4444":p>40?"#FFAA00":"#FFFFFF";
+    this.p1DT.setColor(clr(Match.p1Pct));
+    this.p2DT.setColor(clr(Match.p2Pct));
+    const h = n => "♥".repeat(Math.max(0,n))+"♡".repeat(Math.max(0,3-n));
+    this.p1HT.setText(h(Match.p1Lives));
+    this.p2HT.setText(h(Match.p2Lives));
+  }
+
+  // ── RESPAWN CONTRACT ─────────────────────────────────
+  // P1 and P2 use identical code path — no bias
+  respawnOrEnd(id){
+    const S = this.S;
+    if(S.gameOver) return;
+    const isP1 = id==="p1";
+    const sp   = isP1 ? this.p1 : this.p2;
+    const spX  = isP1 ? SPAWN.p1.x : SPAWN.p2.x;
+    const spY  = isP1 ? SPAWN.p1.y : SPAWN.p2.y;
+
+    if(isP1) Match.p1Lives--; else Match.p2Lives--;
+    const lives = isP1 ? Match.p1Lives : Match.p2Lives;
+    this.cameras.main.shake(240, 0.014);
+    this.refreshHUD();
+
+    if(lives <= 0){
+      S.gameOver = true;
+      Match.winner = isP1 ? "P2" : "P1";
+      this.showSignalLost();
+      return;
+    }
+
+    // Reset — both identical
+    if(isP1){ Match.p1Pct=0; S.p1Stun=false; S.p1AtkCD=false; S.p1Jumps=0; }
+    else    { Match.p2Pct=0; S.p2Stun=false; S.p2AtkCD=false; S.p2Jumps=0; }
+
+    // SOUL ANCHOR — order is critical
+    this.tweens.killTweensOf(sp);
+    sp.setActive(true).setVisible(true).setAlpha(1).clearTint();
+    if(sp.body){
+      sp.body.setEnable(true);
+      sp.body.setVelocity(0,0);
+      sp.body.setAcceleration(0,0);
+    }
+    sp.setPosition(spX, spY);
+
+    // Invincibility flash
+    this.tweens.add({targets:sp, alpha:0.3, duration:100, yoyo:true, repeat:7,
+      onComplete:()=>{ sp.setActive(true).setVisible(true).setAlpha(1); }
+    });
+
+    // Float label
+    const lbl = this.add.text(spX, spY-44, (isP1?"P1":"CPU")+" BACK",
+      {fontFamily:"Press Start 2P",fontSize:"8px",color:isP1?"#00FF88":"#FF5555"}).setOrigin(0.5).setDepth(500);
+    this.tweens.add({targets:lbl, y:spY-84, alpha:0, duration:800, onComplete:()=>lbl.destroy()});
+
+    this.refreshHUD();
+  }
+
+  showSignalLost(){
+    document.getElementById("mc").classList.remove("on");
+    const sl = this.textures.exists("signal_lost")
+      ? this.add.image(GW/2,GH/2,"signal_lost").setDisplaySize(GW,GH).setAlpha(0).setDepth(8000).setScrollFactor(0)
+      : this.add.rectangle(GW/2,GH/2,GW,GH,0x050308,0).setDepth(8000).setScrollFactor(0);
+    this.tweens.add({targets:sl, alpha:0.9, duration:400});
+
+    const winner = Match.winner === "P1" ? Match.p1 : Match.p2;
+    const winColor = winner==="Juni" ? "#00FF88" : "#FF6600";
+    this.add.text(GW/2, GH/2-30, "SIGNAL LOST",{fontFamily:"Press Start 2P",fontSize:"22px",color:"#FF2222",stroke:"#000",strokeThickness:4}).setDepth(8001).setOrigin(0.5).setScrollFactor(0);
+    this.add.text(GW/2, GH/2+10, Match.winner+" WINS — "+winner.toUpperCase(),{fontFamily:"Press Start 2P",fontSize:"10px",color:winColor}).setDepth(8001).setOrigin(0.5).setScrollFactor(0);
+
+    // Conversion CTA
+    const url = winner==="Juni" ? BOOK_LINKS.juni_en : BOOK_LINKS.pyro_en;
+    const cta = this.add.text(GW/2, GH/2+50, "📖 READ THE LEGEND",{
+      fontFamily:"Press Start 2P",fontSize:"9px",color:"#55AAFF",
+      backgroundColor:"#111111",padding:{x:10,y:5}
+    }).setDepth(8001).setOrigin(0.5).setScrollFactor(0).setInteractive({useHandCursor:true});
+    cta.on("pointerdown",()=>window.open(url,"_blank"));
+    this.tweens.add({targets:cta, alpha:0.5, duration:800, yoyo:true, repeat:-1});
+
+    // Also link Outbreak (cross-pollination)
+    const cta2 = this.add.text(GW/2, GH/2+78, "📡 OUTBREAK FROM THE STARS →",{
+      fontFamily:"Press Start 2P",fontSize:"6px",color:"#9933CC"
+    }).setDepth(8001).setOrigin(0.5).setScrollFactor(0).setInteractive({useHandCursor:true});
+    cta2.on("pointerdown",()=>window.open(BOOK_LINKS.outbreak_en,"_blank"));
+
+    this.time.delayedCall(2500, ()=> this.scene.start("ResultsScene"));
+  }
+
+  // ── HIT RESOLUTION ───────────────────────────────────
+  // Hitbox destroyed first — prevents double-fire freeze
+  resolveHit(atkId, tgtId, hit, isProjectile){
+    const S = this.S;
+    if(S.gameOver || !hit || !hit.active) return;
+    hit.destroy();
+    const tgt = tgtId==="p2" ? this.p2 : this.p1;
+    const atk = atkId==="p1" ? this.p1 : this.p2;
+    if(!tgt.active || !tgt.body) return;
+
+    const power = isProjectile ? 8 : 6;
+    if(tgtId==="p2") Match.p2Pct+=power; else Match.p1Pct+=power;
+    const pct = tgtId==="p2" ? Match.p2Pct : Match.p1Pct;
+
+    // NMN Smash formula — gentler ramp
+    const kbScale = Math.min(4, 1+(pct*0.015));
+    const dir = tgt.x >= atk.x ? 1 : -1;
+    tgt.body.setVelocity(dir*180*kbScale, -160*kbScale);
+
+    // Play damage animation on target
+    const tPre = tgtId==="p2" ? this.p2Pre : this.p1Pre;
+    if(this.anims.exists(tPre+"_dmg")) tgt.play(tPre+"_dmg", true);
+
+    this.cameras.main.shake(isProjectile?40:65, 0.007);
+
+    // Stun — input lock only, velocity runs free
+    if(tgtId==="p2") S.p2Stun=true; else S.p1Stun=true;
+    this.time.delayedCall(150, ()=>{
+      if(!S.gameOver){ if(tgtId==="p2") S.p2Stun=false; else S.p1Stun=false; }
+    });
+
+    this.tweens.add({targets:tgt, alpha:{from:0.5,to:1}, duration:140});
+    this.refreshHUD();
+  }
+
+  // ── SPAWN MELEE HITBOX ───────────────────────────────
+  spawnMelee(id){
+    const sp  = id==="p1" ? this.p1 : this.p2;
+    const pre = id==="p1" ? this.p1Pre : this.p2Pre;
+    if(!sp.active || !sp.body) return;
+    const dir = sp.flipX ? -1 : 1;
+    if(this.anims.exists(pre+"_melee")) sp.play(pre+"_melee", true);
+    // Hitbox as rectangle with physics
+    const hit = this.add.rectangle(sp.x+dir*38, sp.y-6, 32, 28, 0xFFD700, 0);
+    this.physics.add.existing(hit);
+    hit.body.setAllowGravity(false).setImmovable(true);
+    hit.setData("owner", id);
+    hit.life = 0;
+    this.meleeGrp.add(hit);
+  }
+
+  // ── SPAWN PROJECTILE ────────────────────────────────
+  spawnProjectile(id){
+    const sp  = id==="p1" ? this.p1 : this.p2;
+    const pre = id==="p1" ? this.p1Pre : this.p2Pre;
+    if(!sp.active || !sp.body) return;
+    const dir   = sp.flipX ? -1 : 1;
+    const isP1  = id==="p1";
+    const col   = isP1 ? 0xFF5500 : 0x00CCFF;
+    const col2  = isP1 ? 0xFFAA00 : 0xFFFFFF;
+
+    if(this.anims.exists(pre+"_range")) sp.play(pre+"_range", true);
+
+    const vis = this.add.rectangle(sp.x+dir*38, sp.y-6, isP1?20:16, isP1?9:11, col, 0.95).setDepth(50);
+    this.tweens.add({targets:vis, fillColor:{from:col,to:col2}, duration:isP1?55:28, yoyo:true, repeat:-1});
+
+    const hit = this.add.rectangle(sp.x+dir*38, sp.y-6, 18, 18, 0xFFFFFF, 0);
+    this.physics.add.existing(hit);
+    hit.body.setAllowGravity(false);
+    hit.body.setVelocityX(dir*(isP1?560:580));
+    hit.setData("owner", id);
+    hit.setData("vis",   vis);
+    hit.life = 0;
+    this.projGrp.add(hit);
+
+    // Vapor trail
+    let tc = 0;
+    this.time.addEvent({delay:22,repeat:20,callback:()=>{
+      if(!hit.active){ if(vis.active)vis.destroy(); return; }
+      vis.setPosition(hit.x, hit.y);
+      const dot = this.add.rectangle(hit.x-dir*(6+tc*1.2), hit.y+(Math.random()*6-3),
+        isP1?7:5, isP1?5:7, isP1?0xFF6600:0x00AAFF, 0.8).setDepth(49);
+      tc++;
+      this.tweens.add({targets:dot, alpha:0, scaleX:0, scaleY:0, duration:isP1?200:150, onComplete:()=>dot.destroy()});
+    }});
+  }
+
+  // ── BURST (Semicolon) ────────────────────────────────
+  spawnBurst(id){
+    const sp  = id==="p1" ? this.p1 : this.p2;
+    const pre = id==="p1" ? this.p1Pre : this.p2Pre;
+    if(!sp.active || !sp.body) return;
+    if(this.anims.exists(pre+"_burst")) sp.play(pre+"_burst", true);
+    const col = pre==="j" ? 0x00FF88 : 0xFF2222;
+    const aoe = this.add.circle(sp.x, sp.y, 80, col, 0.35).setDepth(49);
+    this.tweens.add({targets:aoe, scaleX:1.5, scaleY:1.5, alpha:0, duration:400, onComplete:()=>aoe.destroy()});
+    // AOE hit
+    const tgt = id==="p1" ? this.p2 : this.p1;
+    if(Phaser.Math.Distance.Between(sp.x,sp.y,tgt.x,tgt.y) < 90){
+      addGoldSpark(this, tgt.x, tgt.y);
+      this.resolveHit(id, id==="p1"?"p2":"p1", {active:true, destroy:()=>{}, getData:()=>"dummy", x:tgt.x, y:tgt.y, setData:()=>{}}, false);
+    }
+  }
+
+  // ── CPU AI ───────────────────────────────────────────
+  runCPU(dt){
+    const S = this.S, sp = this.p2;
+    if(!sp.active || S.p2Stun || !sp.body) return;
+    if(sp.body.blocked.down) S.p2Jumps = 0;
+    const dx = this.p1.x - sp.x, absX = Math.abs(dx);
+    if(absX > 40){ sp.body.setVelocityX(dx>0?190:-190); sp.setFlipX(dx<0); }
+    else sp.body.setVelocityX(sp.body.velocity.x*0.6);
+    // Jump occasionally
+    this.cpuAtkTimer = (this.cpuAtkTimer||0) + dt;
+    if(absX>60 && S.p2Jumps<2 && Math.random()<0.022){
+      sp.body.setVelocityY(-600); S.p2Jumps++; // Golden Ore jump velocity
+    }
+    // Melee when close
+    if(absX<70 && Math.random()<0.10 && !this.cpuAtkCD){
+      this.cpuAtkCD=true;
+      this.spawnMelee("p2");
+      this.time.delayedCall(450,()=>this.cpuAtkCD=false);
+    }
+    // Projectile at range
+    this.cpuFireTimer = (this.cpuFireTimer||0) + dt;
+    if(absX>90 && absX<280 && Math.random()<0.035 && !this.cpuAtkCD){
+      this.cpuAtkCD=true;
+      this.spawnProjectile("p2");
+      this.time.delayedCall(350,()=>this.cpuAtkCD=false);
+    }
+  }
+
+  // ── P1 INPUT ─────────────────────────────────────────
+  moveP1(){
+    const S = this.S, sp = this.p1, pre = this.p1Pre;
+    if(!sp.active || !sp.body) return;
+    const k = this.keys;
+    if(sp.body.blocked.down) S.p1Jumps = 0;
+
+    // Shield (L key)
+    if(k.L.isDown || MP.s){
+      sp.setVelocityX(0);
+      sp.setFrame(pre==="j"?18:20);
+      return;
+    }
+
+    if(!S.p1Stun){
+      const gL = k.A.isDown || MP.l;
+      const gR = k.D.isDown || MP.r;
+      if(gL){ sp.body.setVelocityX(-260); sp.setFlipX(true); sp.play(pre+"_idle",true); }
+      else if(gR){ sp.body.setVelocityX(260); sp.setFlipX(false); sp.play(pre+"_idle",true); }
+      else{ sp.body.setVelocityX(sp.body.velocity.x*0.7); sp.play(pre+"_idle",true); }
+
+      if((Phaser.Input.Keyboard.JustDown(k.W)||MP.j) && S.p1Jumps<2){
+        sp.body.setVelocityY(-600); S.p1Jumps++;  // Golden Ore jump velocity
+        sp.play(pre+"_jump",true);
+        MP.j=false;
+      }
+      if((Phaser.Input.Keyboard.JustDown(k.J)||MP.a) && !S.p1AtkCD){
+        S.p1AtkCD=true;
+        this.spawnMelee("p1");
+        this.time.delayedCall(210,()=>S.p1AtkCD=false);
+        MP.a=false;
+      }
+      if((Phaser.Input.Keyboard.JustDown(k.K)||MP.f) && !S.p1AtkCD){
+        S.p1AtkCD=true;
+        this.spawnProjectile("p1");
+        this.time.delayedCall(290,()=>S.p1AtkCD=false);
+        MP.f=false;
+      }
+      if(Phaser.Input.Keyboard.JustDown(k.SEMI)){
+        this.spawnBurst("p1");
+      }
+    }
+  }
+
+  // ── CAMERA ───────────────────────────────────────────
+  updateCamera(){
+    const p1x = this.p1.active ? this.p1.x : GW/2;
+    const p2x = this.p2.active ? this.p2.x : GW/2;
+    const mx  = (p1x+p2x)/2;
+    this.camX += (mx-this.camX)*0.08;
+    const dist = Math.abs(p1x-p2x);
+    const raw  = dist<180?1.18:dist>420?0.86:1.0;
+    this.targetZoom = Phaser.Math.Clamp(raw, 0.82, 1.22);
+    this.cameras.main.zoom += (this.targetZoom-this.cameras.main.zoom)*0.04;
+    this.cameras.main.centerOn(this.camX, GH/2);
+  }
+
+  // ── UPDATE ───────────────────────────────────────────
+  update(time, dt){
+    const S = this.S;
+
+    // Pause toggle
+    if(Phaser.Input.Keyboard.JustDown(this.keys.P)){
+      Match.paused = !Match.paused;
+      this.pauseContainer.setVisible(Match.paused);
+      this.physics.world.isPaused = Match.paused;
+    }
+    if(Match.paused || S.gameOver) return;
+
+    // Hitbox lifetime decay
+    this.meleeGrp.children.iterate(h=>{
+      if(!h) return;
+      h.life += dt;
+      if(h.life > 200) h.destroy();
+    });
+    this.projGrp.children.iterate(h=>{
+      if(!h) return;
+      h.life += dt;
+      const vis = h.getData("vis");
+      if(h.life > 1500 || h.x < BLAST.minX || h.x > BLAST.maxX){
+        if(vis&&vis.active) vis.destroy();
+        h.destroy();
+      }
+    });
+
+    this.moveP1();
+    this.runCPU(dt);
+
+    // Blast zone check — both players identical
+    [["p1",this.p1],["p2",this.p2]].forEach(([id,sp])=>{
+      if(!sp.active) return;
+      if(sp.x<BLAST.minX||sp.x>BLAST.maxX||sp.y<BLAST.minY||sp.y>BLAST.maxY)
+        this.respawnOrEnd(id);
+    });
+
+    this.updateCamera();
+  }
+}
+
+// ── RESULTS SCENE ─────────────────────────────────────
+class ResultsScene extends Phaser.Scene {
+  constructor(){ super("ResultsScene"); }
+
+  create(){
+    this.add.image(GW/2, GH/2, "bg_eyes").setDisplaySize(GW,GH).setAlpha(0.35);
+
+    const winner = Match.winner==="P1" ? Match.p1 : Match.p2;
+    const winColor = winner==="Juni" ? "#00FF88" : "#FF6600";
+    const winSheet = winner==="Juni" ? "j_sheet" : "p_sheet";
+
+    // Winner portrait animated
+    const portrait = this.add.sprite(GW/2, GH/2-60, winSheet).setDisplaySize(120,120);
+    if(this.anims.exists((winner==="Juni"?"j":"p")+"_idle"))
+      portrait.play((winner==="Juni"?"j":"p")+"_idle");
+    this.tweens.add({targets:portrait, scaleX:1.08, scaleY:1.08, yoyo:true, repeat:-1, duration:800});
+
+    this.add.text(GW/2, GH/2+20, "SECTOR CLEARED",{
+      fontFamily:"Press Start 2P",fontSize:"18px",color:"#FFD700",
+      stroke:"#000",strokeThickness:4
+    }).setOrigin(0.5);
+    this.add.text(GW/2, GH/2+50, Match.winner+" WINS — "+winner.toUpperCase(),{
+      fontFamily:"Press Start 2P",fontSize:"10px",color:winColor
+    }).setOrigin(0.5);
+
+    // Conversion CTAs
+    const url1 = winner==="Juni" ? BOOK_LINKS.juni_en : BOOK_LINKS.pyro_en;
+    const lore1 = winner==="Juni"
+      ? "Enter if you dare; face Anubis in the sands of time."
+      : "Born from the forge. His tusks run hotter than the mine walls.";
+    const cta1 = this.add.text(GW/2, GH/2+74, "★ "+lore1,{
+      fontFamily:"Press Start 2P",fontSize:"6px",color:winColor,
+      align:"center",wordWrap:{width:GW-40}
+    }).setOrigin(0.5).setInteractive({useHandCursor:true});
+    cta1.on("pointerdown",()=>window.open(url1,"_blank"));
+    this.tweens.add({targets:cta1,alpha:0.5,duration:900,yoyo:true,repeat:-1});
+
+    const cta2 = this.add.text(GW/2, GH/2+102,
+      winner==="Juni"?"📡 Also: Outbreak from the Stars →":"📗 Also: Juni the Immortal →",{
+      fontFamily:"Press Start 2P",fontSize:"6px",color:"#555"
+    }).setOrigin(0.5).setInteractive({useHandCursor:true});
+    cta2.on("pointerover",()=>cta2.setColor("#AAA"));
+    cta2.on("pointerout",()=>cta2.setColor("#555"));
+    cta2.on("pointerdown",()=>window.open(winner==="Juni"?BOOK_LINKS.outbreak_en:BOOK_LINKS.juni_en,"_blank"));
+
+    this.add.text(GW/2, GH-28, "Do you want to test your luck again?",{
+      fontFamily:"Press Start 2P",fontSize:"7px",color:"#888"
+    }).setOrigin(0.5);
+    this.add.text(GW/2, GH-14, "ANY KEY / TAP = REMATCH    ESC = MENU",{
+      fontFamily:"Press Start 2P",fontSize:"7px",color:"#444"
+    }).setOrigin(0.5);
+
+    this.input.keyboard.on("keydown",e=>{
+      if(e.key==="Escape") this.scene.start("BrawlerScene");
+      else this.scene.start("BattleScene");
+    });
+    this.input.on("pointerdown",()=>this.scene.start("BattleScene"));
+  }
+}
+
+// ── BOOT ──────────────────────────────────────────────
+new Phaser.Game({
+  type: Phaser.AUTO,
+  width: GW, height: GH,
+  parent: "gc",
+  backgroundColor: "#050308",
+  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+  physics: { default:"arcade", arcade:{ gravity:{y:0}, debug:false } },
+  scene: [StartScreen, BrawlerScene, OriginHub, CreatorBio, BattleScene, ResultsScene],
+  input: { gamepad: true }
+});
+</script>
+</body>
+</html>
