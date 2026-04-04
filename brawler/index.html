@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/><title>NMN: BRAWLERS v5.3 - SOLID SPRITES</title>
+    <meta charset="UTF-8"/><title>NMN: BRAWLERS v5.4 - DEEP SLICE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
     <style>
@@ -47,21 +47,13 @@ const MP = { l: false, r: false, j: false, a: false, s: false, f: false };
 
 const Match = { p1: "Juni", p2: "Pyro" };
 
-// CONSTANT PHYSICS CALIBRATION
-function calibrate(sp) {
+// PHYSICS LOCKDOWN
+function lockHitbox(sp) {
     sp.setOrigin(0.5, 0.5);
-    // This exact box prevents the "hopping" between animations
+    // Hard-coded to fit the bottom of your 128x128 Piskel export
     sp.body.setSize(44, 96).setOffset(42, 32);
     sp.setCollideWorldBounds(true);
     sp.setDragX(2500);
-}
-
-function mkSp(scene, x, y, name) {
-    let key = name.toLowerCase() + "_sheet";
-    const textureKey = scene.textures.exists(key) ? key : "placeholder";
-    let sp = scene.physics.add.sprite(x, y, textureKey);
-    calibrate(sp);
-    return sp;
 }
 
 class StartScreen extends Phaser.Scene {
@@ -69,12 +61,9 @@ class StartScreen extends Phaser.Scene {
     preload() {
         this.load.image("promo", "brawler_promo.jpg");
         this.load.image("bg", "bg_deep_forest.jpg");
+        // Ensure frameWidth/Height is strictly 128
         this.load.spritesheet("juni_sheet", "juni_sheet.png", { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet("pyro_sheet", "pyro_sheet.png", { frameWidth: 128, frameHeight: 128 });
-        
-        let g = this.make.graphics({x: 0, y: 0, add: false});
-        g.fillStyle(0x444444, 1); g.fillRect(0, 0, 128, 128);
-        g.generateTexture("placeholder", 128, 128);
     }
     create() {
         this.add.image(GW/2, GH/2, "promo").setDisplaySize(GW, GH);
@@ -102,21 +91,22 @@ class BattleScene extends Phaser.Scene {
         const p1n = Match.p1.toLowerCase(), p2n = Match.p2.toLowerCase();
 
         [p1n, p2n].forEach(n => {
-            if (this.textures.exists(n+'_sheet')) {
-                this.anims.create({ key: n+'_idle', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 0, end: 2 }), frameRate: 6, repeat: -1 });
-                this.anims.create({ key: n+'_jump', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 3, end: 5 }), frameRate: 10, repeat: 0 });
-                this.anims.create({ key: n+'_atk', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 7, end: 11 }), frameRate: 15, repeat: 0 });
-                this.anims.create({ key: n+'_fire', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 12, end: 14 }), frameRate: 12, repeat: 0 });
-                this.anims.create({ key: n+'_shd', frames: [{key: n+'_sheet', frame: 6}], frameRate: 1 });
-            }
+            this.anims.create({ key: n+'_idle', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 0, end: 2 }), frameRate: 6, repeat: -1 });
+            this.anims.create({ key: n+'_jump', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 3, end: 5 }), frameRate: 10, repeat: 0 });
+            this.anims.create({ key: n+'_atk', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 7, end: 11 }), frameRate: 15, repeat: 0 });
+            this.anims.create({ key: n+'_fire', frames: this.anims.generateFrameNumbers(n+'_sheet', { start: 12, end: 14 }), frameRate: 12, repeat: 0 });
+            this.anims.create({ key: n+'_shd', frames: [{key: n+'_sheet', frame: 6}], frameRate: 1 });
         });
 
         this.platforms = this.physics.add.staticGroup();
         this.platforms.add(this.add.rectangle(GW/2, GH-20, 700, 20, 0x3a2a0a).setAlpha(0.2));
 
-        this.p1 = mkSp(this, SPAWN.p1.x, SPAWN.p1.y, Match.p1);
-        this.p2 = mkSp(this, SPAWN.p2.x, SPAWN.p2.y, Match.p2);
+        this.p1 = this.physics.add.sprite(SPAWN.p1.x, SPAWN.p1.y, p1n + "_sheet");
+        this.p2 = this.physics.add.sprite(SPAWN.p2.x, SPAWN.p2.y, p2n + "_sheet");
         
+        lockHitbox(this.p1);
+        lockHitbox(this.p2);
+
         this.physics.add.collider([this.p1, this.p2], this.platforms);
         this.keys = this.input.keyboard.addKeys({ left: 'A', right: 'D', jump: 'W', punch: 'J', shield: 'K', fire: 'L' });
         this.s = { jumps: 0, busy: false };
@@ -126,7 +116,6 @@ class BattleScene extends Phaser.Scene {
         const p1 = this.p1, p2 = this.p2, ks = this.keys, s = this.s, name = Match.p1.toLowerCase();
         const grounded = p1.body.blocked.down;
 
-        // MIRROR LOCK
         p1.setFlipX(p1.x > p2.x);
         p2.setFlipX(p2.x > p1.x);
 
@@ -135,40 +124,34 @@ class BattleScene extends Phaser.Scene {
         if (!s.busy) {
             if (ks.shield.isDown || MP.s) { p1.setVelocityX(0); p1.play(name + '_shd', true); }
             else {
-                // Movement Logic
                 if (ks.left.isDown || MP.l) { p1.setVelocityX(-260); if (grounded) p1.play(name + '_idle', true); }
                 else if (ks.right.isDown || MP.r) { p1.setVelocityX(260); if (grounded) p1.play(name + '_idle', true); }
                 else { p1.setVelocityX(0); if (grounded) p1.play(name + '_idle', true); }
 
-                // Jump Mechanic (Frames 3-5)
                 if ((Phaser.Input.Keyboard.JustDown(ks.jump) || MP.j) && s.jumps < 2) {
                     p1.setVelocityY(-580); p1.play(name + '_jump', true); s.jumps++;
-                    MP.j = false;
                 }
                 if (!grounded && p1.anims.currentAnim && p1.anims.currentAnim.key !== name + '_jump') p1.play(name + '_jump', true);
 
-                // Punch (J)
                 if (Phaser.Input.Keyboard.JustDown(ks.punch) || MP.a) {
                     s.busy = true; p1.play(name + '_atk');
-                    this.time.delayedCall(300, () => { s.busy = false; calibrate(p1); });
-                    MP.a = false;
+                    this.time.delayedCall(300, () => { s.busy = false; lockHitbox(p1); });
                 }
                 
-                // Fire (L) - THE PROJECTILE FIX
+                // FIXED FIRE: Force Frame 13 only
                 if (Phaser.Input.Keyboard.JustDown(ks.fire) || MP.f) {
                     s.busy = true; p1.play(name + '_fire');
                     this.time.delayedCall(200, () => {
-                        // Slicing: Tell Phaser to grab only Frame 13 of the spritesheet
+                        // We use the specific key and index 13
                         let b = this.physics.add.sprite(p1.x, p1.y, name + '_sheet', 13);
                         b.body.setAllowGravity(false);
                         b.setFlipX(p1.flipX);
-                        // Bullet Hitbox (small and focused)
-                        b.body.setSize(30, 30);
-                        b.setVelocityX(p1.flipX ? -600 : 600);
-                        this.time.delayedCall(1000, () => b.destroy());
+                        // Make the projectile hitbox tiny so it doesn't carry the "whole body" physics
+                        b.body.setSize(32, 32).setOffset(48, 48); 
+                        b.setVelocityX(p1.flipX ? -650 : 650);
+                        this.time.delayedCall(800, () => b.destroy());
                     });
-                    this.time.delayedCall(500, () => { s.busy = false; calibrate(p1); });
-                    MP.f = false;
+                    this.time.delayedCall(500, () => { s.busy = false; lockHitbox(p1); });
                 }
             }
         }
