@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <title>NMN: BRAWLERS — Golden Ore Edition v11.6</title>
+  <title>NMN: BRAWLERS — Golden Ore Edition v11.8</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
   <style>
@@ -12,17 +12,19 @@
     #mc{display:none;position:fixed;bottom:0;left:0;right:0;height:180px;pointer-events:none;z-index:999;}
     #mc.on{display:block;}
     .mb{
-      position:absolute;width:58px;height:58px;border-radius:50%;
+      position:absolute;border-radius:50%;
       border:3px solid #FFD700;background:rgba(0,0,0,0.85);
-      color:#FFD700;font-size:14px;font-weight:bold;
+      color:#FFD700;font-weight:bold;
       display:flex;align-items:center;justify-content:center;
       pointer-events:all;user-select:none;-webkit-user-select:none;
       box-shadow:0 0 10px rgba(255,215,0,0.4);
     }
-    #ml{left:18px;bottom:58px;} #mr{left:90px;bottom:58px;}
-    #mj{left:54px;bottom:118px;} #ma{right:18px;bottom:120px;}
-    #ms{right:90px;bottom:80px;} #mf{right:18px;bottom:58px;}
-    #mb{left:54px;bottom:52px;}
+    /* Ergonomic Layout */
+    #ma { width:80px; height:80px; right:20px; bottom:20px; font-size:24px; } /* Melee */
+    #ms { width:65px; height:65px; right:115px; bottom:28px; font-size:20px; } /* Proj */
+    #mf { width:50px; height:50px; right:35px; bottom:115px; font-size:16px; } /* Shield */
+    #mb { width:50px; height:50px; right:100px; bottom:105px; border-color:#00FF88; color:#00FF88; font-size:16px; } /* Burst */
+    #mj { width:60px; height:60px; right:195px; bottom:30px; font-size:18px; } /* Jump */
   </style>
 </head>
 <body>
@@ -34,42 +36,14 @@
     <div id="stick" style="width:44px;height:44px;border-radius:50%;
       background:#FFD700;opacity:0.85;pointer-events:none;transition:transform 0.05s;"></div>
   </div>
-  <div class="mb" id="mj" style="right:160px;bottom:120px;">▲</div>
-  <div class="mb" id="ma" style="right:20px;bottom:120px;">🥊</div>
-  <div class="mb" id="ms" style="right:95px;bottom:60px;">⚡</div>
-  <div class="mb" id="mf" style="right:20px;bottom:55px;">🛡</div>
-  <div class="mb" id="mb" style="right:95px;bottom:130px;border-color:#00FF88;color:#00FF88;">☆</div>
+  <div class="mb" id="mj">▲</div>
+  <div class="mb" id="ma">🥊</div>
+  <div class="mb" id="ms">⚡</div>
+  <div class="mb" id="mf">🛡</div>
+  <div class="mb" id="mb">☆</div>
 </div>
 <script>
-// ═══════════════════════════════════════════════════════════════════
-//  NMN: BRAWLERS — GOLDEN ORE EDITION v11.6
-//  Lord Oro (Creative Director) | Claude (Engineering)
-//
-//  MASTER ANIMATION FRAME REFERENCE (CANON — DO NOT ALTER):
-//  Juni  (j_sheet):
-//    idle:0-3 | jump:4,5,6 | melee:12,14,13 | range:7,8,9 | proj_frame:10
-//    burst:15,16,17 | shield:18 | damage:19,20,21 | launch(>50%):15,16,17
-//  Pyro  (p_sheet):
-//    idle:0-3 | jump:4,4,5 | melee:10,11,12 | range:7,8,9 | proj_frame:15
-//    burst:6 | shield:20 | damage:21,22 | launch(>50%):23,24
-//
-//  PHYSICS: gravity y:1400 (Golden Ore spec)
-//  SPAWN: players spawn ON the main platform, not above it
-//  HITBOXES: add.rectangle + physics.add.existing (never group.create(null))
-//  OVERLAP CALLBACKS: always (hit, player) two-arg form
-//
-//  CONVERSION LINKS (hard-coded):
-//    Juni:    https://books2read.com/u/4EOxZ0
-//    Outbreak:https://books2read.com/u/31NrLw
-//    Tabbies: https://a.co/d/06X2Jjee
-//    Pyro:    https://a.co/d/036X5lJP
-//    Linktree:https://linktr.ee/NMN_LordOro
-// ═══════════════════════════════════════════════════════════════════
-
 const GW=800, GH=450;
-
-// Main platform Y = GH-55, top surface = GH-55-10 = GH-65
-// Spawn players standing on top: y = GH-65-40 = GH-105
 const MAIN_PLAT_Y = GH-55;
 const SPAWN = { p1:{x:200, y:MAIN_PLAT_Y-75}, p2:{x:600, y:MAIN_PLAT_Y-75} };
 const BLAST = { minX:-280, maxX:1080, minY:-280, maxY:880 };
@@ -79,7 +53,7 @@ const Match = {
   p1Pct:0, p2Pct:0,
   p1Lives:3, p2Lives:3,
   map:"bg_eyes", paused:false, winner:null,
-  difficulty:"NORMAL"  // EASY | NORMAL | HARD
+  difficulty:"NORMAL", maxHealth:250 
 };
 
 const BOOK_LINKS = {
@@ -90,14 +64,12 @@ const BOOK_LINKS = {
 };
 const LINKTREE = "https://linktr.ee/NMN_LordOro";
 const STAGE_BG = {
-  mana_forest:  { key:"bg_eyes", tint:0x88ffaa, alpha:0.35 },
-  glitch_mines: { key:"bg_eyes", tint:0x8888ff, alpha:0.35 },
-  obsidian_pit: { key:"bg_eyes", tint:0xFFD700, alpha:0.35 }
+  mana_forest:  { key:"deep_forest_img", tint:null, alpha:1 },
+  glitch_mines: { key:"forest_edge_img", tint:null, alpha:1 },
+  obsidian_pit: { key:"bg_eyes", tint:0xFFD700, alpha:0.45 }
 };
-
 const BOOK_LIST = ["juni_en","outbreak_en","tabbies_en","pyro_en"];
 
-// CANON FRAME REGISTRY (Master Animation List — do not alter)
 const FRAMES = {
   juni: { idle:[0,1,2,3], jump:5, melee:12, range:10, proj:10, burst:16, shield:18, knock:15, dmg:[19,20,21] },
   pyro: { idle:[0,1,2,3], jump:4, melee:11, range:15, proj:15, burst:6,  shield:20, knock:23, dmg:[21,22]    }
@@ -108,9 +80,7 @@ const JOY={active:false,vx:0,vy:0};
 
 (function(){
   const isTouch="ontouchstart" in window||navigator.maxTouchPoints>0;
-  if(isTouch) document.getElementById("mc").classList.add("on");
-
-  // Joystick
+  window.IS_TOUCH = isTouch; 
   const joy=document.getElementById("joy");
   const stick=document.getElementById("stick");
   if(joy){
@@ -137,8 +107,6 @@ const JOY={active:false,vx:0,vy:0};
     joy.onpointermove=e=>{if(!JOY.active)return;e.preventDefault();upd(e);};
     joy.onpointerup=end;joy.onpointercancel=end;joy.onpointerleave=end;
   }
-
-  // Action buttons
   const bind=(id,k)=>{
     const el=document.getElementById(id);
     if(!el)return;
@@ -148,7 +116,6 @@ const JOY={active:false,vx:0,vy:0};
   bind("mj","j");bind("ma","a");bind("ms","s");bind("mf","f");bind("mb","b");
 })();
 
-// Gold spark — no screen flash
 function goldSpark(scene,x,y){
   const g=scene.add.graphics().setDepth(600);
   [0xFFD700,0xFF8800,0xFFFF88,0xFF5500].forEach(col=>{
@@ -161,21 +128,27 @@ function goldSpark(scene,x,y){
   scene.tweens.add({targets:g,alpha:0,duration:220,onComplete:()=>g.destroy()});
 }
 
-// Arc slash visual
 function arcSlash(scene,x,y,dir,isJuni){
   const g=scene.add.graphics().setDepth(580);
   const col =isJuni?0x00FF88:0xFF4400;
   const col2=isJuni?0xAAFFCC:0xFFAA00;
   g.lineStyle(5,col,0.9);
+  
+  // Logic Fix: Mirror arc geometry perfectly
+  const startAngle = dir === 1 ? -70 : 110;
+  const endAngle = dir === 1 ? 70 : 250;
+  const inStart = dir === 1 ? -50 : 130;
+  const inEnd = dir === 1 ? 50 : 230;
+
   g.beginPath();
-  g.arc(x+dir*36,y-8,28,Phaser.Math.DegToRad(-70),Phaser.Math.DegToRad(70),false);
+  g.arc(x+dir*36,y-8,28,Phaser.Math.DegToRad(startAngle),Phaser.Math.DegToRad(endAngle),false);
   g.strokePath();
   g.lineStyle(2,col2,0.6);
   g.beginPath();
-  g.arc(x+dir*36,y-8,19,Phaser.Math.DegToRad(-50),Phaser.Math.DegToRad(50),false);
+  g.arc(x+dir*36,y-8,19,Phaser.Math.DegToRad(inStart),Phaser.Math.DegToRad(inEnd),false);
   g.strokePath();
   for(let i=0;i<7;i++){
-    const ang=Phaser.Math.DegToRad(Phaser.Math.Between(-70,70));
+    const ang=Phaser.Math.DegToRad(Phaser.Math.Between(startAngle,endAngle));
     const r=Phaser.Math.Between(18,32);
     const px=x+dir*36+Math.cos(ang)*r,py=y-8+Math.sin(ang)*r;
     const dot=scene.add.rectangle(px,py,isJuni?5:4,isJuni?4:6,isJuni?0x00FF88:0xFF6600,0.9).setDepth(581);
@@ -183,19 +156,14 @@ function arcSlash(scene,x,y,dir,isJuni){
   }
   scene.tweens.add({targets:g,alpha:0,duration:110,onComplete:()=>g.destroy()});
 }
-// ─────────────────────────────────────────────────────
-//  START SCREEN (UPDATED LINES 186-219)
-// ─────────────────────────────────────────────────────
+
 class StartScreen extends Phaser.Scene{
   constructor(){super("StartScreen");}
   preload(){
-    this.load.image("promo",    "brawler_promo.jpg");
+    this.load.image("promo",    "title_screen_NB.jpg");
     this.load.image("bg_eyes",  "oros_game_eyes.jpg");
-    
-    // NEW FOREST ASSETS PLUGGED IN HERE
     this.load.image("deep_forest_img", "bg_deep_forest.jpg");
     this.load.image("forest_edge_img", "forest_bg.jpg");
-    
     this.load.image("hub_bg",   "logo.jpg");
     this.load.image("link_tree","link_tree.jpg");
     this.load.image("signal_lost","signal_lost.jpg");
@@ -205,10 +173,10 @@ class StartScreen extends Phaser.Scene{
     ["wanderer","olydia","orid","helios"].forEach(n=>this.load.image(n+"_beta",n+"_beta.jpg"));
     this.load.on("loaderror",f=>console.warn("Fallback:",f.key));
     
-    // Loading bar
-    const bar=this.add.rectangle(GW/2,GH/2+20,2,8,0xFFD700).setDepth(1);
-    const trk=this.add.rectangle(GW/2,GH/2+20,402,10,0x222222).setDepth(0);
-    this.load.on("progress",v=>{bar.width=2+398*v;});
+    // Logic Fix: Left-Anchored loading bar
+    const bar=this.add.rectangle(GW/2-200,GH/2+20,0,8,0xFFD700).setOrigin(0,0.5).setDepth(1);
+    const trk=this.add.rectangle(GW/2,GH/2+20,404,10,0x222222).setDepth(0);
+    this.load.on("progress",v=>{bar.width=400*v;});
     this.load.on("complete",()=>{bar.destroy();trk.destroy();});
   }
   create(){
@@ -217,7 +185,7 @@ class StartScreen extends Phaser.Scene{
     else
       this.add.rectangle(0,0,GW,GH,0x050308).setOrigin(0);
     
-    this.add.text(GW/2,GH/2+50,"GOLDEN ORE EDITION v11.6",{
+    this.add.text(GW/2,GH/2+50,"GOLDEN ORE EDITION v11.8",{
       fontFamily:"Press Start 2P",fontSize:"14px",color:"#FFD700",
       stroke:"#000",strokeThickness:3
     }).setOrigin(0.5);
@@ -231,9 +199,6 @@ class StartScreen extends Phaser.Scene{
   }
 }
 
-// ─────────────────────────────────────────────────────
-//  BRAWLER SELECT
-// ─────────────────────────────────────────────────────
 class BrawlerScene extends Phaser.Scene{
   constructor(){super("BrawlerScene");}
   create(){
@@ -241,6 +206,7 @@ class BrawlerScene extends Phaser.Scene{
     Match.p1Pct=0;Match.p2Pct=0;
     Match.p1Lives=3;Match.p2Lives=3;
     Match.paused=false;Match.winner=null;
+    document.getElementById("mc").classList.remove("on");
 
     this.add.image(GW/2,GH/2,"bg_eyes").setDisplaySize(GW,GH).setAlpha(0.5);
     this.add.text(GW/2,30,"SELECT CHARACTER",{fontFamily:"Press Start 2P",fontSize:"14px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
@@ -277,38 +243,34 @@ class BrawlerScene extends Phaser.Scene{
           else{this.scoutIdx=i;this.intelTxt.setText("🔒 "+c.name+": LOCKED — click again to unlock.").setColor("#FF8888");}
           return;
         }
-        if(this.scoutIdx!==i){this.scoutIdx=i;this.intelTxt.setText("★ "+c.name.toUpperCase()+" — "+this.getLore(c.name)).setColor(c.color);return;}
+        if(this.scoutIdx!==i){this.scoutIdx=i;this.intelTxt.setText(c.name.toUpperCase()+" — "+this.getLore(c.name)).setColor(c.color);return;}
         Match.p1=c.name;
         Match.p2=c.name==="Juni"?"Pyro":"Juni";
         this.scene.start("StageSelectScene");
       });
     });
 
-    // Bottom nav
     this.add.text(GW/2-130,GH-20,"📖 ORIGIN HUB",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#050308",backgroundColor:"#FFD700",padding:{x:8,y:4}}).setOrigin(0.5).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("OriginHub"));
     this.add.text(GW/2+130,GH-20,"⚙ DIFFICULTY",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#FFD700",backgroundColor:"#111",padding:{x:8,y:4}}).setOrigin(0.5).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("DifficultyScene"));
   }
   getLore(name){
     const lore={
       "Juni":"Enter if you dare; face Anubis in the endless expanse of the sands of time.",
-      "Pyro":"Born from the forge. His tusks run hotter than the mine walls."
+      "Pyro":"⭐ Born from the forge. He's fire undying as long as the forge deep within the mine is going as it has for eons."
     };
     return lore[name]||"A warrior from the mine.";
   }
 }
 
-// ─────────────────────────────────────────────────────
-//  DIFFICULTY SELECT
-// ─────────────────────────────────────────────────────
 class DifficultyScene extends Phaser.Scene{
   constructor(){super("DifficultyScene");}
   create(){
     this.add.image(GW/2,GH/2,"bg_eyes").setDisplaySize(GW,GH).setAlpha(0.4);
     this.add.text(GW/2,60,"SELECT DIFFICULTY",{fontFamily:"Press Start 2P",fontSize:"13px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
     const opts=[
-      {label:"EASY",   desc:"CPU is slow. Good for exploring.",          color:"#00FF88",val:"EASY"},
-      {label:"NORMAL", desc:"CPU hunts you. Balanced tension.",           color:"#FFD700",val:"NORMAL"},
-      {label:"HARD",   desc:"CPU is relentless. No mercy in the mine.",  color:"#FF4444",val:"HARD"},
+      {label:"EASY",   desc:"100% Max Health. CPU is slow and hesitant.",     color:"#00FF88",val:"EASY", hp:100},
+      {label:"NORMAL", desc:"250% Max Health. Balanced tracking and tension.", color:"#FFD700",val:"NORMAL", hp:250},
+      {label:"HARD",   desc:"500% Max Health. CPU is relentless. No mercy.",  color:"#FF4444",val:"HARD", hp:500},
     ];
     opts.forEach((o,i)=>{
       const y=180+i*80;
@@ -316,14 +278,12 @@ class DifficultyScene extends Phaser.Scene{
       const panel=this.add.rectangle(GW/2,y,460,60,sel?0x1a1a0a:0x0d0d0d).setStrokeStyle(sel?3:2,sel?parseInt(o.color.replace("#","0x")):0x444444).setInteractive({useHandCursor:true});
       this.add.text(GW/2,y-10,o.label,{fontFamily:"Press Start 2P",fontSize:"11px",color:o.color}).setOrigin(0.5);
       this.add.text(GW/2,y+12,o.desc,{fontFamily:"Press Start 2P",fontSize:"6px",color:"#888",align:"center"}).setOrigin(0.5);
-      panel.on("pointerdown",()=>{Match.difficulty=o.val;this.scene.start("BrawlerScene");});
+      panel.on("pointerdown",()=>{Match.difficulty=o.val; Match.maxHealth=o.hp; this.scene.start("BrawlerScene");});
     });
     this.add.text(30,30,"◀ BACK",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#AAA"}).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("BrawlerScene"));
   }
 }
-// ─────────────────────────────────────────────────────
-//  STAGE SELECT (REPLACING LINES 311-341)
-// ─────────────────────────────────────────────────────
+
 class StageSelectScene extends Phaser.Scene{
   constructor(){super("StageSelectScene");}
   create(){
@@ -331,49 +291,25 @@ class StageSelectScene extends Phaser.Scene{
     this.add.text(GW/2,40,"SELECT EXTRACTION SECTOR",{fontFamily:"Press Start 2P",fontSize:"13px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
     
     const stages=[
-      {
-        key:"mana_forest", 
-        label:"DEEP FOREST",   
-        sub:"Verdant / Ancient",   
-        bgKey:"deep_forest_img", // Uses bg_deep_forest.jpg
-        tint:0xffffff            // No tint needed for real images
-      },
-      {
-        key:"glitch_mines",
-        label:"FOREST EDGE",  
-        sub:"Stable / Calm",       
-        bgKey:"forest_edge_img", // Uses forest_bg.jpg
-        tint:0xffffff
-      },
-      {
-        key:"obsidian_pit",
-        label:"THE MINE",      
-        sub:"Narrow / Brutal",     
-        bgKey:"bg_eyes",         // Uses your standard oros_game_eyes.jpg
-        tint:0xFFD700            // Gold tint for the "Main" stage
-      },
+      { key:"mana_forest",  label:"DEEP FOREST",   sub:"Verdant / Ancient",   bgKey:"deep_forest_img" },
+      { key:"glitch_mines", label:"FOREST EDGE",   sub:"Stable / Calm",       bgKey:"forest_edge_img" },
+      { key:"obsidian_pit", label:"THE MINE",      sub:"Narrow / Brutal",     bgKey:"bg_eyes" },
     ];
 
     stages.forEach((stage,i)=>{
       const x=GW/2+(i===0?-240:i===1?0:240),y=GH/2+10;
       const bg=this.add.rectangle(x,y,210,150,0x111111).setStrokeStyle(2,0x555555);
-      
-      // Use the actual image for the preview panel
       const preview = this.add.image(x, y, stage.bgKey).setDisplaySize(210, 150).setAlpha(0.3);
-      
       const panel=this.add.rectangle(x,y,210,150,0x000000,0).setInteractive({useHandCursor:true});
       this.add.text(x,y-28,stage.label,{fontFamily:"Press Start 2P",fontSize:"9px",color:"#FFD700",stroke:"#000",strokeThickness:2}).setOrigin(0.5);
       this.add.text(x,y-4,stage.sub,{fontFamily:"Press Start 2P",fontSize:"6px",color:"#AAA"}).setOrigin(0.5);
       
-      // Mini characters as preview
-      const jPrev=this.add.sprite(x-30,y+30,"j_sheet",0).setDisplaySize(48,48);
-      const pPrev=this.add.sprite(x+30,y+30,"p_sheet",0).setDisplaySize(48,48).setFlipX(true);
-      
       panel.on("pointerover",()=>{panel.setStrokeStyle(3,0xFFFFFF);bg.setStrokeStyle(3,0xFFD700); preview.setAlpha(0.6);});
       panel.on("pointerout", ()=>{panel.setStrokeStyle(0);bg.setStrokeStyle(2,0x555555); preview.setAlpha(0.3);});
       
+      // Logic Fix: Pass the system key, not the image key
       panel.on("pointerdown",()=>{
-        Match.map = stage.bgKey; // Pass the actual image key to the battle
+        Match.map = stage.key; 
         this.scene.start("BattleScene");
       });
     });
@@ -381,9 +317,6 @@ class StageSelectScene extends Phaser.Scene{
   }
 }
 
-// ─────────────────────────────────────────────────────
-//  ORIGIN HUB
-// ─────────────────────────────────────────────────────
 class OriginHub extends Phaser.Scene{
   constructor(){super("OriginHub");}
   create(){
@@ -394,7 +327,7 @@ class OriginHub extends Phaser.Scene{
       {key:"juni_en",    title:"JUNI THE IMMORTAL",       url:BOOK_LINKS.juni_en},
       {key:"outbreak_en",title:"OUTBREAK FROM THE STARS", url:BOOK_LINKS.outbreak_en},
       {key:"tabbies_en", title:"ALL TABBIES HAVE A PLACE",url:BOOK_LINKS.tabbies_en},
-      {key:"pyro_en",    title:"PYRO & HELIOS",            url:BOOK_LINKS.pyro_en},
+      {key:"pyro_en",    title:"PYRO & HELIOS",           url:BOOK_LINKS.pyro_en},
     ];
     books.forEach((b,i)=>{
       const x=110+i*185,y=220;
@@ -411,14 +344,10 @@ class OriginHub extends Phaser.Scene{
   }
 }
 
-// ─────────────────────────────────────────────────────
-//  CREATOR BIO — mysterious / horror tint
-// ─────────────────────────────────────────────────────
 class CreatorBio extends Phaser.Scene{
   constructor(){super("CreatorBio");}
   create(){
     this.add.image(GW/2,GH/2,"bg_eyes").setDisplaySize(GW,GH).setAlpha(0.35);
-    // Red vignette overlay for horror atmosphere
     const vgfx=this.add.graphics();
     vgfx.fillGradientStyle(0xFF0000,0xFF0000,0x000000,0x000000,0.18,0.18,0,0);
     vgfx.fillRect(0,0,GW,GH);
@@ -428,8 +357,9 @@ class CreatorBio extends Phaser.Scene{
 
     const bio=`They say the mine was empty when he found it.\nThe shadows here have teeth.\nThe ore bleeds gold when you aren't watching.\n\nLord Oro doesn't build worlds.\nHe excavates them from a void\nthat was never meant to be opened.\n\nThe characters in his books\nknow things they shouldn't.\nThey remember you.\n\nHe calls it Nonsense Media Network.\nThe name is a misdirection.\n\nHe is watching.\nHe has always been watching.\n\nIf you are reading this —\nyou are already inside the mine.`;
 
-    const bioText=this.add.text(GW/2,210,bio,{fontFamily:"Press Start 2P",fontSize:"7px",color:"#E8E0D0",align:"center",lineSpacing:6,wordWrap:{width:GW-80}}).setOrigin(0.5);
-    // Scrollable bio with mouse wheel and touch drag
+    // Logic Fix: Left alignment per Lead Architect request
+    const bioText=this.add.text(60, 210, bio, {fontFamily:"Press Start 2P",fontSize:"7px",color:"#E8E0D0",align:"left",lineSpacing:6,wordWrap:{width:400}}).setOrigin(0, 0.5);
+    
     this.input.on("wheel",(pointer,gameObjects,deltaX,deltaY)=>{
       bioText.y-=deltaY*0.5;
       bioText.y=Phaser.Math.Clamp(bioText.y,80,280);
@@ -440,49 +370,43 @@ class CreatorBio extends Phaser.Scene{
       if(p.isDown){bioText.y+=(p.y-touchY0)*0.4;bioText.y=Phaser.Math.Clamp(bioText.y,80,280);touchY0=p.y;}
     });
 
-    // Blinking cursor effect
-    const cursor=this.add.text(GW/2+160,340,"█",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#FF4444"}).setOrigin(0.5);
+    const cursor=this.add.text(280,340,"█",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#FF4444"}).setOrigin(0.5);
     this.tweens.add({targets:cursor,alpha:0,duration:500,yoyo:true,repeat:-1});
 
-    const lt=this.add.image(GW/2,GH-52,"link_tree").setDisplaySize(180,60).setInteractive({useHandCursor:true});
+    // Logic Fix: Parallel Linktree placement
+    const lt=this.add.image(GW - 160, GH/2,"link_tree").setDisplaySize(210,100).setInteractive({useHandCursor:true});
     lt.on("pointerdown",()=>window.open(LINKTREE,"_blank"));
-    this.add.text(GW/2,GH-16,"[ ENTER THE NETWORK ]",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#55AAFF"}).setOrigin(0.5).setInteractive({useHandCursor:true}).on("pointerdown",()=>window.open(LINKTREE,"_blank"));
+    this.add.text(GW - 160, GH/2 + 70,"[ ENTER THE NETWORK ]",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#55AAFF"}).setOrigin(0.5).setInteractive({useHandCursor:true}).on("pointerdown",()=>window.open(LINKTREE,"_blank"));
+    
     this.add.text(30,30,"◀ BACK",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#AAA"}).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("OriginHub"));
   }
 }
 
-// ─────────────────────────────────────────────────────
-//  BATTLE SCENE
-// ─────────────────────────────────────────────────────
 class BattleScene extends Phaser.Scene{
   constructor(){super("BattleScene");}
 
   create(){
-    // ── BG ──
-    // Stage background mapped via STAGE_BG
+    if(window.IS_TOUCH) document.getElementById("mc").classList.add("on");
+
     const stageCfg=STAGE_BG[Match.map]||STAGE_BG.mana_forest;
     const bgImg=this.add.image(GW/2,GH/2,stageCfg.key).setDisplaySize(GW,GH).setAlpha(stageCfg.alpha).setScrollFactor(0);
     if(stageCfg.tint) bgImg.setTint(stageCfg.tint);
 
-    // ── PHYSICS ──
     this.physics.world.gravity.y=1400;
 
-    // ── PLATFORMS ──
     this.platforms=this.physics.add.staticGroup();
     const mkP=(px,py,pw,ph=18,col=0x3a2a0a)=>{
       const p=this.add.rectangle(px,py,pw,ph,col);
       this.add.rectangle(px,py-ph/2-1,pw,3,0xFFD700,0.35);
       this.physics.add.existing(p,true);
-      p.body.checkCollision.down=false;  // one-way: passable from below
+      p.body.checkCollision.down=false;
       this.platforms.add(p);
       return p;
     };
-    mkP(GW/2,  MAIN_PLAT_Y,  520,20);  // main — y=GH-55
-    mkP(150,   GH-180, 200);            // left shelf
-    mkP(650,   GH-180, 200);            // right shelf
+    mkP(GW/2,  MAIN_PLAT_Y,  520,20);
+    mkP(150,   GH-180, 200);
+    mkP(650,   GH-180, 200);
 
-    // ── ANIMATIONS (Juni and Pyro have SEPARATE anim keys) ──
-    // Juni
     const jAnims=[
       {key:"j_idle",   start:0,  end:3,  rate:6,  loop:true},
       {key:"j_jump",   start:4,  end:6,  rate:8,  loop:false},
@@ -493,7 +417,6 @@ class BattleScene extends Phaser.Scene{
       {key:"j_dmg",    start:19, end:21, rate:12, loop:false},
       {key:"j_launch", start:15, end:17, rate:10, loop:false},
     ];
-    // Pyro
     const pAnims=[
       {key:"p_idle",   start:0,  end:3,  rate:8,  loop:true},
       {key:"p_jump",   frames:[4,4,5],   rate:8,  loop:false},
@@ -516,7 +439,6 @@ class BattleScene extends Phaser.Scene{
     jAnims.forEach(d=>makeAnim("j_sheet",d));
     pAnims.forEach(d=>makeAnim("p_sheet",d));
 
-    // ── PLAYERS — spawn ON the platform ──
     const p1Sheet=Match.p1==="Juni"?"j_sheet":"p_sheet";
     const p2Sheet=Match.p1==="Juni"?"p_sheet":"j_sheet";
     this.p1Pre=Match.p1==="Juni"?"j":"p";
@@ -528,7 +450,6 @@ class BattleScene extends Phaser.Scene{
     [this.p1,this.p2].forEach(sp=>{
       sp.setDisplaySize(80,80);
       sp.setCollideWorldBounds(false);
-      // Body anchored to feet
       sp.body.setSize(36,50).setOffset((sp.width-36)/2, sp.height-50);
       sp.setBounce(0);
       sp.setDragX(700);
@@ -537,35 +458,35 @@ class BattleScene extends Phaser.Scene{
 
     this.physics.add.collider([this.p1,this.p2],this.platforms);
 
-    // Start idle animations immediately
     this.p1.play(this.p1Pre+"_idle");
     this.p2.play(this.p2Pre+"_idle");
 
-    // Animation state machine — return to idle after every combat anim
     const combatSuffixes=["_melee","_range","_burst","_launch","_dmg","_jump"];
     this.anims.on("animationcomplete",(anim,sprite)=>{
       if(!sprite||!sprite.active||!sprite.body) return;
       if(!combatSuffixes.some(s=>anim.key.endsWith(s))) return;
       const pre=(sprite===this.p1)?this.p1Pre:this.p2Pre;
-      // Return to idle if not moving fast horizontally
       if(Math.abs(sprite.body.velocity.x)<40) sprite.play(pre+"_idle",true);
     });
 
-    // ── STATE ──
     this.S={
+      state:"STARTING",
       p1Stun:false,p2Stun:false,
       p1AtkCD:false,p2AtkCD:false,
       p1Jumps:0,p2Jumps:0,
-      gameOver:false
+      gameOver:false,
+      p1ShieldHp: 5, p2ShieldHp: 5,
+      p1Bursts: 3, p2Bursts: 3,
+      p1BurstBuff: false, p2BurstBuff: false,
+      p1ProjReady: true, p2ProjReady: true
     };
-    this.cpuAtkTimer=0;this.cpuFireTimer=0;this.cpuJumps=0;this.cpuAtkCD=false;
+    
+    // CPU Data
+    this.cpuAtkTimer=0;this.cpuFireTimer=0;this.cpuAtkCD=false;
+    this.cpuSpeed    = Match.difficulty==="EASY"?90:Match.difficulty==="HARD"?260:170;
+    this.cpuAtkFreq  = Match.difficulty==="EASY"?0.02:Match.difficulty==="HARD"?0.25:0.10;
+    this.cpuFireFreq = Match.difficulty==="EASY"?0.005:Match.difficulty==="HARD"?0.10:0.03;
 
-    // CPU speed multipliers by difficulty
-    this.cpuSpeed    = Match.difficulty==="EASY"?120:Match.difficulty==="HARD"?220:170;
-    this.cpuAtkFreq  = Match.difficulty==="EASY"?0.04:Match.difficulty==="HARD"?0.18:0.10;
-    this.cpuFireFreq = Match.difficulty==="EASY"?0.01:Match.difficulty==="HARD"?0.06:0.03;
-
-    // ── HITBOX GROUPS (rectangle+physics — stable arg order) ──
     this.meleeGrp=this.physics.add.group();
     this.projGrp =this.physics.add.group();
 
@@ -590,85 +511,95 @@ class BattleScene extends Phaser.Scene{
       this.resolveHit("p2","p1",hit,true);
     });
 
-    // ── HUD ──
     this.buildHUD();
     this.refreshHUD();
 
-    // ── KEYS ──
     this.keys=this.input.keyboard.addKeys({
-      W:"W",A:"A",D:"D",J:"J",K:"K",L:"L",
+      W:"W",A:"A",S:"S",D:"D",DOWN:"DOWN",J:"J",K:"K",L:"L",
       SEMI:"SEMICOLON",P:"P"
     });
 
-    // ── PAUSE MENU ──
     this.buildPauseMenu();
 
-    // ── CAMERA ──
     this.camX=GW/2;this.targetZoom=1.0;
     this.cameras.main.centerOn(GW/2,GH/2);
+
+    // Logic Fix: Brawl delay timer
+    const bText = this.add.text(GW/2, GH/2, "BRAWL!", {fontFamily:"Press Start 2P", fontSize:"40px", color:"#FFD700", stroke:"#000", strokeThickness:5}).setOrigin(0.5);
+    this.tweens.add({targets:bText, scaleX:1.2, scaleY:1.2, yoyo:true, repeat:-1, duration:300});
+    this.time.delayedCall(1500, () => {
+      bText.destroy();
+      this.S.state = "PLAYING";
+    });
   }
 
-  // ── HEALTH BARS + HUD ────────────────────────────────
   buildHUD(){
     const D=9999;
     const p1c=Match.p1==="Juni"?"#00FF88":"#FF6600";
     const p2c=Match.p1==="Juni"?"#FF6600":"#00FF88";
 
-    // P1 panel
     this.add.rectangle(0,0,230,56,0x050308,0.92).setOrigin(0).setDepth(D).setScrollFactor(0);
     this.add.text(10,5,Match.p1.toUpperCase(),{fontFamily:"Press Start 2P",fontSize:"7px",color:p1c}).setDepth(D).setScrollFactor(0);
-    // Health bar track
     this.add.rectangle(10+4,17,200,10,0x333333).setOrigin(0).setDepth(D).setScrollFactor(0);
     this.p1Bar=this.add.rectangle(10+4,17,200,10,parseInt(p1c.replace("#","0x"))).setOrigin(0).setDepth(D).setScrollFactor(0);
-    // Percent
-    this.p1DT=this.add.text(10,30,"0%",{fontFamily:"Press Start 2P",fontSize:"11px",color:"#FFF"}).setDepth(D).setScrollFactor(0);
-    this.p1HT=this.add.text(10,44,"♥♥♥",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#FF4444"}).setDepth(D).setScrollFactor(0);
+    this.p1ProjBar = this.add.rectangle(10+4, 28, 200, 2, 0x55AAFF).setOrigin(0).setDepth(D).setScrollFactor(0);
+    
+    this.p1DT=this.add.text(10,34,"0%",{fontFamily:"Press Start 2P",fontSize:"11px",color:"#FFF"}).setDepth(D).setScrollFactor(0);
+    this.p1HT=this.add.text(10,48,"♥♥♥",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#FF4444"}).setDepth(D).setScrollFactor(0);
+    this.p1BurstsHUD = this.add.text(60, 48, "☆x3", {fontFamily:"Press Start 2P",fontSize:"7px",color:"#00FF88"}).setDepth(D).setScrollFactor(0);
 
-    // P2 panel
     this.add.rectangle(GW,0,230,56,0x050308,0.92).setOrigin(1,0).setDepth(D).setScrollFactor(0);
     this.add.text(GW-10,5,"CPU: "+Match.p2.toUpperCase(),{fontFamily:"Press Start 2P",fontSize:"7px",color:p2c}).setOrigin(1,0).setDepth(D).setScrollFactor(0);
     this.add.rectangle(GW-214,17,200,10,0x333333).setOrigin(0).setDepth(D).setScrollFactor(0);
     this.p2Bar=this.add.rectangle(GW-214,17,200,10,parseInt(p2c.replace("#","0x"))).setOrigin(0).setDepth(D).setScrollFactor(0);
-    this.p2DT=this.add.text(GW-10,30,"0%",{fontFamily:"Press Start 2P",fontSize:"11px",color:"#FFF"}).setOrigin(1,0).setDepth(D).setScrollFactor(0);
-    this.p2HT=this.add.text(GW-10,44,"♥♥♥",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#FF4444"}).setOrigin(1,0).setDepth(D).setScrollFactor(0);
+    this.p2DT=this.add.text(GW-10,34,"0%",{fontFamily:"Press Start 2P",fontSize:"11px",color:"#FFF"}).setOrigin(1,0).setDepth(D).setScrollFactor(0);
+    this.p2HT=this.add.text(GW-10,48,"♥♥♥",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#FF4444"}).setOrigin(1,0).setDepth(D).setScrollFactor(0);
 
     this.add.text(GW/2,6,"P = PAUSE",{fontFamily:"Press Start 2P",fontSize:"5px",color:"#444"}).setOrigin(0.5,0).setDepth(D).setScrollFactor(0);
   }
 
   refreshHUD(){
-    // Health bar shrinks as % rises, maxes at 500%
-    const p1pct=Math.min(Match.p1Pct,500)/500;
-    const p2pct=Math.min(Match.p2Pct,500)/500;
+    // Logic Fix: Scale relative to the difficulty Max Health parameter
+    const p1pct=Math.min(Match.p1Pct,Match.maxHealth)/Match.maxHealth;
+    const p2pct=Math.min(Match.p2Pct,Match.maxHealth)/Match.maxHealth;
     this.p1Bar.scaleX=Math.max(0,1-p1pct);
     this.p2Bar.scaleX=Math.max(0,1-p2pct);
-    const clr=p=>p>200?"#FF4444":p>100?"#FFAA00":"#FFFFFF";
+    
+    const clr=p=>p>(Match.maxHealth*0.8)?"#FF4444":p>(Match.maxHealth*0.4)?"#FFAA00":"#FFFFFF";
     this.p1DT.setText(Match.p1Pct+"%").setColor(clr(Match.p1Pct));
     this.p2DT.setText(Match.p2Pct+"%").setColor(clr(Match.p2Pct));
+    
     const h=n=>"♥".repeat(Math.max(0,n))+"♡".repeat(Math.max(0,3-n));
     this.p1HT.setText(h(Match.p1Lives));
     this.p2HT.setText(h(Match.p2Lives));
+
+    this.p1BurstsHUD.setText("☆x"+this.S.p1Bursts);
+    this.p1ProjBar.scaleX = this.S.p1ProjReady ? 1 : 0;
   }
 
-  // ── PAUSE MENU with random book ──────────────────────
   buildPauseMenu(){
     this.pauseContainer=this.add.container(GW/2,GH/2).setDepth(9500).setVisible(false);
-    const pBg=this.add.rectangle(0,0,360,220,0x050308,0.96).setStrokeStyle(2,0xFFD700);
-    const pTxt=this.add.text(0,-88,"⏸  PAUSED",{fontFamily:"Press Start 2P",fontSize:"13px",color:"#FFD700"}).setOrigin(0.5);
+    // Logic Fix: Larger box to fit new layout
+    const pBg=this.add.rectangle(0,0,440,260,0x050308,0.96).setStrokeStyle(3,0xFFD700);
+    const pTxt=this.add.text(0,-100,"⏸  PAUSED",{fontFamily:"Press Start 2P",fontSize:"14px",color:"#FFD700"}).setOrigin(0.5);
 
-    // Random book
     const bKey=BOOK_LIST[Math.floor(Math.random()*BOOK_LIST.length)];
     const bUrl=BOOK_LINKS[bKey];
-    const bookImg=this.add.image(0,-28,bKey).setDisplaySize(60,90).setInteractive({useHandCursor:true});
+    const bookImg=this.add.image(0,-30,bKey).setDisplaySize(70,105).setInteractive({useHandCursor:true});
     bookImg.on("pointerdown",()=>window.open(bUrl,"_blank"));
-    const bookHint=this.add.text(0,42,"📖 READ THE LEGEND →",{fontFamily:"Press Start 2P",fontSize:"6px",color:"#55AAFF"}).setOrigin(0.5).setInteractive({useHandCursor:true});
+    const bookHint=this.add.text(0,45,"📖 READ THE LEGEND →",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#55AAFF"}).setOrigin(0.5).setInteractive({useHandCursor:true});
     bookHint.on("pointerdown",()=>window.open(bUrl,"_blank"));
 
-    const qBtn=this.add.text(0,80,"◀ QUIT TO MENU",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#050308",backgroundColor:"#FFD700",padding:{x:12,y:6}}).setOrigin(0.5).setInteractive({useHandCursor:true});
+    // Logic Fix: Added quick restart to maintain consumer flow
+    const rBtn=this.add.text(-90,95,"🔄 RESTART",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#00FF88",backgroundColor:"#111",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
+    rBtn.on("pointerdown",()=>{Match.paused=false; this.scene.restart();});
+    
+    const qBtn=this.add.text(90,95,"◀ QUIT",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#050308",backgroundColor:"#FFD700",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
     qBtn.on("pointerdown",()=>{Match.paused=false;this.scene.start("BrawlerScene");});
-    this.pauseContainer.add([pBg,pTxt,bookImg,bookHint,qBtn]);
+    
+    this.pauseContainer.add([pBg,pTxt,bookImg,bookHint,rBtn,qBtn]);
   }
 
-  // ── RESPAWN CONTRACT ─────────────────────────────────
   respawnOrEnd(id){
     const S=this.S;
     if(S.gameOver)return;
@@ -690,26 +621,17 @@ class BattleScene extends Phaser.Scene{
       return;
     }
 
-    // Reset — both players identical path
-    if(isP1){Match.p1Pct=0;S.p1Stun=false;S.p1AtkCD=false;S.p1Jumps=0;}
+    if(isP1){Match.p1Pct=0;S.p1Stun=false;S.p1AtkCD=false;S.p1Jumps=0;S.p1Bursts=3;}
     else    {Match.p2Pct=0;S.p2Stun=false;S.p2AtkCD=false;S.p2Jumps=0;}
 
-    // SOUL ANCHOR
     this.tweens.killTweensOf(sp);
     sp.setActive(true).setVisible(true).setAlpha(1).clearTint();
-    if(sp.body){
-      sp.body.setEnable(true);
-      sp.body.setVelocity(0,0);
-      sp.body.setAcceleration(0,0);
-    }
+    if(sp.body){ sp.body.setEnable(true); sp.body.setVelocity(0,0); sp.body.setAcceleration(0,0); }
     sp.setPosition(spX,spY);
     sp.play(pre+"_idle");
 
-    this.tweens.add({targets:sp,alpha:0.3,duration:100,yoyo:true,repeat:7,
-      onComplete:()=>{sp.setActive(true).setVisible(true).setAlpha(1);}
-    });
-    const lbl=this.add.text(spX,spY-44,(isP1?"P1":"CPU")+" BACK",
-      {fontFamily:"Press Start 2P",fontSize:"7px",color:isP1?"#00FF88":"#FF5555"}).setOrigin(0.5).setDepth(500);
+    this.tweens.add({targets:sp,alpha:0.3,duration:100,yoyo:true,repeat:7, onComplete:()=>{sp.setActive(true).setVisible(true).setAlpha(1);} });
+    const lbl=this.add.text(spX,spY-44,(isP1?"P1":"CPU")+" BACK", {fontFamily:"Press Start 2P",fontSize:"7px",color:isP1?"#00FF88":"#FF5555"}).setOrigin(0.5).setDepth(500);
     this.tweens.add({targets:lbl,y:spY-84,alpha:0,duration:800,onComplete:()=>lbl.destroy()});
     this.refreshHUD();
   }
@@ -733,18 +655,33 @@ class BattleScene extends Phaser.Scene{
     this.time.delayedCall(2600,()=>this.scene.start("ResultsScene"));
   }
 
-  // ── HIT RESOLUTION ───────────────────────────────────
   resolveHit(atkId,tgtId,hit,isProjectile){
     const S=this.S;
     if(S.gameOver||!hit||!hit.active)return;
-    // Destroy projectile visual on hit
-    if(isProjectile){const vis=hit.getData("vis");if(vis&&vis.active)vis.destroy();}
+    
+    // Logic Fix: Shield blocking calculations
+    const isTgtShielding = (tgtId==="p1" && (this.keys.S.isDown || this.keys.DOWN.isDown || MP.f));
+    const tgtShieldHp = tgtId==="p1" ? S.p1ShieldHp : S.p2ShieldHp;
+    
+    if (isProjectile){const vis=hit.getData("vis");if(vis&&vis.active)vis.destroy();}
     hit.destroy();
+    
     const tgt=tgtId==="p2"?this.p2:this.p1;
     const atk=atkId==="p1"?this.p1:this.p2;
     if(!tgt.active||!tgt.body)return;
 
-    const power=isProjectile?8:6;
+    // Shield interaction
+    if(isTgtShielding && tgtShieldHp > 0){
+      if(tgtId==="p1") S.p1ShieldHp--; else S.p2ShieldHp--;
+      goldSpark(this, tgt.x, tgt.y);
+      this.cameras.main.shake(40,0.003); // light shake for block
+      return; 
+    }
+
+    // Logic Fix: Random damage pools + double burst boost
+    let power = isProjectile ? Phaser.Math.Between(5,9) : Phaser.Math.Between(3,7);
+    if(atkId==="p1" && S.p1BurstBuff) power *= 2; 
+
     if(tgtId==="p2")Match.p2Pct+=power;else Match.p1Pct+=power;
     const pct=tgtId==="p2"?Match.p2Pct:Match.p1Pct;
 
@@ -752,15 +689,14 @@ class BattleScene extends Phaser.Scene{
     const dir=tgt.x>=atk.x?1:-1;
     tgt.body.setVelocity(dir*180*kbScale,-160*kbScale);
 
-    // FRAME SELECTION via FRAMES registry — exact frame before anim plays
     const tPre=tgtId==="p2"?this.p2Pre:this.p1Pre;
     const fHit=FRAMES[tPre==="j"?"juni":"pyro"];
-    if(pct>50){
-      // Launch — set knock frame instantly, then play launch anim
+    
+    // Knockdown threshold now scales with difficulty max health
+    if(pct > (Match.maxHealth*0.35)){
       tgt.setFrame(fHit.knock);
       if(this.anims.exists(tPre+"_launch")) this.time.delayedCall(40,()=>{ if(tgt.active) tgt.play(tPre+"_launch",true); });
     } else {
-      // Damage — set first dmg frame instantly, then play dmg anim
       tgt.setFrame(fHit.dmg[0]);
       if(this.anims.exists(tPre+"_dmg")) this.time.delayedCall(30,()=>{ if(tgt.active) tgt.play(tPre+"_dmg",true); });
     }
@@ -774,7 +710,6 @@ class BattleScene extends Phaser.Scene{
     this.refreshHUD();
   }
 
-  // ── SPAWN MELEE ──────────────────────────────────────
   spawnMelee(id){
     const sp=id==="p1"?this.p1:this.p2;
     const pre=id==="p1"?this.p1Pre:this.p2Pre;
@@ -792,7 +727,6 @@ class BattleScene extends Phaser.Scene{
     this.meleeGrp.add(hit);
   }
 
-  // ── SPAWN PROJECTILE (homing memory, proj frame from FRAMES) ──────
   spawnProjectile(id){
     const sp=id==="p1"?this.p1:this.p2;
     const pre=id==="p1"?this.p1Pre:this.p2Pre;
@@ -801,54 +735,45 @@ class BattleScene extends Phaser.Scene{
     const isJuni=pre==="j";
     const fReg=FRAMES[isJuni?"juni":"pyro"];
 
-    // Shooter: snap to range frame then play anim
     sp.setFrame(fReg.range);
     if(this.anims.exists(pre+"_range")) this.time.delayedCall(30,()=>{ if(sp.active) sp.play(pre+"_range",true); });
 
-    // Visual: sprite using canonical proj frame from the sheet
-    const vis=this.add.sprite(sp.x+dir*40,sp.y-8,isJuni?"j_sheet":"p_sheet",fReg.proj)
-      .setDisplaySize(38,38).setDepth(50);
+    const vis=this.add.sprite(sp.x+dir*40,sp.y-8,isJuni?"j_sheet":"p_sheet",fReg.proj).setDisplaySize(38,38).setDepth(50);
+    vis.setFlipX(dir===-1); // Logic Fix: Correctly flips visual depending on firing dir
 
-    // Physics hitbox (invisible, drives overlap)
     const hit=this.add.rectangle(sp.x+dir*40,sp.y-8,18,18,0xFFFFFF,0);
     this.physics.add.existing(hit);
     hit.body.setAllowGravity(false);
-    // No fixed velocityX — homing handled in update()
+    // Logic Fix: Shoots straight, homing disabled
+    hit.body.setVelocityX(dir * 550);
+    
     hit.setData("owner",id);
     hit.setData("vis",vis);
     hit.life=0;
     this.projGrp.add(hit);
   }
 
-
-  // ── BURST / AOE ──────────────────────────────────────
   spawnBurst(id){
     const sp=id==="p1"?this.p1:this.p2;
     const pre=id==="p1"?this.p1Pre:this.p2Pre;
     if(!sp.active||!sp.body)return;
-    // Play transcendence/burst frame
-    // Force exact burst/transcendence frame from FRAMES registry
     const fReg=FRAMES[pre==="j"?"juni":"pyro"];
     sp.setFrame(fReg.burst);
     if(this.anims.exists(pre+"_burst")) this.time.delayedCall(60,()=>sp.play(pre+"_burst",true));
     const isJuni=pre==="j";
     const col=isJuni?0x00FF88:0xFF2200;
-    // Glow ring
     const ring=this.add.circle(sp.x,sp.y,90,col,0.2).setDepth(49);
     const ring2=this.add.circle(sp.x,sp.y,55,col,0.35).setDepth(50);
     this.tweens.add({targets:[ring,ring2],scaleX:1.6,scaleY:1.6,alpha:0,duration:420,onComplete:()=>{ring.destroy();ring2.destroy();}});
-    // Emit particles
     for(let i=0;i<14;i++){
       const ang=Math.random()*Math.PI*2,len=20+Math.random()*70;
       const dot=this.add.rectangle(sp.x+Math.cos(ang)*len,sp.y+Math.sin(ang)*len,8,8,col,0.9).setDepth(51);
       this.tweens.add({targets:dot,x:sp.x+Math.cos(ang)*(len+40),y:sp.y+Math.sin(ang)*(len+40),alpha:0,duration:380,onComplete:()=>dot.destroy()});
     }
-    // AOE hit check
     const tgt=id==="p1"?this.p2:this.p1;
     if(tgt.active&&Phaser.Math.Distance.Between(sp.x,sp.y,tgt.x,tgt.y)<95){
       goldSpark(this,tgt.x,tgt.y-20);
-      // Direct damage — bypass hitbox for AOE
-      const power=15;
+      const power=15; // Raw burst AOE damage
       const tgtId=id==="p1"?"p2":"p1";
       if(tgtId==="p2")Match.p2Pct+=power;else Match.p1Pct+=power;
       const pct=tgtId==="p2"?Match.p2Pct:Match.p1Pct;
@@ -857,8 +782,8 @@ class BattleScene extends Phaser.Scene{
       const dir=tgt.x>=sp.x?1:-1;
       tgt.body.setVelocity(dir*160*kbScale,-140*kbScale);
       const bfReg=FRAMES[tPre==="j"?"juni":"pyro"];
-      tgt.setFrame(pct>50?bfReg.knock:bfReg.dmg[0]);
-      if(this.anims.exists(tPre+(pct>50?"_launch":"_dmg"))) this.time.delayedCall(35,()=>{ if(tgt.active) tgt.play(tPre+(pct>50?"_launch":"_dmg"),true); });
+      tgt.setFrame(pct>(Match.maxHealth*0.35)?bfReg.knock:bfReg.dmg[0]);
+      if(this.anims.exists(tPre+(pct>(Match.maxHealth*0.35)?"_launch":"_dmg"))) this.time.delayedCall(35,()=>{ if(tgt.active) tgt.play(tPre+(pct>(Match.maxHealth*0.35)?"_launch":"_dmg"),true); });
       this.cameras.main.shake(120,0.01);
       const tgtSp=tgtId==="p2"?"p2":"p1";
       if(tgtSp==="p2")this.S.p2Stun=true;else this.S.p1Stun=true;
@@ -867,10 +792,9 @@ class BattleScene extends Phaser.Scene{
     }
   }
 
-  // ── CPU AI ───────────────────────────────────────────
   runCPU(dt){
     const S=this.S,sp=this.p2;
-    if(!sp.active||S.p2Stun||!sp.body)return;
+    if(S.state!=="PLAYING" || !sp.active || S.p2Stun || !sp.body)return;
     if(sp.body.blocked.down)S.p2Jumps=0;
     const dx=this.p1.x-sp.x,absX=Math.abs(dx);
     if(absX>40){sp.body.setVelocityX(dx>0?this.cpuSpeed:-this.cpuSpeed);sp.setFlipX(dx<0);}
@@ -884,27 +808,25 @@ class BattleScene extends Phaser.Scene{
     if(absX>90&&absX<300&&Math.random()<this.cpuFireFreq&&!this.cpuAtkCD){
       this.cpuAtkCD=true;this.spawnProjectile("p2");this.time.delayedCall(360,()=>this.cpuAtkCD=false);
     }
-    // CPU burst occasionally
     if(Match.p2Pct>80&&Math.random()<0.005) this.spawnBurst("p2");
-    // Play idle or move anim
+    
     if(!sp.anims.isPlaying||sp.anims.currentAnim?.key===this.p2Pre+"_idle"||sp.anims.currentAnim?.key===this.p2Pre+"_dmg"){
       if(!["_melee","_range","_burst","_launch","_dmg","_jump"].some(s=>sp.anims.currentAnim?.key.includes(s)))
         sp.play(this.p2Pre+"_idle",true);
     }
   }
 
-  // ── P1 INPUT ─────────────────────────────────────────
   moveP1(){
     const S=this.S,sp=this.p1,pre=this.p1Pre,k=this.keys;
-    if(!sp.active||!sp.body)return;
+    if(S.state!=="PLAYING" || !sp.active || !sp.body) return;
     if(sp.body.blocked.down)S.p1Jumps=0;
 
-    // Shield — use FRAMES registry for exact frame
-    if(k.L.isDown||MP.f){
+    // Logic Fix: Shield overrides anims perfectly and holds frame
+    if((k.S.isDown || k.DOWN.isDown || MP.f) && S.p1ShieldHp > 0){
       sp.body.setVelocityX(0);
       const fReg=FRAMES[pre==="j"?"juni":"pyro"];
       sp.setFrame(fReg.shield);
-      return;
+      return; 
     }
 
     if(!S.p1Stun){
@@ -913,7 +835,6 @@ class BattleScene extends Phaser.Scene{
       else if(gR){sp.body.setVelocityX(260);sp.setFlipX(false);}
       else sp.body.setVelocityX(sp.body.velocity.x*0.7);
 
-      // Only play idle if no combat anim is running
       const combatAnims=["_melee","_range","_burst","_launch","_dmg","_jump"];
       const inCombat=sp.anims.currentAnim&&combatAnims.some(s=>sp.anims.currentAnim.key.includes(s));
       if(!inCombat) sp.play(pre+"_idle",true);
@@ -926,17 +847,25 @@ class BattleScene extends Phaser.Scene{
         S.p1AtkCD=true;this.spawnMelee("p1");
         this.time.delayedCall(210,()=>S.p1AtkCD=false);MP.a=false;
       }
-      if((Phaser.Input.Keyboard.JustDown(k.K)||MP.s)&&!S.p1AtkCD){
-        S.p1AtkCD=true;this.spawnProjectile("p1");
-        this.time.delayedCall(290,()=>S.p1AtkCD=false);MP.s=false;
+      // Logic Fix: 1.5s projectile gauge implementation
+      if((Phaser.Input.Keyboard.JustDown(k.K)||MP.s)&&!S.p1AtkCD && S.p1ProjReady){
+        S.p1ProjReady=false;
+        this.spawnProjectile("p1");
+        this.time.delayedCall(1500, ()=>{ S.p1ProjReady=true; this.refreshHUD(); });
+        MP.s=false;
       }
-      if((Phaser.Input.Keyboard.JustDown(k.SEMI)||MP.b)){
-        this.spawnBurst("p1");MP.b=false;
+      // Logic Fix: Limited Burst logic
+      if((Phaser.Input.Keyboard.JustDown(k.SEMI)||MP.b) && S.p1Bursts > 0){
+        S.p1Bursts--;
+        this.spawnBurst("p1");
+        S.p1BurstBuff = true; 
+        this.time.delayedCall(5000, ()=> S.p1BurstBuff = false); // Buff wears off
+        this.refreshHUD();
+        MP.b=false;
       }
     }
   }
 
-  // ── CAMERA ───────────────────────────────────────────
   updateCamera(){
     const p1x=this.p1.active?this.p1.x:GW/2;
     const p2x=this.p2.active?this.p2.x:GW/2;
@@ -949,7 +878,6 @@ class BattleScene extends Phaser.Scene{
     this.cameras.main.centerOn(this.camX,GH/2);
   }
 
-  // ── UPDATE ───────────────────────────────────────────
   update(time,dt){
     const S=this.S;
 
@@ -957,19 +885,23 @@ class BattleScene extends Phaser.Scene{
       Match.paused=!Match.paused;
       this.physics.world.isPaused=Match.paused;
       if(Match.paused){
-        // Rebuild with fresh random book every pause
         this.pauseContainer.removeAll(true);
-        const pBg=this.add.rectangle(0,0,360,220,0x050308,0.96).setStrokeStyle(2,0xFFD700);
-        const pTxt=this.add.text(0,-88,"⏸  PAUSED",{fontFamily:"Press Start 2P",fontSize:"13px",color:"#FFD700"}).setOrigin(0.5);
+        const pBg=this.add.rectangle(0,0,440,260,0x050308,0.96).setStrokeStyle(3,0xFFD700);
+        const pTxt=this.add.text(0,-100,"⏸  PAUSED",{fontFamily:"Press Start 2P",fontSize:"14px",color:"#FFD700"}).setOrigin(0.5);
         const bKey=BOOK_LIST[Math.floor(Math.random()*BOOK_LIST.length)];
         const bUrl=BOOK_LINKS[bKey];
-        const bookImg=this.add.image(0,-28,bKey).setDisplaySize(60,90).setInteractive({useHandCursor:true});
+        const bookImg=this.add.image(0,-30,bKey).setDisplaySize(70,105).setInteractive({useHandCursor:true});
         bookImg.on("pointerdown",()=>window.open(bUrl,"_blank"));
-        const bookHint=this.add.text(0,42,"📖 READ THE LEGEND →",{fontFamily:"Press Start 2P",fontSize:"6px",color:"#55AAFF"}).setOrigin(0.5).setInteractive({useHandCursor:true});
+        const bookHint=this.add.text(0,45,"📖 READ THE LEGEND →",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#55AAFF"}).setOrigin(0.5).setInteractive({useHandCursor:true});
         bookHint.on("pointerdown",()=>window.open(bUrl,"_blank"));
-        const qBtn=this.add.text(0,80,"◀ QUIT TO MENU",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#050308",backgroundColor:"#FFD700",padding:{x:12,y:6}}).setOrigin(0.5).setInteractive({useHandCursor:true});
+        
+        const rBtn=this.add.text(-90,95,"🔄 RESTART",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#00FF88",backgroundColor:"#111",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
+        rBtn.on("pointerdown",()=>{Match.paused=false; this.scene.restart();});
+        
+        const qBtn=this.add.text(90,95,"◀ QUIT",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#050308",backgroundColor:"#FFD700",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
         qBtn.on("pointerdown",()=>{Match.paused=false;this.physics.world.isPaused=false;this.scene.start("BrawlerScene");});
-        this.pauseContainer.add([pBg,pTxt,bookImg,bookHint,qBtn]);
+        
+        this.pauseContainer.add([pBg,pTxt,bookImg,bookHint,rBtn,qBtn]);
       }
       this.pauseContainer.setVisible(Match.paused);
     }
@@ -978,27 +910,19 @@ class BattleScene extends Phaser.Scene{
     this.meleeGrp.children.iterate(h=>{
       if(!h)return;h.life+=dt;if(h.life>200)h.destroy();
     });
-    // Homing projectile update
+    
     this.projGrp.children.iterate(h=>{
       if(!h||!h.active)return;
       h.life+=dt;
       const vis=h.getData("vis");
-      const owner=h.getData("owner");
-      const target=owner==="p1"?this.p2:this.p1;
-      if(target&&target.active){
-        this.physics.moveToObject(h,target,300);
-        if(vis&&vis.active){
-          vis.x=h.x; vis.y=h.y;
-          vis.rotation=Phaser.Math.Angle.Between(h.x,h.y,target.x,target.y);
-        }
-      }
+      if(vis&&vis.active){ vis.x=h.x; vis.y=h.y; }
+      
+      // Logic Fix: Destroys cleanly if it flies out of the map bounds
       if(h.life>1600||h.x<BLAST.minX||h.x>BLAST.maxX||h.y<BLAST.minY||h.y>BLAST.maxY){
         if(vis&&vis.active)vis.destroy();
         h.destroy();
       }
     });
-
-
 
     this.moveP1();
     this.runCPU(dt);
@@ -1010,8 +934,12 @@ class BattleScene extends Phaser.Scene{
     });
 
     this.updateCamera();
+    
+    // Animate the projectile gauge smoothly
+    if(!this.S.p1ProjReady){
+        this.p1ProjBar.scaleX += (1.0 / (1500/dt)); 
+    }
 
-    // Safety net: if p1 anim stopped and not moving, snap to idle frame
     if(this.p1.active&&this.p1.body&&!this.p1.anims.isPlaying&&Math.abs(this.p1.body.velocity.x)<40){
       const fSafe=FRAMES[this.p1Pre==="j"?"juni":"pyro"];
       this.p1.setFrame(fSafe.idle[0]);
@@ -1019,12 +947,10 @@ class BattleScene extends Phaser.Scene{
   }
 }
 
-// ─────────────────────────────────────────────────────
-//  RESULTS
-// ─────────────────────────────────────────────────────
 class ResultsScene extends Phaser.Scene{
   constructor(){super("ResultsScene");}
   create(){
+    document.getElementById("mc").classList.remove("on");
     this.add.image(GW/2,GH/2,"bg_eyes").setDisplaySize(GW,GH).setAlpha(0.35);
     const winner=Match.winner==="P1"?Match.p1:Match.p2;
     const wc=winner==="Juni"?"#00FF88":"#FF6600";
@@ -1053,9 +979,6 @@ class ResultsScene extends Phaser.Scene{
   }
 }
 
-// ─────────────────────────────────────────────────────
-//  BOOT
-// ─────────────────────────────────────────────────────
 new Phaser.Game({
   type:Phaser.AUTO,
   width:GW,height:GH,
