@@ -88,10 +88,6 @@ class StartScreen extends Phaser.Scene{
     this.load.image("promo","title_screen_NB.jpg");this.load.image("bg_eyes","oros_game_eyes.jpg");
     this.load.image("deep_forest_img","bg_deep_forest.jpg");this.load.image("forest_edge_img","forest_bg.jpg");
     this.load.image("hub_bg","logo.jpg");this.load.image("link_tree","link_tree.jpg");this.load.image("signal_lost","signal_lost.jpg");
-    
-    // NOTE: This line loads the Victory Image placeholder (ready for your custom art)
-    // this.load.image("victory_img", "victory_screen.jpg");
-    
     this.load.spritesheet("j_sheet","juni_sheet.png",{frameWidth:128,frameHeight:128});
     this.load.spritesheet("p_sheet","pyro_sheet.png",{frameWidth:128,frameHeight:128});
     ["juni_en","outbreak_en","tabbies_en","pyro_en"].forEach(b=>this.load.image(b,b+".jpeg"));
@@ -295,24 +291,11 @@ class BattleScene extends Phaser.Scene{
     this.meleeGrp=this.physics.add.group({allowGravity: false});
     this.projGrp=this.physics.add.group({allowGravity: false});
 
-    const hitCheck = (obj1, obj2) => {
-        let hit = obj1.getData("owner") ? obj1 : obj2;
-        let player = obj1.getData("owner") ? obj2 : obj1;
-        if(!hit || !hit.active || !player || !player.active) return;
-        const owner = hit.getData("owner");
-        const tgtId = owner === "p1" ? "p2" : "p1";
-        const isProj = hit.getData("isProj");
-        
-        if ((tgtId === "p1" && player === this.p1) || (tgtId === "p2" && player === this.p2)) {
-            goldSpark(this, player.x, player.y);
-            this.resolveHit(owner, tgtId, hit, isProj);
-        }
-    };
-
-    this.physics.add.overlap(this.meleeGrp, this.p1, hitCheck);
-    this.physics.add.overlap(this.meleeGrp, this.p2, hitCheck);
-    this.physics.add.overlap(this.projGrp, this.p1, hitCheck);
-    this.physics.add.overlap(this.projGrp, this.p2, hitCheck);
+    // LOG 010 FIX: Hard-coded, explicit overlap checks to guarantee physics hit detection
+    this.physics.add.overlap(this.p1, this.meleeGrp, (p, h) => { if(h.getData("owner") === "p2") { goldSpark(this, p.x, p.y); this.resolveHit("p2", "p1", h, false); } });
+    this.physics.add.overlap(this.p2, this.meleeGrp, (p, h) => { if(h.getData("owner") === "p1") { goldSpark(this, p.x, p.y); this.resolveHit("p1", "p2", h, false); } });
+    this.physics.add.overlap(this.p1, this.projGrp, (p, h) => { if(h.getData("owner") === "p2") { goldSpark(this, p.x, p.y); this.resolveHit("p2", "p1", h, true); } });
+    this.physics.add.overlap(this.p2, this.projGrp, (p, h) => { if(h.getData("owner") === "p1") { goldSpark(this, p.x, p.y); this.resolveHit("p1", "p2", h, true); } });
     
     this.buildHUD();this.refreshHUD();
     this.keys=this.input.keyboard.addKeys({W:"W",A:"A",S:"S",D:"D",DOWN:"DOWN",J:"J",K:"K",L:"L",SEMI:"SEMICOLON",P:"P"});
@@ -384,16 +367,15 @@ class BattleScene extends Phaser.Scene{
     this.pauseBookHint.on("pointerdown",()=>window.open(this.pauseBookUrl,"_blank"));
     
     const rBtn=this.add.text(-96,100,"🔄 RESTART",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#00FF88",backgroundColor:"#111",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
-    // LOG 009 FIX: Hard-reset bypass for the restart button
+    // LOG 010 FIX: Absolute Hard Reset via Scene Start
     rBtn.on("pointerdown",()=>{
         Match.paused=false;
         this.physics.world.isPaused=false;
         if(window.IS_TOUCH) document.getElementById("mc").classList.add("on");
-        this.scene.restart();
+        this.scene.start("BattleScene");
     });
     
     const qBtn=this.add.text(96,100,"◀ QUIT",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#050308",backgroundColor:"#FFD700",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
-    // LOG 009 FIX: Hard-reset bypass for the quit button
     qBtn.on("pointerdown",()=>{
         Match.paused=false;
         this.physics.world.isPaused=false;
@@ -472,7 +454,7 @@ class BattleScene extends Phaser.Scene{
     
     const hit = this.add.rectangle(sp.x + dir * 35, sp.y - 6, 60, 40, 0xFFD700, 0);
     this.physics.add.existing(hit);
-    hit.body.setAllowGravity(false);
+    hit.body.allowGravity = false;
     hit.body.moves = false;
     hit.setData("owner", id);
     hit.setData("isProj", false);
@@ -488,18 +470,16 @@ class BattleScene extends Phaser.Scene{
     if(this.anims.exists(pre+"_range"))this.time.delayedCall(30,()=>{if(sp.active)sp.play(pre+"_range",true);});
     const vis=this.add.sprite(sp.x+dir*45,sp.y-8,isJuni?"j_sheet":"p_sheet",fReg.proj).setDisplaySize(38,38).setDepth(50).setFlipX(dir===-1);
     
-    const hit = this.add.rectangle(sp.x + dir * 45, sp.y - 8, 20, 20, 0xFFFFFF, 0);
-    
-    // LOG 009 FIX: Group addition MUST precede the explicit velocity setup
-    this.projGrp.add(hit);
-    this.physics.world.enable(hit);
-    
+    // LOG 010 FIX: Explicit creation -> physics enable -> body config -> add to group
+    const hit = this.add.rectangle(sp.x + dir * 45, sp.y - 8, 40, 40, 0xFFFFFF, 0);
+    this.physics.add.existing(hit);
     hit.body.allowGravity = false; 
     hit.body.setVelocity(dir * 500, 0);
     hit.setData("owner", id);
     hit.setData("vis", vis);
     hit.setData("isProj", true);
     hit.life = 0;
+    this.projGrp.add(hit);
   }
 
   spawnBurst(id){
@@ -538,7 +518,6 @@ class BattleScene extends Phaser.Scene{
       this.time.delayedCall(1500,()=>{S.p2ProjReady=true;S.p2ProjCharge=1.0;});
     }
     
-    // LOG 009 FIX: CPU AOE Burst Implementation
     if(S.p2Bursts>0 && absX<80 && Math.random()<0.008 && !this.cpuAtkCD){
       this.cpuAtkCD=true;
       S.p2Bursts--;
