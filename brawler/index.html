@@ -287,7 +287,7 @@ class BattleScene extends Phaser.Scene{
     this.physics.add.collider([this.p1,this.p2],this.platforms);
     this.p1.play(this.p1Pre+"_idle");this.p2.play(this.p2Pre+"_idle");
 
-    this.S={state:"STARTING",p1Stun:false,p2Stun:false,p1AtkCD:false,p2AtkCD:false,p1Jumps:0,p2Jumps:0,gameOver:false,p1ShieldHp:5,p2ShieldHp:5,p1Bursts:3,p2Bursts:3,p1BurstBuff:false,p1ProjReady:true,p1ProjCharge:1.0, p2ProjReady:true, p2ProjCharge:1.0};
+    this.S={state:"STARTING",p1Stun:false,p2Stun:false,p1AtkCD:false,p2AtkCD:false,p1Jumps:0,p2Jumps:0,gameOver:false,p1ShieldHp:5,p2ShieldHp:5,p1Bursts:3,p2Bursts:3,p1BurstBuff:false,p2BurstBuff:false,p1ProjReady:true,p1ProjCharge:1.0, p2ProjReady:true, p2ProjCharge:1.0};
     this.cpuSpeed=Match.difficulty==="EASY"?90:Match.difficulty==="HARD"?260:170;
     this.cpuAtkFreq=Match.difficulty==="EASY"?0.02:Match.difficulty==="HARD"?0.25:0.10;
     this.cpuFireFreq=Match.difficulty==="EASY"?0.005:Match.difficulty==="HARD"?0.10:0.03;
@@ -295,11 +295,24 @@ class BattleScene extends Phaser.Scene{
     this.meleeGrp=this.physics.add.group({allowGravity: false});
     this.projGrp=this.physics.add.group({allowGravity: false});
 
-    // LOG 008 FIX: Bulletproof, hard-coded collision listeners. No more phantom boxes.
-    this.physics.add.overlap(this.p1, this.meleeGrp, (player, hit) => { if(hit.getData("owner") === "p2") this.resolveHit("p2", "p1", hit, false); });
-    this.physics.add.overlap(this.p2, this.meleeGrp, (player, hit) => { if(hit.getData("owner") === "p1") this.resolveHit("p1", "p2", hit, false); });
-    this.physics.add.overlap(this.p1, this.projGrp, (player, hit) => { if(hit.getData("owner") === "p2") this.resolveHit("p2", "p1", hit, true); });
-    this.physics.add.overlap(this.p2, this.projGrp, (player, hit) => { if(hit.getData("owner") === "p1") this.resolveHit("p1", "p2", hit, true); });
+    const hitCheck = (obj1, obj2) => {
+        let hit = obj1.getData("owner") ? obj1 : obj2;
+        let player = obj1.getData("owner") ? obj2 : obj1;
+        if(!hit || !hit.active || !player || !player.active) return;
+        const owner = hit.getData("owner");
+        const tgtId = owner === "p1" ? "p2" : "p1";
+        const isProj = hit.getData("isProj");
+        
+        if ((tgtId === "p1" && player === this.p1) || (tgtId === "p2" && player === this.p2)) {
+            goldSpark(this, player.x, player.y);
+            this.resolveHit(owner, tgtId, hit, isProj);
+        }
+    };
+
+    this.physics.add.overlap(this.meleeGrp, this.p1, hitCheck);
+    this.physics.add.overlap(this.meleeGrp, this.p2, hitCheck);
+    this.physics.add.overlap(this.projGrp, this.p1, hitCheck);
+    this.physics.add.overlap(this.projGrp, this.p2, hitCheck);
     
     this.buildHUD();this.refreshHUD();
     this.keys=this.input.keyboard.addKeys({W:"W",A:"A",S:"S",D:"D",DOWN:"DOWN",J:"J",K:"K",L:"L",SEMI:"SEMICOLON",P:"P"});
@@ -334,11 +347,12 @@ class BattleScene extends Phaser.Scene{
     this.p2ProjBar=this.add.rectangle(GW-214,30,200,4,0x55AAFF).setOrigin(0);
     this.p2DT=this.add.text(GW-10,37,"0%",{fontFamily:"Press Start 2P",fontSize:"11px",color:"#FFF"}).setOrigin(1,0);
     this.p2HT=this.add.text(GW-10,51,"♥♥♥",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#FF4444"}).setOrigin(1,0);
+    this.p2BurstsHUD=this.add.text(GW-68,51,"☆x3",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#FF4444"}).setOrigin(1,0);
     
     const hP=this.add.text(GW/2,6,"P / TAP = PAUSE",{fontFamily:"Press Start 2P",fontSize:"5px",color:"#888"}).setOrigin(0.5,0).setInteractive({useHandCursor:true});
     hP.on('pointerdown', () => { this.togglePause(); });
     
-    this.hudContainer.add([bg1,t1,h1b,this.p1Bar,p1pb,this.p1ProjBar,this.p1DT,this.p1HT,this.p1BurstsHUD,bg2,t2,h2b,this.p2Bar,p2pb,this.p2ProjBar,this.p2DT,this.p2HT,hP]);
+    this.hudContainer.add([bg1,t1,h1b,this.p1Bar,p1pb,this.p1ProjBar,this.p1DT,this.p1HT,this.p1BurstsHUD,bg2,t2,h2b,this.p2Bar,p2pb,this.p2ProjBar,this.p2DT,this.p2HT,this.p2BurstsHUD,hP]);
   }
 
   refreshHUD(){
@@ -351,6 +365,7 @@ class BattleScene extends Phaser.Scene{
     const h=n=>"♥".repeat(Math.max(0,n))+"♡".repeat(Math.max(0,3-n));
     this.p1HT.setText(h(Match.p1Lives));this.p2HT.setText(h(Match.p2Lives));
     this.p1BurstsHUD.setText("☆x"+this.S.p1Bursts);
+    this.p2BurstsHUD.setText("☆x"+this.S.p2Bursts);
   }
 
   buildPauseMenu(){
@@ -369,10 +384,22 @@ class BattleScene extends Phaser.Scene{
     this.pauseBookHint.on("pointerdown",()=>window.open(this.pauseBookUrl,"_blank"));
     
     const rBtn=this.add.text(-96,100,"🔄 RESTART",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#00FF88",backgroundColor:"#111",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
-    rBtn.on("pointerdown",()=>{this.togglePause(); this.scene.restart();});
+    // LOG 009 FIX: Hard-reset bypass for the restart button
+    rBtn.on("pointerdown",()=>{
+        Match.paused=false;
+        this.physics.world.isPaused=false;
+        if(window.IS_TOUCH) document.getElementById("mc").classList.add("on");
+        this.scene.restart();
+    });
     
     const qBtn=this.add.text(96,100,"◀ QUIT",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#050308",backgroundColor:"#FFD700",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
-    qBtn.on("pointerdown",()=>{this.togglePause(); this.scene.start("BrawlerScene");});
+    // LOG 009 FIX: Hard-reset bypass for the quit button
+    qBtn.on("pointerdown",()=>{
+        Match.paused=false;
+        this.physics.world.isPaused=false;
+        if(window.IS_TOUCH) document.getElementById("mc").classList.add("on");
+        this.scene.start("BrawlerScene");
+    });
     
     this.pauseContainer.add([pBg,pTxt,codeTxt,this.pauseBookImg,this.pauseBookHint,rBtn,qBtn]);
   }
@@ -408,15 +435,13 @@ class BattleScene extends Phaser.Scene{
     
     if(shielding&&shieldHp>0){if(isP1Tgt)S.p1ShieldHp--;else S.p2ShieldHp--;goldSpark(this,tgt.x,tgt.y);return;}
     
-    goldSpark(this,tgt.x,tgt.y); 
-    
     let power=isProjectile?Phaser.Math.Between(5,9):Phaser.Math.Between(3,7);
     if(atkId==="p1"&&S.p1BurstBuff)power*=2;
-    if(tgtId==="p2")Match.p2Pct+=power;else Match.p1Pct+=power;
+    if(atkId==="p2"&&S.p2BurstBuff)power*=2;
     
+    if(tgtId==="p2")Match.p2Pct+=power;else Match.p1Pct+=power;
     const pct=tgtId==="p2"?Match.p2Pct:Match.p1Pct;
     
-    // LOG 008 FIX: The true HP depletion death sequence
     if(pct >= Match.maxHealth) {
         goldSpark(this, tgt.x, tgt.y);
         goldSpark(this, tgt.x-20, tgt.y-10);
@@ -450,6 +475,7 @@ class BattleScene extends Phaser.Scene{
     hit.body.setAllowGravity(false);
     hit.body.moves = false;
     hit.setData("owner", id);
+    hit.setData("isProj", false);
     hit.life = 0;
     this.meleeGrp.add(hit);
   }
@@ -462,14 +488,18 @@ class BattleScene extends Phaser.Scene{
     if(this.anims.exists(pre+"_range"))this.time.delayedCall(30,()=>{if(sp.active)sp.play(pre+"_range",true);});
     const vis=this.add.sprite(sp.x+dir*45,sp.y-8,isJuni?"j_sheet":"p_sheet",fReg.proj).setDisplaySize(38,38).setDepth(50).setFlipX(dir===-1);
     
-    const hit = this.add.rectangle(sp.x + dir * 45, sp.y - 8, 30, 30, 0xFFFFFF, 0);
-    this.physics.add.existing(hit);
-    hit.body.setAllowGravity(false); 
+    const hit = this.add.rectangle(sp.x + dir * 45, sp.y - 8, 20, 20, 0xFFFFFF, 0);
+    
+    // LOG 009 FIX: Group addition MUST precede the explicit velocity setup
+    this.projGrp.add(hit);
+    this.physics.world.enable(hit);
+    
+    hit.body.allowGravity = false; 
     hit.body.setVelocity(dir * 500, 0);
     hit.setData("owner", id);
     hit.setData("vis", vis);
+    hit.setData("isProj", true);
     hit.life = 0;
-    this.projGrp.add(hit);
   }
 
   spawnBurst(id){
@@ -506,6 +536,17 @@ class BattleScene extends Phaser.Scene{
       this.spawnProjectile("p2");
       this.time.delayedCall(360,()=>this.cpuAtkCD=false);
       this.time.delayedCall(1500,()=>{S.p2ProjReady=true;S.p2ProjCharge=1.0;});
+    }
+    
+    // LOG 009 FIX: CPU AOE Burst Implementation
+    if(S.p2Bursts>0 && absX<80 && Math.random()<0.008 && !this.cpuAtkCD){
+      this.cpuAtkCD=true;
+      S.p2Bursts--;
+      this.spawnBurst("p2");
+      S.p2BurstBuff=true;
+      this.time.delayedCall(5000,()=>S.p2BurstBuff=false);
+      this.time.delayedCall(500,()=>this.cpuAtkCD=false);
+      this.refreshHUD();
     }
   }
 
@@ -550,7 +591,6 @@ class BattleScene extends Phaser.Scene{
     
     if(isP1)Match.p1Pct=0;else Match.p2Pct=0;
     
-    // LOG 008 FIX: Clean respawn logic with spawn protection
     sp.body.setVelocity(0,0);
     sp.setPosition(spX,spY);
     
