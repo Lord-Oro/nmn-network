@@ -34,7 +34,6 @@
 <script>
 
 const GW=800,GH=450,MAIN_PLAT_Y=GH-55;
-// LOG 002 FIX: Spawns moved inward (250/550 instead of 200/600) to stop immediate ring-outs
 const SPAWN={p1:{x:250,y:MAIN_PLAT_Y-75},p2:{x:550,y:MAIN_PLAT_Y-75}};
 const BLAST={minX:-280,maxX:1080,minY:-280,maxY:880};
 const Match={p1:"Juni",p2:"Pyro",p1Pct:0,p2Pct:0,p1Lives:3,p2Lives:3,map:"mana_forest",paused:false,winner:null,difficulty:"NORMAL",maxHealth:250};
@@ -116,9 +115,7 @@ class InstructionsScene extends Phaser.Scene {
   create(){
     this.add.image(GW/2,GH/2,"bg_eyes").setDisplaySize(GW,GH).setAlpha(0.4);
     this.add.text(GW/2,45,"HOW TO PLAY",{fontFamily:"Press Start 2P",fontSize:"15px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
-
-    const t = `GOAL:\nIncrease opponent's damage % to knock them off the platform!\n\nKEYBOARD:\nA / D : Move Left / Right\nW : Jump (Up to 2x)\nS / DOWN : Shield (Blocks damage, degrades over time)\nJ : Melee Attack\nK : Fire Projectile (Requires brief charge)\n; : Burst AOE (3x per match - Grants temporary 2X damage)\n\nMOBILE:\nJoystick : Move & Jump (Swipe Up)\n🥊 : Melee Attack   ⚡ : Fire Projectile\n🛡 : Shield       ☆ : Burst AOE`;
-
+    const t = `GOAL:\nIncrease opponent's damage % to knock them off the platform!\n\nKEYBOARD:\nA / D : Move Left / Right\nW : Jump (Up to 2x)\nS / DOWN : Shield (Blocks damage)\nJ : Melee Attack\nK : Fire Projectile\n; : Burst AOE (3x per match)\n\nMOBILE:\nJoystick : Move & Jump (Swipe Up)\n🥊 : Melee Attack   ⚡ : Fire Projectile\n🛡 : Shield         ☆ : Burst AOE`;
     this.add.text(GW/2, GH/2 + 20, t, {fontFamily:"Press Start 2P",fontSize:"8px",color:"#E8E0D0",align:"center",lineSpacing:8}).setOrigin(0.5);
     this.add.text(30,30,"◀ BACK",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#AAA"}).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("BrawlerScene"));
   }
@@ -271,11 +268,8 @@ class BattleScene extends Phaser.Scene{
       this.physics.add.existing(p,true);p.body.checkCollision.down=false;
       this.platforms.add(p);return p;
     };
-    
-    // LOG 002 FIX: Widened platform from 520 to 700 to prevent instant ring-outs
     mkP(GW/2,MAIN_PLAT_Y,700,20);
     mkP(150,GH-180,200);mkP(650,GH-180,200);
-    
     const jAnims=[{key:"j_idle",start:0,end:3,rate:6,loop:true},{key:"j_jump",start:4,end:6,rate:8,loop:false},{key:"j_melee",frames:[12,14,13],rate:14,loop:false},{key:"j_range",start:7,end:9,rate:12,loop:false},{key:"j_burst",start:15,end:17,rate:10,loop:false},{key:"j_shield",frames:[18],rate:1,loop:false},{key:"j_dmg",start:19,end:21,rate:12,loop:false},{key:"j_launch",start:15,end:17,rate:10,loop:false}];
     const pAnims=[{key:"p_idle",start:0,end:3,rate:8,loop:true},{key:"p_jump",frames:[4,4,5],rate:8,loop:false},{key:"p_melee",frames:[10,11,12],rate:14,loop:false},{key:"p_range",start:7,end:9,rate:12,loop:false},{key:"p_burst",frames:[6],rate:1,loop:false},{key:"p_shield",frames:[20],rate:1,loop:false},{key:"p_dmg",start:21,end:22,rate:12,loop:false},{key:"p_launch",start:23,end:24,rate:10,loop:false}];
     const makeAnim=(sheet,def)=>{if(this.anims.exists(def.key))return;if(def.frames)this.anims.create({key:def.key,frames:def.frames.map(f=>({key:sheet,frame:f})),frameRate:def.rate,repeat:def.loop?-1:0});else this.anims.create({key:def.key,frames:this.anims.generateFrameNumbers(sheet,{start:def.start,end:def.end}),frameRate:def.rate,repeat:def.loop?-1:0});};
@@ -284,58 +278,47 @@ class BattleScene extends Phaser.Scene{
     this.p1Pre=Match.p1==="Juni"?"j":"p";this.p2Pre=Match.p1==="Juni"?"p":"j";
     this.p1=this.physics.add.sprite(SPAWN.p1.x,SPAWN.p1.y,p1Sheet);
     this.p2=this.physics.add.sprite(SPAWN.p2.x,SPAWN.p2.y,p2Sheet).setFlipX(true);
-    
-    // LOG 002 FIX: Smaller player hitboxes
     [this.p1,this.p2].forEach(sp=>{sp.setDisplaySize(80,80).setCollideWorldBounds(false).setBounce(0).setDragX(700);sp.body.setSize(24,46).setOffset((sp.width-24)/2,sp.height-46);sp.body.setMaxVelocity(600,1000);});
     this.physics.add.collider([this.p1,this.p2],this.platforms);
     this.p1.play(this.p1Pre+"_idle");this.p2.play(this.p2Pre+"_idle");
-    const cs=["_melee","_range","_burst","_launch","_dmg","_jump"];
-    this.anims.on("animationcomplete",(anim,sprite)=>{
-      if(!sprite||!sprite.active||!sprite.body)return;
-      if(!cs.some(s=>anim.key.endsWith(s)))return;
-      const pre=(sprite===this.p1)?this.p1Pre:this.p2Pre;
-      if(Math.abs(sprite.body.velocity.x)<40)sprite.play(pre+"_idle",true);
-    });
     this.S={state:"STARTING",p1Stun:false,p2Stun:false,p1AtkCD:false,p2AtkCD:false,p1Jumps:0,p2Jumps:0,gameOver:false,p1ShieldHp:5,p2ShieldHp:5,p1Bursts:3,p2Bursts:3,p1BurstBuff:false,p1ProjReady:true,p1ProjCharge:1.0};
-    this.cpuAtkTimer=0;this.cpuFireTimer=0;this.cpuAtkCD=false;
     this.cpuSpeed=Match.difficulty==="EASY"?90:Match.difficulty==="HARD"?260:170;
     this.cpuAtkFreq=Match.difficulty==="EASY"?0.02:Match.difficulty==="HARD"?0.25:0.10;
     this.cpuFireFreq=Match.difficulty==="EASY"?0.005:Match.difficulty==="HARD"?0.10:0.03;
     this.meleeGrp=this.physics.add.group();this.projGrp=this.physics.add.group();
-    
-    this.physics.add.overlap(this.meleeGrp,this.p2,(hit,player)=>{if(!hit||!hit.active||hit.getData("owner")==="p2")return;goldSpark(this,hit.x,hit.y);this.resolveHit("p1","p2",hit,false);});
-    this.physics.add.overlap(this.meleeGrp,this.p1,(hit,player)=>{if(!hit||!hit.active||hit.getData("owner")==="p1")return;goldSpark(this,hit.x,hit.y);this.resolveHit("p2","p1",hit,false);});
-    this.physics.add.overlap(this.projGrp,this.p2,(hit,player)=>{if(!hit||!hit.active||hit.getData("owner")==="p2")return;goldSpark(this,hit.x,hit.y);this.resolveHit("p1","p2",hit,true);});
-    this.physics.add.overlap(this.projGrp,this.p1,(hit,player)=>{if(!hit||!hit.active||hit.getData("owner")==="p1")return;goldSpark(this,hit.x,hit.y);this.resolveHit("p2","p1",hit,true);});
-    
+    this.physics.add.overlap(this.meleeGrp,this.p2,(hit,player)=>{if(!hit||!hit.active||hit.getData("owner")!=="p1")return;goldSpark(this,hit.x,hit.y);this.resolveHit("p1","p2",hit,false);});
+    this.physics.add.overlap(this.meleeGrp,this.p1,(hit,player)=>{if(!hit||!hit.active||hit.getData("owner")!=="p2")return;goldSpark(this,hit.x,hit.y);this.resolveHit("p2","p1",hit,false);});
+    this.physics.add.overlap(this.projGrp,this.p2,(hit,player)=>{if(!hit||!hit.active||hit.getData("owner")!=="p1")return;goldSpark(this,hit.x,hit.y);this.resolveHit("p1","p2",hit,true);});
+    this.physics.add.overlap(this.projGrp,this.p1,(hit,player)=>{if(!hit||!hit.active||hit.getData("owner")!=="p2")return;goldSpark(this,hit.x,hit.y);this.resolveHit("p2","p1",hit,true);});
     this.buildHUD();this.refreshHUD();
     this.keys=this.input.keyboard.addKeys({W:"W",A:"A",S:"S",D:"D",DOWN:"DOWN",J:"J",K:"K",L:"L",SEMI:"SEMICOLON",P:"P"});
     this.buildPauseMenu();
     this.camX=GW/2;this.targetZoom=1.0;this.cameras.main.centerOn(GW/2,GH/2);
-    const bText=this.add.text(GW/2,GH/2,"BRAWL!",{fontFamily:"Press Start 2P",fontSize:"42px",color:"#FFD700",stroke:"#000",strokeThickness:6}).setOrigin(0.5).setDepth(9000).setScrollFactor(0);
+    const bText=this.add.text(GW/2,GH/2,"BRAWL!",{fontFamily:"Press Start 2P",fontSize:"42px",color:"#FFD700",stroke:"#000",strokeThickness:6}).setOrigin(0.5).setDepth(20000).setScrollFactor(0);
     this.tweens.add({targets:bText,scaleX:1.25,scaleY:1.25,yoyo:true,repeat:-1,duration:280});
     this.time.delayedCall(1500,()=>{bText.destroy();this.S.state="PLAYING";});
   }
 
   buildHUD(){
-    const D=9999;
+    this.hudContainer=this.add.container(0,0).setDepth(10000).setScrollFactor(0);
     const p1c=Match.p1==="Juni"?"#00FF88":"#FF6600",p2c=Match.p1==="Juni"?"#FF6600":"#00FF88";
-    this.add.rectangle(0,0,240,64,0x050308,0.92).setOrigin(0).setDepth(D).setScrollFactor(0);
-    this.add.text(10,5,Match.p1.toUpperCase(),{fontFamily:"Press Start 2P",fontSize:"7px",color:p1c}).setDepth(D).setScrollFactor(0);
-    this.add.rectangle(14,18,200,10,0x333333).setOrigin(0).setDepth(D).setScrollFactor(0);
-    this.p1Bar=this.add.rectangle(14,18,200,10,parseInt(p1c.replace("#","0x"))).setOrigin(0).setDepth(D).setScrollFactor(0);
-    this.add.rectangle(14,30,200,4,0x222244).setOrigin(0).setDepth(D).setScrollFactor(0);
-    this.p1ProjBar=this.add.rectangle(14,30,200,4,0x55AAFF).setOrigin(0).setDepth(D).setScrollFactor(0);
-    this.p1DT=this.add.text(10,37,"0%",{fontFamily:"Press Start 2P",fontSize:"11px",color:"#FFF"}).setDepth(D).setScrollFactor(0);
-    this.p1HT=this.add.text(10,51,"♥♥♥",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#FF4444"}).setDepth(D).setScrollFactor(0);
-    this.p1BurstsHUD=this.add.text(68,51,"☆x3",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#00FF88"}).setDepth(D).setScrollFactor(0);
-    this.add.rectangle(GW,0,240,64,0x050308,0.92).setOrigin(1,0).setDepth(D).setScrollFactor(0);
-    this.add.text(GW-10,5,"CPU: "+Match.p2.toUpperCase(),{fontFamily:"Press Start 2P",fontSize:"7px",color:p2c}).setOrigin(1,0).setDepth(D).setScrollFactor(0);
-    this.add.rectangle(GW-214,18,200,10,0x333333).setOrigin(0).setDepth(D).setScrollFactor(0);
-    this.p2Bar=this.add.rectangle(GW-214,18,200,10,parseInt(p2c.replace("#","0x"))).setOrigin(0).setDepth(D).setScrollFactor(0);
-    this.p2DT=this.add.text(GW-10,37,"0%",{fontFamily:"Press Start 2P",fontSize:"11px",color:"#FFF"}).setOrigin(1,0).setDepth(D).setScrollFactor(0);
-    this.p2HT=this.add.text(GW-10,51,"♥♥♥",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#FF4444"}).setOrigin(1,0).setDepth(D).setScrollFactor(0);
-    this.add.text(GW/2,6,"P = PAUSE",{fontFamily:"Press Start 2P",fontSize:"5px",color:"#444"}).setOrigin(0.5,0).setDepth(D).setScrollFactor(0);
+    const bg1=this.add.rectangle(0,0,240,64,0x050308,0.92).setOrigin(0);
+    const t1=this.add.text(10,5,Match.p1.toUpperCase(),{fontFamily:"Press Start 2P",fontSize:"7px",color:p1c});
+    const h1b=this.add.rectangle(14,18,200,10,0x333333).setOrigin(0);
+    this.p1Bar=this.add.rectangle(14,18,200,10,parseInt(p1c.replace("#","0x"))).setOrigin(0);
+    const p1pb=this.add.rectangle(14,30,200,4,0x222244).setOrigin(0);
+    this.p1ProjBar=this.add.rectangle(14,30,200,4,0x55AAFF).setOrigin(0);
+    this.p1DT=this.add.text(10,37,"0%",{fontFamily:"Press Start 2P",fontSize:"11px",color:"#FFF"});
+    this.p1HT=this.add.text(10,51,"♥♥♥",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#FF4444"});
+    this.p1BurstsHUD=this.add.text(68,51,"☆x3",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#00FF88"});
+    const bg2=this.add.rectangle(GW,0,240,64,0x050308,0.92).setOrigin(1,0);
+    const t2=this.add.text(GW-10,5,"CPU: "+Match.p2.toUpperCase(),{fontFamily:"Press Start 2P",fontSize:"7px",color:p2c}).setOrigin(1,0);
+    const h2b=this.add.rectangle(GW-214,18,200,10,0x333333).setOrigin(0);
+    this.p2Bar=this.add.rectangle(GW-214,18,200,10,parseInt(p2c.replace("#","0x"))).setOrigin(0);
+    this.p2DT=this.add.text(GW-10,37,"0%",{fontFamily:"Press Start 2P",fontSize:"11px",color:"#FFF"}).setOrigin(1,0);
+    this.p2HT=this.add.text(GW-10,51,"♥♥♥",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#FF4444"}).setOrigin(1,0);
+    const hP=this.add.text(GW/2,6,"P = PAUSE",{fontFamily:"Press Start 2P",fontSize:"5px",color:"#444"}).setOrigin(0.5,0);
+    this.hudContainer.add([bg1,t1,h1b,this.p1Bar,p1pb,this.p1ProjBar,this.p1DT,this.p1HT,this.p1BurstsHUD,bg2,t2,h2b,this.p2Bar,this.p2DT,this.p2HT,hP]);
   }
 
   refreshHUD(){
@@ -351,84 +334,40 @@ class BattleScene extends Phaser.Scene{
   }
 
   buildPauseMenu(){
-    this.pauseContainer=this.add.container(GW/2,GH/2).setDepth(9500).setVisible(false);
+    this.pauseContainer=this.add.container(GW/2,GH/2).setDepth(25000).setVisible(false);
     const pBg=this.add.rectangle(0,0,440,270,0x050308,0.97).setStrokeStyle(3,0xFFD700);
     const pTxt=this.add.text(0,-108,"⏸  PAUSED",{fontFamily:"Press Start 2P",fontSize:"15px",color:"#FFD700"}).setOrigin(0.5);
     const bKey=BOOK_LIST[Math.floor(Math.random()*BOOK_LIST.length)],bUrl=BOOK_LINKS[bKey];
     const bookImg=this.add.image(0,-32,bKey).setDisplaySize(72,108).setInteractive({useHandCursor:true});
     bookImg.on("pointerdown",()=>window.open(bUrl,"_blank"));
-    const bookHint=this.add.text(0,48,"📖 READ THE LEGEND →",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#55AAFF"}).setOrigin(0.5).setInteractive({useHandCursor:true});
-    bookHint.on("pointerdown",()=>window.open(bUrl,"_blank"));
     const rBtn=this.add.text(-96,100,"🔄 RESTART",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#00FF88",backgroundColor:"#111",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
     rBtn.on("pointerdown",()=>{Match.paused=false;this.physics.world.isPaused=false;this.scene.restart();});
     const qBtn=this.add.text(96,100,"◀ QUIT",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#050308",backgroundColor:"#FFD700",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
     qBtn.on("pointerdown",()=>{Match.paused=false;this.physics.world.isPaused=false;this.scene.start("BrawlerScene");});
-    this.pauseContainer.add([pBg,pTxt,bookImg,bookHint,rBtn,qBtn]);
-  }
-
-  respawnOrEnd(id){
-    const S=this.S;if(S.gameOver)return;
-    const isP1=id==="p1",sp=isP1?this.p1:this.p2,spX=isP1?SPAWN.p1.x:SPAWN.p2.x,spY=isP1?SPAWN.p1.y:SPAWN.p2.y,pre=isP1?this.p1Pre:this.p2Pre;
-    if(isP1)Match.p1Lives--;else Match.p2Lives--;
-    this.cameras.main.shake(240,0.014);this.refreshHUD();
-    if((isP1?Match.p1Lives:Match.p2Lives)<=0){S.gameOver=true;Match.winner=isP1?"P2":"P1";this.showSignalLost();return;}
-    if(isP1){Match.p1Pct=0;S.p1Stun=false;S.p1AtkCD=false;S.p1Jumps=0;S.p1Bursts=3;S.p1ProjReady=true;S.p1ProjCharge=1.0;}
-    else{Match.p2Pct=0;S.p2Stun=false;S.p2AtkCD=false;S.p2Jumps=0;S.p2Bursts=3;}
-    this.tweens.killTweensOf(sp);
-    sp.setActive(true).setVisible(true).setAlpha(1).clearTint();
-    if(sp.body){sp.body.setEnable(true);sp.body.setVelocity(0,0);sp.body.setAcceleration(0,0);}
-    sp.setPosition(spX,spY);sp.play(pre+"_idle");
-    this.tweens.add({targets:sp,alpha:0.3,duration:100,yoyo:true,repeat:7,onComplete:()=>{sp.setActive(true).setVisible(true).setAlpha(1);}});
-    const lbl=this.add.text(spX,spY-44,(isP1?"P1":"CPU")+" BACK",{fontFamily:"Press Start 2P",fontSize:"7px",color:isP1?"#00FF88":"#FF5555"}).setOrigin(0.5).setDepth(500);
-    this.tweens.add({targets:lbl,y:spY-84,alpha:0,duration:800,onComplete:()=>lbl.destroy()});
-    this.refreshHUD();
-  }
-
-  showSignalLost(){
-    document.getElementById("mc").classList.remove("on");
-    const sl=this.textures.exists("signal_lost")?this.add.image(GW/2,GH/2,"signal_lost").setDisplaySize(GW,GH).setAlpha(0).setDepth(8000).setScrollFactor(0):this.add.rectangle(GW/2,GH/2,GW,GH,0x050308,0).setDepth(8000).setScrollFactor(0);
-    this.tweens.add({targets:sl,alpha:0.9,duration:400});
-    const winner=Match.winner==="P1"?Match.p1:Match.p2,wc=winner==="Juni"?"#00FF88":"#FF6600";
-    this.add.text(GW/2,GH/2-30,"SIGNAL LOST",{fontFamily:"Press Start 2P",fontSize:"22px",color:"#FF2222",stroke:"#000",strokeThickness:4}).setDepth(8001).setOrigin(0.5).setScrollFactor(0);
-    this.add.text(GW/2,GH/2+10,Match.winner+" WINS — "+winner.toUpperCase(),{fontFamily:"Press Start 2P",fontSize:"10px",color:wc}).setDepth(8001).setOrigin(0.5).setScrollFactor(0);
-    const url=winner==="Juni"?BOOK_LINKS.juni_en:BOOK_LINKS.pyro_en;
-    const cta=this.add.text(GW/2,GH/2+50,"📖 READ THE LEGEND",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#55AAFF",backgroundColor:"#111",padding:{x:10,y:5}}).setDepth(8001).setOrigin(0.5).setScrollFactor(0).setInteractive({useHandCursor:true});
-    cta.on("pointerdown",()=>window.open(url,"_blank"));
-    this.tweens.add({targets:cta,alpha:0.5,duration:800,yoyo:true,repeat:-1});
-    const cta2=this.add.text(GW/2,GH/2+78,winner==="Juni"?"📡 Also: Outbreak →":"📗 Also: Juni the Immortal →",{fontFamily:"Press Start 2P",fontSize:"6px",color:"#9933CC"}).setDepth(8001).setOrigin(0.5).setScrollFactor(0).setInteractive({useHandCursor:true});
-    cta2.on("pointerdown",()=>window.open(winner==="Juni"?BOOK_LINKS.outbreak_en:BOOK_LINKS.juni_en,"_blank"));
-    this.time.delayedCall(2600,()=>this.scene.start("ResultsScene"));
+    this.pauseContainer.add([pBg,pTxt,bookImg,rBtn,qBtn]);
   }
 
   resolveHit(atkId,tgtId,hit,isProjectile){
-    const S=this.S;if(S.gameOver||!hit||!hit.active)return;
+    const S=this.S;if(S.gameOver||!hit||!hit.active||atkId===tgtId)return; 
     const isP1Tgt=tgtId==="p1";
-    // LOG 002 FIX: Mobile stick Swipe Down triggers shield perfectly now
     const shielding=isP1Tgt?(this.keys.S.isDown||this.keys.DOWN.isDown||this.keys.L.isDown||MP.f||JOY.vy>0.6):false;
     const shieldHp=isP1Tgt?S.p1ShieldHp:S.p2ShieldHp;
     if(isProjectile){const vis=hit.getData("vis");if(vis&&vis.active)vis.destroy();}
-    hit.destroy(); // Safely destroys hit to prevent rapid multi-hit death
-    
+    hit.destroy();
     const tgt=tgtId==="p2"?this.p2:this.p1,atk=atkId==="p1"?this.p1:this.p2;
     if(!tgt.active||!tgt.body)return;
-    if(shielding&&shieldHp>0){if(isP1Tgt)S.p1ShieldHp--;else S.p2ShieldHp--;goldSpark(this,tgt.x,tgt.y);this.cameras.main.shake(30,0.002);return;}
-    
+    if(shielding&&shieldHp>0){if(isP1Tgt)S.p1ShieldHp--;else S.p2ShieldHp--;goldSpark(this,tgt.x,tgt.y);return;}
     let power=isProjectile?Phaser.Math.Between(5,9):Phaser.Math.Between(3,7);
     if(atkId==="p1"&&S.p1BurstBuff)power*=2;
     if(tgtId==="p2")Match.p2Pct+=power;else Match.p1Pct+=power;
-    const pct=tgtId==="p2"?Match.p2Pct:Match.p1Pct;
+    const pct=tgtId==="p2"?Match.p2Pct:Match.p1Pct,tPre=tgtId==="p2"?this.p2Pre:this.p1Pre;
     const kbScale=Math.min(4,1+(pct*0.015)),dir=tgt.x>=atk.x?1:-1;
-    
-    // LOG 002 FIX: Adjusted launch arc. Pops players up slightly higher, slides them slightly less.
     tgt.body.setVelocity(dir*170*kbScale,-210*kbScale);
-    
-    const tPre=tgtId==="p2"?this.p2Pre:this.p1Pre,fHit=FRAMES[tPre==="j"?"juni":"pyro"],lt=pct>(Match.maxHealth*0.35);
+    const fHit=FRAMES[tPre==="j"?"juni":"pyro"],lt=pct>(Match.maxHealth*0.35);
     tgt.setFrame(lt?fHit.knock:fHit.dmg[0]);
-    if(this.anims.exists(tPre+(lt?"_launch":"_dmg")))this.time.delayedCall(lt?40:30,()=>{if(tgt.active)tgt.play(tPre+(lt?"_launch":"_dmg"),true);});
-    this.cameras.main.shake(isProjectile?40:65,0.007);
+    if(this.anims.exists(tPre+(lt?"_launch":"_dmg")))this.time.delayedCall(30,()=>{if(tgt.active)tgt.play(tPre+(lt?"_launch":"_dmg"),true);});
     if(tgtId==="p2")S.p2Stun=true;else S.p1Stun=true;
     this.time.delayedCall(150,()=>{if(!S.gameOver){if(tgtId==="p2")S.p2Stun=false;else S.p1Stun=false;}});
-    this.tweens.add({targets:tgt,alpha:{from:0.5,to:1},duration:140});
     this.refreshHUD();
   }
 
@@ -439,8 +378,7 @@ class BattleScene extends Phaser.Scene{
     arcSlash(this,sp.x,sp.y,dir,pre==="j");
     sp.setFrame(FRAMES[pre==="j"?"juni":"pyro"].melee);
     if(this.anims.exists(pre+"_melee"))this.time.delayedCall(30,()=>sp.play(pre+"_melee",true));
-    // LOG 002 FIX: Spawns hitbox 10px closer to player to tighten accuracy, smaller size
-    const hit=this.add.rectangle(sp.x+dir*30,sp.y-6,24,20,0xFFD700,0);
+    const hit=this.add.rectangle(sp.x+dir*45,sp.y-6,24,20,0xFFD700,0);
     this.physics.add.existing(hit);hit.body.setAllowGravity(false);hit.body.setImmovable(true);
     hit.setData("owner",id);hit.life=0;this.meleeGrp.add(hit);
   }
@@ -451,14 +389,12 @@ class BattleScene extends Phaser.Scene{
     const dir=sp.flipX?-1:1,isJuni=pre==="j",fReg=FRAMES[isJuni?"juni":"pyro"];
     sp.setFrame(fReg.range);
     if(this.anims.exists(pre+"_range"))this.time.delayedCall(30,()=>{if(sp.active)sp.play(pre+"_range",true);});
-    const vis=this.add.sprite(sp.x+dir*30,sp.y-8,isJuni?"j_sheet":"p_sheet",fReg.proj).setDisplaySize(38,38).setDepth(50).setFlipX(dir===-1);
-    
-    // LOG 002 FIX: Projectile hitbox explicitly defies gravity and holds a perfect horizontal velocity
-    const hit=this.add.rectangle(sp.x+dir*30,sp.y-8,14,14,0xFFFFFF,0);
+    const vis=this.add.sprite(sp.x+dir*45,sp.y-8,isJuni?"j_sheet":"p_sheet",fReg.proj).setDisplaySize(38,38).setDepth(50).setFlipX(dir===-1);
+    const hit=this.add.rectangle(sp.x+dir*45,sp.y-8,14,14,0xFFFFFF,0);
     this.physics.add.existing(hit);
-    hit.body.allowGravity=false; 
-    hit.body.setVelocity(dir*550, 0); 
-    
+    hit.body.setAllowGravity(false); 
+    hit.body.setAcceleration(0,0);
+    hit.body.setVelocity(dir*550,0);
     hit.setData("owner",id);hit.setData("vis",vis);hit.life=0;this.projGrp.add(hit);
   }
 
@@ -468,23 +404,11 @@ class BattleScene extends Phaser.Scene{
     const fReg=FRAMES[pre==="j"?"juni":"pyro"];
     sp.setFrame(fReg.burst);if(this.anims.exists(pre+"_burst"))this.time.delayedCall(60,()=>sp.play(pre+"_burst",true));
     const isJuni=pre==="j",col=isJuni?0x00FF88:0xFF2200;
-    const ring=this.add.circle(sp.x,sp.y,90,col,0.2).setDepth(49),ring2=this.add.circle(sp.x,sp.y,55,col,0.35).setDepth(50);
-    this.tweens.add({targets:[ring,ring2],scaleX:1.6,scaleY:1.6,alpha:0,duration:420,onComplete:()=>{ring.destroy();ring2.destroy();}});
-    for(let i=0;i<14;i++){const ang=Math.random()*Math.PI*2,len=20+Math.random()*70;const dot=this.add.rectangle(sp.x+Math.cos(ang)*len,sp.y+Math.sin(ang)*len,8,8,col,0.9).setDepth(51);this.tweens.add({targets:dot,x:sp.x+Math.cos(ang)*(len+40),y:sp.y+Math.sin(ang)*(len+40),alpha:0,duration:380,onComplete:()=>dot.destroy()});}
+    const ring=this.add.circle(sp.x,sp.y,90,col,0.2).setDepth(49);
+    this.tweens.add({targets:ring,scaleX:1.6,scaleY:1.6,alpha:0,duration:420,onComplete:()=>ring.destroy()});
     const tgt=id==="p1"?this.p2:this.p1;
     if(tgt.active&&Phaser.Math.Distance.Between(sp.x,sp.y,tgt.x,tgt.y)<95){
-      goldSpark(this,tgt.x,tgt.y-20);
-      const tgtId=id==="p1"?"p2":"p1";if(tgtId==="p2")Match.p2Pct+=15;else Match.p1Pct+=15;
-      const pct=tgtId==="p2"?Match.p2Pct:Match.p1Pct,tPre=tgtId==="p2"?this.p2Pre:this.p1Pre;
-      const kbScale=Math.min(4,1+(pct*0.015)),bdir=tgt.x>=sp.x?1:-1;
-      tgt.body.setVelocity(bdir*160*kbScale,-140*kbScale);
-      const bfReg=FRAMES[tPre==="j"?"juni":"pyro"],lt=pct>(Match.maxHealth*0.35);
-      tgt.setFrame(lt?bfReg.knock:bfReg.dmg[0]);
-      if(this.anims.exists(tPre+(lt?"_launch":"_dmg")))this.time.delayedCall(35,()=>{if(tgt.active)tgt.play(tPre+(lt?"_launch":"_dmg"),true);});
-      this.cameras.main.shake(120,0.01);
-      if(tgtId==="p2")this.S.p2Stun=true;else this.S.p1Stun=true;
-      this.time.delayedCall(180,()=>{if(tgtId==="p2")this.S.p2Stun=false;else this.S.p1Stun=false;});
-      this.refreshHUD();
+      this.resolveHit(id,id==="p1"?"p2":"p1",this.add.rectangle(tgt.x,tgt.y,1,1),false);
     }
   }
 
@@ -495,41 +419,25 @@ class BattleScene extends Phaser.Scene{
     const dx=this.p1.x-sp.x,absX=Math.abs(dx);
     if(absX>40){sp.body.setVelocityX(dx>0?this.cpuSpeed:-this.cpuSpeed);sp.setFlipX(dx<0);}
     else sp.body.setVelocityX(sp.body.velocity.x*0.6);
-    this.cpuAtkTimer+=dt;
     if(absX>60&&S.p2Jumps<2&&Math.random()<0.022){sp.body.setVelocityY(-600);S.p2Jumps++;}
-    if(absX<75&&Math.random()<this.cpuAtkFreq&&!this.cpuAtkCD){this.cpuAtkCD=true;this.spawnMelee("p2");this.time.delayedCall(Match.difficulty==="HARD"?350:480,()=>this.cpuAtkCD=false);}
-    this.cpuFireTimer+=dt;
+    if(absX<75&&Math.random()<this.cpuAtkFreq&&!this.cpuAtkCD){this.cpuAtkCD=true;this.spawnMelee("p2");this.time.delayedCall(480,()=>this.cpuAtkCD=false);}
     if(absX>90&&absX<300&&Math.random()<this.cpuFireFreq&&!this.cpuAtkCD){this.cpuAtkCD=true;this.spawnProjectile("p2");this.time.delayedCall(360,()=>this.cpuAtkCD=false);}
-    if(Match.p2Pct>80&&S.p2Bursts>0&&Math.random()<0.005){S.p2Bursts--;this.spawnBurst("p2");}
-    if(!sp.anims.isPlaying||!["_melee","_range","_burst","_launch","_dmg","_jump"].some(s=>sp.anims.currentAnim?.key.includes(s)))sp.play(this.p2Pre+"_idle",true);
   }
 
   moveP1(){
     const S=this.S,sp=this.p1,pre=this.p1Pre,k=this.keys;
     if(S.state!=="PLAYING"||!sp.active||!sp.body)return;
     if(sp.body.blocked.down)S.p1Jumps=0;
-    
-    // LOG 002 FIX: Mobile swipe down checks properly
-    const isShielding = (k.S.isDown||k.DOWN.isDown||k.L.isDown||MP.f||JOY.vy>0.6) && S.p1ShieldHp>0;
-    if(isShielding){
-      sp.body.setVelocityX(0);
-      sp.setFrame(FRAMES[pre==="j"?"juni":"pyro"].shield);
-      return; // Freezes all other input/animations perfectly
-    }
-    
+    const isShielding=(k.S.isDown||k.DOWN.isDown||k.L.isDown||MP.f||JOY.vy>0.6)&&S.p1ShieldHp>0;
+    if(isShielding){sp.body.setVelocityX(0);sp.setFrame(FRAMES[pre==="j"?"juni":"pyro"].shield);return;}
     if(!S.p1Stun){
       const gL=k.A.isDown||MP.l||JOY.vx<-0.25,gR=k.D.isDown||MP.r||JOY.vx>0.25;
       if(gL){sp.body.setVelocityX(-260);sp.setFlipX(true);}else if(gR){sp.body.setVelocityX(260);sp.setFlipX(false);}else sp.body.setVelocityX(sp.body.velocity.x*0.7);
-      const inCombat=sp.anims.currentAnim&&["_melee","_range","_burst","_launch","_dmg","_jump"].some(s=>sp.anims.currentAnim.key.includes(s));
-      if(!inCombat)sp.play(pre+"_idle",true);
-      if((Phaser.Input.Keyboard.JustDown(k.W)||MP.j||JOY.vy<-0.6)&&S.p1Jumps<2){sp.body.setVelocityY(-600);S.p1Jumps++;sp.play(pre+"_jump",true);MP.j=false;}
+      if(Phaser.Input.Keyboard.JustDown(k.W)||MP.j||JOY.vy<-0.6){if(S.p1Jumps<2){sp.body.setVelocityY(-600);S.p1Jumps++;sp.play(pre+"_jump",true);}MP.j=false;}
       if((Phaser.Input.Keyboard.JustDown(k.J)||MP.a)&&!S.p1AtkCD){S.p1AtkCD=true;this.spawnMelee("p1");this.time.delayedCall(210,()=>S.p1AtkCD=false);MP.a=false;}
       if((Phaser.Input.Keyboard.JustDown(k.K)||MP.s)&&S.p1ProjReady&&!S.p1AtkCD){
-        S.p1ProjReady=false;S.p1ProjCharge=0;
-        if(this.p1ProjBar&&this.p1ProjBar.active)this.p1ProjBar.scaleX=0;
-        this.spawnProjectile("p1");
-        this.time.delayedCall(1500,()=>{S.p1ProjReady=true;S.p1ProjCharge=1.0;if(this.p1ProjBar&&this.p1ProjBar.active)this.p1ProjBar.scaleX=1;});
-        MP.s=false;
+        S.p1ProjReady=false;S.p1ProjCharge=0;this.spawnProjectile("p1");
+        this.time.delayedCall(1500,()=>{S.p1ProjReady=true;S.p1ProjCharge=1.0;});MP.s=false;
       }
       if((Phaser.Input.Keyboard.JustDown(k.SEMI)||MP.b)&&S.p1Bursts>0){S.p1Bursts--;this.spawnBurst("p1");S.p1BurstBuff=true;this.time.delayedCall(5000,()=>S.p1BurstBuff=false);this.refreshHUD();MP.b=false;}
     }
@@ -543,72 +451,51 @@ class BattleScene extends Phaser.Scene{
     this.cameras.main.centerOn(this.camX,GH/2);
   }
 
+  respawnOrEnd(id){
+    const S=this.S;if(S.gameOver)return;
+    const isP1=id==="p1",sp=isP1?this.p1:this.p2,spX=isP1?SPAWN.p1.x:SPAWN.p2.x,spY=isP1?SPAWN.p1.y:SPAWN.p2.y;
+    if(isP1)Match.p1Lives--;else Match.p2Lives--;
+    if((isP1?Match.p1Lives:Match.p2Lives)<=0){S.gameOver=true;Match.winner=isP1?"P2":"P1";this.showSignalLost();return;}
+    if(isP1)Match.p1Pct=0;else Match.p2Pct=0;
+    sp.setPosition(spX,spY);this.refreshHUD();
+  }
+
+  showSignalLost(){
+    document.getElementById("mc").classList.remove("on");
+    const sl=this.add.rectangle(GW/2,GH/2,GW,GH,0x050308,0.9).setDepth(30000).setScrollFactor(0);
+    this.add.text(GW/2,GH/2-30,"SIGNAL LOST",{fontFamily:"Press Start 2P",fontSize:"22px",color:"#FF2222"}).setDepth(30001).setOrigin(0.5).setScrollFactor(0);
+    this.time.delayedCall(2000,()=>this.scene.start("ResultsScene"));
+  }
+
   update(time,dt){
     const S=this.S;
     if(Phaser.Input.Keyboard.JustDown(this.keys.P)){
       Match.paused=!Match.paused;this.physics.world.isPaused=Match.paused;
-      if(Match.paused){
-        this.pauseContainer.removeAll(true);
-        const pBg=this.add.rectangle(0,0,440,270,0x050308,0.97).setStrokeStyle(3,0xFFD700);
-        const pTxt=this.add.text(0,-108,"⏸  PAUSED",{fontFamily:"Press Start 2P",fontSize:"15px",color:"#FFD700"}).setOrigin(0.5);
-        const bKey=BOOK_LIST[Math.floor(Math.random()*BOOK_LIST.length)],bUrl=BOOK_LINKS[bKey];
-        const bookImg=this.add.image(0,-32,bKey).setDisplaySize(72,108).setInteractive({useHandCursor:true});
-        bookImg.on("pointerdown",()=>window.open(bUrl,"_blank"));
-        const bookHint=this.add.text(0,48,"📖 READ THE LEGEND →",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#55AAFF"}).setOrigin(0.5).setInteractive({useHandCursor:true});
-        bookHint.on("pointerdown",()=>window.open(bUrl,"_blank"));
-        const rBtn=this.add.text(-96,100,"🔄 RESTART",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#00FF88",backgroundColor:"#111",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
-        rBtn.on("pointerdown",()=>{Match.paused=false;this.physics.world.isPaused=false;this.scene.restart();});
-        const qBtn=this.add.text(96,100,"◀ QUIT",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#050308",backgroundColor:"#FFD700",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
-        qBtn.on("pointerdown",()=>{Match.paused=false;this.physics.world.isPaused=false;this.scene.start("BrawlerScene");});
-        this.pauseContainer.add([pBg,pTxt,bookImg,bookHint,rBtn,qBtn]);
-      }
       this.pauseContainer.setVisible(Match.paused);
+      if(Match.paused)this.pauseContainer.setDepth(25000);
     }
     if(Match.paused||S.gameOver)return;
     this.meleeGrp.children.iterate(h=>{if(!h)return;h.life+=dt;if(h.life>200)h.destroy();});
     this.projGrp.children.iterate(h=>{
       if(!h||!h.active)return;h.life+=dt;
       const vis=h.getData("vis");if(vis&&vis.active){vis.x=h.x;vis.y=h.y;}
-      if(h.life>1600||h.x<BLAST.minX||h.x>BLAST.maxX||h.y<BLAST.minY||h.y>BLAST.maxY){if(vis&&vis.active)vis.destroy();h.destroy();}
+      if(h.life>1600||h.x<BLAST.minX||h.x>BLAST.maxX){ if(vis&&vis.active)vis.destroy(); h.destroy(); }
     });
     this.moveP1();this.runCPU(dt);
-    [["p1",this.p1],["p2",this.p2]].forEach(([id,sp])=>{if(!sp.active)return;if(sp.x<BLAST.minX||sp.x>BLAST.maxX||sp.y<BLAST.minY||sp.y>BLAST.maxY)this.respawnOrEnd(id);});
+    if(this.p1.y>GH+100)this.respawnOrEnd("p1");if(this.p2.y>GH+100)this.respawnOrEnd("p2");
     this.updateCamera();
-    
-    if(!S.p1ProjReady&&this.p1ProjBar&&this.p1ProjBar.active){
-      S.p1ProjCharge=Math.min(1,S.p1ProjCharge+dt/1500);
-      this.p1ProjBar.scaleX=S.p1ProjCharge;
-    }
-    
-    // LOG 002 FIX: The Idle Override Safety Check now perfectly respects the Shield Hold
-    const isShielding = (this.keys.S.isDown||this.keys.DOWN.isDown||this.keys.L.isDown||MP.f||JOY.vy>0.6) && S.p1ShieldHp>0;
-    if(this.p1.active&&this.p1.body&&!this.p1.anims.isPlaying&&Math.abs(this.p1.body.velocity.x)<40 && !isShielding)
-      this.p1.setFrame(FRAMES[this.p1Pre==="j"?"juni":"pyro"].idle[0]);
+    if(!S.p1ProjReady&&this.p1ProjBar.active){S.p1ProjCharge=Math.min(1,S.p1ProjCharge+dt/1500);this.p1ProjBar.scaleX=S.p1ProjCharge;}
+    this.hudContainer.setDepth(10000); 
   }
 }
 
 class ResultsScene extends Phaser.Scene{
   constructor(){super("ResultsScene");}
   create(){
-    document.getElementById("mc").classList.remove("on");
     this.add.image(GW/2,GH/2,"bg_eyes").setDisplaySize(GW,GH).setAlpha(0.35);
-    const winner=Match.winner==="P1"?Match.p1:Match.p2,wc=winner==="Juni"?"#00FF88":"#FF6600";
-    const wSheet=winner==="Juni"?"j_sheet":"p_sheet",wPre=winner==="Juni"?"j":"p";
-    const portrait=this.add.sprite(GW/2,GH/2-65,wSheet).setDisplaySize(120,120);
-    if(this.anims.exists(wPre+"_idle"))portrait.play(wPre+"_idle");
-    this.tweens.add({targets:portrait,scaleX:1.08,scaleY:1.08,yoyo:true,repeat:-1,duration:800});
-    this.add.text(GW/2,GH/2+14,"SECTOR CLEARED",{fontFamily:"Press Start 2P",fontSize:"17px",color:"#FFD700",stroke:"#000",strokeThickness:4}).setOrigin(0.5);
-    this.add.text(GW/2,GH/2+44,Match.winner+" WINS — "+winner.toUpperCase(),{fontFamily:"Press Start 2P",fontSize:"10px",color:wc}).setOrigin(0.5);
-    const url1=winner==="Juni"?BOOK_LINKS.juni_en:BOOK_LINKS.pyro_en;
-    const cta1=this.add.text(GW/2,GH/2+68,"★ "+(winner==="Juni"?"Enter if you dare; face Anubis in the sands of time.":"Born from the forge. His tusks run hotter than the mine walls."),{fontFamily:"Press Start 2P",fontSize:"6px",color:wc,align:"center",wordWrap:{width:GW-40}}).setOrigin(0.5).setInteractive({useHandCursor:true});
-    cta1.on("pointerdown",()=>window.open(url1,"_blank"));
-    this.tweens.add({targets:cta1,alpha:0.5,duration:900,yoyo:true,repeat:-1});
-    const cta2=this.add.text(GW/2,GH/2+96,winner==="Juni"?"📡 Also: Outbreak from the Stars →":"📗 Also: Juni the Immortal →",{fontFamily:"Press Start 2P",fontSize:"6px",color:"#555"}).setOrigin(0.5).setInteractive({useHandCursor:true});
-    cta2.on("pointerover",()=>cta2.setColor("#AAA"));cta2.on("pointerout",()=>cta2.setColor("#555"));
-    cta2.on("pointerdown",()=>window.open(winner==="Juni"?BOOK_LINKS.outbreak_en:BOOK_LINKS.juni_en,"_blank"));
-    this.add.text(GW/2,GH-26,"Do you want to test your luck again?",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#888"}).setOrigin(0.5);
-    this.add.text(GW/2,GH-13,"ANY KEY / TAP = REMATCH    ESC = MENU",{fontFamily:"Press Start 2P",fontSize:"6px",color:"#444"}).setOrigin(0.5);
-    this.input.keyboard.on("keydown",e=>{if(e.key==="Escape")this.scene.start("BrawlerScene");else this.scene.start("BattleScene");});
+    this.add.text(GW/2,GH/2,"SECTOR CLEARED",{fontFamily:"Press Start 2P",fontSize:"17px",color:"#FFD700"}).setOrigin(0.5);
+    this.add.text(GW/2,GH/2+40,"ANY KEY TO REMATCH",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#888"}).setOrigin(0.5);
+    this.input.keyboard.on("keydown",()=>this.scene.start("BattleScene"));
     this.input.on("pointerdown",()=>this.scene.start("BattleScene"));
   }
 }
@@ -617,8 +504,7 @@ new Phaser.Game({
   type:Phaser.AUTO,width:GW,height:GH,parent:"gc",backgroundColor:"#050308",
   scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},
   physics:{default:"arcade",arcade:{gravity:{y:0},debug:false}},
-  scene:[StartScreen,InstructionsScene,BrawlerScene,DifficultyScene,StageSelectScene,OriginHub,CreatorBio,BattleScene,ResultsScene],
-  input:{gamepad:true}
+  scene:[StartScreen,InstructionsScene,BrawlerScene,DifficultyScene,StageSelectScene,OriginHub,CreatorBio,BattleScene,ResultsScene]
 });
 
 </script>
