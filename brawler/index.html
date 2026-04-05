@@ -183,15 +183,19 @@ function arcSlash(scene,x,y,dir,isJuni){
   }
   scene.tweens.add({targets:g,alpha:0,duration:110,onComplete:()=>g.destroy()});
 }
-
 // ─────────────────────────────────────────────────────
-//  START SCREEN
+//  START SCREEN (UPDATED LINES 186-219)
 // ─────────────────────────────────────────────────────
 class StartScreen extends Phaser.Scene{
   constructor(){super("StartScreen");}
   preload(){
     this.load.image("promo",    "brawler_promo.jpg");
     this.load.image("bg_eyes",  "oros_game_eyes.jpg");
+    
+    // NEW FOREST ASSETS PLUGGED IN HERE
+    this.load.image("deep_forest_img", "bg_deep_forest.jpg");
+    this.load.image("forest_edge_img", "forest_bg.jpg");
+    
     this.load.image("hub_bg",   "logo.jpg");
     this.load.image("link_tree","link_tree.jpg");
     this.load.image("signal_lost","signal_lost.jpg");
@@ -200,6 +204,7 @@ class StartScreen extends Phaser.Scene{
     ["juni_en","outbreak_en","tabbies_en","pyro_en"].forEach(b=>this.load.image(b,b+".jpeg"));
     ["wanderer","olydia","orid","helios"].forEach(n=>this.load.image(n+"_beta",n+"_beta.jpg"));
     this.load.on("loaderror",f=>console.warn("Fallback:",f.key));
+    
     // Loading bar
     const bar=this.add.rectangle(GW/2,GH/2+20,2,8,0xFFD700).setDepth(1);
     const trk=this.add.rectangle(GW/2,GH/2+20,402,10,0x222222).setDepth(0);
@@ -211,8 +216,16 @@ class StartScreen extends Phaser.Scene{
       this.add.image(GW/2,GH/2,"promo").setDisplaySize(GW,GH);
     else
       this.add.rectangle(0,0,GW,GH,0x050308).setOrigin(0);
-    this.add.text(GW/2,GH/2+50,"GOLDEN ORE EDITION v11.6",{fontFamily:"Press Start 2P",fontSize:"14px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
-    const b=this.add.text(GW/2,GH/2+90,"CLICK / TAP TO START",{fontFamily:"Press Start 2P",fontSize:"10px",color:"#FFF"}).setOrigin(0.5);
+    
+    this.add.text(GW/2,GH/2+50,"GOLDEN ORE EDITION v11.6",{
+      fontFamily:"Press Start 2P",fontSize:"14px",color:"#FFD700",
+      stroke:"#000",strokeThickness:3
+    }).setOrigin(0.5);
+    
+    const b=this.add.text(GW/2,GH/2+90,"CLICK / TAP TO START",{
+      fontFamily:"Press Start 2P",fontSize:"10px",color:"#FFF"
+    }).setOrigin(0.5);
+    
     this.tweens.add({targets:b,alpha:0,duration:600,yoyo:true,repeat:-1});
     this.input.once("pointerdown",()=>this.scene.start("BrawlerScene"));
   }
@@ -308,33 +321,61 @@ class DifficultyScene extends Phaser.Scene{
     this.add.text(30,30,"◀ BACK",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#AAA"}).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("BrawlerScene"));
   }
 }
-
 // ─────────────────────────────────────────────────────
-//  STAGE SELECT
+//  STAGE SELECT (REPLACING LINES 311-341)
 // ─────────────────────────────────────────────────────
 class StageSelectScene extends Phaser.Scene{
   constructor(){super("StageSelectScene");}
   create(){
     this.add.image(GW/2,GH/2,"bg_eyes").setDisplaySize(GW,GH).setAlpha(0.45);
-    this.add.text(GW/2,40,"SELECT STAGE",{fontFamily:"Press Start 2P",fontSize:"13px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
+    this.add.text(GW/2,40,"SELECT EXTRACTION SECTOR",{fontFamily:"Press Start 2P",fontSize:"13px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
+    
     const stages=[
-      {key:"mana_forest", label:"MANA FOREST",    sub:"Stable / Verdant",     bgKey:"bg_eyes",   tint:0x88ffaa},
-      {key:"glitch_mines",label:"GLITCH MINES",   sub:"Unstable / Corrupted", bgKey:"bg_eyes",   tint:0x8888ff},
-      {key:"obsidian_pit",label:"OBSIDIAN PIT",   sub:"Narrow / Brutal",      bgKey:"bg_eyes",   tint:0xFFD700},
+      {
+        key:"mana_forest", 
+        label:"DEEP FOREST",   
+        sub:"Verdant / Ancient",   
+        bgKey:"deep_forest_img", // Uses bg_deep_forest.jpg
+        tint:0xffffff            // No tint needed for real images
+      },
+      {
+        key:"glitch_mines",
+        label:"FOREST EDGE",  
+        sub:"Stable / Calm",       
+        bgKey:"forest_edge_img", // Uses forest_bg.jpg
+        tint:0xffffff
+      },
+      {
+        key:"obsidian_pit",
+        label:"THE MINE",      
+        sub:"Narrow / Brutal",     
+        bgKey:"bg_eyes",         // Uses your standard oros_game_eyes.jpg
+        tint:0xFFD700            // Gold tint for the "Main" stage
+      },
     ];
+
     stages.forEach((stage,i)=>{
       const x=GW/2+(i===0?-240:i===1?0:240),y=GH/2+10;
       const bg=this.add.rectangle(x,y,210,150,0x111111).setStrokeStyle(2,0x555555);
-      const overlay=this.add.rectangle(x,y,210,150,parseInt(("0x"+stage.tint.toString(16))),0.12);
+      
+      // Use the actual image for the preview panel
+      const preview = this.add.image(x, y, stage.bgKey).setDisplaySize(210, 150).setAlpha(0.3);
+      
       const panel=this.add.rectangle(x,y,210,150,0x000000,0).setInteractive({useHandCursor:true});
       this.add.text(x,y-28,stage.label,{fontFamily:"Press Start 2P",fontSize:"9px",color:"#FFD700",stroke:"#000",strokeThickness:2}).setOrigin(0.5);
       this.add.text(x,y-4,stage.sub,{fontFamily:"Press Start 2P",fontSize:"6px",color:"#AAA"}).setOrigin(0.5);
+      
       // Mini characters as preview
       const jPrev=this.add.sprite(x-30,y+30,"j_sheet",0).setDisplaySize(48,48);
       const pPrev=this.add.sprite(x+30,y+30,"p_sheet",0).setDisplaySize(48,48).setFlipX(true);
-      panel.on("pointerover",()=>{panel.setStrokeStyle(3,0xFFFFFF);bg.setStrokeStyle(3,0xFFD700);});
-      panel.on("pointerout", ()=>{panel.setStrokeStyle(0);bg.setStrokeStyle(2,0x555555);});
-      panel.on("pointerdown",()=>{Match.map=stage.key;this.scene.start("BattleScene");});
+      
+      panel.on("pointerover",()=>{panel.setStrokeStyle(3,0xFFFFFF);bg.setStrokeStyle(3,0xFFD700); preview.setAlpha(0.6);});
+      panel.on("pointerout", ()=>{panel.setStrokeStyle(0);bg.setStrokeStyle(2,0x555555); preview.setAlpha(0.3);});
+      
+      panel.on("pointerdown",()=>{
+        Match.map = stage.bgKey; // Pass the actual image key to the battle
+        this.scene.start("BattleScene");
+      });
     });
     this.add.text(30,30,"◀ BACK",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#AAA"}).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("BrawlerScene"));
   }
