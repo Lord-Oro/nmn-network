@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <title>NMN: BRAWLERS — Golden Ore Edition v11.8 Final</title>
+  <title>NMN: BRAWLERS — Golden Ore Edition v1.0 Final</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-P5WL9XNDY8');</script>
@@ -103,7 +103,7 @@ class StartScreen extends Phaser.Scene{
     if(this.textures.exists("promo")&&this.textures.get("promo").source[0].width>1)
       this.add.image(GW/2,GH/2,"promo").setDisplaySize(GW,GH);
     else this.add.rectangle(0,0,GW,GH,0x050308).setOrigin(0);
-    this.add.text(GW/2,GH/2+50,"GOLDEN ORE EDITION v11.8",{fontFamily:"Press Start 2P",fontSize:"14px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
+    this.add.text(GW/2,GH/2+50,"GOLDEN ORE EDITION v1.0",{fontFamily:"Press Start 2P",fontSize:"14px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
     const b=this.add.text(GW/2,GH/2+90,"CLICK / TAP TO START",{fontFamily:"Press Start 2P",fontSize:"10px",color:"#FFF"}).setOrigin(0.5);
     this.tweens.add({targets:b,alpha:0,duration:600,yoyo:true,repeat:-1});
     this.input.once("pointerdown",()=>this.scene.start("BrawlerScene"));
@@ -286,9 +286,9 @@ class BattleScene extends Phaser.Scene{
     this.cpuAtkFreq=Match.difficulty==="EASY"?0.02:Match.difficulty==="HARD"?0.25:0.10;
     this.cpuFireFreq=Match.difficulty==="EASY"?0.005:Match.difficulty==="HARD"?0.10:0.03;
     
-    // LOG 004 FIX: Hard-disable gravity on the Physics Groups to fix Melee/Proj hitbox dropping
-    this.meleeGrp=this.physics.add.group({allowGravity:false});
-    this.projGrp=this.physics.add.group({allowGravity:false});
+    // Physics Groups
+    this.meleeGrp=this.physics.add.group();
+    this.projGrp=this.physics.add.group();
 
     this.physics.add.overlap(this.meleeGrp,this.p2,(hit,player)=>{if(!hit||!hit.active||hit.getData("owner")!=="p1")return;goldSpark(this,hit.x,hit.y);this.resolveHit("p1","p2",hit,false);});
     this.physics.add.overlap(this.meleeGrp,this.p1,(hit,player)=>{if(!hit||!hit.active||hit.getData("owner")!=="p2")return;goldSpark(this,hit.x,hit.y);this.resolveHit("p2","p1",hit,false);});
@@ -298,13 +298,16 @@ class BattleScene extends Phaser.Scene{
     this.buildHUD();this.refreshHUD();
     this.keys=this.input.keyboard.addKeys({W:"W",A:"A",S:"S",D:"D",DOWN:"DOWN",J:"J",K:"K",L:"L",SEMI:"SEMICOLON",P:"P"});
     this.buildPauseMenu();
-    this.camX=GW/2;this.targetZoom=1.0;this.cameras.main.centerOn(GW/2,GH/2);
+    this.camX=GW/2;
+    this.cameras.main.centerOn(GW/2,GH/2);
+    
     const bText=this.add.text(GW/2,GH/2,"BRAWL!",{fontFamily:"Press Start 2P",fontSize:"42px",color:"#FFD700",stroke:"#000",strokeThickness:6}).setOrigin(0.5).setDepth(20000).setScrollFactor(0);
     this.tweens.add({targets:bText,scaleX:1.25,scaleY:1.25,yoyo:true,repeat:-1,duration:280});
     this.time.delayedCall(1500,()=>{bText.destroy();this.S.state="PLAYING";});
   }
 
   buildHUD(){
+    // LOG 005 FIX: Set scroll factor strictly to 0 so it ignores panning
     this.hudContainer=this.add.container(0,0).setDepth(10000).setScrollFactor(0);
     const p1c=Match.p1==="Juni"?"#00FF88":"#FF6600",p2c=Match.p1==="Juni"?"#FF6600":"#00FF88";
     const bg1=this.add.rectangle(0,0,240,64,0x050308,0.92).setOrigin(0);
@@ -322,7 +325,10 @@ class BattleScene extends Phaser.Scene{
     this.p2Bar=this.add.rectangle(GW-214,18,200,10,parseInt(p2c.replace("#","0x"))).setOrigin(0);
     this.p2DT=this.add.text(GW-10,37,"0%",{fontFamily:"Press Start 2P",fontSize:"11px",color:"#FFF"}).setOrigin(1,0);
     this.p2HT=this.add.text(GW-10,51,"♥♥♥",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#FF4444"}).setOrigin(1,0);
-    const hP=this.add.text(GW/2,6,"P = PAUSE",{fontFamily:"Press Start 2P",fontSize:"5px",color:"#444"}).setOrigin(0.5,0);
+    
+    const hP=this.add.text(GW/2,6,"P / TAP = PAUSE",{fontFamily:"Press Start 2P",fontSize:"5px",color:"#888"}).setOrigin(0.5,0).setInteractive({useHandCursor:true});
+    hP.on('pointerdown', () => { this.togglePause(); });
+    
     this.hudContainer.add([bg1,t1,h1b,this.p1Bar,p1pb,this.p1ProjBar,this.p1DT,this.p1HT,this.p1BurstsHUD,bg2,t2,h2b,this.p2Bar,this.p2DT,this.p2HT,hP]);
   }
 
@@ -343,20 +349,35 @@ class BattleScene extends Phaser.Scene{
     const pBg=this.add.rectangle(0,0,440,270,0x050308,0.97).setStrokeStyle(3,0xFFD700);
     const pTxt=this.add.text(0,-108,"⏸  PAUSED",{fontFamily:"Press Start 2P",fontSize:"15px",color:"#FFD700"}).setOrigin(0.5);
     
-    // LOG 004 FIX: Subliminal Easter Egg Texts added
     const codeTxt=this.add.text(0,-75,"FOLLOW THE CODE...",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#00FF88"}).setOrigin(0.5);
-    const bookHint=this.add.text(0,50,"📖 SEARCH FOR CLUES IN THE BOOKS →",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#55AAFF"}).setOrigin(0.5).setInteractive({useHandCursor:true});
+    this.pauseBookHint=this.add.text(0,50,"📖 SEARCH FOR CLUES IN THE BOOKS →",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#55AAFF"}).setOrigin(0.5).setInteractive({useHandCursor:true});
     
-    const bKey=BOOK_LIST[Math.floor(Math.random()*BOOK_LIST.length)],bUrl=BOOK_LINKS[bKey];
-    const bookImg=this.add.image(0,-16,bKey).setDisplaySize(72,108).setInteractive({useHandCursor:true});
-    bookImg.on("pointerdown",()=>window.open(bUrl,"_blank"));
-    bookHint.on("pointerdown",()=>window.open(bUrl,"_blank"));
+    const bKey=BOOK_LIST[0];
+    this.pauseBookImg=this.add.image(0,-16,bKey).setDisplaySize(72,108).setInteractive({useHandCursor:true});
+    this.pauseBookUrl = BOOK_LINKS[bKey];
+
+    this.pauseBookImg.on("pointerdown",()=>window.open(this.pauseBookUrl,"_blank"));
+    this.pauseBookHint.on("pointerdown",()=>window.open(this.pauseBookUrl,"_blank"));
     
     const rBtn=this.add.text(-96,100,"🔄 RESTART",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#00FF88",backgroundColor:"#111",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
     rBtn.on("pointerdown",()=>{Match.paused=false;this.physics.world.isPaused=false;this.scene.restart();});
     const qBtn=this.add.text(96,100,"◀ QUIT",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#050308",backgroundColor:"#FFD700",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
     qBtn.on("pointerdown",()=>{Match.paused=false;this.physics.world.isPaused=false;this.scene.start("BrawlerScene");});
-    this.pauseContainer.add([pBg,pTxt,codeTxt,bookImg,bookHint,rBtn,qBtn]);
+    this.pauseContainer.add([pBg,pTxt,codeTxt,this.pauseBookImg,this.pauseBookHint,rBtn,qBtn]);
+  }
+
+  togglePause() {
+    const S = this.S;
+    if(S.gameOver) return;
+    Match.paused = !Match.paused;
+    this.physics.world.isPaused = Match.paused;
+    if(Match.paused) {
+        // LOG 005 FIX: Randomly cycles the book cover every time pause is clicked
+        const nextKey = BOOK_LIST[Math.floor(Math.random() * BOOK_LIST.length)];
+        this.pauseBookImg.setTexture(nextKey);
+        this.pauseBookUrl = BOOK_LINKS[nextKey];
+    }
+    this.pauseContainer.setVisible(Match.paused);
   }
 
   resolveHit(atkId,tgtId,hit,isProjectile){
@@ -391,13 +412,15 @@ class BattleScene extends Phaser.Scene{
     sp.setFrame(FRAMES[pre==="j"?"juni":"pyro"].melee);
     if(this.anims.exists(pre+"_melee"))this.time.delayedCall(30,()=>sp.play(pre+"_melee",true));
     
-    // LOG 004 FIX: Huge, generous Coyote Hitbox for melee
-    const hit=this.add.rectangle(sp.x+dir*45,sp.y-6,70,50,0xFFD700,0);
-    this.meleeGrp.add(hit);
+    const hit = this.add.rectangle(sp.x+dir*45, sp.y-6, 70, 50, 0xFFD700, 0);
     this.physics.add.existing(hit);
-    hit.body.allowGravity=false;
+    // LOG 005 FIX: Force physics attributes directly on the body after creation
+    hit.body.setSize(70, 50);
+    hit.body.setAllowGravity(false);
     hit.body.setImmovable(true);
-    hit.setData("owner",id);hit.life=0;
+    hit.setData("owner", id);
+    hit.life = 0;
+    this.meleeGrp.add(hit);
   }
 
   spawnProjectile(id){
@@ -407,12 +430,16 @@ class BattleScene extends Phaser.Scene{
     sp.setFrame(fReg.range);
     if(this.anims.exists(pre+"_range"))this.time.delayedCall(30,()=>{if(sp.active)sp.play(pre+"_range",true);});
     const vis=this.add.sprite(sp.x+dir*45,sp.y-8,isJuni?"j_sheet":"p_sheet",fReg.proj).setDisplaySize(38,38).setDepth(50).setFlipX(dir===-1);
-    const hit=this.add.rectangle(sp.x+dir*45,sp.y-8,20,20,0xFFFFFF,0);
     
-    this.projGrp.add(hit);
+    const hit = this.add.rectangle(sp.x+dir*45, sp.y-8, 20, 20, 0xFFFFFF, 0);
     this.physics.add.existing(hit);
-    hit.body.allowGravity = false; 
-    hit.body.setVelocity(dir*400,0); // Slightly slower to allow jump dodges
+    this.projGrp.add(hit);
+    
+    // LOG 005 FIX: Force physics attributes after group addition
+    hit.body.setSize(20, 20);
+    hit.body.setAllowGravity(false); 
+    hit.body.setVelocity(dir * 420, 0);
+    
     hit.setData("owner",id);
     hit.setData("vis",vis);
     hit.setData("target", id==="p1" ? this.p2 : this.p1);
@@ -467,9 +494,9 @@ class BattleScene extends Phaser.Scene{
   updateCamera(){
     const p1x=this.p1.active?this.p1.x:GW/2,p2x=this.p2.active?this.p2.x:GW/2;
     this.camX+=(((p1x+p2x)/2)-this.camX)*0.08;
-    this.targetZoom=Phaser.Math.Clamp(Math.abs(p1x-p2x)<180?1.18:Math.abs(p1x-p2x)>420?0.86:1.0,0.82,1.22);
-    this.cameras.main.zoom+=(this.targetZoom-this.cameras.main.zoom)*0.04;
-    this.cameras.main.centerOn(this.camX,GH/2);
+    // LOG 005 FIX: Clamp the camera pan so we don't scroll completely off stage
+    this.camX = Phaser.Math.Clamp(this.camX, GW/2 - 150, GW/2 + 150);
+    this.cameras.main.centerOn(this.camX, GH/2);
   }
 
   respawnOrEnd(id){
@@ -490,19 +517,15 @@ class BattleScene extends Phaser.Scene{
 
   update(time,dt){
     const S=this.S;
-    if(Phaser.Input.Keyboard.JustDown(this.keys.P)){
-      Match.paused=!Match.paused;this.physics.world.isPaused=Match.paused;
-      this.pauseContainer.setVisible(Match.paused);
-      if(Match.paused)this.pauseContainer.setDepth(25000);
-    }
+    if(Phaser.Input.Keyboard.JustDown(this.keys.P)){ this.togglePause(); }
     if(Match.paused||S.gameOver)return;
+    
     this.meleeGrp.children.iterate(h=>{if(!h)return;h.life+=dt;if(h.life>200)h.destroy();});
     
     this.projGrp.children.iterate(h=>{
       if(!h||!h.active)return;h.life+=dt;
       const vis=h.getData("vis");if(vis&&vis.active){vis.x=h.x;vis.y=h.y;}
       
-      // LOG 004 FIX: Vertical Homing Logic. Curve into target unless dodged.
       const tgt = h.getData("target");
       if(tgt && tgt.active && h.life < 800) { 
           const dx = tgt.x - h.x;
@@ -526,11 +549,7 @@ class BattleScene extends Phaser.Scene{
     this.updateCamera();
     if(!S.p1ProjReady&&this.p1ProjBar.active){S.p1ProjCharge=Math.min(1,S.p1ProjCharge+dt/1500);this.p1ProjBar.scaleX=S.p1ProjCharge;}
     
-    // LOG 004 FIX: UI Anchors
-    this.hudContainer.setScale(1 / this.cameras.main.zoom);
-    this.pauseContainer.setScale(1 / this.cameras.main.zoom);
-
-    // LOG 004 FIX: Robust Animation state check to prevent frozen frames
+    // LOG 005 FIX: Robust Animation state check to prevent frozen frames
     [this.p1, this.p2].forEach(sp => {
         if(!sp.active || !sp.body) return;
         const isP1 = sp === this.p1;
