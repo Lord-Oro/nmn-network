@@ -88,6 +88,8 @@ class StartScreen extends Phaser.Scene{
     this.load.image("promo","title_screen_NB.jpg");this.load.image("bg_eyes","oros_game_eyes.jpg");
     this.load.image("deep_forest_img","bg_deep_forest.jpg");this.load.image("forest_edge_img","forest_bg.jpg");
     this.load.image("hub_bg","logo.jpg");this.load.image("link_tree","link_tree.jpg");this.load.image("signal_lost","signal_lost.jpg");
+    // Placeholder for future Victory Image addition
+    // this.load.image("victory_img", "path_to_your_victory_img.jpg");
     this.load.spritesheet("j_sheet","juni_sheet.png",{frameWidth:128,frameHeight:128});
     this.load.spritesheet("p_sheet","pyro_sheet.png",{frameWidth:128,frameHeight:128});
     ["juni_en","outbreak_en","tabbies_en","pyro_en"].forEach(b=>this.load.image(b,b+".jpeg"));
@@ -115,7 +117,7 @@ class InstructionsScene extends Phaser.Scene {
   create(){
     this.add.image(GW/2,GH/2,"bg_eyes").setDisplaySize(GW,GH).setAlpha(0.4);
     this.add.text(GW/2,45,"HOW TO PLAY",{fontFamily:"Press Start 2P",fontSize:"15px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
-    const t = `GOAL:\nIncrease opponent's damage % to knock them off the platform!\n\nKEYBOARD:\nA / D : Move Left / Right\nW : Jump (Up to 2x)\nS / DOWN : Shield (Blocks damage)\nJ : Melee Attack\nK : Fire Projectile (Homes in on target)\n; : Burst AOE (3x per match)\n\nMOBILE:\nJoystick : Move & Jump (Swipe Up)\n🥊 : Melee Attack   ⚡ : Fire Projectile\n🛡 : Shield         ☆ : Burst AOE`;
+    const t = `GOAL:\nIncrease opponent's damage % to knock them off the platform!\n\nKEYBOARD:\nA / D : Move Left / Right\nW : Jump (Up to 2x)\nS / DOWN : Shield (Blocks damage)\nJ : Melee Attack\nK : Fire Projectile (Flat trajectory, dodge by jumping)\n; : Burst AOE (3x per match)\n\nMOBILE:\nJoystick : Move & Jump (Swipe Up)\n🥊 : Melee Attack   ⚡ : Fire Projectile\n🛡 : Shield         ☆ : Burst AOE`;
     this.add.text(GW/2, GH/2 + 20, t, {fontFamily:"Press Start 2P",fontSize:"8px",color:"#E8E0D0",align:"center",lineSpacing:8}).setOrigin(0.5);
     this.add.text(30,30,"◀ BACK",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#AAA"}).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("BrawlerScene"));
   }
@@ -286,7 +288,6 @@ class BattleScene extends Phaser.Scene{
     this.cpuAtkFreq=Match.difficulty==="EASY"?0.02:Match.difficulty==="HARD"?0.25:0.10;
     this.cpuFireFreq=Match.difficulty==="EASY"?0.005:Match.difficulty==="HARD"?0.10:0.03;
     
-    // Physics Groups
     this.meleeGrp=this.physics.add.group();
     this.projGrp=this.physics.add.group();
 
@@ -307,7 +308,6 @@ class BattleScene extends Phaser.Scene{
   }
 
   buildHUD(){
-    // LOG 005 FIX: Set scroll factor strictly to 0 so it ignores panning
     this.hudContainer=this.add.container(0,0).setDepth(10000).setScrollFactor(0);
     const p1c=Match.p1==="Juni"?"#00FF88":"#FF6600",p2c=Match.p1==="Juni"?"#FF6600":"#00FF88";
     const bg1=this.add.rectangle(0,0,240,64,0x050308,0.92).setOrigin(0);
@@ -360,9 +360,11 @@ class BattleScene extends Phaser.Scene{
     this.pauseBookHint.on("pointerdown",()=>window.open(this.pauseBookUrl,"_blank"));
     
     const rBtn=this.add.text(-96,100,"🔄 RESTART",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#00FF88",backgroundColor:"#111",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
-    rBtn.on("pointerdown",()=>{Match.paused=false;this.physics.world.isPaused=false;this.scene.restart();});
+    rBtn.on("pointerdown",()=>{this.togglePause(); this.scene.restart();});
+    
     const qBtn=this.add.text(96,100,"◀ QUIT",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#050308",backgroundColor:"#FFD700",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
-    qBtn.on("pointerdown",()=>{Match.paused=false;this.physics.world.isPaused=false;this.scene.start("BrawlerScene");});
+    qBtn.on("pointerdown",()=>{this.togglePause(); this.scene.start("BrawlerScene");});
+    
     this.pauseContainer.add([pBg,pTxt,codeTxt,this.pauseBookImg,this.pauseBookHint,rBtn,qBtn]);
   }
 
@@ -371,12 +373,19 @@ class BattleScene extends Phaser.Scene{
     if(S.gameOver) return;
     Match.paused = !Match.paused;
     this.physics.world.isPaused = Match.paused;
+    
     if(Match.paused) {
-        // LOG 005 FIX: Randomly cycles the book cover every time pause is clicked
+        // LOG 006 FIX: Randomly cycles the book cover every time pause is clicked
         const nextKey = BOOK_LIST[Math.floor(Math.random() * BOOK_LIST.length)];
         this.pauseBookImg.setTexture(nextKey);
         this.pauseBookUrl = BOOK_LINKS[nextKey];
+        
+        // Hides mobile overlay to stop it from blocking clicks on the UI
+        document.getElementById("mc").classList.remove("on"); 
+    } else {
+        if(window.IS_TOUCH) document.getElementById("mc").classList.add("on"); 
     }
+    
     this.pauseContainer.setVisible(Match.paused);
   }
 
@@ -412,12 +421,11 @@ class BattleScene extends Phaser.Scene{
     sp.setFrame(FRAMES[pre==="j"?"juni":"pyro"].melee);
     if(this.anims.exists(pre+"_melee"))this.time.delayedCall(30,()=>sp.play(pre+"_melee",true));
     
-    const hit = this.add.rectangle(sp.x+dir*45, sp.y-6, 70, 50, 0xFFD700, 0);
+    const hit = this.add.rectangle(sp.x + dir * 35, sp.y - 6, 60, 40, 0xFFD700, 0);
     this.physics.add.existing(hit);
-    // LOG 005 FIX: Force physics attributes directly on the body after creation
-    hit.body.setSize(70, 50);
-    hit.body.setAllowGravity(false);
-    hit.body.setImmovable(true);
+    // LOG 006 FIX: Force attributes locally before adding to group to prevent wipes
+    hit.body.allowGravity = false;
+    hit.body.moves = false;
     hit.setData("owner", id);
     hit.life = 0;
     this.meleeGrp.add(hit);
@@ -431,19 +439,15 @@ class BattleScene extends Phaser.Scene{
     if(this.anims.exists(pre+"_range"))this.time.delayedCall(30,()=>{if(sp.active)sp.play(pre+"_range",true);});
     const vis=this.add.sprite(sp.x+dir*45,sp.y-8,isJuni?"j_sheet":"p_sheet",fReg.proj).setDisplaySize(38,38).setDepth(50).setFlipX(dir===-1);
     
-    const hit = this.add.rectangle(sp.x+dir*45, sp.y-8, 20, 20, 0xFFFFFF, 0);
+    const hit = this.add.rectangle(sp.x + dir * 45, sp.y - 8, 20, 20, 0xFFFFFF, 0);
     this.physics.add.existing(hit);
+    // LOG 006 FIX: Flat trajectory locked.
+    hit.body.allowGravity = false; 
+    hit.body.setVelocity(dir * 500, 0);
+    hit.setData("owner", id);
+    hit.setData("vis", vis);
+    hit.life = 0;
     this.projGrp.add(hit);
-    
-    // LOG 005 FIX: Force physics attributes after group addition
-    hit.body.setSize(20, 20);
-    hit.body.setAllowGravity(false); 
-    hit.body.setVelocity(dir * 420, 0);
-    
-    hit.setData("owner",id);
-    hit.setData("vis",vis);
-    hit.setData("target", id==="p1" ? this.p2 : this.p1);
-    hit.life=0;
   }
 
   spawnBurst(id){
@@ -494,7 +498,6 @@ class BattleScene extends Phaser.Scene{
   updateCamera(){
     const p1x=this.p1.active?this.p1.x:GW/2,p2x=this.p2.active?this.p2.x:GW/2;
     this.camX+=(((p1x+p2x)/2)-this.camX)*0.08;
-    // LOG 005 FIX: Clamp the camera pan so we don't scroll completely off stage
     this.camX = Phaser.Math.Clamp(this.camX, GW/2 - 150, GW/2 + 150);
     this.cameras.main.centerOn(this.camX, GH/2);
   }
@@ -525,23 +528,7 @@ class BattleScene extends Phaser.Scene{
     this.projGrp.children.iterate(h=>{
       if(!h||!h.active)return;h.life+=dt;
       const vis=h.getData("vis");if(vis&&vis.active){vis.x=h.x;vis.y=h.y;}
-      
-      const tgt = h.getData("target");
-      if(tgt && tgt.active && h.life < 800) { 
-          const dx = tgt.x - h.x;
-          if(Math.sign(h.body.velocity.x) === Math.sign(dx)) {
-              const dy = (tgt.y - 10) - h.y;
-              if (Math.abs(dy) > 15) {
-                  h.body.velocity.y = dy > 0 ? 120 : -120;
-              } else {
-                  h.body.velocity.y = 0;
-              }
-          } else {
-              h.body.velocity.y = 0;
-          }
-      }
-
-      if(h.life>2000||h.x<BLAST.minX||h.x>BLAST.maxX){ if(vis&&vis.active)vis.destroy(); h.destroy(); }
+      if(h.life>1600||h.x<BLAST.minX||h.x>BLAST.maxX){ if(vis&&vis.active)vis.destroy(); h.destroy(); }
     });
 
     this.moveP1();this.runCPU(dt);
@@ -549,7 +536,6 @@ class BattleScene extends Phaser.Scene{
     this.updateCamera();
     if(!S.p1ProjReady&&this.p1ProjBar.active){S.p1ProjCharge=Math.min(1,S.p1ProjCharge+dt/1500);this.p1ProjBar.scaleX=S.p1ProjCharge;}
     
-    // LOG 005 FIX: Robust Animation state check to prevent frozen frames
     [this.p1, this.p2].forEach(sp => {
         if(!sp.active || !sp.body) return;
         const isP1 = sp === this.p1;
@@ -579,6 +565,10 @@ class ResultsScene extends Phaser.Scene{
   constructor(){super("ResultsScene");}
   create(){
     this.add.image(GW/2,GH/2,"bg_eyes").setDisplaySize(GW,GH).setAlpha(0.35);
+    
+    // NOTE: This line adds the Victory Image (just uncomment it when the image is ready and loaded in preload)
+    // this.add.image(GW/2, GH/2 - 40, "victory_img").setDisplaySize(200, 150);
+    
     this.add.text(GW/2,GH/2,"SECTOR CLEARED",{fontFamily:"Press Start 2P",fontSize:"17px",color:"#FFD700"}).setOrigin(0.5);
     this.add.text(GW/2,GH/2+40,"ANY KEY TO REMATCH",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#888"}).setOrigin(0.5);
     this.input.keyboard.on("keydown",()=>this.scene.start("BattleScene"));
