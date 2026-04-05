@@ -115,7 +115,7 @@ class InstructionsScene extends Phaser.Scene {
   create(){
     this.add.image(GW/2,GH/2,"bg_eyes").setDisplaySize(GW,GH).setAlpha(0.4);
     this.add.text(GW/2,45,"HOW TO PLAY",{fontFamily:"Press Start 2P",fontSize:"15px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
-    const t = `GOAL:\nIncrease opponent's damage % to knock them off the platform!\n\nKEYBOARD:\nA / D : Move Left / Right\nW : Jump (Up to 2x)\nS / DOWN : Shield (Blocks damage)\nJ : Melee Attack\nK : Fire Projectile\n; : Burst AOE (3x per match)\n\nMOBILE:\nJoystick : Move & Jump (Swipe Up)\n🥊 : Melee Attack   ⚡ : Fire Projectile\n🛡 : Shield         ☆ : Burst AOE`;
+    const t = `GOAL:\nIncrease opponent's damage % to knock them off the platform!\n\nKEYBOARD:\nA / D : Move Left / Right\nW : Jump (Up to 2x)\nS / DOWN : Shield (Blocks damage)\nJ : Melee Attack\nK : Fire Projectile (Homes in on target)\n; : Burst AOE (3x per match)\n\nMOBILE:\nJoystick : Move & Jump (Swipe Up)\n🥊 : Melee Attack   ⚡ : Fire Projectile\n🛡 : Shield         ☆ : Burst AOE`;
     this.add.text(GW/2, GH/2 + 20, t, {fontFamily:"Press Start 2P",fontSize:"8px",color:"#E8E0D0",align:"center",lineSpacing:8}).setOrigin(0.5);
     this.add.text(30,30,"◀ BACK",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#AAA"}).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("BrawlerScene"));
   }
@@ -281,6 +281,16 @@ class BattleScene extends Phaser.Scene{
     [this.p1,this.p2].forEach(sp=>{sp.setDisplaySize(80,80).setCollideWorldBounds(false).setBounce(0).setDragX(700);sp.body.setSize(24,46).setOffset((sp.width-24)/2,sp.height-46);sp.body.setMaxVelocity(600,1000);});
     this.physics.add.collider([this.p1,this.p2],this.platforms);
     this.p1.play(this.p1Pre+"_idle");this.p2.play(this.p2Pre+"_idle");
+    
+    // LOG 004 FIX: Return to Idle explicitly after animations finish
+    this.anims.on("animationcomplete", (anim, sprite) => {
+        if(!sprite||!sprite.active||!sprite.body) return;
+        if(["_melee","_range","_burst","_launch","_dmg","_jump"].some(s=>anim.key.includes(s))){
+            const pre = sprite === this.p1 ? this.p1Pre : this.p2Pre;
+            sprite.play(pre+"_idle", true);
+        }
+    });
+
     this.S={state:"STARTING",p1Stun:false,p2Stun:false,p1AtkCD:false,p2AtkCD:false,p1Jumps:0,p2Jumps:0,gameOver:false,p1ShieldHp:5,p2ShieldHp:5,p1Bursts:3,p2Bursts:3,p1BurstBuff:false,p1ProjReady:true,p1ProjCharge:1.0};
     this.cpuSpeed=Match.difficulty==="EASY"?90:Match.difficulty==="HARD"?260:170;
     this.cpuAtkFreq=Match.difficulty==="EASY"?0.02:Match.difficulty==="HARD"?0.25:0.10;
@@ -334,7 +344,7 @@ class BattleScene extends Phaser.Scene{
   }
 
   buildPauseMenu(){
-    this.pauseContainer=this.add.container(GW/2,GH/2).setDepth(25000).setVisible(false);
+    this.pauseContainer=this.add.container(GW/2,GH/2).setDepth(25000).setVisible(false).setScrollFactor(0); // LOG 004 FIX: Anchor
     const pBg=this.add.rectangle(0,0,440,270,0x050308,0.97).setStrokeStyle(3,0xFFD700);
     const pTxt=this.add.text(0,-108,"⏸  PAUSED",{fontFamily:"Press Start 2P",fontSize:"15px",color:"#FFD700"}).setOrigin(0.5);
     const bKey=BOOK_LIST[Math.floor(Math.random()*BOOK_LIST.length)],bUrl=BOOK_LINKS[bKey];
@@ -378,7 +388,9 @@ class BattleScene extends Phaser.Scene{
     arcSlash(this,sp.x,sp.y,dir,pre==="j");
     sp.setFrame(FRAMES[pre==="j"?"juni":"pyro"].melee);
     if(this.anims.exists(pre+"_melee"))this.time.delayedCall(30,()=>sp.play(pre+"_melee",true));
-    const hit=this.add.rectangle(sp.x+dir*45,sp.y-6,24,20,0xFFD700,0);
+    
+    // LOG 004 FIX: Huge, generous Coyote Hitbox for melee
+    const hit=this.add.rectangle(sp.x+dir*45,sp.y-6,60,40,0xFFD700,0);
     this.physics.add.existing(hit);hit.body.setAllowGravity(false);hit.body.setImmovable(true);
     hit.setData("owner",id);hit.life=0;this.meleeGrp.add(hit);
   }
@@ -395,7 +407,13 @@ class BattleScene extends Phaser.Scene{
     hit.body.setAllowGravity(false); 
     hit.body.setAcceleration(0,0);
     hit.body.setVelocity(dir*550,0);
-    hit.setData("owner",id);hit.setData("vis",vis);hit.life=0;this.projGrp.add(hit);
+    hit.setData("owner",id);
+    hit.setData("vis",vis);
+    
+    // LOG 004 FIX: Assign Target for Homing
+    hit.setData("target", id==="p1" ? this.p2 : this.p1);
+    hit.life=0;
+    this.projGrp.add(hit);
   }
 
   spawnBurst(id){
@@ -476,16 +494,32 @@ class BattleScene extends Phaser.Scene{
     }
     if(Match.paused||S.gameOver)return;
     this.meleeGrp.children.iterate(h=>{if(!h)return;h.life+=dt;if(h.life>200)h.destroy();});
+    
     this.projGrp.children.iterate(h=>{
       if(!h||!h.active)return;h.life+=dt;
       const vis=h.getData("vis");if(vis&&vis.active){vis.x=h.x;vis.y=h.y;}
+      
+      // LOG 004 FIX: Homing Logic for Projectiles
+      const tgt = h.getData("target");
+      if(tgt && tgt.active && h.life < 700) { 
+          const dx = tgt.x - h.x;
+          if(Math.sign(h.body.velocity.x) === Math.sign(dx)) {
+              const dy = (tgt.y - 15) - h.y;
+              h.body.velocity.y += Math.sign(dy) * 12; // Seeker adjustment
+          }
+      }
+
       if(h.life>1600||h.x<BLAST.minX||h.x>BLAST.maxX){ if(vis&&vis.active)vis.destroy(); h.destroy(); }
     });
+
     this.moveP1();this.runCPU(dt);
     if(this.p1.y>GH+100)this.respawnOrEnd("p1");if(this.p2.y>GH+100)this.respawnOrEnd("p2");
     this.updateCamera();
     if(!S.p1ProjReady&&this.p1ProjBar.active){S.p1ProjCharge=Math.min(1,S.p1ProjCharge+dt/1500);this.p1ProjBar.scaleX=S.p1ProjCharge;}
-    this.hudContainer.setDepth(10000); 
+    
+    // LOG 004 FIX: Inverse Zoom anchoring for UI Elements
+    this.hudContainer.setScale(1 / this.cameras.main.zoom);
+    this.pauseContainer.setScale(1 / this.cameras.main.zoom);
   }
 }
 
