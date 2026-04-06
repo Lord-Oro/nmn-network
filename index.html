@@ -301,12 +301,12 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
     /* WORKS */
 /* ── WORKS GRID — Painterly Book Cards ── */
     /* THE COLLECTION BACKDROP */
-/* THE DISPLAY SHELF CONTAINER */
+/* THE DISPLAY SHELF - 3 IN A ROW */
 .works-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 25px;
-    max-width: 1200px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Snaps to 3 on desktop */
+    gap: 30px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 20px;
 }
@@ -314,21 +314,21 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 /* THE BOOK CARD (Full Cover) */
 .work-card {
     position: relative;
-    aspect-ratio: 2/3;
+    aspect-ratio: 2/3; /* Traditional book proportions */
     background: #000;
     border: 1px solid rgba(255, 215, 0, 0.2);
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease;
     cursor: pointer;
-    display: block !important; /* Resets from the old 'flex' log style */
 }
 
 .work-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
     border-color: var(--gold);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
 }
 
+/* THE COVER IMAGE */
 .work-img {
     width: 100%;
     height: 100%;
@@ -337,10 +337,10 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 }
 
 .work-card:hover .work-img {
-    filter: brightness(0.2) blur(2px);
+    filter: brightness(0.15) blur(3px); /* Dims art to make text readable */
 }
 
-/* THE HOVER OVERLAY */
+/* THE HOVER OVERLAY (Hidden by default) */
 .work-overlay {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -352,13 +352,30 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
     text-align: center;
     opacity: 0;
     transition: opacity 0.3s ease;
-    background: rgba(5, 3, 8, 0.4);
+    background: rgba(5, 3, 8, 0.5); /* Tint for readability */
 }
 
 .work-card:hover .work-overlay {
     opacity: 1;
 }
 
+/* STORE LINK BUTTONS */
+.store-link {
+    display: block;
+    width: 85%;
+    padding: 8px;
+    margin: 5px 0;
+    font-size: 10px;
+    text-decoration: none;
+    border: 1px solid #444;
+    color: #888;
+}
+
+.store-link.available {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(255, 215, 0, 0.05);
+}
 /* STORE LINK STYLING */
 .store-link {
     display: block;
