@@ -21,31 +21,38 @@
     <link rel="stylesheet" href="nmn-theme.css">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet">
 <style>
-:root{
-  --gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;
-  --coal:#070605;--shaft:#0d0c08;--rock:#1a1510;
-  --cream:#f0e6cc;--muted:#a0905a;--faint:#5a4a30;
-  --font-pixel:'Press Start 2P',monospace;
-  --font-display:'Cinzel Decorative',serif;
-  --font-serif:'Cormorant Garamond',serif;
-  --font-sans:'Josefin Sans',sans-serif;
+:root {
+  --gold: #FFD700; --gb: #e8b84b; --gd: #8B6914;
+  --coal: #050308; /* Pitch Black Obsidian */
+  --shaft: #08060A; --rock: #0A080C;
+  --cream: #E8E0D0; --neon-green: #00FF88;
+  --font-pixel: 'Press Start 2P', cursive;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;background:#070605}
-body{
-  font-family:var(--font-sans);
-  background:var(--coal);
-  background-image:
-    linear-gradient(45deg,#070605 25%,#0d0c08 25%,#0d0c08 50%,#070605 50%,#070605 75%,#0d0c08 75%,#0d0c08 100%),
-    repeating-linear-gradient(0deg,transparent,transparent 79px,rgba(255,215,0,0.018) 79px,rgba(255,215,0,0.018) 80px),
-    repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(255,215,0,0.018) 79px,rgba(255,215,0,0.018) 80px);
-  background-size:4px 4px, 100% 100%, 100% 100%;
-  color:var(--cream);
-  overflow-x:hidden;
-  padding-top:56px;
-  padding-bottom:40px;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; background: var(--coal); }
+
+body {
+  font-family: var(--font-pixel);
+  background-color: var(--coal);
+  color: var(--cream);
+  overflow-x: hidden;
+  padding-top: 56px;
+  padding-bottom: 40px;
+  /* 16-BIT OBSIDIAN MINE WALL WITH GOLD ORE FLECKS */
+  background-image: 
+    radial-gradient(2px 2px at 40px 60px, #FFD700 50%, transparent 100%),
+    radial-gradient(2px 2px at 120px 180px, #e8b84b 50%, transparent 100%),
+    radial-gradient(1px 1px at 180px 40px, #FFF 50%, transparent 100%),
+    linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
+  background-size: 200px 200px, 200px 200px, 200px 200px, 32px 32px, 32px 32px;
+  line-height: 1.8;
 }
 
+/* OVERRIDE ALL OLD FONTS — FORCE 16-BIT EVERYWHERE */
+h1, h2, h3, h4, p, a, div, span, .nav-pillar>a {
+  font-family: var(--font-pixel) !important;
+}
 /* NAV */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:1000;
@@ -702,8 +709,18 @@ footer{padding:1.75rem 3rem;border-top:1px solid rgba(255,215,0,.08);display:fle
 .lesson-btn:hover{background:rgba(255,215,0,.08);border-color:#FFD700}
 </style>
 <style id="nmn-cursor">
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
+/* 16-BIT PIXEL LANTERN CURSOR */
+body, * {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24'%3E%3Crect x='10' y='2' width='4' height='2' fill='%238B6914'/%3E%3Crect x='8' y='4' width='8' height='2' fill='%238B6914'/%3E%3Crect x='6' y='6' width='12' height='2' fill='%231a1000'/%3E%3Crect x='6' y='8' width='2' height='10' fill='%238B6914'/%3E%3Crect x='16' y='8' width='2' height='10' fill='%238B6914'/%3E%3Crect x='8' y='8' width='8' height='10' fill='%23FF8C00' opacity='0.8'/%3E%3Crect x='10' y='10' width='4' height='6' fill='%23FFD700'/%3E%3Crect x='6' y='18' width='12' height='4' fill='%238B6914'/%3E%3C/svg%3E") 12 12, auto !important;
+}
+
+/* THE GOLDEN GLOW THAT FOLLOWS IT */
+#pickaxe-glow {
+    position: fixed; width: 60px; height: 60px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, rgba(232,184,75,0.1) 40%, transparent 70%);
+    pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
+}
 </style>
 <style id="gemini-v5">
 .mining-frame{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-height:85vh;margin:0 auto;overflow:hidden}
