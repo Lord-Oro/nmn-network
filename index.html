@@ -300,6 +300,20 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
     
     /* WORKS */
 /* ── WORKS GRID — Painterly Book Cards ── */
+    /* THE COLLECTION BACKDROP */
+.works-viewport {
+    background-image: url('goldmine_stable.jpg'); /* The Majestic Goldmine */
+    transition: background-image 0.05s steps(2); /* Snap transition for a digital feel */
+    background-size: cover;
+    background-position: center;
+}
+
+/* THE CORRUPTED STATE */
+.works-viewport.glitched {
+    background-image: url('obsidian_glitched.jpg'); /* The Glitched Obsidian */
+    /* Add extra intensity to the 'corruption' */
+    filter: contrast(1.5) saturate(1.1) hue-rotate(-15deg);
+}
 .works-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
