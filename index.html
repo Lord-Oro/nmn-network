@@ -304,8 +304,8 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 /* THE COLLECTION VIEWPORT - NO STRETCH */
 .works-viewport {
     position: relative;
-    padding: 4rem 2rem;
-    background-color: #050308; /* Fills the bottom so the image doesn't stretch */
+    padding: 6rem 2rem;
+    background-color: #050308;
     background-image: url('goldmine_stable.jpg');
     background-size: 100% auto;
     background-position: top center;
@@ -314,35 +314,48 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
     border-top: 4px solid var(--gd);
 }
 
-/* THE GLITCH FIX (No space between classes) */
+/* THE GLITCH FIX (No space) */
 .works-viewport.glitched {
     background-image: url('obsidian_glitched.jpg') !important;
 }
 
-/* THE "DATA LOG" LIBRARY CARDS */
+/* THE "DATA LOG" LIBRARY LIST */
+.works-grid {
+    display: flex;
+    flex-direction: column; /* Stacks logs like a library shelf */
+    gap: 15px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
 .work-card {
-    background: rgba(10, 8, 12, 0.9);
-    border: 2px solid var(--gd);
-    margin-bottom: 1.5rem;
-    display: flex; /* Makes books look like horizontal log entries */
+    background: rgba(10, 8, 12, 0.95) !important;
+    border: 2px solid var(--gd) !important;
+    display: flex !important; /* Forces the horizontal log look */
     flex-direction: row; 
-    gap: 20px;
+    align-items: center;
+    gap: 25px;
     padding: 15px;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-decoration: none;
     position: relative;
     overflow: hidden;
 }
 
 .work-card:hover {
-    border-color: var(--gold);
-    transform: translateX(15px); /* Slides out like a file being pulled from a shelf */
-    box-shadow: -10px 0 0 var(--gold);
+    border-color: var(--gold) !important;
+    transform: translateX(30px); /* Slides out like a folder being pulled from a shelf */
+    box-shadow: -15px 0 0 var(--gold);
+    background: rgba(255, 215, 0, 0.05) !important;
 }
 
-/* SCANLINE EFFECT FOR DATA LOGS */
-.work-card::after {
-    content: "";
-    position: absolute;
+/* DATA LOG ICONS */
+.log-icon {
+    min-width: 32px; height: 32px;
+    background: #444; border: 2px solid #111;
+    position: relative; box-shadow: 2px 2px 0 #000;
+}
+.log-icon::before { content: ""; position: absolute; top: 3px; left: 5px; width: 18px; height: 12px; background: #eee; }
     top: 0; left: 0; width: 100%; height: 2px;
     background: rgba(255, 215, 0, 0.1);
     animation: scan 4s linear infinite;
