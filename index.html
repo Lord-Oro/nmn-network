@@ -304,7 +304,7 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 /* THE COLLECTION VIEWPORT - NO STRETCH */
 .works-viewport {
     position: relative;
-    padding: 6rem 2rem;
+    padding: 4rem 2rem;
     background-color: #050308;
     background-image: url('goldmine_stable.jpg');
     background-size: 100% auto;
@@ -314,15 +314,40 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
     border-top: 4px solid var(--gd);
 }
 
-/* THE GLITCH FIX (No space) */
+/* THE GLITCH FIX (STUCK TOGETHER) */
 .works-viewport.glitched {
     background-image: url('obsidian_glitched.jpg') !important;
 }
 
-/* THE "DATA LOG" LIBRARY LIST */
+/* THE LIBRARY SHELF LAYOUT */
 .works-grid {
     display: flex;
-    flex-direction: column; /* Stacks logs like a library shelf */
+    flex-direction: column; /* Stacks books vertically */
+    align-items: flex-end; /* Aligns them to the right to pull out LEFT */
+    gap: 8px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* THE BOOK SPINE (COLLAPSED) */
+.work-card {
+    width: 80px; /* Narrow side of the book */
+    height: 350px;
+    background: rgba(15, 12, 18, 0.95) !important;
+    border: 2px solid var(--gd) !important;
+    display: flex !important;
+    flex-direction: row-reverse; 
+    overflow: hidden;
+    transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+}
+
+/* THE PULL-OUT (EXPANDED) */
+.work-card:hover {
+    width: 100%; /* Pulls out to show the cover and description */
+    background: rgba(10, 8, 12, 0.98) !important;
+    border-color: var(--gold) !important;
+}
     gap: 15px;
     max-width: 1000px;
     margin: 0 auto;
