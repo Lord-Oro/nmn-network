@@ -878,6 +878,24 @@ body::before{
 
 </head>
 <body>
+    <div id="descent-overlay">
+    <div class="elevator-shaft"></div>
+    <div class="descent-text" id="descent-target-text">DESCENDING...</div>
+</div>
+
+<div id="retro-modal">
+    <div class="modal-text" id="modal-content">Initializing...</div>
+    <div id="modal-actions"></div>
+</div>
+    <div id="descent-overlay">
+    <div class="elevator-shaft"></div>
+    <div class="descent-text" id="descent-target-text">DESCENDING...</div>
+</div>
+
+<div id="retro-modal">
+    <div class="modal-text" id="modal-content">Initializing...</div>
+    <div id="modal-actions"></div>
+</div>
 <script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
 <div id="cursor-lamp"></div>
@@ -1504,7 +1522,7 @@ body::before{
     </div>
   </a>
 
-  <a href="archives.html" class="mine-bubble bubble-archives">
+  <a href="archives.html" class="mine-bubble bubble-archives" onclick="interceptDescent(event, 'THE ARCHIVES', 'archives.html')">
     <img src="archive_icon.jpg" alt="Static Lion Blue">
     <div class="bubble-info-block">
         <span class="bubble-name">The Archives</span>
@@ -2223,6 +2241,81 @@ document.querySelectorAll('.vessel-anchor-wrap').forEach(el => {
     body { padding-bottom: 80px !important; } 
 }
 @media (min-width: 769px) { .mobile-hub-nav { display: none; } }
+/* THE DESCENT OVERLAY */
+#descent-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000;
+    z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.descent-active { opacity: 1 !important; pointer-events: all !important; }
+.elevator-shaft { width: 4px; height: 100vh; background: linear-gradient(to bottom, transparent, var(--gold), transparent); animation: drop 0.5s infinite linear; }
+.descent-text { font-family: 'Press Start 2P', cursive; color: var(--gold); font-size: 14px; position: absolute; text-shadow: 0 0 10px var(--gold); animation: pulse 1s infinite; }
+
+@keyframes drop { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+/* RETRO POPUP MODAL */
+#retro-modal {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+    background: #050308; border: 4px solid var(--neon-green); box-shadow: 0 0 30px rgba(0,255,136,0.4);
+    padding: 40px; z-index: 999999; width: 90%; max-width: 500px; text-align: center;
+    opacity: 0; pointer-events: none; transition: all 0.2s ease;
+}
+#retro-modal.show { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: all; }
+.modal-text { font-family: 'Press Start 2P', cursive; font-size: 10px; color: var(--text-light); line-height: 1.8; margin-bottom: 30px; }
+.modal-btn { background: transparent; border: 2px solid var(--neon-green); color: var(--neon-green); padding: 10px 20px; font-family: 'Press Start 2P', cursive; font-size: 10px; cursor: pointer; transition: all 0.2s; margin: 5px; }
+.modal-btn:hover { background: var(--neon-green); color: #000; }
 </style>
+    <script>
+    // PROCEDURAL AUDIO ENGINE 
+    const NMNAudioEngine = {
+        ctx: null,
+        init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+        playTone(freq, type, duration) {
+            this.init();
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type; osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0, this.ctx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.05, this.ctx.currentTime + 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+            osc.connect(gain); gain.connect(this.ctx.destination);
+            osc.start(); osc.stop(this.ctx.currentTime + duration);
+        },
+        playDrop() { this.playTone(150, 'sine', 0.5); } 
+    };
+
+    // THE DESCENT PROTOCOL
+    function interceptDescent(event, locationName, targetUrl) {
+        event.preventDefault(); 
+        NMNAudioEngine.playDrop();
+        
+        const overlay = document.getElementById('descent-overlay');
+        const text = document.getElementById('descent-target-text');
+        text.innerText = `DESCENDING TO: ${locationName}...`;
+        overlay.classList.add('descent-active');
+
+        // Wait 1.8 seconds for animation, then route
+        setTimeout(() => {
+            if(targetUrl) window.location.href = targetUrl;
+        }, 1800);
+    }
+
+    // THE MODAL SYSTEM
+    const modal = document.getElementById('retro-modal');
+    const modalContent = document.getElementById('modal-content');
+    const modalActions = document.getElementById('modal-actions');
+
+    function showModal(text, htmlButtons) {
+        NMNAudioEngine.playDrop();
+        modalContent.innerHTML = text;
+        modalActions.innerHTML = htmlButtons;
+        modal.classList.add('show');
+    }
+    function hideModal() {
+        modal.classList.remove('show');
+        NMNAudioEngine.playDrop();
+    }
+</script>
 </body>
 </html>
