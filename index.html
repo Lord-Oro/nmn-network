@@ -302,10 +302,17 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 /* ── WORKS GRID — Painterly Book Cards ── */
     /* THE COLLECTION BACKDROP */
 .works-viewport {
-    background-image: url('goldmine_stable.jpg'); /* The Majestic Goldmine */
-    transition: background-image 0.05s steps(2); /* Snap transition for a digital feel */
-    background-size: cover;
-    background-position: center;
+    position: relative;
+    padding: 6rem 2rem;
+    background-color: #050308;
+    background-image: url('goldmine_stable.jpg');
+    /* FIX: This fits the width and keeps the height proportional */
+    background-size: 100% auto; 
+    background-position: top center;
+    background-repeat: no-repeat;
+    transition: all 0.1s steps(2);
+    border-top: 4px solid var(--gd);
+    border-bottom: 4px solid var(--gd);
 }
 
 /* THE CORRUPTED STATE */
