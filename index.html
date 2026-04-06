@@ -301,113 +301,79 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
     /* WORKS */
 /* ── WORKS GRID — Painterly Book Cards ── */
     /* THE COLLECTION BACKDROP */
-/* THE COLLECTION VIEWPORT - NO STRETCH */
-.works-viewport {
-    position: relative;
-    padding: 4rem 2rem;
-    background-color: #050308;
-    background-image: url('goldmine_stable.jpg');
-    background-size: 100% auto;
-    background-position: top center;
-    background-repeat: no-repeat;
-    transition: background-image 0.1s steps(2);
-    border-top: 4px solid var(--gd);
-}
-
-/* THE GLITCH FIX (STUCK TOGETHER) */
-.works-viewport.glitched {
-    background-image: url('obsidian_glitched.jpg') !important;
-}
-
-/* THE LIBRARY SHELF LAYOUT */
+/* THE DISPLAY SHELF CONTAINER */
 .works-grid {
-    display: flex;
-    flex-direction: column; /* Stacks books vertically */
-    align-items: flex-end; /* Aligns them to the right to pull out LEFT */
-    gap: 8px;
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-/* THE BOOK SPINE (COLLAPSED) */
-.work-card {
-    width: 80px; /* Narrow side of the book */
-    height: 350px;
-    background: rgba(15, 12, 18, 0.95) !important;
-    border: 2px solid var(--gd) !important;
-    display: flex !important;
-    flex-direction: row-reverse; 
-    overflow: hidden;
-    transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    cursor: pointer;
-}
-
-/* THE PULL-OUT (EXPANDED) */
-.work-card:hover {
-    width: 100%; /* Pulls out to show the cover and description */
-    background: rgba(10, 8, 12, 0.98) !important;
-    border-color: var(--gold) !important;
-}
-    gap: 15px;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.work-card {
-    background: rgba(10, 8, 12, 0.95) !important;
-    border: 2px solid var(--gd) !important;
-    display: flex !important; /* Forces the horizontal log look */
-    flex-direction: row; 
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 25px;
-    padding: 15px;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    text-decoration: none;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* THE BOOK CARD (Full Cover) */
+.work-card {
     position: relative;
+    aspect-ratio: 2/3;
+    background: #000;
+    border: 1px solid rgba(255, 215, 0, 0.2);
     overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    display: block !important; /* Resets from the old 'flex' log style */
 }
 
 .work-card:hover {
-    border-color: var(--gold) !important;
-    transform: translateX(30px); /* Slides out like a folder being pulled from a shelf */
-    box-shadow: -15px 0 0 var(--gold);
-    background: rgba(255, 215, 0, 0.05) !important;
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    border-color: var(--gold);
 }
 
-/* DATA LOG ICONS */
-.log-icon {
-    min-width: 32px; height: 32px;
-    background: #444; border: 2px solid #111;
-    position: relative; box-shadow: 2px 2px 0 #000;
-}
-.log-icon::before { content: ""; position: absolute; top: 3px; left: 5px; width: 18px; height: 12px; background: #eee; }
-    top: 0; left: 0; width: 100%; height: 2px;
-    background: rgba(255, 215, 0, 0.1);
-    animation: scan 4s linear infinite;
+.work-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: filter 0.3s ease;
 }
 
-@keyframes scan {
-    0% { top: 0; } 100% { top: 100%; }
+.work-card:hover .work-img {
+    filter: brightness(0.2) blur(2px);
 }
-.works-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-  gap:24px;
+
+/* THE HOVER OVERLAY */
+.work-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background: rgba(5, 3, 8, 0.4);
 }
-.work-card{
-  background:var(--coal);
-  border:1px solid rgba(255,215,0,0.12);
-  text-decoration:none;
-  display:flex;
-  flex-direction:column;
-  position:relative;
-  overflow:hidden;
-  transition:transform .3s, box-shadow .3s, border-color .3s;
+
+.work-card:hover .work-overlay {
+    opacity: 1;
 }
-.work-card:hover{
-  transform:translateY(-5px);
-  border-color:rgba(255,215,0,0.4);
-  box-shadow:0 12px 40px rgba(0,0,0,0.6), 0 0 30px rgba(255,215,0,0.08);
+
+/* STORE LINK STYLING */
+.store-link {
+    display: block;
+    width: 85%;
+    padding: 8px;
+    margin: 4px 0;
+    font-size: 10px;
+    text-decoration: none;
+    border: 1px solid #444;
+    color: #888;
+}
+
+.store-link.available {
+    border-color: var(--gold);
+    color: var(--gold);
 }
 /* Painterly cover art panel */
 .book-cover-art{
@@ -1194,244 +1160,106 @@ body::before{
         </div>
       </div>
 
-      <!-- ALL TABBIES — ENGLISH -->
-      <div class="work-card">
-        <div class="book-cover-art tabbies">
-          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
-          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
-          <span class="cover-ribbon live">Live</span>
-          <img src="tabbies_en.jpeg" class="pixel-sticker" alt="All Tabbies EN">
-        </div>
-        <div class="book-info">
-          <div class="work-type">English — Amazon KDP</div>
-          <h3>All Tabbies Have a Place Too</h3>
-          <p>A story about belonging, found in the unlikeliest of places.</p>
-          <div class="portal-btns">
-            <a href="https://amzn.to/4bNAQ1y" target="_blank" class="portal-btn live">Amazon ↗</a>
-            <span class="portal-btn pending">Google Play ⏳</span>
-            <span class="portal-btn coming">Kobo 🔜</span>
-            <span class="portal-btn coming">Apple 🔜</span>
+     <div class="works-grid">
+        
+        <div class="work-card">
+          <img src="pyro_en.jpeg" class="work-img" alt="Pyro and Helios">
+          <div class="work-overlay">
+            <h3 style="color:var(--gold); font-size:12px; margin-bottom:10px;">PYRO & HELIOS</h3>
+            <p style="font-size:9px; color:#ccc; margin-bottom:15px;">English Edition. The primary novel of fire and identity.</p>
+            <a href="https://amzn.to/4uOpLpA" class="store-link available">AMAZON [LIT]</a>
+            <div class="store-link">GOOGLE PLAY [PENDING]</div>
           </div>
         </div>
-      </div>
 
-      <!-- ALL TABBIES — SPANISH -->
-      <div class="work-card">
-        <div class="book-cover-art tabbies">
-          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
-          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
-          <span class="cover-ribbon live">Live · ES</span>
-          <img src="tabbies_es.jpg" class="pixel-sticker" alt="All Tabbies ES">
-        </div>
-        <div class="book-info">
-          <div class="work-type">Español — Amazon KDP</div>
-          <h3>Todos los Gatos Tienen su Lugar</h3>
-          <p>La edición en español. Disponible ahora en Amazon.</p>
-          <div class="portal-btns">
-            <a href="https://amzn.to/47qbOUT" target="_blank" class="portal-btn live">Amazon ↗</a>
-            <span class="portal-btn pending">Google Play ⏳</span>
-            <span class="portal-btn coming">Kobo 🔜</span>
+        <div class="work-card">
+          <img src="tabbies_en.jpeg" class="work-img" alt="All Tabbies EN">
+          <div class="work-overlay">
+            <h3 style="color:var(--gold); font-size:12px; margin-bottom:10px;">ALL TABBIES (EN)</h3>
+            <p style="font-size:9px; color:#ccc; margin-bottom:15px;">English Edition. A story about belonging in the unlikeliest places.</p>
+            <a href="https://amzn.to/4bNAQ1y" class="store-link available">AMAZON [LIT]</a>
           </div>
         </div>
-      </div>
 
-      <!-- ALL TABBIES — JAPANESE -->
-      <div class="work-card">
-        <div class="book-cover-art tabbies">
-          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
-          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
-          <span class="cover-ribbon live">Live · JP</span>
-          <img src="tabbies_ja.jpg" class="pixel-sticker" alt="All Tabbies JA">
-        </div>
-        <div class="book-info">
-          <div class="work-type">日本語 — Amazon KDP Japan</div>
-          <h3>猫にも居場所がある</h3>
-          <p>日本語版。Amazonで今すぐ購入。</p>
-          <div class="portal-btns">
-            <a href="https://amzn.to/3PPrJG9" target="_blank" class="portal-btn live">Amazon ↗</a>
-            <span class="portal-btn pending">Google Play ⏳</span>
-            <span class="portal-btn coming">Kobo 🔜</span>
+        <div class="work-card">
+          <img src="tabbies_es.jpg" class="work-img" alt="All Tabbies ES">
+          <div class="work-overlay">
+            <h3 style="color:var(--gold); font-size:12px; margin-bottom:10px;">TODOS LOS GATOS (ES)</h3>
+            <p style="font-size:9px; color:#ccc; margin-bottom:15px;">Edición en Español. Disponible ahora.</p>
+            <a href="https://amzn.to/47qbOUT" class="store-link available">AMAZON [LIT]</a>
           </div>
         </div>
-      </div>
 
-      <!-- ALL TABBIES — PORTUGUESE -->
-      <div class="work-card">
-        <div class="book-cover-art tabbies">
-          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
-          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
-          <span class="cover-ribbon live">Live · PT</span>
-          <img src="tabbies_pt.jpeg" class="pixel-sticker" alt="All Tabbies PT">
-        </div>
-        <div class="book-info">
-          <div class="work-type">Português — Amazon KDP Brasil</div>
-          <h3>Todos os Gatos Têm o Seu Lugar</h3>
-          <p>Edição em português brasileiro. Disponível agora.</p>
-          <div class="portal-btns">
-            <a href="https://amzn.to/4uTtNgB" target="_blank" class="portal-btn live">Amazon ↗</a>
-            <span class="portal-btn pending">Google Play ⏳</span>
-            <span class="portal-btn coming">Kobo 🔜</span>
+        <div class="work-card">
+          <img src="tabbies_ja.jpg" class="work-img" alt="All Tabbies JA">
+          <div class="work-overlay">
+            <h3 style="color:var(--gold); font-size:12px; margin-bottom:10px;">猫にも居場所がある (JA)</h3>
+            <p style="font-size:9px; color:#ccc; margin-bottom:15px;">日本語版。Amazon Japanで今すぐ購入。</p>
+            <a href="https://amzn.to/3PPrJG9" class="store-link available">AMAZON [LIT]</a>
           </div>
         </div>
-      </div>
 
-      <!-- ALL TABBIES — KOREAN -->
-      <div class="work-card">
-        <div class="book-cover-art tabbies">
-          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
-          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
-          <span class="cover-ribbon live">Live · KO</span>
-          <img src="tabbies_ko.jpeg" class="pixel-sticker" alt="All Tabbies KO">
-        </div>
-        <div class="book-info">
-          <div class="work-type">한국어 — Google Play Books</div>
-          <h3>모든 고양이는 갈 곳이 있다</h3>
-          <p>한국어판. 구글 플레이 북스에서 지금 구입하세요.</p>
-          <div class="portal-btns">
-            <span class="portal-btn pending">Google Play ⏳</span>
-            <span class="portal-btn coming">Amazon 🔜</span>
-            <span class="portal-btn coming">Ridibooks 🔜</span>
+        <div class="work-card">
+          <img src="tabbies_ko.jpeg" class="work-img" alt="All Tabbies KO">
+          <div class="work-overlay">
+            <h3 style="color:var(--gold); font-size:12px; margin-bottom:10px;">모든 고양이는... (KO)</h3>
+            <p style="font-size:9px; color:#ccc; margin-bottom:15px;">한국어판. 구글 플레이 북스에서 지금 구입하세요.</p>
+            <div class="store-link available">GOOGLE PLAY [LIT]</div>
           </div>
         </div>
-      </div>
 
-      <!-- OUTBREAK FROM THE STARS -->
-      <div class="work-card">
-        <div class="book-cover-art outbreak">
-          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
-          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
-          <span class="cover-ribbon live">New Release</span>
-          <img src="outbreak_en.jpeg" class="pixel-sticker" alt="Outbreak EN">
-        </div>
-        <div class="book-info">
-          <div class="work-type">English — Amazon KDP</div>
-          <h3>Outbreak From the Stars</h3>
-          <p>They didn't come to destroy. They came to replace. Found-footage cosmic horror.</p>
-          <div class="portal-btns">
-            <a href="https://amzn.to/3NIeQ08" target="_blank" class="portal-btn live">Amazon ↗</a>
-            <span class="portal-btn pending">Google Play ⏳</span>
-            <span class="portal-btn coming">Kobo 🔜</span>
-            <span class="portal-btn coming">Apple 🔜</span>
+        <div class="work-card">
+          <img src="outbreak_en.jpeg" class="work-img" alt="Outbreak EN">
+          <div class="work-overlay">
+            <h3 style="color:var(--gold); font-size:12px; margin-bottom:10px;">OUTBREAK FROM THE STARS</h3>
+            <p style="font-size:9px; color:#ccc; margin-bottom:15px;">English. Found-footage cosmic horror.</p>
+            <a href="https://amzn.to/3NIeQ08" class="store-link available">AMAZON [LIT]</a>
           </div>
         </div>
-      </div>
 
-
-      <!-- OUTBREAK — SPANISH -->
-      <div class="work-card">
-        <div class="book-cover-art outbreak">
-          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
-          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
-          <span class="cover-ribbon live">Live · ES</span>
-          <img src="outbreak_es.jpeg" class="pixel-sticker" alt="Outbreak ES">
-        </div>
-        <div class="book-info">
-          <div class="work-type">Español — Amazon KDP</div>
-          <h3>Brote Desde Las Estrellas</h3>
-          <p>Una transmisión interdimensional. Horror cósmico en español.</p>
-          <div class="portal-btns">
-            <a href="https://amzn.to/3NIeQ08" target="_blank" class="portal-btn live">Amazon ↗</a>
-            <span class="portal-btn coming">Google Play 🔜</span>
+        <div class="work-card">
+          <img src="juni_en.jpeg" class="work-img" alt="Juni EN">
+          <div class="work-overlay">
+            <h3 style="color:var(--gold); font-size:12px; margin-bottom:10px;">JUNI THE IMMORTAL</h3>
+            <p style="font-size:9px; color:#ccc; margin-bottom:15px;">English. 18 years in the making.</p>
+            <a href="https://amzn.to/4tfhJoc" class="store-link available">AMAZON [LIT]</a>
           </div>
         </div>
+
       </div>
 
-      <!-- OUTBREAK — PORTUGUESE -->
-      <div class="work-card">
-        <div class="book-cover-art outbreak">
-          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
-          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
-          <span class="cover-ribbon live">Live · PT</span>
-          <img src="outbreak_pt.jpeg" class="pixel-sticker" alt="Outbreak PT">
-        </div>
-        <div class="book-info">
-          <div class="work-type">Português — Amazon KDP Brasil</div>
-          <h3>Surto Das Estrelas</h3>
-          <p>Uma transmissão transdimensional. Horror cósmico em português.</p>
-          <div class="portal-btns">
-            <a href="https://amzn.to/3NIeQ08" target="_blank" class="portal-btn live">Amazon ↗</a>
-            <span class="portal-btn coming">Google Play 🔜</span>
+      <div style="height: 100px;"></div> <h2 style="text-align:center; color:#FF4444; font-family:'Press Start 2P'; font-size:18px; margin-bottom:40px;">[ THE OBSIDIAN VEIN ]</h2>
+      
+      <div class="works-grid">
+        
+        <div class="work-card" style="border-color:#FF4444;">
+          <img src="minewars_cover.jpg" class="work-img" alt="Mine Wars">
+          <div class="work-overlay" style="background:rgba(20,0,0,0.7);">
+            <h3 style="color:#FF4444; font-size:12px; margin-bottom:10px;">THE MINE WARS</h3>
+            <p style="font-size:9px; color:#ccc; margin-bottom:15px;">Declassified War Logs. Free to read on the network.</p>
+            <a href="minewars.html" class="store-link available" style="border-color:#FF4444; color:#FF4444;">READ FREE [LIT]</a>
           </div>
         </div>
-      </div>
 
-      <!-- OUTBREAK — JAPANESE -->
-      <div class="work-card">
-        <div class="book-cover-art outbreak">
-          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
-          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
-          <span class="cover-ribbon live">Live · JA</span>
-          <img src="outbreak_ja.jpg" class="pixel-sticker" alt="Outbreak JA">
-        </div>
-        <div class="book-info">
-          <div class="work-type">日本語 — Amazon KDP Japan</div>
-          <h3>星々からのアウトブレイク</h3>
-          <p>次元間通信。日本語版。今すぐAmazonで。</p>
-          <div class="portal-btns">
-            <a href="https://amzn.to/3NIeQ08" target="_blank" class="portal-btn live">Amazon ↗</a>
-            <span class="portal-btn coming">Google Play 🔜</span>
+        <div class="work-card" style="border-color:var(--neon-green);">
+          <img src="wanderer_cover.jpg" class="work-img" alt="The Wanderer">
+          <div class="work-overlay" style="background:rgba(0,20,0,0.7);">
+            <h3 style="color:var(--neon-green); font-size:12px; margin-bottom:10px;">THE WANDERER</h3>
+            <p style="font-size:9px; color:#ccc; margin-bottom:15px;">Extraction pending. $2.99 across 7 languages.</p>
+            <div class="store-link">KDP PENDING</div>
           </div>
         </div>
-      </div>
 
-      <!-- OUTBREAK — KOREAN -->
-      <div class="work-card">
-        <div class="book-cover-art outbreak">
-          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
-          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
-          <span class="cover-ribbon live">Live · KO</span>
-          <img src="outbreak_ko.jpg" class="pixel-sticker" alt="Outbreak KO">
-        </div>
-        <div class="book-info">
-          <div class="work-type">한국어 — Ridibooks / Google Play</div>
-          <h3>별들로부터의 발생</h3>
-          <p>차원 간 전송. 한국어판.</p>
-          <div class="portal-btns">
-            <span class="portal-btn pending">Ridibooks ⏳</span>
-            <span class="portal-btn coming">Google Play 🔜</span>
+        <div class="work-card" style="border-color:var(--neon-green);">
+          <img src="swimmer_cover.jpg" class="work-img" alt="The Swimmer">
+          <div class="work-overlay" style="background:rgba(0,20,0,0.7);">
+            <h3 style="color:var(--neon-green); font-size:12px; margin-bottom:10px;">THE SWIMMER</h3>
+            <p style="font-size:9px; color:#ccc; margin-bottom:15px;">Lore Fragment. Survival in the deep mine.</p>
+            <div class="store-link">KDP PENDING</div>
           </div>
         </div>
-      </div>
-      <!-- JUNI THE IMMORTAL -->
-      <div class="work-card">
-        <div class="book-cover-art juni">
-          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
-          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
-          <span class="cover-ribbon live">Live</span>
-          <img src="juni_en.jpeg" class="pixel-sticker" alt="Juni the Immortal">
-        </div>
-        <div class="book-info">
-          <div class="work-type">English — Amazon KDP</div>
-          <h3>Juni the Immortal</h3>
-          <p>Immortality is not a gift. Juni has lived long enough to know the difference.</p>
-          <div class="portal-btns">
-            <a href="https://amzn.to/4tfhJoc" target="_blank" class="portal-btn live">Amazon ↗</a>
-            <span class="portal-btn pending">Google Play ⏳</span>
-            <span class="portal-btn coming">Kobo 🔜</span>
-            <span class="portal-btn coming">Apple 🔜</span>
-          </div>
-        </div>
-      </div>
 
-      <!-- NAYLA & FELIK — coming soon -->
-      <div class="work-card">
-        <div class="book-cover-art nayla">
-          <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
-          <div class="cover-corner bl"></div><div class="cover-corner br"></div>
-          <span class="cover-ribbon progress">18 Years in the Making</span>
-          <span class="cover-icon nayla-icon">🦁</span>
-        </div>
-        <div class="book-info">
-          <div class="work-type">Epic Fantasy — In Progress</div>
-          <h3>Nayla the Lioness &amp; Felik</h3>
-          <p>A lioness. A man split between worlds. The origin story of everything in the mine.</p>
-          <div class="portal-btns">
-            <span class="portal-btn coming">Coming 2026 🔜</span>
-          </div>
-        </div>
       </div>
-
-    </div>
 
     </div><!-- /.works-grid goldmine -->
     </div><!-- /#panel-gold -->
@@ -1442,22 +1270,28 @@ body::before{
 
         <!-- THE WANDERER -->
         <div class="work-card">
-          <div class="work-card">
-          <div class="book-cover-art shortstories" style="border-color:rgba(155,89,182,.4);">
-            <div class="cover-corner tl"></div><div class="cover-corner tr"></div>
-            <div class="cover-corner bl"></div><div class="cover-corner br"></div>
-            <span class="cover-ribbon progress" style="background:linear-gradient(135deg,#6B2FA0,#9B59B6);">7-Language Roster</span>
-            <img src="wanderer_cover.jpg" style="width:100%; height:100%; object-fit:cover; opacity:0.8; position:absolute; top:0; left:0;">
-          </div>
-          <div class="book-info">
-            <div class="work-type" style="color:#9B59B6;">Obsidian Extraction — $2.99</div>
-            <h3>The Wanderer</h3>
-            <p>An episodic identity thriller. Now being localized for global extraction in 7 languages. The signal is spreading.</p>
-            <div class="portal-btns">
-              <span class="portal-btn coming">KDP Extraction Pending 📡</span>
-            </div>
-          </div>
-        </div>
+    <img src="minewars_cover.jpg" class="work-img">
+    <div class="work-overlay">
+        <h3 style="color:#FF4444;">THE MINE WARS</h3>
+        <a href="minewars.html" class="store-link available" style="border-color:#FF4444; color:#FF4444;">READ FREE [LIT]</a>
+    </div>
+</div>
+
+<div class="work-card">
+    <img src="wanderer_cover.jpg" class="work-img">
+    <div class="work-overlay">
+        <h3 style="color:var(--neon-green);">THE WANDERER</h3>
+        <div class="store-link">KDP PENDING</div>
+    </div>
+</div>
+
+<div class="work-card">
+    <img src="swimmer_cover.jpg" class="work-img">
+    <div class="work-overlay">
+        <h3 style="color:var(--neon-green);">THE SWIMMER</h3>
+        <div class="store-link">KDP PENDING</div>
+    </div>
+</div>
 
         <div class="work-card">
           <div class="book-cover-art shortstories" style="border-color:rgba(155,89,182,.4);">
