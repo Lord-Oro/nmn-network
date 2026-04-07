@@ -3,168 +3,190 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Alchemist's Table — NMN</title>
+<title>The Alchemist's Table — NMN Retro</title>
+
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="shortcut icon" href="favicon.png" type="image/png">
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
 
 <style>
-:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-sans);background:var(--coal);color:var(--cream);min-height:100vh;background-image:linear-gradient(45deg,#0c0a07 25%,#110e0a 25%,#110e0a 50%,#0c0a07 50%,#0c0a07 75%,#110e0a 75%,#110e0a 100%);background-size:4px 4px}
-header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(12,10,7,.95);position:sticky;top:0;z-index:10}
-.logo{font-family:var(--font-serif);font-style:italic;color:var(--gold);font-size:.95rem;text-decoration:none}
-.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
-.back:hover{color:var(--gold)}
-main{max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
-.al-hero{text-align:center;margin-bottom:2.5rem}
-.al-eyebrow{font-size:.55rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gd);margin-bottom:.75rem}
-.al-title{font-family:var(--font-serif);font-size:clamp(1.8rem,4vw,3rem);color:var(--cream);margin-bottom:.4rem}
-.al-title em{color:var(--gold);font-style:italic}
-.al-sub{font-size:.72rem;color:var(--muted);line-height:2;max-width:540px;margin:0 auto}
+:root {
+  --gold: #FFD700;
+  --gb: #e8b84b;
+  --gd: #AA7700;
+  --bg-color: #000000;
+  --panel-bg: #111111;
+  --cream: #f0e6cc;
+  --muted: #aaaaaa;
+  --lg: #55FF55; 
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-text: 'VT323', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { min-height: 100vh; background: var(--bg-color); }
+
+body {
+  font-family: var(--font-text);
+  color: var(--cream);
+  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
+  padding-bottom: 60px;
+  font-size: 1.2rem;
+}
+
+/* 16-BIT UI BORDER HELPER */
+.retro-box {
+  background: var(--panel-bg);
+  border: 4px solid #FFF;
+  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
+}
+
+/* HEADER */
+header {
+  padding: 1rem 2rem; border-bottom: 4px solid var(--lg);
+  display: flex; justify-content: space-between; align-items: center;
+  background: #000; z-index: 1000; position: sticky; top: 0;
+}
+.logo { font-family: var(--font-pixel); color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
+.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.back:hover { color: var(--gold); }
+
+main { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem; }
+
+.al-hero { text-align: center; margin-bottom: 2.5rem; background: #000; padding: 2rem; border: 4px solid #444; }
+.al-eyebrow { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); margin-bottom: 1rem; }
+.al-title { font-family: var(--font-pixel); font-size: 1.5rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 3px 3px 0 #553300;}
+.al-title em { color: var(--gold); font-style: normal; }
+.al-sub { font-size: 1.3rem; color: var(--muted); line-height: 1.5; max-width: 600px; margin: 0 auto; }
+
 /* PERIODIC TABLE */
-.table-label{font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gd);margin-bottom:1rem;display:flex;align-items:center;gap:.75rem}
-.table-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(255,215,0,.2),transparent)}
-.periodic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:.5rem;margin-bottom:2rem}
-.element-card{border:1px solid rgba(255,215,0,.15);padding:.75rem .5rem;text-align:center;cursor:pointer;transition:all .25s;position:relative;background:rgba(255,255,255,.02)}
-.element-card:hover{border-color:rgba(255,215,0,.5);transform:translateY(-3px);background:rgba(255,215,0,.06)}
-.element-card.active{border-color:var(--gold);background:rgba(255,215,0,.1)}
-.el-num{font-size:.38rem;color:var(--faint);margin-bottom:.2rem}
-.el-symbol{font-family:var(--font-serif);font-size:1.6rem;color:var(--cream);line-height:1;margin-bottom:.2rem}
-.el-name{font-size:.38rem;letter-spacing:.05em;color:var(--muted);line-height:1.3}
-.el-type{position:absolute;top:.3rem;right:.3rem;width:6px;height:6px;border-radius:50%}
-.type-gold{background:#c9962a}
-.type-void{background:#6a3a8a}
-.type-flame{background:#cc4422}
-.type-radiance{background:#ddcc44}
-.type-water{background:#4466aa}
-.type-shadow{background:#445566}
-.type-earth{background:#664422}
-.type-time{background:#44aaaa}
+.table-label { font-family: var(--font-pixel); font-size: 0.7rem; color: var(--gold); margin-bottom: 1.5rem; border-bottom: 4px solid #333; padding-bottom: 0.5rem; text-shadow: 2px 2px 0 #000; }
+
+.periodic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+
+.element-card { background: #000; border: 4px solid #444; padding: 1rem 0.5rem; text-align: center; cursor: pointer; transition: transform 0.1s; position: relative; }
+.element-card:hover { border-color: var(--cream); transform: translateY(-4px); background: #111; box-shadow: 4px 4px 0 #000; }
+.element-card.active { border-color: var(--gold); background: #221100; box-shadow: inset 0 0 0 4px var(--gd), 4px 4px 0 #000; }
+
+.el-num { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--muted); margin-bottom: 0.5rem; text-align: left; padding-left: 0.2rem;}
+.el-symbol { font-family: var(--font-pixel); font-size: 1.8rem; color: var(--cream); margin-bottom: 0.5rem; text-shadow: 2px 2px 0 #000;}
+.el-name { font-size: 1rem; color: var(--muted); text-transform: uppercase; }
+
+.el-type { position: absolute; top: 6px; right: 6px; width: 10px; height: 10px; border: 2px solid #FFF; }
+.type-gold { background: #c9962a; }
+.type-void { background: #6a3a8a; }
+.type-flame { background: #cc4422; }
+.type-radiance { background: #ddcc44; }
+.type-water { background: #4466aa; }
+.type-shadow { background: #445566; }
+.type-earth { background: #664422; }
+.type-time { background: #44aaaa; }
 
 /* DETAIL PANEL */
-.element-detail{border:1px solid rgba(255,215,0,.15);background:rgba(255,215,0,.03);padding:2rem;min-height:200px;display:flex;flex-direction:column;justify-content:center}
-.detail-empty{font-family:var(--font-serif);font-style:italic;color:var(--faint);text-align:center;font-size:.95rem}
-.detail-header{display:flex;gap:1.5rem;align-items:flex-start;margin-bottom:1.5rem;flex-wrap:wrap}
-.detail-symbol-big{font-family:var(--font-serif);font-size:4rem;color:var(--gold);line-height:1;flex-shrink:0;text-shadow:2px 2px 0 var(--gd)}
-.detail-info h2{font-family:var(--font-serif);font-size:1.4rem;color:var(--cream);margin-bottom:.3rem}
-.detail-info h2 em{color:var(--gold);font-style:italic}
-.detail-meta{font-size:.48rem;color:var(--gd);letter-spacing:.15em;line-height:2;margin-bottom:.5rem}
-.detail-type-badge{display:inline-block;padding:.2rem .6rem;font-size:.4rem;letter-spacing:.15em;text-transform:uppercase;border:1px solid}
-.detail-desc{font-family:var(--font-serif);font-style:italic;font-size:.95rem;color:var(--muted);line-height:1.8;margin-bottom:1rem}
-.detail-properties{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.6rem;color:var(--muted)}
-.detail-prop{padding:.5rem;border:1px solid rgba(255,215,0,.08);line-height:1.6}
-.detail-prop strong{color:var(--gd);display:block;font-size:.45rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:.2rem;font-weight:400}
-.detail-lore{font-family:var(--font-serif);font-style:italic;font-size:.85rem;color:var(--gd);padding:.75rem;border-left:2px solid var(--gd);margin-top:1rem;line-height:1.7}
+.element-detail { padding: 2rem; min-height: 250px; display: flex; flex-direction: column; justify-content: center; margin-bottom: 3rem;}
+.detail-empty { font-family: var(--font-pixel); color: var(--muted); text-align: center; font-size: 0.8rem; animation: blink 1.5s infinite;}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+.detail-header { display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; border-bottom: 4px dashed #333; padding-bottom: 1.5rem;}
+.detail-symbol-big { font-family: var(--font-pixel); font-size: 4rem; color: var(--gold); line-height: 1; text-shadow: 4px 4px 0 var(--gd); }
+.detail-info h2 { font-family: var(--font-pixel); font-size: 1.2rem; color: var(--cream); margin-bottom: 0.8rem; line-height: 1.4;}
+.detail-info h2 em { color: var(--gold); font-style: normal; }
+.detail-meta { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gd); line-height: 1.8; margin-bottom: 1rem; }
+
+.detail-type-badge { display: inline-block; padding: 0.4rem 0.8rem; font-family: var(--font-pixel); font-size: 0.5rem; text-transform: uppercase; border: 2px solid; background: #000;}
+
+.detail-desc { font-size: 1.4rem; color: var(--cream); line-height: 1.6; margin-bottom: 1.5rem; }
+
+.detail-properties { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;}
+@media(max-width: 600px) { .detail-properties { grid-template-columns: 1fr; } }
+.detail-prop { background: #000; border: 4px solid #444; padding: 1rem; font-size: 1.2rem; color: var(--muted); line-height: 1.4;}
+.detail-prop strong { font-family: var(--font-pixel); color: var(--gd); display: block; font-size: 0.6rem; text-transform: uppercase; margin-bottom: 0.5rem; }
+
+.detail-lore { font-size: 1.3rem; color: var(--lg); padding: 1rem; border-left: 4px solid var(--lg); background: rgba(0, 255, 136, 0.05); line-height: 1.5; font-style: italic;}
+
+/* ── MOUSE FIX ── */
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+
 </style>
-
-<style id="depth-gauge-style">
-.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:36px;background:rgba(12,10,7,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:2rem;z-index:999;padding:0 1rem;flex-wrap:wrap}
-.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28}
-.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
-.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s}
-.dg-link:hover{color:#FFD700}
-.dg-sep{color:#2a1808;font-size:.6rem}
-</style>
-
-<style id="nmn-cursor">
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
-</style>
-<style id="floating-gauge">
-.depth-gauge{
-  position:fixed!important;bottom:12px!important;left:50%!important;
-  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
-  height:42px!important;background:rgba(12,10,7,.88)!important;
-  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
-  padding:0 18px!important;pointer-events:none!important;
-  z-index:9999!important;backdrop-filter:blur(4px)!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  gap:1.2rem!important;flex-wrap:nowrap!important;
-  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
-}
-.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
-body{padding-bottom:65px!important}
-</style>
-
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
-
-
 </head>
 <body>
-<script src="nmn-nav.js"></script>
+
 <header>
-  <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="oracle.html" class="back">← Oracle's Chamber</a>
+  <a href="index.html" class="logo">NMN DATA TERMINAL</a>
+  <a href="oracle.html" class="back">← RETURN TO ORACLE</a>
 </header>
+
 <main>
   <div class="al-hero">
-    <div class="al-eyebrow">The Oracle's Chamber</div>
-    <h1 class="al-title">The Alchemist's <em>Table</em></h1>
-    <p class="al-sub">The NMN universe has its own periodic table — fictional elements with pseudo-scientific profiles, atomic weights, and documented roles in Lord Oro's mythology. Click any element to read its full profile.</p>
+    <div class="al-eyebrow">DATABASE ENTRY: ALCHEMY</div>
+    <h1 class="al-title">THE ALCHEMIST'S <em>TABLE</em></h1>
+    <p class="al-sub">Fictional elements. Documented roles in Lord Oro's mythology. Select an element to initialize data transfer.</p>
   </div>
 
-  <div class="table-label">The NMN Periodic Table of Elements</div>
+  <div class="table-label">NMN PERIODIC TABLE</div>
   <div class="periodic-grid" id="periodicGrid"></div>
 
-  <div class="table-label">Element Profile</div>
-  <div class="element-detail" id="elementDetail">
-    <div class="detail-empty">Select an element to read its profile</div>
+  <div class="table-label">ELEMENT PROFILE</div>
+  <div class="element-detail retro-box" id="elementDetail">
+    <div class="detail-empty">AWAITING SELECTION...</div>
   </div>
 </main>
 
 <script>
 const ELEMENTS = [
-  {num:1,sym:'Au',name:'Aurite',type:'gold',typeLabel:'Gold Type',color:'#c9962a',
+  {num:1,sym:'Au',name:'Aurite',type:'gold',typeLabel:'Gold Type',color:'#FFD700',
    mass:'196.97',state:'Solid — always',origin:'The Mine Core',
    desc:'The foundational element of the NMN universe. Aurite is not simply gold — it is the physical manifestation of potential realized. Every vein of Aurite in the mine represents a person who dug far enough to find something worth finding.',
    properties:{melting:'Refuses to melt under pressure','boiling':'Has never been boiled','reactivity':'Reacts to intention','stability':'Infinitely stable when held by the right hands'},
    lore:'"Aurite is the gold of the interior world. It doesn\'t exist in mines. It exists in people who have done the work." — Lord Oro',
    stories:'All NMN stories'},
-  {num:2,sym:'Vd',name:'Void Ore',type:'void',typeLabel:'Void Type',color:'#6a3a8a',
+  {num:2,sym:'Vd',name:'Void Ore',type:'void',typeLabel:'Void Type',color:'#AA55FF',
    mass:'∅.∅∅',state:'Neither solid nor gas',origin:'Outbreak From the Stars',
    desc:'Void Ore arrived with the Outbreak. It is not mined — it appears. Where it appears, existing matter begins to doubt its own identity. Void Ore does not destroy. It replaces. This is significantly worse.',
    properties:{melting:'Absorbs heat rather than melting','boiling':'Causes surrounding elements to evaporate','reactivity':'Highly reactive to consciousness','stability':'Stable only in the absence of life'},
    lore:'"They didn\'t come with weapons. They came with Void Ore. That was the weapon." — Outbreak From the Stars',
    stories:'Outbreak From the Stars'},
-  {num:3,sym:'Px',name:'Pyrexite',type:'flame',typeLabel:'Flame Type',color:'#cc4422',
+  {num:3,sym:'Px',name:'Pyrexite',type:'flame',typeLabel:'Flame Type',color:'#FF5555',
    mass:'39.₂',state:'Perpetually igniting',origin:'Pyro & Helios',
    desc:'The element that powers Pyro. Pyrexite does not merely burn — it burns with intention. When Pyro strikes a surface with Pyrexite energy, the fire that results knows what it is protecting. Fire without purpose simply destroys. Pyrexite fire protects.',
-   properties:{melting:'Intensifies rather than melts','boiling:'Erupts into protective flame','reactivity':'Reacts to love and to threat equally','stability':'Stable when its purpose is clear'},
-   lore:'"Pyro didn\'t know home meant until he had Pyrexite to protect it with." — Pyro & Helios',
+   properties:{melting:'Intensifies rather than melts','boiling':'Erupts into protective flame','reactivity':'Reacts to love and to threat equally','stability':'Stable when its purpose is clear'},
+   lore:'"Pyro didn\'t know what home meant until he had Pyrexite to protect it with." — Pyro & Helios',
    stories:'Pyro & Helios: A Journey Home'},
-  {num:4,sym:'Lx',name:'Lumexite',type:'radiance',typeLabel:'Radiance Type',color:'#ddcc44',
+  {num:4,sym:'Lx',name:'Lumexite',type:'radiance',typeLabel:'Radiance Type',color:'#FFFF88',
    mass:'88.₈',state:'Continuously luminous',origin:'Pyro & Helios',
    desc:'The element of Helios. Lumexite does not produce light — it is light that has decided to have a physical form. It cannot be contained in darkness because the darkness simply stops existing where Lumexite is present. Helios carries it effortlessly.',
    properties:{melting:'Light does not melt','boiling':'Intensifies to blinding on extreme heat','reactivity':'Unreactive to shadow — simply dissolves it','stability':'The most stable element in the NMN table'},
    lore:'"Light doesn\'t fight the dark. It simply arrives. Lumexite understood this before Helios did." — Pyro & Helios',
    stories:'Pyro & Helios: A Journey Home'},
-  {num:5,sym:'Tm',name:'Temporium',type:'time',typeLabel:'Time Type',color:'#44aaaa',
-   mass:'♾.₀',state:'Exists in all states simultaneously',origin:'Juni the Immortal',
+  {num:5,sym:'Tm',name:'Temporium',type:'time',typeLabel:'Time Type',color:'#55FFFF',
+   mass:'♾.₀',state:'Exists in all states',origin:'Juni the Immortal',
    desc:'The element that makes Juni\'s immortality possible. Temporium does not stop time — it makes time optional. Juni\'s cells contain Temporium at levels that prevent the normal decay process. The side effect is that she cannot forget. Temporium remembers everything it touches.',
    properties:{melting:'Melts before and after simultaneously','boiling':'Has already boiled and will boil again','reactivity':'Reacts with memory — strengthens it','stability':'Paradoxically stable'},
    lore:'"Juni had Temporium in her blood before anyone knew what to call it. She was the first and only case. That has never stopped being a problem." — Juni the Immortal',
    stories:'Juni the Immortal'},
-  {num:6,sym:'Mb',name:'Mnemite',type:'shadow',typeLabel:'Shadow Type',color:'#445566',
-   mass:'44.₄',state:'Gaseous — always shifting',origin:'Lord Oro\'s Personal Archive',
+  {num:6,sym:'Mb',name:'Mnemite',type:'shadow',typeLabel:'Shadow Type',color:'#888888',
+   mass:'44.₄',state:'Gaseous — always shifting',origin:'Lord Oro\'s Archive',
    desc:'The element of memory and shadow. Mnemite is what the mine walls are made of — not stone, but compressed memory. Every wall in the mine is made of things that were true once. When the walls crack, memories leak out. This is what lore fragments are: Mnemite escaping.',
    properties:{melting:'Softens under the weight of strong memory','boiling':'Evaporates into lore fragment form','reactivity':'Extremely reactive to emotion','stability':'Unstable — always shifting'},
    lore:'"The mine walls are made of Mnemite. Every lore fragment you find is a crack in the wall. The mine is telling you something." — Lord Oro',
    stories:'All NMN games — The Lore Vault'},
-  {num:7,sym:'Ln',name:'Leonite',type:'earth',typeLabel:'Strength Type',color:'#886622',
-   mass:'62.₁',state:'Dense solid',origin:'Nayla the Lioness',
-   desc:'The element of Nayla\'s world. Leonite is found only in the fantasy world where imaginary friends become real. It is the physical substance of belief made manifest — the heavier the belief, the denser the Leonite. Nayla\'s presence makes Leonite appear wherever she walks.',
+  {num:7,sym:'Ln',name:'Leonite',type:'earth',typeLabel:'Strength Type',color:'#AA7700',
+   mass:'62.₁',state:'Dense solid',origin:'Nela the Lioness',
+   desc:'The element of Nela\'s world. Leonite is found only in the fantasy world where imaginary friends become real. It is the physical substance of belief made manifest — the heavier the belief, the denser the Leonite. Nela\'s presence makes Leonite appear wherever she walks.',
    properties:{melting:'Has never been observed melting','boiling':'Boils only in the absence of belief','reactivity':'Reacts to conviction — solidifies','stability':'Becomes more stable under pressure'},
-   lore:'"The ground in Nayla\'s world is made of Leonite. That\'s why it holds her weight no matter what she carries." — Nayla the Lioness',
-   stories:'Nayla the Lioness and Felik'},
-  {num:8,sym:'Ds',name:'Dualite',type:'shadow',typeLabel:'Dual Type',color:'#7a4a8a',
-   mass:'2×∞',state:'Two states at once',origin:'Felik — The Man with Two Souls',
-   desc:'The element unique to Felik. Dualite exists as two contradictory states simultaneously — it is both the hardest substance in the NMN table and the most flexible. This is not a flaw. This is the entire point. Felik\'s two souls are held together by Dualite bonds that should not be chemically possible.',
-   properties:{melting:'Both melts and hardens under heat','boiling':'Splits into two separate elements and recombines','reactivity':'Reactive to choice — responds to decisions','stability':'Perfectly stable precisely because it contains contradiction'},
+   lore:'"The ground in Nela\'s world is made of Leonite. That\'s why it holds her weight no matter what she carries." — Nela the Lioness',
+   stories:'Nela the Lioness and Felik'},
+  {num:8,sym:'Ds',name:'Dualite',type:'shadow',typeLabel:'Dual Type',color:'#5555FF',
+   mass:'2×∞',state:'Two states at once',origin:'Felik',
+   desc:'The element unique to Felik. Dualite exists as two contradictory states simultaneously — it is both the hardest substance in the NMN table and the most flexible. Felik\'s two souls are held together by Dualite bonds that should not be chemically possible.',
+   properties:{melting:'Both melts and hardens under heat','boiling':'Splits into two elements and recombines','reactivity':'Reactive to choice — responds to decisions','stability':'Perfectly stable because it contains contradiction'},
    lore:'"Dualite shouldn\'t be able to exist. And yet here is Felik. The periodic table has been updated accordingly." — The Alchemist\'s Notes',
-   stories:'Nayla the Lioness and Felik'},
-  {num:9,sym:'Ax',name:'Axiom',type:'gold',typeLabel:'Mythic Type',color:'#e8b84b',
-   mass:'∞',state:'Undefined',origin:'Lord Oro — Mythic',
-   desc:'The rarest element in the NMN table. Axiom is the substance of Lord Oro himself — or rather, it is the element that forms when all other NMN elements are present in the same space at the same time. It has never been isolated. It has only been witnessed. Like Lord Oro.',
+   stories:'Nela the Lioness and Felik'},
+  {num:9,sym:'Ax',name:'Axiom',type:'gold',typeLabel:'Mythic Type',color:'#55FF55',
+   mass:'∞',state:'Undefined',origin:'Lord Oro',
+   desc:'The rarest element in the NMN table. Axiom is the substance of Lord Oro himself — or rather, it is the element that forms when all other NMN elements are present in the same space at the same time. It has never been isolated. It has only been witnessed.',
    properties:{melting:'Unaffected by any known force','boiling':'Has never been observed','reactivity':'Reacts only to completed grimoires','stability':'Absolute'},
    lore:'"Axiom cannot be synthesized. It can only be witnessed. That\'s the whole point of the Collector." — Lord Oro',
    stories:'The Collector — Mythic Tier'},
@@ -184,15 +206,17 @@ document.getElementById('periodicGrid').innerHTML = ELEMENTS.map((el,i) =>
 function showElement(i) {
   document.querySelectorAll('.element-card').forEach(c => c.classList.remove('active'));
   document.getElementById('el' + i).classList.add('active');
+  
   const el = ELEMENTS[i];
   const propsHtml = Object.entries(el.properties).map(([k,v]) =>
     `<div class="detail-prop"><strong>${k}</strong>${v}</div>`).join('');
+    
   document.getElementById('elementDetail').innerHTML = `
     <div class="detail-header">
       <div class="detail-symbol-big" style="color:${el.color}">${el.sym}</div>
       <div class="detail-info">
         <h2>${el.name} — <em>${el.typeLabel}</em></h2>
-        <div class="detail-meta">Atomic Mass: ${el.mass} &nbsp;|&nbsp; State: ${el.state}<br>Origin: ${el.origin} &nbsp;|&nbsp; Appears in: ${el.stories}</div>
+        <div class="detail-meta">ATOMIC MASS: ${el.mass} <br> STATE: ${el.state} <br> ORIGIN: ${el.origin} <br> FILE: ${el.stories}</div>
         <span class="detail-type-badge" style="border-color:${el.color};color:${el.color}">${el.typeLabel}</span>
       </div>
     </div>
@@ -202,258 +226,5 @@ function showElement(i) {
 }
 </script>
 
-<div class="depth-gauge" id="depthGauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
-  <span class="dg-sep">⬡</span>
-  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> Lore Fragments</div>
-  <span class="dg-sep">⬡</span>
-  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span> Creatures</div>
-  <span class="dg-sep">⬡</span>
-  <a href="lorevault.html" class="dg-link">📜 Vault</a>
-  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
-  <a href="ledger.html" class="dg-link">📖 Ledger</a>
-</div>
-<script>
-(function(){
-  try{
-    var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
-    var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
-    var gold=parseInt(localStorage.getItem('nmn_total_gold')||'0');
-    var el=document.getElementById('dgGold');if(el)el.textContent=gold;
-    var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
-    var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
-  }catch(e){}
-})();
-</script>
-
-<script>
-window.NMN_CONTEXT = "oracle";
-// NMN LIVING SOUNDSCAPE — Excavation Committee
-// Gemini's Quad-Track Engine + Claude's integration layer
-// Zero external files. Under 2KB. Procedural — never repeats exactly.
-
-const NMN_Audio = {
-  ctx: null,
-  running: false,
-  masterGain: null,
-  layers: {},
-
-  init() {
-    if (this.ctx) return;
-    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
-    this.masterGain.connect(this.ctx.destination);
-  },
-
-  // TRACK 1 — The Deep Earth (continuous, low hum)
-  playHum() {
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(55, this.ctx.currentTime); // G1
-    gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
-    // Slow breathing — mine is alive
-    // Gemini's LFO: 0.08Hz = one breath every 12.5 seconds
-    const lfo = this.ctx.createOscillator();
-    const lfoGain = this.ctx.createGain();
-    lfo.type = 'sine';
-    lfo.frequency.value = 0.08;
-    lfoGain.gain.value = 0.01; // depth of breath
-    lfo.connect(lfoGain);
-    lfoGain.connect(gain.gain);
-    lfo.start();
-    osc.connect(gain);
-    gain.connect(this.masterGain);
-    osc.start();
-    this.layers.hum = { osc, gain };
-  },
-
-  // TRACK 2 — The Air Shaft (filtered noise / wind)
-  playWind() {
-    const bufferSize = 2 * this.ctx.sampleRate;
-    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-    const output = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
-    const whiteNoise = this.ctx.createBufferSource();
-    whiteNoise.buffer = noiseBuffer;
-    whiteNoise.loop = true;
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 400;
-    const g = this.ctx.createGain();
-    g.gain.setValueAtTime(0.012, this.ctx.currentTime);
-    whiteNoise.connect(filter);
-    filter.connect(g);
-    g.connect(this.masterGain);
-    whiteNoise.start();
-    this.layers.wind = { src: whiteNoise, gain: g };
-  },
-
-  // TRACK 3 — The Distant Strike (random pickaxe echoes)
-  playStrike() {
-    const tick = () => {
-      if (!this.running) return;
-      if (Math.random() > 0.75) {
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        // Metallic strike freq
-        osc.frequency.setValueAtTime(140 + Math.random() * 80, this.ctx.currentTime);
-        osc.type = 'sawtooth';
-        g.gain.setValueAtTime(0.04, this.ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.6);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.6);
-      }
-      // Randomize interval — 3s to 6s — never predictable
-      setTimeout(tick, 3000 + Math.random() * 3000);
-    };
-    setTimeout(tick, 2000);
-  },
-
-  // TRACK 4 — The Gold Shimmer (crystal high tones)
-  playShimmer() {
-    const tick = () => {
-      if (!this.running) return;
-      if (Math.random() > 0.85) {
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = 'triangle';
-        // Gold harmonic range — slightly randomized each time
-        osc.frequency.setValueAtTime(2200 + Math.random() * 1400, this.ctx.currentTime);
-        g.gain.setValueAtTime(0, this.ctx.currentTime);
-        g.gain.linearRampToValueAtTime(0.012, this.ctx.currentTime + 1.2);
-        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2.5);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 2.5);
-      }
-      setTimeout(tick, 5000 + Math.random() * 4000);
-    };
-    setTimeout(tick, 4000);
-  },
-
-  // TRACK 5 — The Subterranean Drip (Gemini's finalized version)
-  // Fast pitch-drop simulates the physics of water hitting a cavern pool
-  playWaterDrip() {
-    const tick = () => {
-      if (!this.running) return;
-      if (Math.random() > 0.6) {
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = 'sine';
-        // Start mid-freq, drop 50% in 80ms — exact droplet physics
-        osc.frequency.setValueAtTime(400 + Math.random() * 100, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.08);
-        g.gain.setValueAtTime(0.02, this.ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.08);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.08);
-      }
-      // 2-8 second random interval — no rhythmic pattern ever emerges
-      setTimeout(tick, 2000 + Math.random() * 6000);
-    };
-    setTimeout(tick, 5000 + Math.random() * 3000);
-  },
-
-  // TRACK 6 — The Oracle's Pad
-  playOraclePad() {
-    const AMAJ = [220, 277.18, 329.63];
-    const tick = () => {
-      if (!this.running) return;
-      AMAJ.forEach((freq, i) => {
-        const osc = this.ctx.createOscillator();
-        const filter = this.ctx.createBiquadFilter();
-        const g = this.ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-        filter.type = 'lowpass'; filter.frequency.value = 800;
-        g.gain.setValueAtTime(0, this.ctx.currentTime);
-        g.gain.linearRampToValueAtTime(0.03, this.ctx.currentTime + 2);
-        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 9);
-        osc.connect(filter); filter.connect(g); g.connect(this.masterGain);
-        osc.start(this.ctx.currentTime + i * 0.08);
-        osc.stop(this.ctx.currentTime + 9.5);
-      });
-      setTimeout(tick, 9000);
-    };
-    setTimeout(tick, 8000);
-  },
-
-  // Page-context aware — different mix per section
-  startAll(context) {
-    if (this.running) return;
-    this.init();
-    this.running = true;
-    this.playHum();
-    this.playWind();
-    this.playStrike();
-    this.playShimmer();
-    this.playOraclePad();
-    // Only add water drip on deep mine pages
-    if (context === 'deep' || context === 'oracle' || context === 'vigil') {
-      this.playWaterDrip();
-    }
-    // Tora gets a slightly higher shimmer frequency (more ethereal)
-    if (context === 'tora') {
-      this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
-    }
-  },
-
-  stop() {
-    if (!this.running) return;
-    this.running = false;
-    if (this.masterGain) {
-      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
-    }
-  },
-
-  toggle() {
-    if (this.running) { this.stop(); return false; }
-    else { this.startAll(window.NMN_CONTEXT || 'mine'); return true; }
-  }
-};
-
-// Trigger on first interaction — browser autoplay policy requires user gesture
-document.addEventListener('click', () => {
-  if (!NMN_Audio.running) NMN_Audio.startAll(window.NMN_CONTEXT || 'mine');
-}, { once: true });
-
-</script>
-
-<button id="nmn-sound-btn" onclick="
-  const on = NMN_Audio.toggle();
-  this.textContent = on ? '🔊 Sound On' : '🔇 Sound Off';
-  this.style.color = on ? 'var(--gold,#c9962a)' : '#4a3c28';
-" style="position:fixed;bottom:42px;right:.75rem;z-index:998;background:rgba(12,10,7,.9);border:1px solid rgba(255,215,0,.2);color:#4a3c28;font-family:Josefin Sans,sans-serif;font-size:.42rem;letter-spacing:.1em;padding:.35rem .6rem;cursor:pointer;transition:all .3s">🔇 Sound Off</button>
-<script id="nmn-glow">
-(function(){
-  var r=document.createElement('div');
-  r.id='pickaxe-glow';
-  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
-  document.body.appendChild(r);
-  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
-  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
-  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
-})();
-</script>
-
-<!-- Monetag Service Worker Registration -->
-<script>
-if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
-}
-</script>
-
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
-</div>
 </body>
 </html>
