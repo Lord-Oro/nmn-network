@@ -7,17 +7,20 @@
 <link rel="stylesheet" href="nmn-theme.css">
 
 <style>
-:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28;--lg:#6aaa4a;--dg:#2a5a1a;--rock:#1a1510;--nela:#d97736;--felik:#6c7a89;}
+:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28;--lg:#6aaa4a;--dg:#2a5a1a;--rock:#1a1510;}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-sans);background:#040404;color:var(--cream);min-height:100vh;
-background-image:
-  linear-gradient(rgba(4, 4, 4, 0.9), rgba(4, 4, 4, 0.95)),
-  repeating-linear-gradient(45deg, #070a05 0%, #070a05 5px, #0a0f07 5px, #0a0f07 10px);
+body{font-family:var(--font-sans);background:#070a05;color:var(--cream);min-height:100vh;
+background-image:linear-gradient(45deg,#070a05 25%,#0a0f07 25%,#0a0f07 50%,#070a05 50%,#070a05 75%,#0a0f07 75%,#0a0f07 100%);background-size:4px 4px;
 padding-bottom:50px}
-header{padding:.8rem 2rem;border-bottom:1px solid rgba(232,184,75,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(4,4,4,.97);position:sticky;top:0;z-index:20}
-.logo{font-family:var(--font-serif);font-style:italic;color:var(--gb);font-size:1rem;text-decoration:none}
+
+header{padding:.8rem 2rem;border-bottom:1px solid rgba(106,170,74,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(7,10,5,.97);position:sticky;top:0;z-index:20}
+.logo{font-family:var(--font-serif);font-style:italic;color:var(--lg);font-size:1rem;text-decoration:none}
 .back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
-.back:hover{color:var(--gold)}
+.back:hover{color:var(--lg)}
+
+/* ── MOUSE & CURSOR FIX ── */
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
 
 /* ── SCREENS ── */
 .screen{display:none;animation:fadeIn .5s ease}
@@ -26,78 +29,81 @@ header{padding:.8rem 2rem;border-bottom:1px solid rgba(232,184,75,.15);display:f
 
 /* ── CHARACTER CREATION ── */
 #createScreen{max-width:560px;margin:0 auto;padding:2.5rem 1.5rem}
-.create-title{font-family:var(--font-serif);font-size:2rem;color:var(--cream);text-align:center;margin-bottom:.3rem; text-shadow: 0 0 10px rgba(255,215,0,0.2);}
+.create-title{font-family:var(--font-serif);font-size:2rem;color:var(--cream);text-align:center;margin-bottom:.3rem; text-shadow: 0 0 10px rgba(255,215,0,0.1);}
 .create-title em{color:var(--gold);font-style:italic}
 .create-sub{font-size:.7rem;color:var(--muted);text-align:center;line-height:1.9;margin-bottom:2rem;font-family:var(--font-serif);font-style:italic}
-.create-label{font-size:.5rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gd);margin-bottom:.5rem;display:block}
-.create-input{width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.02);border:1px solid rgba(232,184,75,.2);color:var(--cream);font-family:var(--font-serif);font-style:italic;font-size:1rem;outline:none;margin-bottom:1.25rem;transition:border-color .3s; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);}
-.create-input:focus{border-color:rgba(255,215,0,.5)}
+.create-label{font-size:.5rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dg);margin-bottom:.5rem;display:block}
+.create-input{width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.02);border:1px solid rgba(106,170,74,.2);color:var(--cream);font-family:var(--font-serif);font-style:italic;font-size:1rem;outline:none;margin-bottom:1.25rem;transition:border-color .3s;}
+.create-input:focus{border-color:var(--lg)}
 .trait-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.5rem}
-.trait-card{border:1px solid rgba(232,184,75,.15);padding:1rem;cursor:pointer;transition:all .25s;text-align:center;background:rgba(255,255,255,.02)}
-.trait-card:hover{border-color:rgba(255,215,0,.4);background:rgba(232,184,75,.04)}
-.trait-card.selected{border-color:var(--gold);background:rgba(232,184,75,.08); box-shadow: 0 0 15px rgba(255,215,0,0.1);}
+.trait-card{border:1px solid rgba(106,170,74,.15);padding:1rem;cursor:pointer;transition:all .25s;text-align:center;background:rgba(255,255,255,.02)}
+.trait-card:hover{border-color:rgba(106,170,74,.4);background:rgba(106,170,74,.04)}
+.trait-card.selected{border-color:var(--gold);background:rgba(232,184,75,.08); box-shadow: 0 0 10px rgba(255,215,0,0.1);}
 .trait-icon{font-size:1.5rem;display:block;margin-bottom:.4rem}
 .trait-name{font-family:var(--font-serif);font-size:.95rem;color:var(--cream);margin-bottom:.2rem}
 .trait-desc{font-size:.52rem;color:var(--muted);line-height:1.6}
-.start-btn{width:100%;padding:1rem;background:var(--gd);color:#020503;font-family:var(--font-sans);font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;border:1px solid var(--gold);cursor:pointer;transition:all .3s}
-.start-btn:hover{background:var(--gold); box-shadow: 0 0 20px rgba(255,215,0,0.3);}
-.dedication{font-family:var(--font-serif);font-style:italic;font-size:.75rem;color:var(--muted);text-align:center;margin-top:1.25rem;line-height:1.7;padding:.75rem;border:1px solid rgba(232,184,75,.08)}
+.start-btn{width:100%;padding:1rem;background:var(--lg);color:#020503;font-family:var(--font-sans);font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;border:none;cursor:pointer;transition:all .3s}
+.start-btn:hover{background:#7acc5a;}
+.dedication{font-family:var(--font-serif);font-style:italic;font-size:.75rem;color:var(--muted);text-align:center;margin-top:1.25rem;line-height:1.7;padding:.75rem;border:1px solid rgba(106,170,74,.08)}
 
 /* ── MAIN GAME ── */
 #gameScreen{max-width:1000px;margin:0 auto;padding:1.5rem;position:relative;}
 
-/* HUD & ACTIVITY TRACKER */
-.top-dashboard { display: grid; grid-template-columns: 300px 1fr; gap: 1rem; margin-bottom: 1.25rem; }
+/* HUD & RADAR MAP */
+.top-dashboard { display: grid; grid-template-columns: 1fr 280px; gap: 1rem; margin-bottom: 1.25rem; }
 @media(max-width: 800px) { .top-dashboard { grid-template-columns: 1fr; } }
 
-.hud{background:rgba(4,4,4,.95);border:1px solid rgba(232,184,75,.15);padding:1.25rem;display:flex;flex-direction:column;gap:1rem; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);}
+.hud{background:rgba(7,10,5,.95);border:1px solid rgba(106,170,74,.15);padding:1.25rem;display:flex;flex-direction:column;justify-content:space-between; gap:1rem; }
 .hud-header { display: flex; justify-content: space-between; align-items: flex-start; }
 .hud-name{font-family:var(--font-serif);font-size:1.1rem;color:var(--cream)}
-.hud-name em{color:var(--gold);font-style:italic; text-shadow: 0 0 5px rgba(255,215,0,0.3);}
-.hud-day{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd); margin-top: 0.3rem;}
+.hud-name em{color:var(--gold);font-style:italic; }
+.hud-day{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dg); margin-top: 0.3rem;}
 .hud-gold-container { text-align: right; }
 .hud-gold{font-family:var(--font-serif);font-size:1.8rem;color:var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.2);}
 .hud-gold-label{font-size:.45rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gd);}
-.hud-weather { font-size:.65rem;color:var(--muted);font-family:var(--font-serif);font-style:italic; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.05); }
+.hud-weather { font-size:.65rem;color:var(--muted);font-family:var(--font-serif);font-style:italic; padding-top: 0.5rem; border-top: 1px solid rgba(106,170,74,.1); }
 
-/* ACTIVE MINER LOG (Replaces the simple dot) */
-.active-tracker { background: #020104; border: 1px solid rgba(232,184,75,.2); display: flex; flex-direction: column; overflow: hidden; position: relative; }
-.tracker-header { background: rgba(232,184,75,.05); color: var(--gold); font-size: 0.45rem; padding: 8px 12px; text-transform: uppercase; border-bottom: 1px solid rgba(232,184,75,.1); letter-spacing: 0.2em; display: flex; justify-content: space-between;}
-.tracker-window { flex: 1; padding: 1rem; font-family: var(--font-sans); font-size: 0.6rem; color: var(--cream); overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.2) 2px, rgba(0,0,0,0.2) 4px); }
-.tracker-event { display: flex; gap: 0.5rem; align-items: flex-start; animation: slideIn 0.3s ease forwards; opacity: 0; transform: translateX(-10px); }
-.tracker-event.system { color: var(--muted); font-style: italic; font-family: var(--font-serif); }
-.tracker-event.action { color: var(--gb); }
-.tracker-event.loot { color: var(--gold); font-weight: bold; }
-@keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
+/* SUBTERRANEAN RADAR */
+.active-tracker { background: #020104; border: 1px solid rgba(106,170,74,.3); display: flex; flex-direction: column; overflow: hidden; position: relative; height: 180px; }
+.tracker-header { background: rgba(106,170,74,.1); color: var(--lg); font-size: 0.45rem; padding: 6px 10px; text-transform: uppercase; border-bottom: 1px solid rgba(106,170,74,.2); letter-spacing: 0.1em; display: flex; justify-content: space-between;}
+.radar-map { flex: 1; position: relative; background: #040503; background-image: radial-gradient(circle at center, rgba(106,170,74,0.05) 0%, transparent 70%), repeating-linear-gradient(0deg, transparent, transparent 15px, rgba(106,170,74,0.03) 15px, rgba(106,170,74,0.03) 16px), repeating-linear-gradient(90deg, transparent, transparent 15px, rgba(106,170,74,0.03) 15px, rgba(106,170,74,0.03) 16px); overflow: hidden; }
+.radar-node { position: absolute; transform: translate(-50%, -50%); font-size: 0.75rem; opacity: 0.4; transition: opacity 0.3s; z-index: 5; }
+.radar-node.active { opacity: 1; filter: drop-shadow(0 0 5px rgba(255,215,0,0.5)); }
+.radar-player { position: absolute; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 8px var(--gold), 0 0 15px var(--gold); transition: top 1.2s cubic-bezier(0.4, 0, 0.2, 1), left 1.2s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10; top: 50%; left: 50%; }
+.radar-pulse { position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px; border-radius: 50%; border: 1px solid rgba(255,215,0,0.6); animation: radarPulse 2s infinite ease-out; opacity: 0; }
+@keyframes radarPulse { 0% { transform: scale(0.2); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
 
 /* NEEDS BARS */
 .needs{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
 @media(max-width: 600px) { .needs { grid-template-columns: repeat(2,1fr); } }
-.need-bar{background:rgba(255,255,255,.01);border:1px solid rgba(255,255,255,.05);padding:.8rem}
+.need-bar{background:rgba(255,255,255,.02);border:1px solid rgba(106,170,74,.1);padding:.8rem}
 .need-label{font-size:.45rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem; display: flex; justify-content: space-between;}
-.need-track{height:4px;background:rgba(0,0,0,.5);overflow:hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);}
-.need-fill{height:100%;transition:width .6s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px currentColor;}
-.need-rest .need-fill{background:var(--gd); color: var(--gd);}
-.need-food .need-fill{background:#8a6a2a; color: #8a6a2a;}
-.need-connection .need-fill{background:#6a4a9a; color: #6a4a9a;}
-.need-spirit .need-fill{background:#2a6a8a; color: #2a6a8a;}
+.need-track{height:4px;background:rgba(0,0,0,.5);overflow:hidden;}
+.need-fill{height:100%;transition:width .6s cubic-bezier(0.4, 0, 0.2, 1);}
+.need-rest .need-fill{background:#4a8a6a; box-shadow: 0 0 10px #4a8a6a;}
+.need-food .need-fill{background:#8a6a2a; box-shadow: 0 0 10px #8a6a2a;}
+.need-connection .need-fill{background:#6a4a9a; box-shadow: 0 0 10px #6a4a9a;}
+.need-spirit .need-fill{background:#2a6a8a; box-shadow: 0 0 10px #2a6a8a;}
 
 /* TOWN GRID */
-.section-label{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gd);margin-bottom:1rem;display:flex;align-items:center;gap:1rem; text-shadow: 0 0 5px rgba(255,215,0,0.2);}
-.section-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(232,184,75,.3),transparent)}
+.section-label{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--dg);margin-bottom:1rem;display:flex;align-items:center;gap:1rem; }
+.section-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(106,170,74,.3),transparent)}
 
 .town-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:0.75rem;margin-bottom:2rem}
-.action-btn{border:1px solid rgba(255,255,255,.05);padding:1rem;background:rgba(255,255,255,.02);cursor:pointer;transition:all .3s;text-align:left; position: relative; overflow: hidden;}
-.action-btn::before { content: ''; position: absolute; top: 0; left: 0; width: 2px; height: 100%; background: var(--gd); opacity: 0; transition: opacity 0.3s; }
-.action-btn:hover:not(:disabled){border-color:rgba(232,184,75,.4);background:rgba(232,184,75,.05);transform:translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.5);}
+.action-btn{border:1px solid rgba(106,170,74,.15);padding:1rem;background:rgba(255,255,255,.02);cursor:pointer;transition:all .3s;text-align:left; position: relative; overflow: hidden;}
+.action-btn::before { content: ''; position: absolute; top: 0; left: 0; width: 2px; height: 100%; background: var(--lg); opacity: 0; transition: opacity 0.3s; }
+.action-btn:hover:not(:disabled){border-color:rgba(106,170,74,.4);background:rgba(106,170,74,.05);transform:translateY(-2px); }
 .action-btn:hover:not(:disabled)::before { opacity: 1; }
 .action-btn:disabled{opacity:.3;cursor:default; filter: grayscale(100%);}
 .action-btn.used{border-color:rgba(255,215,0,.2);background:rgba(255,215,0,.04);}
-.action-icon{font-size:1.5rem;display:block;margin-bottom:.5rem; filter: drop-shadow(0 0 5px rgba(255,215,0,0.2));}
+.action-icon{font-size:1.5rem;display:block;margin-bottom:.5rem; }
 .action-name{font-size:.7rem;color:var(--cream);display:block;margin-bottom:.3rem;font-family:var(--font-serif); letter-spacing: 0.05em;}
 .action-effects{font-size:.45rem;color:var(--muted);line-height:1.6; text-transform: uppercase; letter-spacing: 0.1em;}
 
-/* EXPLORATION MODAL */
+/* EXPLORATION BUTTON & MODAL */
+.explore-btn { width: 100%; text-align: center; border-color: rgba(255,215,0,0.3); margin-bottom: 1.5rem; }
+.explore-btn:hover:not(:disabled) { border-color: var(--gold); background: rgba(255,215,0,0.05); }
+
 .explore-overlay{display:none;position:fixed;inset:0;background:rgba(2,1,2,.95);z-index:100;align-items:center;justify-content:center;padding:1.5rem; backdrop-filter: blur(5px);}
 .explore-overlay.open{display:flex; animation: fadeIn 0.4s ease;}
 .explore-box{max-width:600px;width:100%;background:#040404;border:1px solid var(--gd);padding:2rem; box-shadow: 0 0 30px rgba(139, 105, 20, 0.2); position: relative;}
@@ -107,26 +113,27 @@ header{padding:.8rem 2rem;border-bottom:1px solid rgba(232,184,75,.15);display:f
 .explore-choice-btn { padding: 0.8rem 1.5rem; background: transparent; border: 1px solid rgba(232,184,75,.3); color: var(--gb); font-family: var(--font-sans); font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.3s; }
 .explore-choice-btn:hover { background: rgba(232,184,75,.1); border-color: var(--gold); box-shadow: 0 0 10px rgba(255,215,0,0.2); }
 
-.end-day-btn{width:100%;padding:1.2rem;background:transparent;border:1px solid var(--gd);color:var(--gold);font-family:var(--font-sans);font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;margin-bottom:1.25rem; position: relative;}
-.end-day-btn:hover:not(:disabled){background:rgba(139,105,20,0.1); box-shadow: inset 0 0 20px rgba(139,105,20,0.4), 0 0 15px rgba(255,215,0,0.1);}
+/* CONTROLS */
+.controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; }
+.end-day-btn{padding:1.2rem;background:transparent;border:1px solid var(--dg);color:var(--cream);font-family:var(--font-sans);font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s;}
+.end-day-btn:hover:not(:disabled){background:var(--lg); color:#000;}
 .end-day-btn:disabled{opacity:.2;cursor:default; border-color: rgba(255,255,255,0.1); color: var(--muted);}
 
 /* STORY LOG */
-.story-log{border:1px solid rgba(255,255,255,.05);background:rgba(0,0,0,.6);max-height:250px;overflow-y:auto;padding:1rem; box-shadow: inset 0 0 10px rgba(0,0,0,1);}
+.story-log{border:1px solid rgba(106,170,74,.1);background:rgba(0,0,0,.4);max-height:200px;overflow-y:auto;padding:1rem;}
 .log-entry{font-family:var(--font-serif);font-style:italic;font-size:.85rem;color:var(--muted);line-height:1.8;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.02)}
-.log-entry:last-child{border-bottom:none;color:var(--cream); text-shadow: 0 0 5px rgba(255,255,255,0.2);}
+.log-entry:last-child{border-bottom:none;color:var(--cream);}
 
 /* NPC DIALOG */
 .npc-overlay{display:none;position:fixed;inset:0;background:rgba(3,2,1,.9);z-index:50;align-items:center;justify-content:center;padding:1.5rem;}
 .npc-overlay.open{display:flex}
-.npc-box{max-width:500px;width:100%;background:#040404;border:1px solid var(--gd);padding:2rem; position: relative;}
-.npc-box::before { content: ''; position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px; border: 1px solid rgba(255,215,0,0.1); pointer-events: none; }
+.npc-box{max-width:500px;width:100%;background:#070a05;border:1px solid rgba(106,170,74,.3);padding:2rem;}
 .npc-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem}
-.npc-avatar{font-size:2.5rem; filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));}
-.npc-name{font-family:var(--font-serif);font-size:1.3rem;color:var(--gold); letter-spacing: 0.05em;}
+.npc-avatar{font-size:2.5rem; filter: drop-shadow(0 0 10px rgba(106,170,74,0.2));}
+.npc-name{font-family:var(--font-serif);font-size:1.3rem;color:var(--lg); letter-spacing: 0.05em;}
 .npc-line{font-family:var(--font-serif);font-style:italic;font-size:1.1rem;color:var(--cream);line-height:1.8;margin-bottom:1.5rem}
-.npc-close{width:100%;padding:.8rem;background:transparent;border:1px solid rgba(232,184,75,.3);color:var(--gb);font-family:var(--font-sans);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s}
-.npc-close:hover{background:rgba(232,184,75,.1); border-color: var(--gold);}
+.npc-close{width:100%;padding:.8rem;background:transparent;border:1px solid rgba(106,170,74,.3);color:var(--lg);font-family:var(--font-sans);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.npc-close:hover{background:rgba(106,170,74,.1);}
 
 /* LORD ORO APPEARANCE */
 .oro-overlay{display:none;position:fixed;inset:0;z-index:60;pointer-events:none}
@@ -137,21 +144,21 @@ header{padding:.8rem 2rem;border-bottom:1px solid rgba(232,184,75,.15);display:f
 .oro-overlay.show .oro-eyes{opacity:1}
 .oro-eye{width:6px;height:6px;border-radius:50%;background:#e8b84b;box-shadow:0 0 10px #e8b84b, 0 0 20px #FFD700;animation:eyeGlow 3s ease-in-out infinite}
 @keyframes eyeGlow{0%,100%{opacity:.4; transform: scale(1);}50%{opacity:1; transform: scale(1.2);}}
-.oro-line{position:absolute;right:90px;bottom:calc(10% + 80px);background:rgba(2,1,2,.95);border:1px solid rgba(255,215,0,.1);border-left:3px solid var(--gold);padding:1rem;max-width:280px;opacity:0;transition:opacity 1s ease 2s;pointer-events:all; box-shadow: 0 10px 30px rgba(0,0,0,0.8);}
+.oro-line{position:absolute;right:90px;bottom:calc(10% + 80px);background:rgba(2,1,2,.95);border:1px solid rgba(255,215,0,.2);border-left:3px solid var(--gold);padding:1rem;max-width:280px;opacity:0;transition:opacity 1s ease 2s;pointer-events:all; box-shadow: 0 10px 30px rgba(0,0,0,0.8);}
 .oro-overlay.show .oro-line{opacity:1}
 .oro-line p{font-family:var(--font-serif);font-style:italic;font-size:.9rem;color:var(--cream);line-height:1.7}
 .oro-line small{font-size:.45rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd);display:block;margin-top:.5rem}
 
 /* SCROLLBAR */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); }
-::-webkit-scrollbar-thumb { background: var(--gd); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+::-webkit-scrollbar-thumb { background: rgba(106,170,74,.5); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--lg); }
 </style>
 </head>
 <body>
 <header>
-  <a href="#" class="logo">⛏️ Ivy's Corner</a>
+  <a href="#" class="logo">🌿 Poison Ivy's Tunnel</a>
   <a href="#" class="back">← The Surface</a>
 </header>
 
@@ -167,7 +174,7 @@ header{padding:.8rem 2rem;border-bottom:1px solid rgba(232,184,75,.15);display:f
     <div class="trait-card" onclick="selectTrait('Builder')" id="trait-Builder">
       <span class="trait-icon">⚒️</span>
       <div class="trait-name">The Builder</div>
-      <div class="trait-desc">You shape the stone. Rooms upgrade faster. +5 gold on deep digs.</div>
+      <div class="trait-desc">You shape the stone. +5 gold on deep digs.</div>
     </div>
     <div class="trait-card" onclick="selectTrait('Dreamer')" id="trait-Dreamer">
       <span class="trait-icon">🌙</span>
@@ -177,17 +184,16 @@ header{padding:.8rem 2rem;border-bottom:1px solid rgba(232,184,75,.15);display:f
     <div class="trait-card" onclick="selectTrait('Wanderer')" id="trait-Wanderer">
       <span class="trait-icon">🧭</span>
       <div class="trait-name">The Wanderer</div>
-      <div class="trait-desc">Felik and Nela trust you. Connection builds fast. Lord Oro lingers longer.</div>
+      <div class="trait-desc">Felik and Nela trust you. Lord Oro lingers longer.</div>
     </div>
     <div class="trait-card" onclick="selectTrait('Goldseeker')" id="trait-Goldseeker">
       <span class="trait-icon">⬡</span>
       <div class="trait-name">The Goldseeker</div>
-      <div class="trait-desc">The mountain yields to you. High chance of rare finds during exploration.</div>
+      <div class="trait-desc">The mountain yields to you. High chance of rare finds.</div>
     </div>
   </div>
 
   <button class="start-btn" onclick="startGame()">Descend Into the Dark</button>
-  <div class="dedication">"A small town buried in gold and memory. Welcome to Ivy's Corner."</div>
 </div>
 
 <div class="screen" id="gameScreen">
@@ -205,16 +211,24 @@ header{padding:.8rem 2rem;border-bottom:1px solid rgba(232,184,75,.15);display:f
         </div>
       </div>
       <div class="hud-weather" id="hudWeather"></div>
-      <button class="end-day-btn" style="margin:0; padding: 0.6rem; font-size: 0.5rem; letter-spacing: 0.1em; border-color: rgba(255,255,255,0.1);" onclick="confirmReset()">↺ Surrender to the Surface (Reset)</button>
     </div>
 
     <div class="active-tracker">
       <div class="tracker-header">
-        <span>Live Log: <span id="trackerLocation">Ivy's Corner</span></span>
+        <span>Radar: <span id="trackerLocation">Quarters</span></span>
         <span id="trackerStatus" style="color:var(--muted)">Idle</span>
       </div>
-      <div class="tracker-window" id="trackerWindow">
-        <div class="tracker-event system">» Tracking system initiated. The mountain is awake.</div>
+      <div class="radar-map" id="radarMap">
+        <div class="radar-node" id="node-ivy" style="top:25%; left:25%" title="Ivy's Shop">💎</div>
+        <div class="radar-node" id="node-pip" style="top:25%; left:75%" title="Pip's Heap">🤖</div>
+        <div class="radar-node" id="node-nela" style="top:75%; left:25%" title="Nela's Post">🦁</div>
+        <div class="radar-node" id="node-felik" style="top:75%; left:75%" title="Felik's Crossroads">🌗</div>
+        <div class="radar-node active" id="node-home" style="top:50%; left:50%; font-size: 1rem;" title="Quarters">🏠</div>
+        <div class="radar-node" id="node-explore" style="top:90%; left:50%; color:var(--gold)" title="Deep Seam">⛏️</div>
+        
+        <div class="radar-player" id="radarPlayer">
+            <div class="radar-pulse"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -241,14 +255,17 @@ header{padding:.8rem 2rem;border-bottom:1px solid rgba(232,184,75,.15);display:f
   <div class="section-label">Ivy's Corner (Town Actions) <span style="font-size:0.45rem; color:var(--muted); text-transform:none; letter-spacing:normal;" id="actionsLeft">(2 remaining today)</span></div>
   <div class="town-grid" id="actionsGrid"></div>
   
-  <div class="section-label" style="margin-top: 1.5rem;">The Depths</div>
-  <button class="action-btn" style="width: 100%; text-align: center; border-color: var(--gd); margin-bottom: 1.5rem;" onclick="startExploration()" id="exploreBtn">
-    <span class="action-icon" style="font-size: 2rem;">⛏️</span>
-    <span class="action-name" style="font-size: 0.9rem;">Explore the Deep Seam</span>
+  <div class="section-label" style="margin-top: 1.5rem; color:var(--gold);">The Depths</div>
+  <button class="action-btn explore-btn" onclick="startExploration()" id="exploreBtn">
+    <span class="action-icon" style="font-size: 2rem; filter: drop-shadow(0 0 5px rgba(255,215,0,0.5));">⛏️</span>
+    <span class="action-name" style="font-size: 0.9rem; color:var(--gold);">Explore the Deep Seam</span>
     <span class="action-effects">Venture into the unknown. Costs 20 Rest, 15 Food. High Risk, High Reward.</span>
   </button>
 
-  <button class="end-day-btn" id="endDayBtn" onclick="endDay()" disabled>Retire to Quarters — End the Day</button>
+  <div class="controls-grid">
+      <button class="end-day-btn" id="endDayBtn" onclick="endDay()" disabled>Retire to Quarters</button>
+      <button class="end-day-btn" style="border-color: rgba(255,255,255,0.1); color: var(--muted); font-size: 0.45rem;" onclick="confirmReset()">↺ Reset Simulation</button>
+  </div>
 
   <div class="section-label">Memory Log</div>
   <div class="story-log" id="storyLog"></div>
@@ -284,6 +301,18 @@ header{padding:.8rem 2rem;border-bottom:1px solid rgba(232,184,75,.15);display:f
   </div>
 </div>
 
+<script id="nmn-glow">
+(function(){
+  var r=document.createElement('div');
+  r.id='pickaxe-glow';
+  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
+  document.body.appendChild(r);
+  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
+  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
+  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
+})();
+</script>
+
 <script>
 // ── LORE & NPC DATA ───────────────────────────────────────────────────
 const NPC_AVATARS = { ivy:'💎', pip:'🤖', tora:'🔮', nela:'🦁', felik:'🌗' };
@@ -292,40 +321,24 @@ const NPC_NAMES = { ivy:'Ivy Martin', pip:'Pip the Scrapper', tora:'Tora the See
 const IVY_LINES = [
   "Welcome back. I saved a piece of fractured ruby for you. It's where the light gets in.",
   "Being a shopkeeper here is like being a miner — we're all looking for something hidden.",
-  "Don't tell the others, but I saved this amber for you. It holds a prehistoric moth.",
-  "Gold is nice, but have you seen the way this obsidian catches the shadows?"
+  "Don't tell the others, but I saved this amber for you. It holds a prehistoric moth."
 ];
 const PIP_LINES = [
   "I have calculated a 98% chance of survival today. This is an improvement.",
-  "I found copper wire. It is redundant for me. Please accept it as 'friendship'.",
-  "I observed Lord Oro near your quarters. My internal clock paused for 0.4 seconds.",
-  "My optical sensors find the Window Crack logically pleasing."
-];
-const TORA_LINES = [
-  "A door will open that has no handle. You must speak to it.",
-  "The dust is settling. What is revealed beneath is yours to bear.",
-  "The stars are out of alignment, but the stone is true. Trust the stone."
+  "I found copper wire. It is redundant for me. Please accept it as 'friendship'."
 ];
 const NELA_LINES = [
   "The stone is hard, but we must be harder. Keep your guard up in the lower shafts.",
-  "I patrol the perimeter so you can dig. Do not waste the safety I provide.",
-  "I smelled smoke from the Deep Seam today. It wasn't natural. Be careful.",
-  "A lioness does not fear the dark, but she respects what hunts within it."
+  "I patrol the perimeter so you can dig. Do not waste the safety I provide."
 ];
 const FELIK_LINES = [
   "One path leads to gold, the other to shadows. I walk both. Which will you choose?",
-  "A man with two souls understands the mountain better than most. It is divided, just like us.",
-  "I saw a mural of two boys down there—one of fire, one of light. The past is bleeding through.",
-  "Do not let the greed consume your first soul, nor the fear consume your second."
+  "A man with two souls understands the mountain better than most. It is divided, just like us."
 ];
 const ORO_LINES = [
   "The stone remembers your name. Do you?",
   "The deepest mines aren't in the earth. They are in the memory.",
-  "I saw Nela today. She asked if you were still digging. Do not disappoint her.",
-  "Felik once told me that a man with two souls is never truly alone.",
-  "Do not be afraid of the dark. The dark is where the gold lives.",
-  "Every strike of the pickaxe is a word in your own story.",
-  "A kingdom is just a cave until a lord decides to lead."
+  "Every strike of the pickaxe is a word in your own story."
 ];
 
 const WEATHER = [
@@ -337,6 +350,33 @@ const WEATHER = [
 
 function RND(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
+// ── RADAR MAP LOGIC ───────────────────────────────────────────────────
+const RADAR_LOCS = {
+  'ivy': { top: '25%', left: '25%', name: "Ivy's Shop" },
+  'pip': { top: '25%', left: '75%', name: "Pip's Heap" },
+  'nela': { top: '75%', left: '25%', name: "Nela's Post" },
+  'felik': { top: '75%', left: '75%', name: "Felik's Crossroads" },
+  'explore': { top: '90%', left: '50%', name: "Deep Seam" },
+  'home': { top: '50%', left: '50%', name: "Quarters" }
+};
+
+function updateRadar(locId) {
+  const loc = RADAR_LOCS[locId] || RADAR_LOCS['home'];
+  const player = document.getElementById('radarPlayer');
+  
+  // Move blip
+  player.style.top = loc.top;
+  player.style.left = loc.left;
+  
+  // Update text
+  document.getElementById('trackerLocation').textContent = loc.name;
+  
+  // Highlight node
+  document.querySelectorAll('.radar-node').forEach(n => n.classList.remove('active'));
+  const node = document.getElementById('node-' + locId);
+  if(node) node.classList.add('active');
+}
+
 // ── ACTIONS ────────────────────────────────────────────────────────────
 const ACTIONS = [
   { id:'ivy', icon:'💎', name:"Ivy's Gem Shop", effects:'+15 Bond, +15 Spirit, -10 Gold',
@@ -347,60 +387,44 @@ const ACTIONS = [
     log:"You sat with Pip. He simulated the sound of a crackling fire. Close enough." },
   { id:'nela', icon:'🦁', name:'Nela\'s Watchpost', effects:'+20 Rest, +10 Bond',
     apply(G){G.needs.rest=Math.min(100,G.needs.rest+20);G.needs.connection=Math.min(100,G.needs.connection+10);return{npc:'nela',line:RND(NELA_LINES)};},
-    log:"You stood watch with Nela. Just being near her made you feel secure enough to rest your eyes." },
+    log:"You stood watch with Nela. Her presence made you feel secure enough to rest." },
   { id:'felik', icon:'🌗', name:'Felik\'s Crossroads', effects:'+25 Spirit, -10 Rest',
     apply(G){G.needs.spirit=Math.min(100,G.needs.spirit+25);G.needs.rest=Math.max(5,G.needs.rest-10);return{npc:'felik',line:RND(FELIK_LINES)};},
-    log:"You spoke with Felik. His two voices overlapped, filling you with strange, ancient inspiration." }
+    log:"You spoke with Felik. His two voices filled you with ancient inspiration." }
 ];
 
 // ── EXPLORATION LOGIC ──────────────────────────────────────────────────
-let inExploration = false;
-let exploreStep = 0;
-
 const EXPLORE_EVENTS = [
   {
     title: "The Shimmering Vein", text: "You strike the wall and a bright yellow glow spills out. Do you dig carefully or smash it open?",
     choices: [
-      { label: "Dig Carefully", apply: (G) => { G.gold += 15; trackLog("Mined carefully. +15 Gold.", "loot"); return "You extract the gold without collapsing the tunnel."; } },
-      { label: "Smash It", apply: (G) => { let g = Math.random()>0.5?30:5; G.gold += g; G.needs.rest -= 10; trackLog(`Smashed wall. Found ${g} Gold. -10 Rest.`, "action"); return "Rubble flies everywhere. It was reckless, but you got what you could."; } }
+      { label: "Dig Carefully", apply: (G) => { G.gold += 15; return "You extract 15 Gold without collapsing the tunnel."; } },
+      { label: "Smash It", apply: (G) => { let g = Math.random()>0.5?30:5; G.gold += g; G.needs.rest -= 10; return `Rubble flies everywhere. Found ${g} Gold. Lost 10 Rest.`; } }
     ]
   },
   {
     title: "The Forgotten Mural", text: "Your lantern illuminates a dusty wall painting: a boy of pure fire holding hands with a boy of brilliant light. Pyro and Helios.",
     choices: [
-      { label: "Study the Lore", apply: (G) => { G.needs.spirit += 25; trackLog("Studied ancient lore. +25 Spirit.", "action"); return "The story of their journey home fills you with hope."; } },
-      { label: "Keep Moving", apply: (G) => { trackLog("Ignored the mural.", "system"); return "You have no time for myths. Gold awaits."; } }
-    ]
-  },
-  {
-    title: "A Shadow in the Dark", text: "You hear a growl echoing from the lower shaft. A shadow detaches from the wall.",
-    choices: [
-      { label: "Call for Nela", apply: (G) => { G.needs.connection += 10; trackLog("Called Nela. Shadow retreated.", "action"); return "Nela's roar echoes from above. The shadow vanishes instantly."; } },
-      { label: "Stand Your Ground", apply: (G) => { G.needs.rest -= 20; G.needs.spirit -= 15; trackLog("Fought off fear. -20 Rest, -15 Spirit.", "system"); return "It was just a trick of the light... but it exhausted your nerves."; } }
+      { label: "Study the Lore", apply: (G) => { G.needs.spirit += 25; return "The story of their journey fills you with hope. +25 Spirit."; } },
+      { label: "Keep Moving", apply: (G) => { return "You have no time for myths. Gold awaits."; } }
     ]
   }
 ];
 
 function startExploration() {
-  if(actionsUsedToday.length >= 2 || G.needs.rest < 20 || G.needs.food < 15) {
-    alert("You are too tired, hungry, or have no time left to explore the Deep Seam today.");
-    return;
-  }
+  if(actionsUsedToday.length >= 2 || G.needs.rest < 20 || G.needs.food < 15) return;
   
   actionsUsedToday.push('explore');
   G.actionsUsed = actionsUsedToday;
   G.needs.rest -= 20;
   G.needs.food -= 15;
   
-  trackLog("Miner has entered the Deep Seam.", "system");
-  document.getElementById('trackerStatus').textContent = "Exploring";
+  updateRadar('explore');
+  document.getElementById('trackerStatus').textContent = "Deep Digging";
   document.getElementById('trackerStatus').style.color = "var(--gold)";
   
-  inExploration = true;
-  exploreStep = 0;
   renderGame();
-  
-  setTimeout(() => showExploreEvent(), 800);
+  setTimeout(() => showExploreEvent(), 1200);
 }
 
 function showExploreEvent() {
@@ -430,21 +454,13 @@ function showExploreEvent() {
 
 function endExploration() {
   document.getElementById('exploreOverlay').classList.remove('open');
-  trackLog("Miner returned to Ivy's Corner.", "system");
-  document.getElementById('trackerStatus').textContent = "Idle";
-  document.getElementById('trackerStatus').style.color = "var(--muted)";
-  inExploration = false;
-  
-  G.log.push(`Day ${G.day} — You explored the Deep Seam. The mountain tested you, but you survived.`);
+  G.log.push(`Day ${G.day} — You explored the Deep Seam. The mountain tested you.`);
   save(G);
   renderGame();
-  
-  if(Math.random() > 0.6) setTimeout(()=>showNPC('felik', RND(FELIK_LINES)), 500);
 }
 
-
 // ── GAME STATE & CORE LOOP ─────────────────────────────────────────────
-const SAVE_KEY = 'nmn_ivysmine_v2';
+const SAVE_KEY = 'nmn_ivysmine_v3';
 let G = null;
 let selectedTrait = null;
 let actionsUsedToday = [];
@@ -476,6 +492,7 @@ function startGame() {
   
   actionsUsedToday = G.actionsUsed || [];
   showScreen('gameScreen');
+  updateRadar('home');
   renderGame();
   maybeShowOro();
 }
@@ -485,17 +502,9 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
 }
 
-function trackLog(msg, type="action") {
-  const win = document.getElementById('trackerWindow');
-  const d = new Date();
-  const time = `${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
-  win.innerHTML += `<div class="tracker-event ${type}">[${time}] ${msg}</div>`;
-  win.scrollTop = win.scrollHeight;
-}
-
 function renderGame() {
   document.getElementById('hudName').innerHTML = `<em>${G.name}</em> — ${G.trait}`;
-  document.getElementById('hudDay').textContent = `Day ${G.day} in Ivy's Corner`;
+  document.getElementById('hudDay').textContent = `Day ${G.day}`;
   document.getElementById('hudGold').textContent = Math.floor(G.gold);
   document.getElementById('hudWeather').textContent = RND(WEATHER);
 
@@ -539,7 +548,9 @@ function doAction(id) {
 
   actionsUsedToday.push(id);
   G.actionsUsed = actionsUsedToday;
-  trackLog(`Interacting with ${action.name}...`, "action");
+  
+  updateRadar(id);
+  document.getElementById('trackerStatus').textContent = "Visiting";
 
   const result = action.apply(G);
   G.log.push(`Day ${G.day} — ${action.log}`);
@@ -547,14 +558,13 @@ function doAction(id) {
   renderGame();
 
   if(result && result.npc) {
-    setTimeout(()=>showNPC(result.npc, result.line), 300);
+    setTimeout(()=>showNPC(result.npc, result.line), 1000);
   }
 }
 
 function endDay() {
   if(actionsUsedToday.length < 2) return;
 
-  // Drain needs overnight
   G.needs.rest = Math.min(100, G.needs.rest + 30);
   G.needs.food = Math.max(0, G.needs.food - 15);
   G.needs.connection = Math.max(0, G.needs.connection - 10);
@@ -565,7 +575,9 @@ function endDay() {
   G.actionsUsed = [];
   G.log.push(`Day ${G.day} — You wake up in your quarters. The mountain has shifted in the night.`);
   
-  trackLog(`=== DAY ${G.day} BEGAN ===`, "system");
+  updateRadar('home');
+  document.getElementById('trackerStatus').textContent = "Idle";
+  
   save(G);
   renderGame();
 
@@ -590,14 +602,13 @@ function maybeShowOro() {
   document.getElementById('oroLineText').textContent = line;
   const overlay = document.getElementById('oroOverlay');
   overlay.classList.add('show');
-  trackLog("A golden presence was detected.", "system");
   G.log.push(`Day ${G.day} — Lord Oro spoke: "${line}"`);
   save(G);
   setTimeout(()=>{ overlay.classList.remove('show'); renderGame(); }, 6000);
 }
 
 function confirmReset() {
-  if(confirm(`Abandon this life in the mine? All gold and bonds will be lost.`)) {
+  if(confirm(`Abandon this life in the mine? All progress will be lost.`)) {
     localStorage.removeItem(SAVE_KEY);
     G = null;
     actionsUsedToday = [];
@@ -612,8 +623,8 @@ window.addEventListener('DOMContentLoaded', ()=>{
     G = saved;
     actionsUsedToday = G.actionsUsed || [];
     showScreen('gameScreen');
+    updateRadar('home');
     renderGame();
-    trackLog("System resumed. Miner returned.", "system");
   }
 });
 </script>
