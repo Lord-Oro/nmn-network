@@ -77,6 +77,7 @@ body{padding-top:56px;background:var(--coal);display:flex;flex-direction:column;
 </head>
 <body>
 <script src="nmn-wallet.js"></script>
+<script src="nmn-scene.js"></script>
 <script src="nmn-nav.js"></script>
 
 <div class="game-header">
@@ -133,26 +134,12 @@ let speedLevel = 1;
 let goldBits = [], statics = [], particles = [];
 let tunnelOffset = 0;
 
-// ── INPUT ──
-document.addEventListener('keydown', e => {
-  keys[e.key] = true;
-  if (state === 'dead' && (e.key === 'Enter' || e.key === ' ')) startGame();
-});
-document.addEventListener('keyup', e => { keys[e.key] = false; });
-C.addEventListener('touchstart', e => {
-  e.preventDefault();
-  const x = e.touches[0].clientX;
-  const mid = C.getBoundingClientRect().left + C.offsetWidth / 2;
-  if (x < mid) keys['ArrowLeft'] = true;
-  else keys['ArrowRight'] = true;
-});
-C.addEventListener('touchend', () => { keys['ArrowLeft'] = false; keys['ArrowRight'] = false; });
-
 // ── TYPEWRITER SECRET ──
 function typewriterSecret(msg, el, speed=40) {
   el.textContent = '';
   let i = 0;
-  const iv = setInterval(() => {
+  // Controlled by NMNScene so it cancels cleanly if player resets mid-transmission
+  const iv = NMNScene.interval(() => {
     el.textContent += msg[i];
     i++;
     if(i >= msg.length) clearInterval(iv);
@@ -166,13 +153,13 @@ function triggerSecret() {
   box.style.display = 'block';
   const msg = 'ACCESS GRANTED.\n\nCODE: OBSERVER_5K\n\nUSE AT PATREON.COM/LORDMINADEORO\nFOR ONE FREE WEEK\nON THE COPPER ORE TIER.\n\nTHE ARCHIVE REMEMBERS.';
   typewriterSecret(msg, txt, 35);
-  // Award gold to NMNWallet
+  
   if(window.NMNWallet) NMNWallet.addGold(500);
   addParticles(cartX+CART_W/2, H-CART_H-20, '#FFD700', 25);
 }
 
-// ── GAME FUNCTIONS ──
-function startGame() {
+// ── GAME INIT ──
+function initGame() {
   state = 'playing';
   score = 0; depth = 0; frame = 0;
   gameSpeed = 3; spawnRate = 0.02; speedLevel = 1;
@@ -180,9 +167,40 @@ function startGame() {
   cartX = LANE_START + cartLane * LANE_W + LANE_W/2 - CART_W/2;
   goldBits = []; statics = []; particles = [];
   secretUnlocked = false;
+  
   document.getElementById('secretMsg').style.display = 'none';
   document.getElementById('secretText').textContent = '';
-  requestAnimationFrame(loop);
+  document.getElementById('hudGold').textContent = '0';
+  
+  keys = {};
+  
+  // Bind controls strictly through NMNScene for automatic garbage collection
+  NMNScene.on(document, 'keydown', e => {
+    keys[e.key] = true;
+    if (state === 'dead' && (e.key === 'Enter' || e.key === ' ')) startGame();
+  });
+  
+  NMNScene.on(document, 'keyup', e => { keys[e.key] = false; });
+  
+  NMNScene.on(C, 'touchstart', e => {
+    e.preventDefault();
+    const x = e.touches[0].clientX;
+    const mid = C.getBoundingClientRect().left + C.offsetWidth / 2;
+    if (x < mid) keys['ArrowLeft'] = true;
+    else keys['ArrowRight'] = true;
+  }, { passive: false });
+  
+  NMNScene.on(C, 'touchend', () => { keys['ArrowLeft'] = false; keys['ArrowRight'] = false; });
+
+  NMNScene.raf(loop);
+}
+
+function startGame() {
+  if (window.NMNScene) {
+    NMNScene.go('oreracer', initGame);
+  } else {
+    initGame(); // Fallback
+  }
 }
 
 function addParticles(x, y, color, count=8) {
@@ -300,7 +318,7 @@ function drawHUD() {
   ctx.textAlign = 'right';
   ctx.fillStyle = speedLevel >= 4 ? '#ff4400' : speedLevel >= 3 ? '#ff8800' : 'rgba(255,215,0,0.7)';
   ctx.fillText(`${speedLevel}x`, LANE_START+LANES*LANE_W-6, 18);
-  // Speed warning
+  
   if(speedLevel >= 4){
     ctx.fillStyle = `rgba(255,68,0,${0.5+Math.sin(frame*0.2)*0.5})`;
     ctx.font = '7px "Press Start 2P", monospace';
@@ -314,7 +332,7 @@ function drawDead() {
   ctx.fillStyle = '#FFD700'; ctx.font = '16px "Press Start 2P", monospace'; ctx.textAlign = 'center';
   ctx.fillText('CART DERAILED', W/2, H/2-40);
   ctx.fillStyle = '#c9962a'; ctx.font = '9px "Press Start 2P", monospace';
-  ctx.fillText(`GOLD: ${score}`, W/2, H/2-10);
+  ctx.fillText(`SCORE: ${score}`, W/2, H/2-10);
   ctx.fillText(`DEPTH: ${depth}m`, W/2, H/2+10);
   if(score > bestScore){ ctx.fillStyle = '#fff'; ctx.fillText('NEW BEST!', W/2, H/2+30); }
   ctx.fillStyle = 'rgba(255,215,0,0.5)'; ctx.font = '7px "Press Start 2P", monospace';
@@ -341,7 +359,6 @@ function loop() {
   tunnelOffset += gameSpeed * 0.8;
   depth = Math.floor(frame * gameSpeed * 0.05);
 
-  // DYNAMIC DIFFICULTY — Gemini's scaling logic
   gameSpeed = 3 + Math.floor(score / 500) * 0.8;
   spawnRate = 0.02 + (score / 10000);
   speedLevel = Math.max(1, Math.floor(score / 500) + 1);
@@ -360,7 +377,7 @@ function loop() {
   const targetX = LANE_START + cartLane*LANE_W + LANE_W/2 - CART_W/2;
   cartX += (targetX - cartX) * 0.25;
 
-  // Spawn using dynamic rates
+  // Spawn
   if(Math.random() < spawnRate) {
     const lane = Math.floor(Math.random() * LANES);
     statics.push({ x: LANE_START + lane*LANE_W + LANE_W/2 - STATIC_W/2, y: -STATIC_H, lane, frame:0 });
@@ -370,7 +387,7 @@ function loop() {
     goldBits.push({ x: LANE_START + lane*LANE_W + LANE_W/2 - GOLD_SIZE/2, y: -GOLD_SIZE, pulse:0 });
   }
 
-  // Move using gameSpeed
+  // Move
   goldBits.forEach(g => g.y += gameSpeed * 1.2);
   statics.forEach(s => s.y += gameSpeed * 1.1);
   goldBits = goldBits.filter(g => g.y < H+20);
@@ -385,7 +402,7 @@ function loop() {
       score += 10;
       addParticles(g.x+GOLD_SIZE/2, g.y+GOLD_SIZE/2, '#FFD700', 6);
       document.getElementById('hudGold').textContent = score;
-      if(window.NMNWallet) NMNWallet.addGold(2);
+      if(window.NMNWallet) NMNWallet.addGold(2); // Translates arcade score to actual global wealth
       if(score >= 5000 && !secretUnlocked) triggerSecret();
     }
     return !hit;
@@ -418,7 +435,12 @@ function loop() {
   drawHUD();
 
   if(state === 'dead'){ drawDead(); return; }
-  requestAnimationFrame(loop);
+  
+  if (window.NMNScene) {
+      NMNScene.raf(loop);
+  } else {
+      requestAnimationFrame(loop);
+  }
 }
 
 document.getElementById('hudBest').textContent = bestScore;
