@@ -3,745 +3,580 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Lord Oro's Labyrinth — NMN</title>
-<link rel="stylesheet" href="nmn-theme.css">
+<title>The Labyrinth — Sector 1</title>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P5WL9XNDY8');
+</script>
+<link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
 <style>
+/* ── CORE NMN VARIABLES & AESTHETIC ── */
 :root {
-  --gold: #FFD700; --gold-bright: #e8b84b; --gold-dim: #7a5a18;
-  --coal: #0c0a07; --shaft: #110e09; --cream: #f0e6cc;
-  --muted: #8a7654; --faint: #4a3c28;
+  --gold: #FFD700; --gb: #e8b84b; --gd: #8B6914;
+  --coal: #050308; --shaft: #08060A; --rock: #0A080C;
+  --cream: #E8E0D0; --neon-green: #00FF88;
+  --font-pixel: 'Press Start 2P', cursive;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; background: var(--coal); }
+
 body {
-  font-family: var(--font-sans);
-  background: var(--coal); color: var(--cream);
-  height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+  font-family: var(--font-pixel);
+  color: var(--cream);
+  display: flex; flex-direction: column;
+  background-image: 
+    linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
+  background-size: 32px 32px;
 }
+
+/* OVERRIDE ALL OLD FONTS */
+h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
+
+/* CRT SCANLINES & VIGNETTE */
+body::after {
+  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
+  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.08) 50%),
+              linear-gradient(90deg,rgba(232,184,75,0.015),rgba(197,146,0,0.008),rgba(255,215,0,0.015));
+  background-size:100% 3px,3px 100%; pointer-events:none; z-index:10000; opacity:0.18;
+}
+body::before {
+  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
+  background:radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.65) 100%);
+  pointer-events:none; z-index:9999;
+}
+
+/* HEADER */
 header {
-  padding: 0.8rem 2rem;
-  border-bottom: 1px solid rgba(255,215,0,0.15);
+  padding: 1rem 2rem; border-bottom: 2px solid var(--gd);
   display: flex; justify-content: space-between; align-items: center;
-  background: rgba(12,10,7,0.95); flex-shrink: 0; z-index: 10;
+  background: rgba(5,3,14,.95); z-index: 1000; flex-shrink: 0;
 }
-.logo { font-family: var(--font-serif); font-style: italic; color: var(--gold); font-size: 0.95rem; text-decoration: none; }
-.back { font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
-.back:hover { color: var(--gold); }
+.logo { color: var(--gold); font-size: .65rem; text-decoration: none; text-shadow: 0 0 10px rgba(255,215,0,.4); }
+.back-btn { font-size: .45rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+.back-btn:hover { color: var(--gold); }
+
+/* ARCADE HUD */
 .hud {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 0.4rem 1.5rem; background: rgba(12,10,7,0.9);
-  border-bottom: 1px solid rgba(255,215,0,0.08); flex-shrink: 0;
+  padding: 0.5rem 2rem; background: rgba(5,3,8,0.9);
+  border-bottom: 1px solid rgba(255,215,0,0.15); flex-shrink: 0; z-index: 50; flex-wrap: wrap; gap: 10px;
 }
-.hud-stat { text-align: center; }
-.hud-val { font-family: var(--font-pixel); font-size: .7rem; color: var(--gold); line-height: 1.4; text-shadow: 0 0 10px rgba(255,215,0,.4); }
-.hud-lab { font-size: 0.48rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--faint); }
-.game-area { flex: 1; position: relative; overflow: hidden; }
-canvas { display: block; width: 100%; height: 100%; }
+.hud-stat { font-size: 0.5rem; color: var(--gd); display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.hud-val { color: var(--gold); font-size: 0.8rem; text-shadow: 0 0 10px rgba(255,215,0,0.3); }
 
+/* GAME CANVAS */
+.game-area { flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.canvas-wrap {
+  position: relative; width: 100%; max-width: 700px; height: 100%; max-height: 700px;
+  background: #000; border: 2px solid var(--gd);
+  box-shadow: inset 0 0 50px rgba(0,0,0,1), 0 0 30px rgba(255,215,0,0.1);
+}
+canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; touch-action: none; }
+
+/* OVERLAYS */
 .overlay {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  background: rgba(12,10,7,0.94); z-index: 20;
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; background: rgba(5,3,8,0.95); z-index: 100;
 }
-.overlay-title { font-family: var(--font-display); font-size: clamp(1.5rem, 4vw, 2.5rem); color: var(--gold); margin-bottom: 0.5rem; text-align: center; }
-.overlay-title em { font-style: italic; }
-.overlay-sub { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.08em; margin-bottom: 1rem; text-align: center; max-width: 380px; line-height: 1.8; }
-.lore-box { font-family: var(--font-serif); font-style: italic; font-size: 0.95rem; color: var(--gold-dim); max-width: 380px; text-align: center; line-height: 1.7; padding: 1rem; border: 1px solid rgba(255,215,0,0.15); background: rgba(255,215,0,0.03); margin-bottom: 1.5rem; }
-.lore-tag { font-family: var(--font-sans); font-style: normal; font-size: 0.5rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-dim); display: block; margin-bottom: 0.4rem; }
-.btn { padding: 0.7rem 1.8rem; font-family: var(--font-sans); font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; border: none; transition: all 0.3s; display: inline-block; text-decoration: none; margin: 0.25rem; }
+.overlay.hidden { display: none !important; }
+.ov-title { font-size: 1.5rem; color: var(--gold); text-shadow: 0 0 20px rgba(255,215,0,.5); text-align: center; line-height: 1.5; margin-bottom: 1rem; }
+.ov-sub { font-size: .45rem; color: var(--cream); text-align: center; line-height: 2; max-width: 500px; margin-bottom: 2rem; }
+.ov-stats { display: flex; gap: 2rem; margin-bottom: 2rem; }
+.ov-stat-box { text-align: center; }
+.ov-stat-box span { display: block; font-size: 0.4rem; color: var(--gd); margin-bottom: 0.5rem; }
+.ov-stat-box strong { font-size: 1.2rem; color: var(--gold); }
+
+.btn {
+  padding: 0.8rem 1.5rem; font-family: var(--font-sans); font-size: 0.5rem; letter-spacing: 0.2em;
+  text-transform: uppercase; cursor: pointer; border: none; transition: all 0.3s; display: inline-block; text-decoration: none;
+}
 .btn-gold { background: var(--gold); color: var(--coal); }
-.btn-gold:hover { background: var(--gold-bright); }
-.btn-outline { background: transparent; color: var(--gold); border: 1px solid rgba(255,215,0,0.4); }
-.btn-outline:hover { background: rgba(255,215,0,0.08); }
-.controls-hint { font-size: 0.52rem; letter-spacing: 0.12em; color: var(--faint); margin-top: 0.75rem; text-align: center; }
+.btn-gold:hover { background: #fff; box-shadow: 0 0 20px rgba(255,215,0,.6); transform: scale(1.05); }
 
-/* MOBILE CONTROLS */
-.mobile-controls {
-  position: absolute; bottom: 1rem; left: 0; right: 0;
-  display: flex; justify-content: space-between; padding: 0 1rem;
-  pointer-events: none; z-index: 15;
+/* CONTROLS */
+.controls-bar {
+  display: flex; justify-content: center; align-items: center; flex-direction: column;
+  padding: 0.5rem 2rem; background: rgba(5,3,8,0.9); border-top: 1px solid var(--gd); z-index: 50;
 }
-.mobile-btn {
-  width: 60px; height: 60px;
-  background: rgba(255,215,0,0.15);
-  border: 1px solid rgba(255,215,0,0.3);
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-size: 1.5rem; pointer-events: all; cursor: pointer;
-  user-select: none; -webkit-user-select: none;
+.ctrl-hint { font-size: 0.35rem; color: var(--gd); margin-bottom: 5px; }
+.mobile-dpad {
+  display: none; grid-template-columns: 50px 50px 50px; grid-template-rows: 50px 50px; gap: 5px; margin-top: 10px;
 }
-.mobile-btn:active { background: rgba(255,215,0,0.35); }
-.mobile-jump {
-  width: 70px; height: 70px;
-  background: rgba(255,215,0,0.2);
-  border: 1px solid rgba(255,215,0,0.4);
+.dpad-btn {
+  background: rgba(255,215,0,0.1); border: 1px solid var(--gd); color: var(--gold);
+  display: flex; align-items: center; justify-content: center; font-size: 0.8rem; user-select: none;
+}
+.dpad-btn:active { background: rgba(255,215,0,0.3); }
+
+#btn-up { grid-column: 2; grid-row: 1; }
+#btn-left { grid-column: 1; grid-row: 2; }
+#btn-down { grid-column: 2; grid-row: 2; }
+#btn-right { grid-column: 3; grid-row: 2; }
+
+@media (max-width: 768px) {
+  .ctrl-hint { display: none; }
+  .mobile-dpad { display: grid; }
+  header { padding: 0.8rem 1rem; }
+  .logo { font-size: 0.5rem; }
 }
 
-/* LORE TOAST — non-disruptive, corner notification */
-.lore-toast{position:fixed;bottom:50px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(12,10,7,.92);border:1px solid rgba(255,215,0,.3);border-left:3px solid var(--gold,#c9962a);padding:.6rem 1rem;max-width:280px;width:90%;z-index:500;opacity:0;transition:opacity .4s,transform .4s;pointer-events:none;font-family:var(--font-sans)}
-.lore-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.lore-toast-label{font-size:.38rem;letter-spacing:.2em;text-transform:uppercase;color:#7a5a18;margin-bottom:.25rem}
-.lore-toast-text{font-size:.58rem;color:#f0e6cc;line-height:1.5;font-style:italic}
-</style>
-
-<style id="depth-gauge-style">
-.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:36px;background:rgba(12,10,7,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:2rem;z-index:999;padding:0 1rem;flex-wrap:wrap}
-.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28}
-.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
-.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s}
-.dg-link:hover{color:#FFD700}
-.dg-sep{color:#2a1808;font-size:.6rem}
-</style>
-
-<style id="nmn-cursor">
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
-</style>
-<style id="gemini-viewport">
-.mining-frame{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-height:85vh;margin:0 auto;overflow:hidden}
-canvas{max-width:95%;height:auto!important}
-.active-glow{animation:pulseGold 2s infinite;color:#fff!important;text-shadow:0 0 10px #c9962a}
-@keyframes pulseGold{0%{opacity:.7}50%{opacity:1}100%{opacity:.7}}
-</style>
-<style id="floating-gauge">
-.depth-gauge{
-  position:fixed!important;bottom:12px!important;left:50%!important;
-  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
-  height:42px!important;background:rgba(12,10,7,.88)!important;
-  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
-  padding:0 18px!important;pointer-events:none!important;
-  z-index:9999!important;backdrop-filter:blur(4px)!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  gap:1.2rem!important;flex-wrap:nowrap!important;
-  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+/* FLOATING GAUGE */
+.depth-gauge {
+  position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:92%!important; height:42px!important; background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important; border-radius:22px!important; padding:0 18px!important;
+  z-index:9999!important; backdrop-filter:blur(4px)!important; display:flex!important; align-items:center!important;
+  justify-content:center!important; gap:1.2rem!important; box-shadow:0 0 20px rgba(255,215,0,.08)!important;
 }
-.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
-body{padding-bottom:65px!important}
+.dg-stat { font-size: 0.4rem; color: var(--gd); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
+.dg-val { color: var(--gold); font-size: 0.6rem; }
+.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+.dg-link:hover { color: var(--gold); }
+
+/* CUSTOM CURSOR */
+body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
 </style>
-
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
-
-
 </head>
 <body>
-<script src="nmn-nav.js"></script>
+
 <header>
   <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="games.html" class="back">← Recreation Hall</a>
+  <a href="games.html" class="back-btn">← Return to Forge</a>
 </header>
+
 <div class="hud">
-  <div class="hud-stat"><div class="hud-val" id="levelVal">1</div><div class="hud-lab">Level</div></div>
-  <div class="hud-stat"><div class="hud-val" id="goldVal">0</div><div class="hud-lab">Gold</div></div>
-  <div class="hud-stat"><div class="hud-val" id="livesVal">♥♥♥</div><div class="hud-lab">Lives</div></div>
-  <div class="hud-stat"><div class="hud-val" id="scoreVal">0</div><div class="hud-lab">Score</div></div>
+  <div class="hud-stat">DEPTH (LVL) <span class="hud-val" id="h-level">1</span></div>
+  <div class="hud-stat">STEPS <span class="hud-val" id="h-steps">0</span></div>
+  <div class="hud-stat">GOLD <span class="hud-val" id="h-gold">0</span></div>
 </div>
+
 <div class="game-area">
-  <canvas id="c"></canvas>
-  <div class="mobile-controls" id="mobileControls" style="display:none">
-    <div class="mobile-btn" id="btnLeft">←</div>
-    <div class="mobile-btn mobile-jump" id="btnJump">↑</div>
-    <div class="mobile-btn" id="btnRight">→</div>
-  </div>
-
-  <!-- START -->
-  <div class="overlay" id="startOv">
-    <div class="overlay-title">Lord Oro's <em>Labyrinth</em></div>
-    <p class="overlay-sub">Navigate the mine shaft levels. Collect gold nuggets. Avoid the shadows. Reach the exit portal to descend deeper into Lord Oro's world.</p>
-    <p class="controls-hint">Arrow Keys or A/D to move &nbsp;|&nbsp; W or Space to jump &nbsp;|&nbsp; Mobile buttons below</p>
-    <br>
-    <button class="btn btn-gold" onclick="startGame()">Enter the Labyrinth</button>
-    <a href="games.html" class="btn btn-outline">Return to Hall</a>
-  </div>
-
-  <!-- LEVEL COMPLETE -->
-  <div class="overlay" id="levelOv" style="display:none">
-    <div class="overlay-title">Level <em>Complete</em></div>
-    <div class="lore-box"><span class="lore-tag">From the Archives</span><span id="levelLore"></span></div>
-    <button class="btn btn-gold" onclick="nextLevel()">Descend Deeper</button>
-  </div>
-
-  <!-- GAME OVER -->
-  <div class="overlay" id="gameOverOv" style="display:none">
-    <div class="overlay-title">The Shadow <em>Won</em></div>
-    <p class="overlay-sub" id="finalStats"></p>
-    <div class="lore-box"><span class="lore-tag">From the Archives</span><span id="goLore"></span></div>
-    <button class="btn btn-outline" onclick="shareScore(score, 'Lord Oro's Labyrinth')" style="margin-right:.5rem">⬡ Share Score</button>
-<button class="btn btn-gold" onclick="restartGame()">Try Again</button>
-    <a href="games.html" class="btn btn-outline">Return to Hall</a>
+  <div class="canvas-wrap">
+    <canvas id="cv"></canvas>
+    
+    <div class="overlay" id="ov-start">
+      <h1 class="ov-title">THE LABYRINTH</h1>
+      <p class="ov-sub">You are deep in the obsidian veins. Keep your lantern close. Find the gold. Find the exit hatch. Do not get lost.</p>
+      <button class="btn btn-gold" onclick="startGame()">ENTER THE DARK</button>
+    </div>
+    
+    <div class="overlay hidden" id="ov-win">
+      <h1 class="ov-title" style="color:var(--neon-green); text-shadow:0 0 20px rgba(0,255,136,0.5);">HATCH FOUND</h1>
+      <p class="ov-sub">Descending deeper into the mine...</p>
+      <div class="ov-stats">
+        <div class="ov-stat-box"><span>GOLD EXTRACTED</span><strong id="win-gold">0</strong></div>
+      </div>
+      <button class="btn btn-gold" onclick="nextLevel()">DESCEND</button>
+    </div>
   </div>
 </div>
 
+<div class="controls-bar">
+  <span class="ctrl-hint">CONTROLS: ARROW KEYS or WASD to navigate the darkness. SWIPE to move on mobile.</span>
+  <div class="mobile-dpad">
+    <div class="dpad-btn" id="btn-up">▲</div>
+    <div class="dpad-btn" id="btn-left">◀</div>
+    <div class="dpad-btn" id="btn-down">▼</div>
+    <div class="dpad-btn" id="btn-right">▶</div>
+  </div>
+</div>
 
-<script id="nmn-bridge">
-(function(){
-  try{
-    if(!localStorage.getItem('nmn_collector_v2'))
-      localStorage.setItem('nmn_collector_v2',JSON.stringify({G:{team:[],grimoire:{},starter:null,activeIdx:0,gold:0,clearedZones:['surface'],battles:0}}));
-    if(!localStorage.getItem('nmn_total_gold'))
-      localStorage.setItem('nmn_total_gold','0');
-  }catch(e){}
-})();
-</script>
-<script>
-const lore = [
-  "The gold was never in the ground. It was in the hands that dug for it.",
-  "Nayla ran through the dark, her eyes reflecting what no human eye should see.",
-  "Juni had lived long enough to forget what dying felt like.",
-  "My sword is my pen. My kingdom is the human interior world.",
-  "The goldmine is within. Everything you seek, you carry.",
-  "Lord Oro was never in any story. And yet he was in all of them.",
-  "I never starve again. Substance in my words.",
-  "Outbreak from the stars — they didn't come to destroy. They came to replace.",
-];
-
-const canvas = document.getElementById('c');
-const ctx = canvas.getContext('2d');
-const T = 40; // tile size
-
-// LEVEL MAPS — 0=empty, 1=platform, 2=gold, 3=enemy, 4=exit
-const levels = [
-  // Level 1 — simple intro
-  [
-    "                    ",
-    "                    ",
-    "       GG           ",
-    "      ####          ",
-    "                    ",
-    "  GG         G      ",
-    "  ####    ####      ",
-    "              G     ",
-    "     G     #####    ",
-    "   ####             ",
-    "         E   G      ",
-    "    G  ######       ",
-    "  ####         GG   ",
-    "           ######   ",
-    "  P                X",
-    "####################",
-  ],
-  // Level 2 — harder
-  [
-    "                    ",
-    "    G               ",
-    "   ###  G           ",
-    "       ###          ",
-    " G             G    ",
-    "###          ###    ",
-    "         E          ",
-    "   GG  ######  G    ",
-    "  ####          ### ",
-    "         G          ",
-    "   E  ######  E     ",
-    " ####          ###  ",
-    "G                 G ",
-    "##   G    G    G  ##",
-    "P  ########### G  X ",
-    "####################",
-  ],
-  // Level 3 — expert
-  [
-    "                    ",
-    "G       GGG         ",
-    "###   #####    G    ",
-    "              ###   ",
-    "  E   G             ",
-    "####  ###   E  G    ",
-    "           ###  ### ",
-    "  GG   E            ",
-    " ####  ##  G        ",
-    "          ###  E    ",
-    "  G              ###",
-    " ###  GGG   G       ",
-    "     #####  ###  E  ",
-    "P G             ### ",
-    "### G  E   G      X ",
-    "####################",
-  ],
-];
-
-const COLORS = {
-  '#': '#2a2015', // platform
-  'G': '#c9962a', // gold
-  'E': '#4a0a0a', // enemy
-  'P': '#c9962a', // player start
-  'X': '#2a5a2a', // exit
-};
-
-let state = {
-  level: 0, lives: 3, totalGold: 0, totalScore: 0,
-  running: false, frame: 0
-};
-
-let player, enemies, goldCoins, exit, platforms, camera;
-let keys = {};
-
-function parseLevel(levelIdx) {
-  const map = levels[levelIdx % levels.length];
-  platforms = []; enemies = []; goldCoins = []; exit = null;
-  let playerStart = { x: 2*T, y: 13*T };
-
-  map.forEach((row, ry) => {
-    [...row].forEach((ch, cx) => {
-      const x = cx * T, y = ry * T;
-      if (ch === '#') platforms.push({ x, y, w: T, h: T });
-      if (ch === 'G') goldCoins.push({ x: x+8, y: y+8, w: 24, h: 24, collected: false });
-      if (ch === 'E') enemies.push({ x, y: y-T+8, w: 28, h: 32, vx: 1.2, onGround: false, dir: 1 });
-      if (ch === 'P') playerStart = { x, y: y - T + 4 };
-      if (ch === 'X') exit = { x, y: y-T+4, w: T, h: T };
-    });
-  });
-
-  player = {
-    x: playerStart.x, y: playerStart.y,
-    w: 26, h: 36, vx: 0, vy: 0,
-    onGround: false, jumps: 0, maxJumps: 2,
-    invincible: 0, gold: 0, score: 0
-  };
-
-  camera = { x: 0, y: 0 };
-}
-
-function startGame() {
-  document.getElementById('startOv').style.display = 'none';
-  if (/Mobi|Android/i.test(navigator.userAgent)) {
-    document.getElementById('mobileControls').style.display = 'flex';
-  }
-  state.level = 0; state.lives = 3; state.totalGold = 0; state.totalScore = 0;
-  resize();
-  parseLevel(0);
-  state.running = true;
-  requestAnimationFrame(loop);
-}
-
-function nextLevel() {
-  document.getElementById('levelOv').style.display = 'none';
-  state.level++;
-  parseLevel(state.level);
-  state.running = true;
-  requestAnimationFrame(loop);
-}
-
-function restartGame() {
-  document.getElementById('gameOverOv').style.display = 'none';
-  state.level = 0; state.lives = 3; state.totalGold = 0; state.totalScore = 0;
-  parseLevel(0);
-  state.running = true;
-  requestAnimationFrame(loop);
-}
-
-function resize() {
-  const area = canvas.parentElement;
-  canvas.width = area.clientWidth;
-  canvas.height = area.clientHeight;
-}
-
-function collides(a, b) {
-  return a.x < b.x+b.w && a.x+a.w > b.x && a.y < b.y+b.h && a.y+a.h > b.y;
-}
-
-function resolveCollision(entity, plats) {
-  entity.onGround = false;
-  // Vertical
-  entity.y += entity.vy;
-  for (const p of plats) {
-    if (collides(entity, p)) {
-      if (entity.vy > 0) { entity.y = p.y - entity.h; entity.vy = 0; entity.onGround = true; }
-      else if (entity.vy < 0) { entity.y = p.y + p.h; entity.vy = 0; }
-    }
-  }
-  // Horizontal
-  entity.x += entity.vx;
-  for (const p of plats) {
-    if (collides(entity, p)) {
-      if (entity.vx > 0) entity.x = p.x - entity.w;
-      else if (entity.vx < 0) entity.x = p.x + p.w;
-      entity.vx = 0;
-    }
-  }
-}
-
-function update() {
-  state.frame++;
-  const W = canvas.width, H = canvas.height;
-  const mapW = 20 * T, mapH = 16 * T;
-
-  // Player input
-  const spd = 4;
-  if (keys['ArrowLeft'] || keys['a']) player.vx = -spd;
-  else if (keys['ArrowRight'] || keys['d']) player.vx = spd;
-  else player.vx *= 0.7;
-
-  // Jump
-  if ((keys['ArrowUp'] || keys['w'] || keys[' ']) && player.jumps < player.maxJumps) {
-    if (!keys._jumpHeld) {
-      player.vy = -10;
-      player.jumps++;
-      keys._jumpHeld = true;
-    }
-  } else if (!keys['ArrowUp'] && !keys['w'] && !keys[' ']) {
-    keys._jumpHeld = false;
-  }
-
-  // Gravity
-  player.vy = Math.min(player.vy + 0.5, 14);
-  if (player.onGround) player.jumps = 0;
-
-  resolveCollision(player, platforms);
-
-  // Clamp to map
-  player.x = Math.max(0, Math.min(mapW - player.w, player.x));
-  if (player.y > mapH) die();
-
-  // Camera follow
-  camera.x = Math.max(0, Math.min(mapW - W, player.x - W/2));
-  camera.y = Math.max(0, Math.min(mapH - H, player.y - H/2));
-
-  // Gold collection
-  goldCoins.forEach(g => {
-    if (!g.collected && collides(player, g)) {
-      g.collected = true;
-      player.gold++;
-      player.score += 50;
-    }
-  });
-
-  // Enemies
-  enemies.forEach(e => {
-    e.vy = (e.vy || 0) + 0.5;
-    e.vy = Math.min(e.vy, 14);
-    e.x += e.vx;
-    // Bounce off walls and platform edges
-    let hitWall = e.x <= 0 || e.x + e.w >= mapW;
-    platforms.forEach(p => {
-      if (collides(e, p)) {
-        if (e.vx > 0) e.x = p.x - e.w;
-        else e.x = p.x + p.w;
-        hitWall = true;
-      }
-    });
-    if (hitWall) e.vx *= -1;
-    e.y += e.vy;
-    e.onGround = false;
-    platforms.forEach(p => {
-      if (collides(e, p)) {
-        if (e.vy > 0) { e.y = p.y - e.h; e.vy = 0; e.onGround = true; }
-        else { e.y = p.y + p.h; e.vy = 0; }
-      }
-    });
-
-    // Enemy vs player
-    if (player.invincible <= 0 && collides(player, e)) {
-      // Stomp from above
-      if (player.vy > 0 && player.y + player.h < e.y + e.h * 0.5) {
-        e.dead = true;
-        player.vy = -8;
-        player.score += 100;
-      } else {
-        die();
-      }
-    }
-  });
-  enemies = enemies.filter(e => !e.dead);
-
-  if (player.invincible > 0) player.invincible--;
-
-  // Exit
-  if (exit && collides(player, exit)) {
-    state.totalGold += player.gold;
-    state.totalScore += player.score;
-    updateHUD();
-    levelComplete();
-  }
-
-  updateHUD();
-}
-
-function die() {
-  if (player.invincible > 0) return;
-  state.lives--;
-  updateHUD();
-  if (state.lives <= 0) {
-    state.running = false;
-    document.getElementById('finalStats').textContent = `Level ${state.level+1} — Gold: ${state.totalGold + player.gold} — Score: ${state.totalScore + player.score}`;
-    document.getElementById('goLore').textContent = lore[Math.floor(Math.random()*lore.length)];
-    document.getElementById('gameOverOv').style.display = 'flex';
-  } else {
-    parseLevel(state.level);
-  }
-}
-
-function levelComplete() {
-  state.running = false;
-  document.getElementById('levelLore').textContent = lore[state.level % lore.length];
-  document.getElementById('levelOv').style.display = 'flex';
-}
-
-function updateHUD() {
-  document.getElementById('levelVal').textContent = state.level + 1;
-  document.getElementById('goldVal').textContent = state.totalGold + (player ? player.gold : 0);
-  document.getElementById('livesVal').textContent = '♥'.repeat(Math.max(0, state.lives));
-  document.getElementById('scoreVal').textContent = state.totalScore + (player ? player.score : 0);
-}
-
-function draw() {
-  const W = canvas.width, H = canvas.height;
-  ctx.save();
-  ctx.translate(-camera.x, -camera.y);
-
-  // Background
-  ctx.fillStyle = '#0c0a07';
-  ctx.fillRect(camera.x, camera.y, W, H);
-
-  // Grid texture
-  ctx.strokeStyle = 'rgba(255,215,0,0.03)';
-  ctx.lineWidth = 1;
-  for (let x = Math.floor(camera.x/T)*T; x < camera.x+W; x+=T) {
-    ctx.beginPath(); ctx.moveTo(x, camera.y); ctx.lineTo(x, camera.y+H); ctx.stroke();
-  }
-  for (let y = Math.floor(camera.y/T)*T; y < camera.y+H; y+=T) {
-    ctx.beginPath(); ctx.moveTo(camera.x, y); ctx.lineTo(camera.x+W, y); ctx.stroke();
-  }
-
-  // Platforms
-  platforms.forEach(p => {
-    ctx.fillStyle = '#2a2015';
-    ctx.fillRect(p.x, p.y, p.w, p.h);
-    ctx.strokeStyle = '#3a3020';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(p.x, p.y, p.w, p.h);
-    // Top highlight
-    ctx.fillStyle = 'rgba(255,255,255,0.04)';
-    ctx.fillRect(p.x, p.y, p.w, 3);
-  });
-
-  // Exit portal
-  if (exit) {
-    const pulse = 0.8 + 0.2 * Math.sin(state.frame * 0.1);
-    ctx.fillStyle = `rgba(42,90,42,${pulse})`;
-    ctx.fillRect(exit.x, exit.y, exit.w, exit.h);
-    ctx.strokeStyle = '#4aaa4a';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(exit.x, exit.y, exit.w, exit.h);
-    ctx.fillStyle = '#4aaa4a';
-    ctx.font = '20px serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('⬇', exit.x + T/2, exit.y + T*0.7);
-    ctx.textAlign = 'left';
-  }
-
-  // Gold coins
-  goldCoins.forEach(g => {
-    if (g.collected) return;
-    const bob = Math.sin(state.frame * 0.08 + g.x) * 2;
-    const grd = ctx.createRadialGradient(g.x+12, g.y+12+bob, 0, g.x+12, g.y+12+bob, 14);
-    grd.addColorStop(0, '#e8b84b');
-    grd.addColorStop(0.5, '#c9962a');
-    grd.addColorStop(1, '#7a5a18');
-    ctx.fillStyle = grd;
-    ctx.beginPath();
-    ctx.arc(g.x+12, g.y+12+bob, 10, 0, Math.PI*2);
-    ctx.fill();
-    ctx.fillStyle = 'rgba(255,255,255,0.3)';
-    ctx.beginPath();
-    ctx.arc(g.x+9, g.y+9+bob, 3, 0, Math.PI*2);
-    ctx.fill();
-  });
-
-  // Enemies — shadow figures
-  enemies.forEach(e => {
-    const pulse = 0.7 + 0.3 * Math.sin(state.frame * 0.15 + e.x);
-    ctx.fillStyle = `rgba(60,10,10,${pulse})`;
-    // Body
-    ctx.fillRect(e.x+4, e.y+12, 20, 20);
-    // Head
-    ctx.beginPath();
-    ctx.arc(e.x+14, e.y+10, 10, 0, Math.PI*2);
-    ctx.fill();
-    // Eyes glow
-    ctx.fillStyle = `rgba(180,40,40,${pulse})`;
-    ctx.beginPath();
-    ctx.arc(e.x+10, e.y+8, 2.5, 0, Math.PI*2);
-    ctx.arc(e.x+18, e.y+8, 2.5, 0, Math.PI*2);
-    ctx.fill();
-  });
-
-  // Player
-  if (player.invincible % 6 < 3) {
-    // Body glow
-    const pgrd = ctx.createRadialGradient(player.x+13, player.y+18, 0, player.x+13, player.y+18, 30);
-    pgrd.addColorStop(0, 'rgba(255,215,0,0.15)');
-    pgrd.addColorStop(1, 'rgba(255,215,0,0)');
-    ctx.fillStyle = pgrd;
-    ctx.fillRect(player.x-20, player.y-20, player.w+40, player.h+40);
-    // Body
-    ctx.fillStyle = '#c9962a';
-    ctx.fillRect(player.x+5, player.y+14, 16, 22);
-    // Head
-    ctx.beginPath();
-    ctx.arc(player.x+13, player.y+10, 9, 0, Math.PI*2);
-    ctx.fill();
-    // Helmet
-    ctx.fillStyle = '#e8b84b';
-    ctx.fillRect(player.x+4, player.y+3, 18, 6);
-    ctx.fillRect(player.x+6, player.y, 14, 4);
-    // Lantern light
-    ctx.fillStyle = 'rgba(232,184,75,0.7)';
-    ctx.beginPath();
-    ctx.arc(player.x+13, player.y+2, 3, 0, Math.PI*2);
-    ctx.fill();
-    // Legs
-    ctx.fillStyle = '#c9962a';
-    ctx.fillRect(player.x+5, player.y+34, 6, 8);
-    ctx.fillRect(player.x+15, player.y+34, 6, 8);
-  }
-
-  ctx.restore();
-}
-
-function loop() {
-  if (!state.running) return;
-  update();
-  draw();
-  requestAnimationFrame(loop);
-}
-
-// KEYBOARD
-window.addEventListener('keydown', e => {
-  keys[e.key] = true;
-  if ([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
-});
-window.addEventListener('keyup', e => { keys[e.key] = false; });
-window.addEventListener('resize', resize);
-
-// MOBILE BUTTONS
-function mobileBtn(id, keyOn, keyOff) {
-  const el = document.getElementById(id);
-  el.addEventListener('touchstart', () => { keys[keyOn] = true; }, { passive: true });
-  el.addEventListener('touchend', () => { keys[keyOn] = false; }, { passive: true });
-}
-mobileBtn('btnLeft', 'ArrowLeft');
-mobileBtn('btnRight', 'ArrowRight');
-document.getElementById('btnJump').addEventListener('touchstart', () => {
-  keys['ArrowUp'] = true; keys._jumpHeld = false;
-}, { passive: true });
-document.getElementById('btnJump').addEventListener('touchend', () => { keys['ArrowUp'] = false; }, { passive: true });
-
-resize();
-</script>
-
-<div class="depth-gauge" id="depthGauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
-  <span class="dg-sep">⬡</span>
-  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> Lore Fragments</div>
-  <span class="dg-sep">⬡</span>
-  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span> Creatures</div>
+<div class="depth-gauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold</div>
   <span class="dg-sep">⬡</span>
   <a href="lorevault.html" class="dg-link">📜 Vault</a>
   <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
-  <a href="ledger.html" class="dg-link">📖 Ledger</a>
 </div>
-<script>
-(function(){
-  try{
-    var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
-    var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
-    var gold=parseInt(localStorage.getItem('nmn_total_gold')||'0');
-    var el=document.getElementById('dgGold');if(el)el.textContent=gold;
-    var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
-    var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
-  }catch(e){}
-})();
 
-function shareScore(score, game, extra) {
-  const text = extra || `I just scored ${score} in ${game} on Lord Oro's mine! 🏔️ nonsensemedianetwork.com`;
-  const url = 'https://nonsensemedianetwork.com';
+<script>
+window.NMN_CONTEXT = "mine";
+const NMN_Audio = {
+  ctx: null, running: false, masterGain: null,
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  },
+  playHum() {
+    const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+    osc.type = 'sine'; osc.frequency.setValueAtTime(45, this.ctx.currentTime); 
+    gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+    osc.connect(gain); gain.connect(this.masterGain); osc.start();
+  },
+  playDrip() {
+    const tick = () => {
+      if (!this.running) return;
+      if (Math.random() > 0.6) {
+        const osc = this.ctx.createOscillator(); const g = this.ctx.createGain();
+        osc.type = 'sine'; osc.frequency.setValueAtTime(400 + Math.random() * 100, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.08);
+        g.gain.setValueAtTime(0.02, this.ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.08);
+        osc.connect(g); g.connect(this.masterGain); osc.start(); osc.stop(this.ctx.currentTime + 0.08);
+      }
+      setTimeout(tick, 2000 + Math.random() * 6000);
+    };
+    setTimeout(tick, 1000);
+  },
+  startAll() {
+    if (this.running) return;
+    this.init(); this.running = true; this.playHum(); this.playDrip();
+  }
+};
+document.addEventListener('click', () => { if (!NMN_Audio.running) NMN_Audio.startAll(); }, { once: true });
+
+const SFX = {
+  play(freq, type, dur, vol = 0.1) {
+    if (!NMN_Audio.ctx) return;
+    const osc = NMN_Audio.ctx.createOscillator(); const gain = NMN_Audio.ctx.createGain();
+    osc.type = type; osc.frequency.setValueAtTime(freq, NMN_Audio.ctx.currentTime);
+    gain.gain.setValueAtTime(0, NMN_Audio.ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(vol, NMN_Audio.ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, NMN_Audio.ctx.currentTime + dur);
+    osc.connect(gain); gain.connect(NMN_Audio.masterGain);
+    osc.start(); osc.stop(NMN_Audio.ctx.currentTime + dur);
+  },
+  step() { this.play(80 + Math.random()*20, 'square', 0.05, 0.02); },
+  wall() { this.play(60, 'sawtooth', 0.1, 0.05); },
+  gold() { this.play(800 + Math.random()*200, 'sine', 0.2, 0.1); },
+  exit() { this.play(400, 'triangle', 0.2, 0.1); setTimeout(()=>this.play(600, 'triangle', 0.4, 0.1), 200); }
+};
+</script>
+
+<script>
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+let W, H;
+
+function resize() {
+  const wrap = cv.parentElement;
+  W = cv.width = wrap.clientWidth;
+  H = cv.height = wrap.clientHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ── GAME STATE ──
+const TYPES = { WALL: 0, PATH: 1, GOLD: 2, EXIT: 3 };
+
+let maze = [];
+let cols = 0, rows = 0;
+let cellSize = 0;
+let player = { c: 1, r: 1, visualC: 1, visualR: 1 };
+let level = 1;
+let goldExtracted = 0;
+let steps = 0;
+let gameRunning = false;
+let loopId = null;
+
+let particles = [];
+let texts = [];
+
+// Maze Generation (Recursive Backtracker)
+function generateMaze(w, h) {
+  maze = Array.from({length: h}, () => Array(w).fill(TYPES.WALL));
   
-  // Native share sheet on mobile (iOS/Android)
-  if(navigator.share) {
-    navigator.share({ title: game + ' — NMN', text: text, url: url })
-      .catch(()=>{});
-    return;
+  function carve(r, c) {
+    maze[r][c] = TYPES.PATH;
+    const dirs = [[0,-2], [0,2], [-2,0], [2,0]].sort(() => Math.random() - 0.5);
+    
+    for (let [dr, dc] of dirs) {
+      const nr = r + dr, nc = c + dc;
+      if (nr > 0 && nr < h-1 && nc > 0 && nc < w-1 && maze[nr][nc] === TYPES.WALL) {
+        maze[r + dr/2][c + dc/2] = TYPES.PATH; // carve wall between
+        carve(nr, nc);
+      }
+    }
   }
   
-  // Desktop fallback — show share panel
-  const panel = document.getElementById('sharePanel');
-  if(panel) { panel.style.display='flex'; return; }
+  carve(1, 1);
+
+  // Add Exit
+  maze[h-2][w-2] = TYPES.EXIT;
   
-  const p = document.createElement('div');
-  p.id = 'sharePanel';
-  p.style.cssText = 'position:fixed;inset:0;background:rgba(3,2,1,.92);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem';
-  p.innerHTML = `
-    <div style="background:#1a1208;border:1px solid rgba(255,215,0,.3);padding:2rem;max-width:400px;width:100%;text-align:center">
-      <div style="font-family:Cormorant Garamond,serif;font-style:italic;font-size:1.3rem;color:#e8b84b;margin-bottom:.5rem">${game}</div>
-      <div style="font-size:.65rem;color:#8a7654;margin-bottom:1.5rem;line-height:1.8">${text}</div>
-      <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem">
-        <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}" target="_blank"
-           style="padding:.65rem;background:#1da1f2;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
-          𝕏 Share on X / Twitter
-        </a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}" target="_blank"
-           style="padding:.65rem;background:#1877f2;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
-          Share on Facebook
-        </a>
-        <a href="https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}" target="_blank"
-           style="padding:.65rem;background:#ff4500;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
-          Post to Reddit
-        </a>
-        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(text+' '+url)}" target="_blank"
-           style="padding:.65rem;background:#25d366;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
-          Send on WhatsApp
-        </a>
-        <button onclick="navigator.clipboard.writeText('${text.replace(/'/g,"\'")} ${url}').then(()=>this.textContent='✓ Copied!')"
-           style="padding:.65rem;background:transparent;border:1px solid rgba(255,215,0,.3);color:#FFD700;font-family:Josefin Sans,sans-serif;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer">
-          Copy Link
-        </button>
-      </div>
-      <button onclick="document.getElementById('sharePanel').style.display='none'"
-        style="font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:#4a3c28;background:transparent;border:none;cursor:pointer;padding:.5rem">
-        Close
-      </button>
-    </div>`;
-  document.body.appendChild(p);
+  // Add Random Gold
+  let emptyCells = [];
+  for(let r=1; r<h-1; r++){
+    for(let c=1; c<w-1; c++){
+      if(maze[r][c] === TYPES.PATH && !(r===1 && c===1) && !(r===h-2 && c===w-2)) {
+        emptyCells.push({r,c});
+      }
+    }
+  }
+  
+  // Place gold based on level size
+  let goldCount = Math.floor(Math.sqrt(level)) * 3;
+  emptyCells.sort(() => Math.random() - 0.5);
+  for(let i=0; i<Math.min(goldCount, emptyCells.length); i++) {
+    maze[emptyCells[i].r][emptyCells[i].c] = TYPES.GOLD;
+  }
 }
-</script>
 
-<div class="lore-toast" id="loreToast">
-  <div class="lore-toast-label">⬡ Lore Fragment</div>
-  <div class="lore-toast-text" id="loreToastText"></div>
-</div>
-<script id="nmn-glow">
-(function(){
-  var r=document.createElement('div');
-  r.id='pickaxe-glow';
-  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
-  document.body.appendChild(r);
-  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
-  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
-  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
-})();
-</script>
-<script id="gemini-init">
-window.addEventListener('load',function(){
-  if(!localStorage.getItem('nmn_total_gold')) localStorage.setItem('nmn_total_gold','0');
-  document.querySelectorAll('canvas').forEach(function(g){
-    if(g.parentElement&&!g.parentElement.classList.contains('mining-frame'))
-      g.parentElement.classList.add('mining-frame');
-  });
+function initLevel() {
+  // Increase maze size with level (must be odd numbers)
+  cols = 9 + (level * 4);
+  rows = 9 + (level * 4);
+  
+  // Cap size so it fits on screen somewhat reasonably
+  if (cols > 31) cols = 31;
+  if (rows > 31) rows = 31;
+  
+  cellSize = Math.min(W / cols, H / rows);
+  
+  generateMaze(cols, rows);
+  
+  player = { c: 1, r: 1, visualC: 1, visualR: 1 };
+  steps = 0;
+  particles = []; texts = [];
+  updateHUD();
+}
+
+function startGame() {
+  if (loopId) cancelAnimationFrame(loopId);
+  level = 1; goldExtracted = 0;
+  gameRunning = true;
+  document.getElementById('ov-start').classList.add('hidden');
+  document.getElementById('ov-win').classList.add('hidden');
+  initLevel();
+  loop();
+}
+
+function nextLevel() {
+  level++;
+  gameRunning = true;
+  document.getElementById('ov-win').classList.add('hidden');
+  
+  // Add to Global Gold Wallet
+  try {
+    let currentGold = parseInt(localStorage.getItem('nmn_total_gold') || '0');
+    localStorage.setItem('nmn_total_gold', currentGold + goldExtracted);
+    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold');
+  } catch(e) {}
+  
+  goldExtracted = 0; // reset for the new level
+  initLevel();
+}
+
+function spawnParticles(x, y, color, count) {
+  for(let i=0; i<count; i++) {
+    particles.push({
+      x, y, vx: (Math.random()-0.5)*5, vy: (Math.random()-0.5)*5,
+      life: 1, decay: 0.05 + Math.random()*0.05, color, r: Math.random()*3+1
+    });
+  }
+}
+
+function spawnText(x, y, text, color) {
+  texts.push({ x, y, text, color, life: 1, vy: -1 });
+}
+
+// Input Handling
+let moveTimer = 0;
+function attemptMove(dc, dr) {
+  if (!gameRunning) return;
+  
+  const nc = player.c + dc;
+  const nr = player.r + dr;
+  
+  if (nc >= 0 && nc < cols && nr >= 0 && nr < rows) {
+    if (maze[nr][nc] !== TYPES.WALL) {
+      player.c = nc;
+      player.r = nr;
+      steps++;
+      SFX.step();
+      
+      // Interactions
+      if (maze[nr][nc] === TYPES.GOLD) {
+        maze[nr][nc] = TYPES.PATH;
+        goldExtracted += 25;
+        SFX.gold();
+        spawnParticles(nc*cellSize + cellSize/2, nr*cellSize + cellSize/2, '#FFD700', 15);
+        spawnText(nc*cellSize + cellSize/2, nr*cellSize, "+25G", "#FFD700");
+        updateHUD();
+      } else if (maze[nr][nc] === TYPES.EXIT) {
+        gameRunning = false;
+        SFX.exit();
+        document.getElementById('win-gold').textContent = goldExtracted;
+        document.getElementById('ov-win').classList.remove('hidden');
+      }
+    } else {
+      SFX.wall();
+    }
+  }
+  updateHUD();
+}
+
+// Keyboard
+window.addEventListener('keydown', e => {
+  if(e.key === 'ArrowUp' || e.key === 'w') attemptMove(0, -1);
+  if(e.key === 'ArrowDown' || e.key === 's') attemptMove(0, 1);
+  if(e.key === 'ArrowLeft' || e.key === 'a') attemptMove(-1, 0);
+  if(e.key === 'ArrowRight' || e.key === 'd') attemptMove(1, 0);
 });
-</script>
 
-<!-- Monetag Service Worker Registration -->
-<script>
-if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
+// Mobile D-Pad
+document.getElementById('btn-up').addEventListener('touchstart', e => { e.preventDefault(); attemptMove(0, -1); });
+document.getElementById('btn-down').addEventListener('touchstart', e => { e.preventDefault(); attemptMove(0, 1); });
+document.getElementById('btn-left').addEventListener('touchstart', e => { e.preventDefault(); attemptMove(-1, 0); });
+document.getElementById('btn-right').addEventListener('touchstart', e => { e.preventDefault(); attemptMove(1, 0); });
+
+// Swipe controls
+let touchStartX = 0, touchStartY = 0;
+cv.addEventListener('touchstart', e => {
+  touchStartX = e.changedTouches[0].screenX;
+  touchStartY = e.changedTouches[0].screenY;
+}, {passive: false});
+
+cv.addEventListener('touchmove', e => { e.preventDefault(); }, {passive: false});
+
+cv.addEventListener('touchend', e => {
+  if(!gameRunning) return;
+  let touchEndX = e.changedTouches[0].screenX;
+  let touchEndY = e.changedTouches[0].screenY;
+  let dx = touchEndX - touchStartX;
+  let dy = touchEndY - touchStartY;
+  
+  if(Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 30) {
+    if(dx > 0) attemptMove(1, 0); else attemptMove(-1, 0);
+  } else if (Math.abs(dy) > 30) {
+    if(dy > 0) attemptMove(0, 1); else attemptMove(0, -1);
+  }
+});
+
+function update() {
+  if(!gameRunning) return;
+  
+  // Lerp visual position for smooth movement
+  player.visualC += (player.c - player.visualC) * 0.2;
+  player.visualR += (player.r - player.visualR) * 0.2;
+  
+  // FX
+  particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.life -= p.decay; });
+  particles = particles.filter(p => p.life > 0);
+  
+  texts.forEach(t => { t.y += t.vy; t.life -= 0.02; });
+  texts = texts.filter(t => t.life > 0);
 }
+
+function draw() {
+  ctx.fillStyle = '#050306'; ctx.fillRect(0, 0, W, H);
+  
+  const offsetX = (W - (cols * cellSize)) / 2;
+  const offsetY = (H - (rows * cellSize)) / 2;
+  
+  ctx.save();
+  ctx.translate(offsetX, offsetY);
+
+  // Draw Maze Base
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const cell = maze[r][c];
+      const x = c * cellSize;
+      const y = r * cellSize;
+      
+      if (cell === TYPES.WALL) {
+        ctx.fillStyle = '#111'; ctx.fillRect(x, y, cellSize, cellSize);
+        ctx.strokeStyle = '#222'; ctx.strokeRect(x, y, cellSize, cellSize);
+      } else if (cell === TYPES.PATH) {
+        ctx.fillStyle = '#2a1a0a'; ctx.fillRect(x, y, cellSize, cellSize);
+      } else if (cell === TYPES.GOLD) {
+        ctx.fillStyle = '#2a1a0a'; ctx.fillRect(x, y, cellSize, cellSize);
+        ctx.fillStyle = '#FFD700'; ctx.beginPath(); ctx.arc(x + cellSize/2, y + cellSize/2, cellSize*0.2, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.fillRect(x + cellSize/2 - 2, y + cellSize/2 - 2, 2, 2);
+      } else if (cell === TYPES.EXIT) {
+        ctx.fillStyle = '#2a1a0a'; ctx.fillRect(x, y, cellSize, cellSize);
+        ctx.fillStyle = '#00FF88'; ctx.fillRect(x + cellSize*0.2, y + cellSize*0.2, cellSize*0.6, cellSize*0.6);
+        ctx.fillStyle = '#000'; ctx.fillRect(x + cellSize*0.3, y + cellSize*0.3, cellSize*0.4, cellSize*0.4);
+      }
+    }
+  }
+
+  // Draw Player
+  const px = player.visualC * cellSize + cellSize/2;
+  const py = player.visualR * cellSize + cellSize/2;
+  const pw = cellSize * 0.5;
+
+  ctx.fillStyle = '#c9962a'; ctx.fillRect(px - pw/2, py - pw/2, pw, pw);
+  ctx.fillStyle = '#FFD700'; ctx.fillRect(px - pw/4, py - pw/4, pw/2, pw/2);
+
+  // FX
+  particles.forEach(p => {
+    ctx.globalAlpha = Math.max(0, p.life);
+    ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, p.r, p.r);
+  });
+  ctx.globalAlpha = 1;
+  
+  texts.forEach(t => {
+    ctx.globalAlpha = Math.max(0, t.life);
+    ctx.fillStyle = t.color; ctx.font = '10px "Press Start 2P"'; ctx.textAlign = 'center';
+    ctx.fillText(t.text, t.x, t.y);
+  });
+  ctx.globalAlpha = 1;
+  ctx.textAlign = 'left';
+
+  ctx.restore();
+
+  // FOG OF WAR (Lantern Effect)
+  // Draw a black overlay covering the entire canvas
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, W, H);
+  
+  // Cut a hole out of the black overlay using 'destination-out'
+  const absPx = offsetX + px;
+  const absPy = offsetY + py;
+  
+  // Radius of light (shrinks slightly as level increases)
+  const lightRadius = Math.max(cellSize * 2.5, cellSize * 5 - (level * 5));
+  const pulse = Math.sin(Date.now() * 0.005) * (cellSize * 0.1);
+  
+  const radGrad = ctx.createRadialGradient(absPx, absPy, 0, absPx, absPy, lightRadius + pulse);
+  radGrad.addColorStop(0, 'rgba(0,0,0,1)'); // Fully erase the black overlay
+  radGrad.addColorStop(0.5, 'rgba(0,0,0,0.8)'); // Soft edge
+  radGrad.addColorStop(1, 'rgba(0,0,0,0)'); // Don't erase anything outside radius
+  
+  ctx.globalCompositeOperation = 'destination-out';
+  ctx.fillStyle = radGrad;
+  ctx.beginPath(); ctx.arc(absPx, absPy, lightRadius + pulse, 0, Math.PI*2); ctx.fill();
+  
+  // Reset comp op
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+function loop() {
+  if(gameRunning) { update(); draw(); }
+  loopId = requestAnimationFrame(loop);
+}
+
+function updateHUD() {
+  document.getElementById('h-level').textContent = level;
+  document.getElementById('h-steps').textContent = steps;
+  document.getElementById('h-gold').textContent = goldExtracted;
+}
+
+// Initial draw
+ctx.fillStyle = '#050306'; ctx.fillRect(0,0,cv.width,cv.height);
 </script>
 
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+<script>
+try {
+    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold') || '0';
+} catch(e) {}
+</script>
+
+<div style="text-align:center;padding:1rem;font-family:'Press Start 2P',monospace;font-size:.3rem;color:#4a3c28; margin-top: auto;">
   <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
   <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
   <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
 </div>
+
 </body>
 </html>
