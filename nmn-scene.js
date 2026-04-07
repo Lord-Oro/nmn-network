@@ -1,8 +1,7 @@
 /* ════════════════════════════════════════════
    nmn-scene.js — Shared Scene Manager
    Fixes level stalls / memory leaks in all games
-   Include AFTER nmn-nav.js:
-   <script src="nmn-scene.js"></script>
+   Include AFTER nmn-wallet.js and nmn-nav.js
    ════════════════════════════════════════════ */
 
 window.NMNScene = (function(){
@@ -17,16 +16,28 @@ window.NMNScene = (function(){
   function destroy() {
     // Cancel animation frame
     if(_afId){ cancelAnimationFrame(_afId); _afId = null; }
+    
     // Clear all intervals
     _intervals.forEach(id => clearInterval(id));
     _intervals = [];
-    // Remove all event listeners
-    _listeners.forEach(({ el, type, fn }) => el.removeEventListener(type, fn));
-    _listeners = [];
-    // Clear all canvases on page
-    document.querySelectorAll('canvas').forEach(cv => {
-      try { cv.getContext('2d').clearRect(0, 0, cv.width, cv.height); } catch(e){}
+    
+    // Remove all event listeners safely
+    _listeners.forEach(({ el, type, fn }) => {
+      if(el) el.removeEventListener(type, fn);
     });
+    _listeners = [];
+    
+    // Clear all canvases on page & reset pending draw paths
+    document.querySelectorAll('canvas').forEach(cv => {
+      try { 
+        const ctx = cv.getContext('2d');
+        if (ctx) {
+            ctx.clearRect(0, 0, cv.width, cv.height); 
+            ctx.beginPath(); // Prevents ghost-rendering from previous scene
+        }
+      } catch(e){}
+    });
+    
     _current = null;
     _paused = false;
   }
@@ -55,6 +66,7 @@ window.NMNScene = (function(){
 
   // ── MANAGED EVENT LISTENER ──
   function on(el, type, fn) {
+    if(!el) return;
     el.addEventListener(type, fn);
     _listeners.push({ el, type, fn });
   }
@@ -87,73 +99,7 @@ window.NMNScene = (function(){
 
 })();
 
-// ── GLOBAL GOLD WALLET (persists across pages via sessionStorage) ──
-window.NMNWallet = (function(){
-  const KEY = 'nmn_wallet';
-
-  function load() {
-    try { return JSON.parse(sessionStorage.getItem(KEY)) || { gold:0, xp:0, level:1, gems:[false,false,false,false,false] }; }
-    catch(e) { return { gold:0, xp:0, level:1, gems:[false,false,false,false,false] }; }
-  }
-
-  function save(w) {
-    try { sessionStorage.setItem(KEY, JSON.stringify(w)); } catch(e) {}
-  }
-
-  function get() { return load(); }
-
-  function addGold(n) {
-    const w = load(); w.gold += n; save(w);
-    window.nmnToast && nmnToast(`+${n} 💎 GOLD`);
-    updateUI(w); return w;
-  }
-
-  function addXP(n) {
-    const w = load(); w.xp += n;
-    if(w.xp >= w.level * 100) { w.xp -= w.level * 100; w.level++; window.nmnToast && nmnToast(`⬆ RANK UP! LEVEL ${w.level}`); }
-    save(w); updateUI(w); return w;
-  }
-
-  function addGem() {
-    const w = load();
-    const i = w.gems.findIndex(g => !g);
-    if(i < 0) { convertGems(); return load(); }
-    w.gems[i] = true;
-    if(w.gems.every(Boolean)) { save(w); convertGems(); return load(); }
-    save(w); updateUI(w); return w;
-  }
-
-  function convertGems() {
-    const w = load();
-    const n = w.gems.filter(Boolean).length;
-    if(!n) return w;
-    w.gold += n * 10; w.gems = [false,false,false,false,false];
-    save(w); window.nmnToast && nmnToast(`💎 ${n} GEMS → +${n*10} GOLD`);
-    updateUI(w); return w;
-  }
-
-  function updateUI(w) {
-    ['nmn-gold','gold-disp','gold-display'].forEach(id => {
-      const el = document.getElementById(id);
-      if(el) el.textContent = w.gold;
-    });
-    ['nmn-xp','xp-disp'].forEach(id => {
-      const el = document.getElementById(id);
-      if(el) el.textContent = w.xp;
-    });
-    ['nmn-level','lvl-disp','player-level'].forEach(id => {
-      const el = document.getElementById(id);
-      if(el) el.textContent = w.level;
-    });
-    for(let i=0;i<5;i++) {
-      const pip = document.getElementById('gp'+i) || document.getElementById('gem-pip-'+i);
-      if(pip) { pip.classList.toggle('lit', w.gems[i]); pip.classList.toggle('nmn-gem-pip', true); }
-    }
-  }
-
-  // Init UI on load
-  document.addEventListener('DOMContentLoaded', () => updateUI(load()));
-
-  return { get, addGold, addXP, addGem, convertGems, updateUI };
-
-})();
+/* NOTE: The legacy NMNWallet block has been permanently REMOVED from this file.
+  It was causing a namespace collision and relying on volatile sessionStorage.
+  The global economy is now securely managed by `nmn-wallet.js` (localStorage V2).
+*/
