@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beast Battle — NMN Retro</title>
+<title>The Grimoire Collector — NMN Retro</title>
 
 <link rel="icon" href="favicon.png" type="image/png">
 <link rel="shortcut icon" href="favicon.png" type="image/png">
@@ -20,9 +20,10 @@
   --panel-bg: #111111;
   --cream: #f0e6cc;
   --muted: #aaaaaa;
-  --lg: #55FF55; /* Retro green */
+  --lg: #55FF55; 
   --red: #FF5555;
   --blue: #5555FF;
+  --purple: #AA55FF;
   --font-pixel: 'Press Start 2P', monospace;
   --font-text: 'VT323', monospace;
 }
@@ -34,7 +35,6 @@ body {
   background: var(--bg-color);
   color: var(--cream);
   min-height: 100vh;
-  /* Hard pixelated scanline effect */
   background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
   padding-bottom: 50px;
   font-size: 1.2rem;
@@ -51,12 +51,7 @@ header {
   padding: 1rem 2rem;
   background: #000;
   border-bottom: 4px solid var(--lg);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 20;
+  display: flex; justify-content: space-between; align-items: center;
 }
 .logo { font-family: var(--font-pixel); color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
 .back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; }
@@ -65,333 +60,433 @@ header {
 /* ── MOUSE FIX ── */
 body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
 
-/* ── BATTLE ARENA ── */
-#gameScreen { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+#gameScreen { max-width: 800px; margin: 1rem auto; padding: 0 1rem; }
 
-.battle-arena {
-  position: relative;
-  height: 400px;
-  background: #222;
-  background-image: 
-    linear-gradient(#111 2px, transparent 2px), 
-    linear-gradient(90deg, #111 2px, transparent 2px); 
-  background-size: 40px 40px;
-  border: 6px solid #FFF;
-  margin-bottom: 1rem;
-  overflow: hidden;
-}
+/* VIEW TABS */
+.tabs { display: flex; gap: 1rem; margin-bottom: 1rem; }
+.tab-btn { flex: 1; padding: 1rem; background: #000; border: 4px solid #444; color: var(--muted); font-family: var(--font-pixel); font-size: 0.7rem; cursor: pointer; text-transform: uppercase; }
+.tab-btn.active { border-color: #FFF; color: var(--gold); box-shadow: 4px 4px 0 #000; background: #111; }
 
-/* SPRITES */
-.sprite {
-  position: absolute;
-  font-size: 5rem;
-  transition: transform 0.1s;
-  filter: drop-shadow(4px 4px 0 #000);
-}
-.sprite.enemy { top: 40px; right: 60px; }
-.sprite.player { bottom: 40px; left: 60px; transform: scaleX(-1); }
+.view-section { display: none; }
+.view-section.active { display: block; animation: flashIn 0.2s steps(2); }
+@keyframes flashIn { 0% { opacity: 0; } 100% { opacity: 1; } }
 
-/* ANIMATIONS */
-@keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-10px); } 50% { transform: translateX(10px); } 75% { transform: translateX(-10px); } 100% { transform: translateX(0); } }
+/* HUD */
+.hud { display: flex; justify-content: space-between; padding: 1rem; margin-bottom: 1rem; }
+.hud-stat { font-family: var(--font-pixel); font-size: 0.7rem; color: var(--cream); }
+.hud-stat span { color: var(--gold); }
+
+/* ── EXPLORE VIEW (RADAR COMPASS) ── */
+.explore-grid { display: grid; grid-template-columns: 200px 1fr; gap: 1rem; margin-bottom: 1rem; }
+@media(max-width: 600px) { .explore-grid { grid-template-columns: 1fr; } }
+
+.radar-container { padding: 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.radar-title { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); margin-bottom: 1rem; text-align: center; }
+.radar { display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(3, 50px); gap: 5px; }
+
+.node { background: #222; border: 4px solid #111; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+.node.empty { background: transparent; border: none; }
+.node.player { background: #000; border-color: #FFF; box-shadow: inset 0 0 10px #FFF; }
+.node.gold { background: #332200; border-color: var(--gold); box-shadow: 0 0 10px var(--gd); }
+.node.enemy { background: #330000; border-color: var(--red); box-shadow: 0 0 10px #880000; }
+.node.safe { background: #003300; border-color: var(--lg); }
+.node.stairs { background: #220033; border-color: var(--purple); }
+
+.dialog-box { padding: 1.5rem; font-size: 1.5rem; line-height: 1.5; min-height: 150px; }
+
+/* D-PAD CONTROLS */
+.dpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; max-width: 200px; margin: 0 auto; }
+.dpad-btn { padding: 1rem; background: #000; border: 4px solid var(--muted); color: var(--cream); font-family: var(--font-pixel); cursor: pointer; transition: transform 0.1s; }
+.dpad-btn:hover:not(:disabled) { border-color: var(--gold); transform: scale(1.05); }
+.dpad-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+.dpad-btn.up { grid-column: 2; grid-row: 1; }
+.dpad-btn.left { grid-column: 1; grid-row: 2; }
+.dpad-btn.right { grid-column: 3; grid-row: 2; }
+.dpad-btn.down { grid-column: 2; grid-row: 3; }
+
+/* ── BATTLE VIEW ── */
+.battle-arena { height: 300px; background: #111; border: 6px solid #FFF; position: relative; margin-bottom: 1rem; overflow: hidden; }
+.sprite { position: absolute; font-size: 4rem; filter: drop-shadow(4px 4px 0 #000); }
+.sprite.enemy { top: 30px; right: 50px; }
+.sprite.player { bottom: 30px; left: 50px; transform: scaleX(-1); }
+
 @keyframes blink { 0%, 50%, 100% { opacity: 1; } 25%, 75% { opacity: 0; } }
-@keyframes tackle { 0% { transform: translate(0,0) scaleX(-1); } 50% { transform: translate(40px, -40px) scaleX(-1); } 100% { transform: translate(0,0) scaleX(-1); } }
 @keyframes capture { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(0.1) translateY(100px); opacity: 0; } }
-
-.anim-shake { animation: shake 0.4s ease-in-out; }
 .anim-blink { animation: blink 0.6s step-end; }
-.anim-tackle { animation: tackle 0.3s ease-in-out; }
 .anim-capture { animation: capture 1s forwards; }
 
-/* HEALTH BARS */
-.hud-box {
-  position: absolute;
-  background: #000;
-  border: 4px solid #FFF;
-  padding: 1rem;
-  width: 250px;
-  box-shadow: 6px 6px 0 #000;
-  z-index: 10;
-}
-.hud-enemy { top: 20px; left: 20px; }
-.hud-player { bottom: 20px; right: 20px; }
+.battle-hud { position: absolute; background: #000; border: 4px solid #FFF; padding: 0.5rem; width: 200px; z-index: 10; }
+.bh-enemy { top: 10px; left: 10px; }
+.bh-player { bottom: 10px; right: 10px; }
+.b-name { font-family: var(--font-pixel); font-size: 0.6rem; margin-bottom: 0.5rem; text-transform: uppercase;}
+.hp-bar-bg { width: 100%; height: 10px; background: #333; border: 2px solid #555; }
+.hp-bar-fill { height: 100%; background: var(--lg); transition: width 0.3s; }
 
-.beast-name { font-family: var(--font-pixel); font-size: 0.7rem; color: var(--cream); margin-bottom: 0.5rem; text-transform: uppercase;}
-.beast-level { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gold); float: right; }
-
-.hp-bar-container { width: 100%; height: 16px; background: #333; border: 4px solid #555; position: relative; margin-bottom: 0.5rem;}
-.hp-bar-fill { height: 100%; background: var(--lg); transition: width 0.3s steps(10); }
-.hp-bar-fill.low { background: var(--red); }
-.hp-bar-fill.mid { background: var(--gold); }
-.hp-text { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--cream); text-align: right; }
-
-/* BOTTOM UI (TEXT BOX & MENU) */
-.bottom-ui {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 1rem;
-  height: 150px;
-}
-@media(max-width: 600px) { .bottom-ui { grid-template-columns: 1fr; height: auto; } }
-
-.dialog-box {
-  background: #000;
-  border: 6px solid #FFF;
-  padding: 1.5rem;
-  font-size: 1.5rem;
-  color: var(--cream);
-  line-height: 1.5;
-  box-shadow: inset 0 0 0 4px var(--gd), 6px 6px 0 #000;
-  display: flex;
-  align-items: center;
-}
-.dialog-text::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 1rem; color: var(--gold);}
-
-.action-menu {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-  background: #000;
-  border: 6px solid #FFF;
-  padding: 1rem;
-  box-shadow: 6px 6px 0 #000;
-}
-.action-btn {
-  background: transparent;
-  border: none;
-  color: var(--cream);
-  font-family: var(--font-pixel);
-  font-size: 0.7rem;
-  text-align: left;
-  cursor: pointer;
-  padding: 0.5rem;
-  transition: transform 0.1s;
-  text-transform: uppercase;
-}
-.action-btn:hover:not(:disabled) { color: var(--gold); transform: translateX(5px); }
+.action-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.action-btn { background: #000; border: 4px solid #FFF; color: var(--cream); font-family: var(--font-pixel); font-size: 0.7rem; padding: 1rem; cursor: pointer; text-align: left; transition: transform 0.1s;}
+.action-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); transform: translateX(5px); }
 .action-btn::before { content: '▶ '; opacity: 0; color: var(--gold); }
 .action-btn:hover:not(:disabled)::before { opacity: 1; }
-.action-btn:disabled { color: #444; cursor: not-allowed; }
+
+/* ── GRIMOIRE VIEW ── */
+.grimoire-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem; }
+.g-card { background: #000; border: 4px solid #444; padding: 1rem; text-align: center; }
+.g-card.caught { border-color: var(--gold); background: #1a1500; }
+.g-sprite { font-size: 2.5rem; margin-bottom: 0.5rem; filter: grayscale(100%); opacity: 0.3; }
+.g-card.caught .g-sprite { filter: none; opacity: 1; filter: drop-shadow(2px 2px 0 #000); }
+.g-name { font-family: var(--font-pixel); font-size: 0.55rem; color: var(--muted); }
+.g-card.caught .g-name { color: var(--cream); }
 
 </style>
 </head>
 <body>
 <header>
-  <a href="#" class="logo">NMN BEAST BATTLES</a>
-  <a href="#" class="back">FLEE TO MENU</a>
+  <a href="#" class="logo">THE MASTER GRIMOIRE</a>
+  <a href="#" class="back">RETURN TO SURFACE</a>
 </header>
 
 <div id="gameScreen">
 
-  <div class="battle-arena">
-    <div class="hud-box hud-enemy">
-      <div class="beast-name" id="enemyName">Shadow Hound <span class="beast-level">Lv 5</span></div>
-      <div class="hp-bar-container">
-        <div class="hp-bar-fill" id="enemyHPBar" style="width: 100%;"></div>
-      </div>
-    </div>
-    <div class="sprite enemy" id="enemySprite">🐺</div>
-
-    <div class="hud-box hud-player">
-      <div class="beast-name" id="playerName">Nela's Cub <span class="beast-level">Lv 6</span></div>
-      <div class="hp-bar-container">
-        <div class="hp-bar-fill" id="playerHPBar" style="width: 100%;"></div>
-      </div>
-      <div class="hp-text"><span id="playerHPText">35</span> / 35</div>
-    </div>
-    <div class="sprite player" id="playerSprite">🦁</div>
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-explore" onclick="switchTab('explore')">EXPLORE</button>
+    <button class="tab-btn" id="tab-grimoire" onclick="switchTab('grimoire')">GRIMOIRE</button>
   </div>
 
-  <div class="bottom-ui">
-    <div class="dialog-box">
-      <span class="dialog-text" id="dialogText">Wild SHADOW HOUND appeared!</span>
+  <div class="hud retro-box">
+    <div class="hud-stat">DEPTH: <span id="hud-depth">1</span></div>
+    <div class="hud-stat">HP: <span id="hud-hp">100</span>/100</div>
+    <div class="hud-stat">GOLD: <span id="hud-gold">0</span></div>
+  </div>
+
+  <div id="view-explore" class="view-section active">
+    <div class="explore-grid">
+      <div class="radar-container retro-box">
+        <div class="radar-title">RADAR COMPASS</div>
+        <div class="radar">
+          <div class="node empty"></div>
+          <div class="node" id="node-n"></div>
+          <div class="node empty"></div>
+          <div class="node" id="node-w"></div>
+          <div class="node player">🤠</div>
+          <div class="node" id="node-e"></div>
+          <div class="node empty"></div>
+          <div class="node" id="node-s"></div>
+          <div class="node empty"></div>
+        </div>
+      </div>
+      <div class="dialog-box retro-box" id="explore-dialog">
+        Pip: "The stone is shifting... check the radar to see what lies ahead. Red is danger. Yellow is treasure."
+      </div>
+    </div>
+    
+    <div class="dpad">
+      <button class="dpad-btn up" onclick="move('n')">▲</button>
+      <button class="dpad-btn left" onclick="move('w')">◀</button>
+      <button class="dpad-btn right" onclick="move('e')">▶</button>
+      <button class="dpad-btn down" onclick="move('s')">▼</button>
+    </div>
+  </div>
+
+  <div id="view-battle" class="view-section">
+    <div class="battle-arena">
+      <div class="battle-hud bh-enemy">
+        <div class="b-name" id="b-enemy-name">Ore Rat</div>
+        <div class="hp-bar-bg"><div class="hp-bar-fill" id="b-enemy-hp" style="width:100%"></div></div>
+      </div>
+      <div class="sprite enemy" id="b-enemy-sprite">🐀</div>
+
+      <div class="battle-hud bh-player">
+        <div class="b-name">Miner</div>
+        <div class="hp-bar-bg"><div class="hp-bar-fill" id="b-player-hp" style="width:100%"></div></div>
+      </div>
+      <div class="sprite player">🤠</div>
     </div>
 
-    <div class="action-menu" id="actionMenu">
-      <button class="action-btn" onclick="playerAttack()" id="btnAttack">FIGHT</button>
-      <button class="action-btn" onclick="attemptCatch()" id="btnCatch">CAPTURE</button>
-      <button class="action-btn" onclick="playerHeal()" id="btnHeal">ITEM</button>
-      <button class="action-btn" onclick="fleeBattle()" id="btnFlee">RUN</button>
+    <div class="dialog-box retro-box" id="battle-dialog" style="margin-bottom:1rem; min-height: 80px;">
+      A wild beast attacks!
     </div>
+
+    <div class="action-menu" id="battle-menu">
+      <button class="action-btn" onclick="battleAttack()">FIGHT (PICKAXE)</button>
+      <button class="action-btn" onclick="battleCatch()">CATCH (GRIMOIRE)</button>
+      <button class="action-btn" onclick="battleFlee()">RUN AWAY</button>
+    </div>
+  </div>
+
+  <div id="view-grimoire" class="view-section">
+    <div class="dialog-box retro-box" style="margin-bottom:1rem; min-height:auto;">
+      Master Grimoire: A record of entities bound to the mountain.
+    </div>
+    <div class="grimoire-grid" id="grimoire-grid">
+      </div>
   </div>
 
 </div>
 
 <script>
-// ── BATTLE STATE ENGINE ─────────────────────────────────────────────
+// ── DATA STRUCTURES ──
+const BEASTS = [
+  { id: 'rat', name: 'Ore Rat', sprite: '🐀', maxHp: 10, catchRate: 0.6 },
+  { id: 'bat', name: 'Cave Bat', sprite: '🦇', maxHp: 15, catchRate: 0.5 },
+  { id: 'hound', name: 'Shadow Hound', sprite: '🐺', maxHp: 30, catchRate: 0.3 },
+  { id: 'spider', name: 'Crystal Spider', sprite: '🕷️', maxHp: 40, catchRate: 0.25 },
+  { id: 'phantom', name: 'Oro Phantom', sprite: '👻', maxHp: 80, catchRate: 0.1 }
+];
 
-const STATE = {
-  isPlayerTurn: true,
-  isAnimating: false,
-  player: {
-    name: "Nela's Cub", maxHp: 35, currentHp: 35, sprite: "🦁"
-  },
-  enemy: {
-    name: "Shadow Hound", maxHp: 25, currentHp: 25, sprite: "🐺", catchRate: 0.4
-  }
+const NODE_TYPES = [
+  { type: 'safe', class: 'safe', symbol: '', text: "An empty tunnel. It's quiet here." },
+  { type: 'gold', class: 'gold', symbol: '💎', text: "You found a vein of raw ore! +Gold." },
+  { type: 'enemy', class: 'enemy', symbol: '⚠️', text: "Danger! A creature blocks the path." },
+  { type: 'stairs', class: 'stairs', symbol: '🪜', text: "You found a shaft leading deeper down." }
+];
+
+// ── GAME STATE ──
+let STATE = {
+  depth: 1,
+  hp: 100,
+  maxHp: 100,
+  gold: 0,
+  grimoire: JSON.parse(localStorage.getItem('nmn_grimoire')) || [],
+  radar: { n: null, s: null, e: null, w: null },
+  currentEnemy: null,
+  isAnimating: false
 };
 
-// UI Elements
-const elDialog = document.getElementById('dialogText');
-const elPlayerHPBar = document.getElementById('playerHPBar');
-const elPlayerHPText = document.getElementById('playerHPText');
-const elEnemyHPBar = document.getElementById('enemyHPBar');
-const elPlayerSprite = document.getElementById('playerSprite');
-const elEnemySprite = document.getElementById('enemySprite');
-const buttons = document.querySelectorAll('.action-btn');
+// ── INITIALIZATION ──
+function init() {
+  updateHUD();
+  generateRadar();
+  renderGrimoire();
+}
 
-function typeText(text, callback) {
+function switchTab(tabId) {
+  if (STATE.isAnimating) return;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+  
+  document.getElementById('tab-' + tabId).classList.add('active');
+  document.getElementById('view-' + tabId).classList.add('active');
+}
+
+function updateHUD() {
+  document.getElementById('hud-depth').textContent = STATE.depth;
+  document.getElementById('hud-hp').textContent = STATE.hp;
+  document.getElementById('hud-gold').textContent = STATE.gold;
+}
+
+function typeText(elId, text, callback) {
   STATE.isAnimating = true;
-  toggleMenu(false);
-  elDialog.textContent = "";
+  const el = document.getElementById(elId);
+  el.textContent = "";
   let i = 0;
   
   const timer = setInterval(() => {
-    elDialog.textContent += text.charAt(i);
+    el.textContent += text.charAt(i);
     i++;
     if (i >= text.length) {
       clearInterval(timer);
       setTimeout(() => {
         STATE.isAnimating = false;
         if(callback) callback();
-      }, 800);
+      }, 500);
     }
-  }, 30); // Speed of text
+  }, 20);
 }
 
-function toggleMenu(show) {
-  buttons.forEach(btn => btn.disabled = !show);
+// ── RADAR MECHANICS ──
+function generateNode() {
+  const roll = Math.random();
+  if (roll < 0.2) return NODE_TYPES[3]; // 20% Stairs
+  if (roll < 0.4) return NODE_TYPES[1]; // 20% Gold
+  if (roll < 0.7) return NODE_TYPES[2]; // 30% Enemy
+  return NODE_TYPES[0]; // 30% Safe
 }
 
-function updateHUD() {
-  // Player
-  let pPercent = (STATE.player.currentHp / STATE.player.maxHp) * 100;
-  elPlayerHPBar.style.width = pPercent + '%';
-  elPlayerHPText.textContent = STATE.player.currentHp;
-  elPlayerHPBar.className = 'hp-bar-fill ' + (pPercent < 25 ? 'low' : pPercent < 50 ? 'mid' : '');
-
-  // Enemy
-  let ePercent = (STATE.enemy.currentHp / STATE.enemy.maxHp) * 100;
-  elEnemyHPBar.style.width = ePercent + '%';
-  elEnemyHPBar.className = 'hp-bar-fill ' + (ePercent < 25 ? 'low' : ePercent < 50 ? 'mid' : '');
+function generateRadar() {
+  STATE.radar.n = generateNode();
+  STATE.radar.s = generateNode();
+  STATE.radar.e = generateNode();
+  STATE.radar.w = generateNode();
+  drawRadar();
 }
 
-// ── ACTIONS ─────────────────────────────────────────────────────────
-
-function playerAttack() {
-  if(!STATE.isPlayerTurn || STATE.isAnimating) return;
-  
-  typeText(`${STATE.player.name} used SCRATCH!`, () => {
-    elPlayerSprite.classList.add('anim-tackle');
-    setTimeout(() => elPlayerSprite.classList.remove('anim-tackle'), 300);
-
-    setTimeout(() => {
-      elEnemySprite.classList.add('anim-blink');
-      let dmg = Math.floor(Math.random() * 5) + 4; // 4 to 8 damage
-      STATE.enemy.currentHp = Math.max(0, STATE.enemy.currentHp - dmg);
-      updateHUD();
-      
-      setTimeout(() => {
-        elEnemySprite.classList.remove('anim-blink');
-        checkWinCondition();
-      }, 600);
-    }, 150);
+function drawRadar() {
+  ['n', 's', 'e', 'w'].forEach(dir => {
+    const el = document.getElementById('node-' + dir);
+    el.className = 'node ' + STATE.radar[dir].class;
+    el.textContent = STATE.radar[dir].symbol;
   });
 }
 
-function attemptCatch() {
-  if(!STATE.isPlayerTurn || STATE.isAnimating) return;
+function move(dir) {
+  if (STATE.isAnimating) return;
+  const targetNode = STATE.radar[dir];
   
-  typeText(`You threw an AMBER SPHERE!`, () => {
-    // Basic catch formula: lower HP = higher catch chance
-    let hpFactor = 1 - (STATE.enemy.currentHp / STATE.enemy.maxHp);
-    let catchChance = STATE.enemy.catchRate + (hpFactor * 0.5);
+  typeText('explore-dialog', targetNode.text, () => {
+    if (targetNode.type === 'gold') {
+      let loot = Math.floor(Math.random() * 20) + (STATE.depth * 5);
+      STATE.gold += loot;
+      document.getElementById('explore-dialog').textContent += ` Got ${loot} Gold!`;
+      updateHUD();
+      generateRadar();
+    } 
+    else if (targetNode.type === 'stairs') {
+      STATE.depth++;
+      updateHUD();
+      generateRadar();
+    }
+    else if (targetNode.type === 'enemy') {
+      startBattle();
+    }
+    else {
+      generateRadar();
+    }
+  });
+}
+
+// ── BATTLE MECHANICS ──
+function startBattle() {
+  // Pick enemy based on depth
+  let possibleBeasts = BEASTS.filter(b => b.maxHp <= STATE.depth * 15 + 15);
+  if (possibleBeasts.length === 0) possibleBeasts = [BEASTS[0]];
+  const template = possibleBeasts[Math.floor(Math.random() * possibleBeasts.length)];
+  
+  STATE.currentEnemy = { ...template, currentHp: template.maxHp };
+  
+  document.getElementById('b-enemy-name').textContent = STATE.currentEnemy.name;
+  document.getElementById('b-enemy-sprite').textContent = STATE.currentEnemy.sprite;
+  document.getElementById('b-enemy-sprite').className = 'sprite enemy'; // reset animations
+  updateBattleHUD();
+  
+  switchTab('battle');
+  typeText('battle-dialog', `Wild ${STATE.currentEnemy.name} emerges from the shadows!`);
+}
+
+function updateBattleHUD() {
+  // Player
+  let pPercent = (STATE.hp / STATE.maxHp) * 100;
+  document.getElementById('b-player-hp').style.width = pPercent + '%';
+  document.getElementById('b-player-hp').style.background = pPercent < 30 ? 'var(--red)' : 'var(--lg)';
+  
+  // Enemy
+  let ePercent = (STATE.currentEnemy.currentHp / STATE.currentEnemy.maxHp) * 100;
+  document.getElementById('b-enemy-hp').style.width = ePercent + '%';
+  document.getElementById('b-enemy-hp').style.background = ePercent < 30 ? 'var(--red)' : 'var(--lg)';
+}
+
+function toggleBattleMenu(show) {
+  document.querySelectorAll('#battle-menu .action-btn').forEach(b => b.disabled = !show);
+}
+
+function battleAttack() {
+  if(STATE.isAnimating) return;
+  toggleBattleMenu(false);
+  
+  typeText('battle-dialog', `Miner swings the Pickaxe!`, () => {
+    let dmg = Math.floor(Math.random() * 10) + 5;
+    STATE.currentEnemy.currentHp = Math.max(0, STATE.currentEnemy.currentHp - dmg);
+    updateBattleHUD();
     
-    // Simulate ball throwing animation
-    elEnemySprite.classList.add('anim-blink');
+    document.getElementById('b-enemy-sprite').classList.add('anim-blink');
+    setTimeout(() => document.getElementById('b-enemy-sprite').classList.remove('anim-blink'), 600);
+
+    setTimeout(() => checkBattleWin(), 1000);
+  });
+}
+
+function battleCatch() {
+  if(STATE.isAnimating) return;
+  toggleBattleMenu(false);
+  
+  typeText('battle-dialog', `You threw a binding sigil from the Grimoire!`, () => {
+    let hpFactor = 1 - (STATE.currentEnemy.currentHp / STATE.currentEnemy.maxHp);
+    let catchChance = STATE.currentEnemy.catchRate + (hpFactor * 0.4);
+    
+    document.getElementById('b-enemy-sprite').classList.add('anim-blink');
     
     setTimeout(() => {
       if(Math.random() < catchChance) {
         // Caught
-        elEnemySprite.classList.remove('anim-blink');
-        elEnemySprite.classList.add('anim-capture');
-        typeText(`Gotcha! ${STATE.enemy.name} was caught!`, () => {
-          setTimeout(() => location.reload(), 2000); // Reset game for demo
+        document.getElementById('b-enemy-sprite').classList.remove('anim-blink');
+        document.getElementById('b-enemy-sprite').classList.add('anim-capture');
+        
+        typeText('battle-dialog', `Gotcha! ${STATE.currentEnemy.name} data added to Grimoire!`, () => {
+          if (!STATE.grimoire.includes(STATE.currentEnemy.id)) {
+            STATE.grimoire.push(STATE.currentEnemy.id);
+            localStorage.setItem('nmn_grimoire', JSON.stringify(STATE.grimoire));
+            renderGrimoire();
+          }
+          setTimeout(() => endBattle(), 1500);
         });
       } else {
-        // Broke free
-        elEnemySprite.classList.remove('anim-blink');
-        typeText(`Oh no! The beast broke free!`, () => {
-          enemyTurn();
-        });
+        // Failed
+        document.getElementById('b-enemy-sprite').classList.remove('anim-blink');
+        typeText('battle-dialog', `The beast broke the sigil!`, () => enemyTurn());
       }
     }, 1000);
   });
 }
 
-function playerHeal() {
-  if(!STATE.isPlayerTurn || STATE.isAnimating) return;
-  if(STATE.player.currentHp === STATE.player.maxHp) {
-    typeText(`HP is already full!`, () => toggleMenu(true));
-    return;
-  }
-  
-  typeText(`You used a RATION. HP restored!`, () => {
-    STATE.player.currentHp = Math.min(STATE.player.maxHp, STATE.player.currentHp + 15);
-    updateHUD();
-    enemyTurn();
-  });
-}
-
-function fleeBattle() {
-  if(!STATE.isPlayerTurn || STATE.isAnimating) return;
-  typeText(`Got away safely!`, () => {
-    setTimeout(() => location.reload(), 1000); // Reset for demo
+function battleFlee() {
+  if(STATE.isAnimating) return;
+  toggleBattleMenu(false);
+  typeText('battle-dialog', `You scrambled back into the darkness.`, () => {
+    setTimeout(() => endBattle(), 1000);
   });
 }
 
 function enemyTurn() {
-  STATE.isPlayerTurn = false;
-  
-  typeText(`${STATE.enemy.name} uses BITE!`, () => {
-    elEnemySprite.classList.add('anim-shake');
-    setTimeout(() => elEnemySprite.classList.remove('anim-shake'), 400);
+  typeText('battle-dialog', `${STATE.currentEnemy.name} strikes!`, () => {
+    let dmg = Math.floor(Math.random() * 5) + (STATE.depth * 2);
+    STATE.hp = Math.max(0, STATE.hp - dmg);
+    updateHUD();
+    updateBattleHUD();
     
-    setTimeout(() => {
-      elPlayerSprite.classList.add('anim-blink');
-      let dmg = Math.floor(Math.random() * 4) + 2; // 2 to 5 damage
-      STATE.player.currentHp = Math.max(0, STATE.player.currentHp - dmg);
-      updateHUD();
-      
-      setTimeout(() => {
-        elPlayerSprite.classList.remove('anim-blink');
-        if(STATE.player.currentHp <= 0) {
-          typeText(`${STATE.player.name} fainted! You blacked out.`, () => {
-             setTimeout(() => location.reload(), 2000);
-          });
-        } else {
-          STATE.isPlayerTurn = true;
-          typeText(`What will ${STATE.player.name} do?`, () => toggleMenu(true));
-        }
-      }, 600);
-    }, 200);
+    if (STATE.hp <= 0) {
+      typeText('battle-dialog', `Miner blacked out... The mountain reclaims you.`, () => {
+        setTimeout(() => location.reload(), 2000); // Game Over
+      });
+    } else {
+      typeText('battle-dialog', `What will you do?`, () => toggleBattleMenu(true));
+    }
   });
 }
 
-function checkWinCondition() {
-  if(STATE.enemy.currentHp <= 0) {
-    elEnemySprite.style.opacity = 0;
-    typeText(`${STATE.enemy.name} fainted! You won!`, () => {
-      setTimeout(() => location.reload(), 2000); // Reset for demo
+function checkBattleWin() {
+  if (STATE.currentEnemy.currentHp <= 0) {
+    typeText('battle-dialog', `${STATE.currentEnemy.name} fell! +15 Gold.`, () => {
+      STATE.gold += 15;
+      updateHUD();
+      setTimeout(() => endBattle(), 1500);
     });
   } else {
     enemyTurn();
   }
 }
 
-// Init
-setTimeout(() => {
-  typeText(`What will ${STATE.player.name} do?`, () => toggleMenu(true));
-}, 1000);
+function endBattle() {
+  generateRadar();
+  switchTab('explore');
+  toggleBattleMenu(true);
+  typeText('explore-dialog', "The path is clear. Check the radar.");
+}
+
+// ── GRIMOIRE RENDERING ──
+function renderGrimoire() {
+  const grid = document.getElementById('grimoire-grid');
+  grid.innerHTML = BEASTS.map(b => {
+    const isCaught = STATE.grimoire.includes(b.id);
+    return `
+      <div class="g-card ${isCaught ? 'caught' : ''}">
+        <div class="g-sprite">${isCaught ? b.sprite : '?'}</div>
+        <div class="g-name">${isCaught ? b.name : 'UNKNOWN'}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Run
+window.addEventListener('DOMContentLoaded', init);
 
 </script>
 </body>
