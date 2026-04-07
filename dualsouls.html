@@ -3,218 +3,292 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Chamber of Dual Souls — NMN</title>
+<title>The Chamber of Dual Souls — NMN Retro</title>
+
+<link rel="icon" href="logo.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="logo.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="logo.jpg">
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
 
 <style>
-:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28;--soul1:#e8b84b;--soul2:#4a6aaa}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-sans);background:#07070c;color:var(--cream);min-height:100vh;overflow-x:hidden;transition:background 1.5s}
-header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.1);display:flex;justify-content:space-between;align-items:center;background:rgba(7,7,12,.95);position:sticky;top:0;z-index:20}
-.logo{font-family:var(--font-serif);font-style:italic;color:var(--gold);font-size:.95rem;text-decoration:none}
-.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
-.back:hover{color:var(--gold)}
+:root {
+  --gold: #FFD700;
+  --gb: #e8b84b;
+  --gd: #AA7700;
+  --bg-color: #000000;
+  --panel-bg: #111111;
+  --cream: #f0e6cc;
+  --muted: #aaaaaa;
+  --lg: #55FF55; 
+  --soul1: #FFD700;
+  --soul2: #5555FF;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-text: 'VT323', monospace;
+}
 
-/* SPLIT ROOM */
-.split-room{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 56px);position:relative;transition:all 1.5s}
-.soul-side{padding:3rem 2rem;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;transition:background 1.5s;position:relative;overflow:hidden}
-.soul-left{background:rgba(255,215,0,.04)}
-.soul-right{background:rgba(74,106,170,.04)}
-/* Divider line */
-.split-room::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,rgba(255,215,0,.3),rgba(74,106,170,.3),transparent);z-index:5}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; overflow-x: hidden; }
 
-.soul-icon{font-size:3rem;display:block;margin-bottom:1rem;animation:soulsFloat 4s ease-in-out infinite}
-.soul-left .soul-icon{animation-delay:0s}
-.soul-right .soul-icon{animation-delay:2s}
-@keyframes soulsFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.soul-name{font-family:var(--font-serif);font-size:1.4rem;margin-bottom:.3rem}
-.soul-left .soul-name{color:var(--soul1)}
-.soul-right .soul-name{color:var(--soul2)}
-.soul-type{font-size:.48rem;letter-spacing:.25em;text-transform:uppercase;margin-bottom:1rem}
-.soul-left .soul-type{color:var(--gd)}
-.soul-right .soul-type{color:#3a5a8a}
-.soul-desc{font-family:var(--font-serif);font-style:italic;font-size:.9rem;color:var(--muted);line-height:1.8;max-width:280px}
+body {
+  font-family: var(--font-text);
+  color: var(--cream);
+  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
+  padding-bottom: 60px;
+  font-size: 1.2rem;
+}
+
+/* 16-BIT UI BORDER HELPER */
+.retro-box {
+  background: var(--panel-bg);
+  border: 4px solid #FFF;
+  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
+}
+
+/* HEADER */
+header {
+  padding: 1rem 2rem; border-bottom: 4px solid var(--gd);
+  display: flex; justify-content: space-between; align-items: center;
+  background: #000; z-index: 1000; position: sticky; top: 0;
+}
+.logo { font-family: var(--font-pixel); color: var(--gold); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
+.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.back:hover { color: var(--gold); }
+
+main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; flex: 1; width: 100%; display: flex; flex-direction: column; gap: 2rem;}
+
+/* HERO / SPLIT DASHBOARD */
+.soul-dashboard { display: grid; grid-template-columns: 1fr 1fr; border: 4px solid var(--gd); background: #000; position: relative; box-shadow: 4px 4px 0 #000;}
+@media(max-width: 600px) { .soul-dashboard { grid-template-columns: 1fr; } }
+
+.soul-side { padding: 2rem; display: flex; flex-direction: column; align-items: center; text-align: center; transition: background 0.3s steps(5); position: relative;}
+.soul-left { border-right: 4px solid var(--gd); background: rgba(255,215,0,0.05); }
+@media(max-width: 600px) { .soul-left { border-right: none; border-bottom: 4px solid var(--gd); } }
+.soul-right { background: rgba(85,85,255,0.05); }
+
+.soul-canvas { width: 64px; height: 64px; image-rendering: pixelated; margin-bottom: 1rem; filter: drop-shadow(4px 4px 0 #000); animation: float 4s ease-in-out infinite; }
+.soul-left .soul-canvas { animation-delay: 0s; }
+.soul-right .soul-canvas { animation-delay: 2s; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+.soul-name { font-family: var(--font-pixel); font-size: 0.8rem; margin-bottom: 0.5rem; text-shadow: 2px 2px 0 #000; }
+.soul-left .soul-name { color: var(--soul1); }
+.soul-right .soul-name { color: var(--soul2); }
+
+.soul-type { font-family: var(--font-pixel); font-size: 0.45rem; letter-spacing: 0.1em; margin-bottom: 1rem; color: var(--muted); }
+.soul-desc { font-size: 1rem; color: var(--muted); line-height: 1.5; max-width: 280px; }
 
 /* CENTER SCALE */
-.center-overlay{position:absolute;left:50%;transform:translateX(-50%);top:50%;transform:translate(-50%,-50%);z-index:10;text-align:center;width:200px}
-.scale-label{font-size:.42rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:.5rem}
-.scale-bar{width:100%;height:4px;background:linear-gradient(to right,var(--soul1),var(--soul2));position:relative;margin-bottom:.5rem}
-.scale-needle{position:absolute;top:-6px;width:2px;height:16px;background:white;transition:left 1s ease;left:50%}
-.scale-pct{font-size:.5rem;color:var(--cream)}
+.scale-container { padding: 1.5rem; background: #000; border: 4px solid var(--gd); box-shadow: 4px 4px 0 #000; text-align: center; position: relative; }
+.scale-label { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 2px 2px 0 #000; }
+.scale-bar-wrap { width: 100%; height: 24px; background: #111; border: 4px solid #444; position: relative; margin-bottom: 1rem; }
+.scale-bar { width: 100%; height: 100%; background: linear-gradient(90deg, var(--soul1) 0%, var(--soul2) 100%); opacity: 0.5; }
+.scale-needle { position: absolute; top: -4px; bottom: -4px; width: 8px; background: #FFF; left: 50%; transform: translateX(-50%); transition: left 0.5s steps(10); border: 2px solid #000; }
+.scale-pct { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gold); }
 
 /* QUESTION AREA */
-.question-area{position:fixed;bottom:0;left:0;right:0;background:rgba(7,7,12,.97);border-top:1px solid rgba(255,215,0,.15);padding:1.5rem 2rem;z-index:15}
-.q-number{font-size:.45rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gd);margin-bottom:.5rem}
-.q-text{font-family:var(--font-serif);font-style:italic;font-size:1.05rem;color:var(--cream);line-height:1.6;margin-bottom:1rem;max-width:700px;margin-left:auto;margin-right:auto;text-align:center}
-.q-choices{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;max-width:700px;margin:0 auto}
-.q-btn{padding:.85rem 1rem;font-family:var(--font-serif);font-style:italic;font-size:.9rem;cursor:pointer;border:1px solid;background:transparent;transition:all .3s;line-height:1.4;text-align:center}
-.q-btn-left{border-color:rgba(255,215,0,.2);color:var(--muted)}
-.q-btn-left:hover{border-color:var(--soul1);color:var(--soul1);background:rgba(255,215,0,.06)}
-.q-btn-right{border-color:rgba(74,106,170,.2);color:var(--muted)}
-.q-btn-right:hover{border-color:var(--soul2);color:var(--soul2);background:rgba(74,106,170,.06)}
+.question-area { background: #000; border: 4px solid #FFF; padding: 2rem; box-shadow: inset 0 0 0 4px #000, inset 0 0 0 8px var(--gd), 10px 10px 0 #000; }
+.q-number { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); margin-bottom: 1rem; border-bottom: 4px dashed #333; padding-bottom: 0.5rem;}
+.q-text { font-size: 1.6rem; color: var(--cream); line-height: 1.5; margin-bottom: 2rem; text-align: left; min-height: 80px; }
+.q-text::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 1rem; color: var(--gold);}
+@keyframes blink { 0%, 50%, 100% { opacity: 1; } 25%, 75% { opacity: 0; } }
+
+.q-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media(max-width: 600px) { .q-choices { grid-template-columns: 1fr; } }
+.q-btn { padding: 1.5rem 1rem; font-family: var(--font-text); font-size: 1.3rem; cursor: pointer; border: 4px solid #444; background: #111; color: var(--muted); transition: transform 0.1s; line-height: 1.4; text-align: left; }
+.q-btn:hover { transform: translateY(-4px); box-shadow: 4px 4px 0 #000; color: var(--cream); }
+.q-btn::before { content: '▶ '; opacity: 0; font-family: var(--font-pixel); font-size: 0.8rem;}
+.q-btn:hover::before { opacity: 1; }
+
+.q-btn-left:hover { border-color: var(--soul1); background: rgba(255,215,0,0.1); }
+.q-btn-left:hover::before { color: var(--soul1); }
+.q-btn-right:hover { border-color: var(--soul2); background: rgba(85,85,255,0.1); }
+.q-btn-right:hover::before { color: var(--soul2); }
 
 /* RESULT */
-.result-overlay{display:none;position:fixed;inset:0;background:rgba(7,7,12,.95);z-index:30;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
-.result-overlay.active{display:flex}
-.result-balance{font-size:.55rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gd);margin-bottom:.75rem}
-.result-title{font-family:var(--font-serif);font-size:2.5rem;color:var(--cream);margin-bottom:.5rem}
-.result-title em{font-style:italic}
-.result-desc{font-family:var(--font-serif);font-style:italic;font-size:1rem;color:var(--muted);max-width:480px;line-height:1.8;margin-bottom:1rem}
-.result-lore{font-size:.85rem;color:var(--gd);font-family:var(--font-serif);font-style:italic;max-width:420px;line-height:1.7;padding:.75rem;border:1px solid rgba(255,215,0,.15);margin-bottom:1.5rem}
-.btn{padding:.75rem 1.75rem;font-family:var(--font-sans);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;border:1px solid rgba(255,215,0,.3);background:transparent;color:var(--gold);transition:all .3s;margin:.25rem}
-.btn:hover{background:rgba(255,215,0,.08)}
+.result-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 100; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; overflow-y: auto;}
+.result-overlay.active { display: flex; animation: flashIn 0.2s steps(2);}
+@keyframes flashIn { 0% { opacity: 0; } 100% { opacity: 1; } }
 
-@media(max-width:600px){.q-choices{grid-template-columns:1fr}.split-room{grid-template-columns:1fr;min-height:auto}.soul-side{padding:2rem 1rem;min-height:30vh}}
+.result-box { background: #000; border: 6px solid #FFF; padding: 2rem; max-width: 600px; width: 100%; box-shadow: inset 0 0 0 4px #000, inset 0 0 0 8px var(--gd), 10px 10px 0 #000; text-align: left;}
+.result-balance { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); margin-bottom: 1rem; border-bottom: 4px dashed #333; padding-bottom: 0.5rem;}
+.result-title { font-family: var(--font-pixel); font-size: 1.6rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 3px 3px 0 #553300;}
+.result-title em { font-style: normal; }
+.result-desc { font-size: 1.3rem; color: var(--cream); line-height: 1.6; margin-bottom: 1.5rem; }
+.result-lore { font-size: 1.2rem; color: var(--lg); padding: 1.5rem; border-left: 4px solid var(--lg); background: rgba(0,255,136,0.05); margin-bottom: 2rem; font-style: italic;}
+
+.btn { padding: 1.2rem 2rem; font-family: var(--font-pixel); font-size: 0.7rem; text-transform: uppercase; cursor: pointer; border: 4px solid #FFF; transition: transform 0.1s; display: inline-block; text-decoration: none; background: #000; color: var(--cream); margin: 0.5rem 0;}
+.btn-gold { background: var(--gd); color: var(--cream); box-shadow: 4px 4px 0 #000; }
+.btn-gold:hover { background: var(--gold); color: #000; transform: translateY(-4px); }
+.btn:hover:not(.btn-gold) { background: #222; transform: translateY(-2px); }
+
+/* HUD (BOTTOM) */
+.hud { display: flex; justify-content: center; align-items: center; padding: 1rem 2rem; background: #000; border-top: 4px solid #333; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; flex-wrap: wrap; gap: 20px; }
+.hud-stat { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; }
+.hud-val { color: var(--gold); font-size: 1rem; text-shadow: 2px 2px 0 #553300; }
+.hud-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
+.hud-link:hover { color: #000; background: var(--gd); }
+
+/* ── MOUSE FIX ── */
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
 </style>
-
-<style id="depth-gauge-style">
-.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:36px;background:rgba(12,10,7,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:2rem;z-index:999;padding:0 1rem;flex-wrap:wrap}
-.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28}
-.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
-.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s}
-.dg-link:hover{color:#FFD700}
-.dg-sep{color:#2a1808;font-size:.6rem}
-</style>
-
-<style id="nmn-cursor">
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
-</style>
-<style id="floating-gauge">
-.depth-gauge{
-  position:fixed!important;bottom:12px!important;left:50%!important;
-  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
-  height:42px!important;background:rgba(12,10,7,.88)!important;
-  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
-  padding:0 18px!important;pointer-events:none!important;
-  z-index:9999!important;backdrop-filter:blur(4px)!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  gap:1.2rem!important;flex-wrap:nowrap!important;
-  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
-}
-.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
-body{padding-bottom:65px!important}
-</style>
-
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
-
 
 </head>
 <body>
+
 <script src="nmn-nav.js"></script>
+
 <header>
-  <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="oracle.html" class="back">← Oracle's Chamber</a>
+  <a href="index.html" class="logo">NMN DUAL SOULS</a>
+  <a href="oracle.html" class="back">← RETURN TO ORACLE</a>
 </header>
 
-<div class="split-room" id="splitRoom">
-  <div class="soul-side soul-left" id="soulLeft">
-    <span class="soul-icon">⭐</span>
-    <div class="soul-name">The First Soul</div>
-    <div class="soul-type">Gold — Metal — The Born</div>
-    <div class="soul-desc">The soul Felik was born with. Warm. Deliberate. It chose him before he chose it. It believes in building things slowly.</div>
+<main>
+  <div class="soul-dashboard" id="splitRoom">
+    <div class="soul-side soul-left" id="soulLeft">
+      <canvas id="soul1Canvas" class="soul-canvas" width="16" height="16"></canvas>
+      <div class="soul-name">THE FIRST SOUL</div>
+      <div class="soul-type">GOLD / METAL / THE BORN</div>
+      <div class="soul-desc">Warm. Deliberate. It chose him before he chose it. It believes in building things slowly.</div>
+    </div>
+    <div class="soul-side soul-right" id="soulRight">
+      <canvas id="soul2Canvas" class="soul-canvas" width="16" height="16"></canvas>
+      <div class="soul-name">THE SECOND SOUL</div>
+      <div class="soul-type">BLUE / SHADOW / THE FOUND</div>
+      <div class="soul-desc">Cold clarity. It sees everything the first misses. It believes in necessary truth over comfortable peace.</div>
+    </div>
   </div>
-  <div class="soul-side soul-right" id="soulRight">
-    <span class="soul-icon">🌑</span>
-    <div class="soul-name">The Second Soul</div>
-    <div class="soul-type">Blue — Shadow — The Found</div>
-    <div class="soul-desc">The soul that asked to stay. Cold clarity. It sees everything the first soul misses. It believes in necessary truth over comfortable peace.</div>
-  </div>
-  <div class="center-overlay">
-    <div class="scale-label">The Balance</div>
-    <div class="scale-bar"><div class="scale-needle" id="scaleNeedle"></div></div>
-    <div class="scale-pct" id="scalePct">Balanced</div>
-  </div>
-</div>
 
-<div class="question-area" id="questionArea">
-  <div class="q-number" id="qNum">Question 1 of 7 — Felik's Crossroads</div>
-  <div class="q-text" id="qText">Loading...</div>
-  <div class="q-choices">
-    <button class="q-btn q-btn-left" id="qLeft" onclick="answer('left')"></button>
-    <button class="q-btn q-btn-right" id="qRight" onclick="answer('right')"></button>
+  <div class="scale-container">
+    <div class="scale-label">THE BALANCE</div>
+    <div class="scale-bar-wrap">
+      <div class="scale-bar"></div>
+      <div class="scale-needle" id="scaleNeedle"></div>
+    </div>
+    <div class="scale-pct" id="scalePct">BALANCED</div>
   </div>
-</div>
+
+  <div class="question-area" id="questionArea">
+    <div class="q-number" id="qNum">QUESTION 1/7 — FELIK'S CROSSROADS</div>
+    <div class="q-text" id="qText"></div>
+    <div class="q-choices">
+      <button class="q-btn q-btn-left" id="qLeft" onclick="answer('left')"></button>
+      <button class="q-btn q-btn-right" id="qRight" onclick="answer('right')"></button>
+    </div>
+  </div>
+</main>
 
 <div class="result-overlay" id="resultOv">
-  <div class="result-balance" id="resultBalance"></div>
-  <div class="result-title" id="resultTitle"></div>
-  <div class="result-desc" id="resultDesc"></div>
-  <div class="result-lore" id="resultLore"></div>
-  <button class="btn" onclick="restartChamber()">Walk the Crossroads Again</button>
-  <a href="oracle.html" class="btn">Return to Oracle's Chamber</a>
+  <div class="result-box">
+    <div class="result-balance" id="resultBalance"></div>
+    <div class="result-title" id="resultTitle"></div>
+    <div class="result-desc" id="resultDesc"></div>
+    <div class="result-lore" id="resultLore"></div>
+    
+    <div style="text-align: center; margin-top: 2rem;">
+      <button class="btn btn-gold" onclick="shareScore()">SHARE RESULT</button>
+      <button class="btn" onclick="restartChamber()">RECALIBRATE</button>
+      <a href="oracle.html" class="btn">EXIT CHAMBER</a>
+    </div>
+  </div>
+</div>
+
+<div class="hud">
+  <div class="hud-stat">GOLD: <span class="hud-val" id="dgGold">0</span></div>
+  <div class="hud-stat">LORE: <span class="hud-val" id="dgLore">0</span></div>
+  <a href="lorevault.html" class="hud-link">VAULT</a>
+  <a href="lantern.html" class="hud-link">LANTERN</a>
 </div>
 
 <script>
+// ── PROCEDURAL SPRITE GENERATOR ──
+function drawSprite(canvasId, seedStr, colorHex) {
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 16, 16);
+  
+  let seed = 0;
+  for(let i=0; i<seedStr.length; i++) { seed = seed * 31 + seedStr.charCodeAt(i); }
+  const random = () => { let x = Math.sin(seed++) * 10000; return x - Math.floor(x); };
+
+  ctx.fillStyle = colorHex;
+  ctx.shadowColor = colorHex;
+  ctx.shadowBlur = 5;
+  
+  for(let x=0; x<8; x++) {
+    for(let y=0; y<16; y++) {
+      if(random() > 0.4) {
+        ctx.fillRect(x, y, 1, 1); 
+        ctx.fillRect(16 - x - 1, y, 1, 1); 
+      }
+    }
+  }
+  ctx.shadowBlur = 0;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  drawSprite('soul1Canvas', 'WarmGoldSoulStar', '#FFD700');
+  drawSprite('soul2Canvas', 'ColdBlueSoulMoon', '#5555FF');
+  updateGlobalHUD();
+});
+
+// ── DATA ──
 const QUESTIONS = [
   {
     text: "A city is burning. You can save the people who betrayed you, or let them burn to save strangers who never knew you existed. You choose—",
     left: "Save the ones who betrayed me. What they did doesn't change what I should do.",
-    right: "Save the strangers. The betrayers made their choices. So will I.",
-    leftSoul: "The First Soul — loyalty without condition",
-    rightSoul: "The Second Soul — clarity without sentiment"
+    right: "Save the strangers. The betrayers made their choices. So will I."
   },
   {
     text: "You find out the truth about your origin — and it is not what you were told. It changes everything you thought you were. You—",
     left: "Hold on to who I built myself to be. Origin is not destiny.",
-    right: "Let the old self go. What's true is more useful than what's comfortable.",
-    leftSoul: "The First Soul — identity is chosen",
-    rightSoul: "The Second Soul — truth first, always"
+    right: "Let the old self go. What's true is more useful than what's comfortable."
   },
   {
     text: "Someone you love is making a catastrophic mistake. They haven't asked for your opinion. You—",
     left: "Say nothing. They have the right to their own catastrophe.",
-    right: "Speak. Love that stays quiet when it should talk isn't love.",
-    leftSoul: "The First Soul — respect their autonomy",
-    rightSoul: "The Second Soul — speak the necessary truth"
+    right: "Speak. Love that stays quiet when it should talk isn't love."
   },
   {
     text: "You've built something remarkable. It will be destroyed unless you compromise everything that made it remarkable. You—",
     left: "Let it be destroyed. A compromised version of it isn't the thing.",
-    right: "Compromise. Something is better than nothing. Rebuild from there.",
-    leftSoul: "The First Soul — integrity over survival",
-    rightSoul: "The Second Soul — survive to build again"
+    right: "Compromise. Something is better than nothing. Rebuild from there."
   },
   {
     text: "You are given the choice between being remembered for something you didn't do, or forgotten for something you did. You take—",
     left: "The false memory. I know the truth. That's enough.",
-    right: "The forgetting. The truth of what I did matters more than anyone's memory of me.",
-    leftSoul: "The First Soul — inner truth is sufficient",
-    rightSoul: "The Second Soul — the act is the monument"
+    right: "The forgetting. The truth of what I did matters more than anyone's memory of me."
   },
   {
     text: "You can end a long conflict by lying once — and the lie will never be discovered. You—",
     left: "Tell the lie. Peace built on a small fiction is still peace.",
-    right: "Tell the truth. Peace that requires a lie to exist is not peace.",
-    leftSoul: "The First Soul — outcomes over purity",
-    rightSoul: "The Second Soul — means define the end"
+    right: "Tell the truth. Peace that requires a lie to exist is not peace."
   },
   {
     text: "At the end of everything — what do you want? Not what you think you should want. What you actually want.",
     left: "To have been loved well by a few people who knew the real thing.",
-    right: "To have changed something that would have stayed the same without me.",
-    leftSoul: "The First Soul — love is the measure",
-    rightSoul: "The Second Soul — impact is the measure"
-  },
+    right: "To have changed something that would have stayed the same without me."
+  }
 ];
 
 const RESULTS = {
   left: {
-    balance: 'The First Soul Dominates',
-    title: 'The <em>Warm</em> Side',
+    balance: 'SYSTEM OVERRIDE: THE FIRST SOUL DOMINATES',
+    title: 'THE <em style="color:var(--soul1)">WARM</em> SIDE',
     desc: 'Felik\'s first soul recognizes you. You choose loyalty, identity, and the quiet dignity of knowing your own truth without requiring others to confirm it. This is the soul that chose to stay with what it built. That is not weakness. That is the deepest kind of strength.',
     lore: '"The first soul chose Felik before he was born. It was not an accident. Felik earned it by being the kind of person worth choosing." — Lord Oro'
   },
   right: {
-    balance: 'The Second Soul Dominates',
-    title: 'The <em>Clear</em> Side',
+    balance: 'SYSTEM OVERRIDE: THE SECOND SOUL DOMINATES',
+    title: 'THE <em style="color:var(--soul2)">CLEAR</em> SIDE',
     desc: 'Felik\'s second soul recognizes you. You choose clarity, impact, and the uncomfortable truth over the comfortable story. This is the soul that asked to stay — and Felik said yes — because it saw what he couldn\'t see alone. You carry the same clarity. Use it with care.',
     lore: '"The second soul didn\'t ask to share a body. It asked to share a life. Felik said yes. That agreement changed both of them." — Lord Oro'
   },
   balanced: {
-    balance: 'The Souls Are Balanced',
-    title: 'The <em>Agreement</em>',
+    balance: 'SYSTEM OVERRIDE: THE SOULS ARE BALANCED',
+    title: 'THE <em style="color:var(--lg)">AGREEMENT</em>',
     desc: 'You are Felik himself — holding both truths without letting either destroy the other. The first soul warms. The second soul clarifies. Together they are the rarest thing: a person who can love fully and see clearly at the same time. Lord Oro says this is the hardest balance to maintain.',
     lore: '"To carry two souls is not a curse. It is a conversation that never ends. The ones who can hold both without either winning — those are the dangerous ones." — Lord Oro'
   }
@@ -222,320 +296,120 @@ const RESULTS = {
 
 let answers = { left: 0, right: 0 };
 let current = 0;
+let typeTimer = null;
+
+function typeText(text, speed=15) {
+  const el = document.getElementById('qText');
+  el.textContent = "";
+  if(typeTimer) clearInterval(typeTimer);
+  let i = 0;
+  typeTimer = setInterval(() => {
+    el.textContent += text.charAt(i++);
+    if (i >= text.length) clearInterval(typeTimer);
+  }, speed);
+}
 
 function renderQuestion() {
   const q = QUESTIONS[current];
-  document.getElementById('qNum').textContent = `Question ${current + 1} of ${QUESTIONS.length} — Felik's Crossroads`;
-  document.getElementById('qText').textContent = `"${q.text}"`;
+  document.getElementById('qNum').textContent = `QUESTION ${current + 1}/${QUESTIONS.length} — FELIK'S CROSSROADS`;
+  typeText(q.text);
   document.getElementById('qLeft').textContent = q.left;
   document.getElementById('qRight').textContent = q.right;
+  
+  // Reset button states temporarily
+  document.getElementById('qLeft').style.pointerEvents = 'auto';
+  document.getElementById('qRight').style.pointerEvents = 'auto';
 }
 
 function updateBalance() {
   const total = answers.left + answers.right;
   const pct = total === 0 ? 50 : Math.round((answers.left / total) * 100);
+  
   document.getElementById('scaleNeedle').style.left = (100 - pct) + '%';
-  if (pct > 60) document.getElementById('scalePct').textContent = 'First Soul Rising';
-  else if (pct < 40) document.getElementById('scalePct').textContent = 'Second Soul Rising';
-  else document.getElementById('scalePct').textContent = 'In Balance';
-  // Room color shift
-  const leftOpacity = 0.04 + (pct / 100) * 0.12;
-  const rightOpacity = 0.04 + ((100 - pct) / 100) * 0.12;
+  
+  if (pct > 60) document.getElementById('scalePct').textContent = 'FIRST SOUL RISING';
+  else if (pct < 40) document.getElementById('scalePct').textContent = 'SECOND SOUL RISING';
+  else document.getElementById('scalePct').textContent = 'IN BALANCE';
+  
+  const leftOpacity = 0.05 + (pct / 100) * 0.2;
+  const rightOpacity = 0.05 + ((100 - pct) / 100) * 0.2;
   document.getElementById('soulLeft').style.background = `rgba(255,215,0,${leftOpacity})`;
-  document.getElementById('soulRight').style.background = `rgba(74,106,170,${rightOpacity})`;
+  document.getElementById('soulRight').style.background = `rgba(85,85,255,${rightOpacity})`;
 }
 
 function answer(side) {
+  if(typeTimer) clearInterval(typeTimer);
+  document.getElementById('qLeft').style.pointerEvents = 'none';
+  document.getElementById('qRight').style.pointerEvents = 'none';
+  
   answers[side]++;
   updateBalance();
   current++;
-  if (current >= QUESTIONS.length) {
-    showResult();
-  } else {
-    renderQuestion();
-  }
+  
+  setTimeout(() => {
+    if (current >= QUESTIONS.length) showResult();
+    else renderQuestion();
+  }, 500);
 }
 
 function showResult() {
   const total = answers.left + answers.right;
   const leftPct = answers.left / total;
   let result;
+  
   if (leftPct > 0.6) result = RESULTS.left;
   else if (leftPct < 0.4) result = RESULTS.right;
   else result = RESULTS.balanced;
+  
   document.getElementById('resultBalance').textContent = result.balance;
   document.getElementById('resultTitle').innerHTML = result.title;
   document.getElementById('resultDesc').textContent = result.desc;
   document.getElementById('resultLore').textContent = result.lore;
   document.getElementById('resultOv').classList.add('active');
+
+  // Save to Vault
+  try {
+    const v = JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]');
+    v.push({text: `I walked Felik's Crossroads and aligned with: ${result.title.replace(/<\/?[^>]+(>|$)/g, "")}.`, source: "Chamber of Dual Souls", date: new Date().toLocaleDateString()});
+    localStorage.setItem('nmn_lore_vault', JSON.stringify(v));
+    updateGlobalHUD();
+  } catch(e){}
 }
 
 function restartChamber() {
   answers = { left: 0, right: 0 };
   current = 0;
   document.getElementById('resultOv').classList.remove('active');
-  document.getElementById('soulLeft').style.background = 'rgba(255,215,0,0.04)';
-  document.getElementById('soulRight').style.background = 'rgba(74,106,170,0.04)';
+  document.getElementById('soulLeft').style.background = 'rgba(255,215,0,0.05)';
+  document.getElementById('soulRight').style.background = 'rgba(85,85,255,0.05)';
   document.getElementById('scaleNeedle').style.left = '50%';
-  document.getElementById('scalePct').textContent = 'Balanced';
+  document.getElementById('scalePct').textContent = 'BALANCED';
   renderQuestion();
+}
+
+function shareScore() {
+  const title = document.getElementById('resultTitle').textContent;
+  const text = `I walked Felik's Crossroads and aligned with: ${title}. Discover your soul alignment at nonsensemedianetwork.com`;
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Result copied to clipboard!');
+  });
+}
+
+function updateGlobalHUD() {
+  try {
+    document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold')||'0';
+  } catch(e) {}
 }
 
 renderQuestion();
 </script>
 
-<div class="depth-gauge" id="depthGauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
-  <span class="dg-sep">⬡</span>
-  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> Lore Fragments</div>
-  <span class="dg-sep">⬡</span>
-  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span> Creatures</div>
-  <span class="dg-sep">⬡</span>
-  <a href="lorevault.html" class="dg-link">📜 Vault</a>
-  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
-  <a href="ledger.html" class="dg-link">📖 Ledger</a>
-</div>
-<script>
-(function(){
-  try{
-    var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
-    var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
-    var gold=parseInt(localStorage.getItem('nmn_total_gold')||'0');
-    var el=document.getElementById('dgGold');if(el)el.textContent=gold;
-    var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
-    var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
-  }catch(e){}
-})();
-</script>
-
-<script>
-window.NMN_CONTEXT = "oracle";
-// NMN LIVING SOUNDSCAPE — Excavation Committee
-// Gemini's Quad-Track Engine + Claude's integration layer
-// Zero external files. Under 2KB. Procedural — never repeats exactly.
-
-const NMN_Audio = {
-  ctx: null,
-  running: false,
-  masterGain: null,
-  layers: {},
-
-  init() {
-    if (this.ctx) return;
-    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
-    this.masterGain.connect(this.ctx.destination);
-  },
-
-  // TRACK 1 — The Deep Earth (continuous, low hum)
-  playHum() {
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(55, this.ctx.currentTime); // G1
-    gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
-    // Slow breathing — mine is alive
-    // Gemini's LFO: 0.08Hz = one breath every 12.5 seconds
-    const lfo = this.ctx.createOscillator();
-    const lfoGain = this.ctx.createGain();
-    lfo.type = 'sine';
-    lfo.frequency.value = 0.08;
-    lfoGain.gain.value = 0.01; // depth of breath
-    lfo.connect(lfoGain);
-    lfoGain.connect(gain.gain);
-    lfo.start();
-    osc.connect(gain);
-    gain.connect(this.masterGain);
-    osc.start();
-    this.layers.hum = { osc, gain };
-  },
-
-  // TRACK 2 — The Air Shaft (filtered noise / wind)
-  playWind() {
-    const bufferSize = 2 * this.ctx.sampleRate;
-    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-    const output = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
-    const whiteNoise = this.ctx.createBufferSource();
-    whiteNoise.buffer = noiseBuffer;
-    whiteNoise.loop = true;
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 400;
-    const g = this.ctx.createGain();
-    g.gain.setValueAtTime(0.012, this.ctx.currentTime);
-    whiteNoise.connect(filter);
-    filter.connect(g);
-    g.connect(this.masterGain);
-    whiteNoise.start();
-    this.layers.wind = { src: whiteNoise, gain: g };
-  },
-
-  // TRACK 3 — The Distant Strike (random pickaxe echoes)
-  playStrike() {
-    const tick = () => {
-      if (!this.running) return;
-      if (Math.random() > 0.75) {
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        // Metallic strike freq
-        osc.frequency.setValueAtTime(140 + Math.random() * 80, this.ctx.currentTime);
-        osc.type = 'sawtooth';
-        g.gain.setValueAtTime(0.04, this.ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.6);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.6);
-      }
-      // Randomize interval — 3s to 6s — never predictable
-      setTimeout(tick, 3000 + Math.random() * 3000);
-    };
-    setTimeout(tick, 2000);
-  },
-
-  // TRACK 4 — The Gold Shimmer (crystal high tones)
-  playShimmer() {
-    const tick = () => {
-      if (!this.running) return;
-      if (Math.random() > 0.85) {
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = 'triangle';
-        // Gold harmonic range — slightly randomized each time
-        osc.frequency.setValueAtTime(2200 + Math.random() * 1400, this.ctx.currentTime);
-        g.gain.setValueAtTime(0, this.ctx.currentTime);
-        g.gain.linearRampToValueAtTime(0.012, this.ctx.currentTime + 1.2);
-        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2.5);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 2.5);
-      }
-      setTimeout(tick, 5000 + Math.random() * 4000);
-    };
-    setTimeout(tick, 4000);
-  },
-
-  // TRACK 5 — The Subterranean Drip (Gemini's finalized version)
-  // Fast pitch-drop simulates the physics of water hitting a cavern pool
-  playWaterDrip() {
-    const tick = () => {
-      if (!this.running) return;
-      if (Math.random() > 0.6) {
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = 'sine';
-        // Start mid-freq, drop 50% in 80ms — exact droplet physics
-        osc.frequency.setValueAtTime(400 + Math.random() * 100, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.08);
-        g.gain.setValueAtTime(0.02, this.ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.08);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.08);
-      }
-      // 2-8 second random interval — no rhythmic pattern ever emerges
-      setTimeout(tick, 2000 + Math.random() * 6000);
-    };
-    setTimeout(tick, 5000 + Math.random() * 3000);
-  },
-
-  // TRACK 6 — The Oracle's Pad
-  playOraclePad() {
-    const AMAJ = [220, 277.18, 329.63];
-    const tick = () => {
-      if (!this.running) return;
-      AMAJ.forEach((freq, i) => {
-        const osc = this.ctx.createOscillator();
-        const filter = this.ctx.createBiquadFilter();
-        const g = this.ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-        filter.type = 'lowpass'; filter.frequency.value = 800;
-        g.gain.setValueAtTime(0, this.ctx.currentTime);
-        g.gain.linearRampToValueAtTime(0.03, this.ctx.currentTime + 2);
-        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 9);
-        osc.connect(filter); filter.connect(g); g.connect(this.masterGain);
-        osc.start(this.ctx.currentTime + i * 0.08);
-        osc.stop(this.ctx.currentTime + 9.5);
-      });
-      setTimeout(tick, 9000);
-    };
-    setTimeout(tick, 8000);
-  },
-
-  // Page-context aware — different mix per section
-  startAll(context) {
-    if (this.running) return;
-    this.init();
-    this.running = true;
-    this.playHum();
-    this.playWind();
-    this.playStrike();
-    this.playShimmer();
-    this.playOraclePad();
-    // Only add water drip on deep mine pages
-    if (context === 'deep' || context === 'oracle' || context === 'vigil') {
-      this.playWaterDrip();
-    }
-    // Tora gets a slightly higher shimmer frequency (more ethereal)
-    if (context === 'tora') {
-      this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
-    }
-  },
-
-  stop() {
-    if (!this.running) return;
-    this.running = false;
-    if (this.masterGain) {
-      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
-    }
-  },
-
-  toggle() {
-    if (this.running) { this.stop(); return false; }
-    else { this.startAll(window.NMN_CONTEXT || 'mine'); return true; }
-  }
-};
-
-// Trigger on first interaction — browser autoplay policy requires user gesture
-document.addEventListener('click', () => {
-  if (!NMN_Audio.running) NMN_Audio.startAll(window.NMN_CONTEXT || 'mine');
-}, { once: true });
-
-</script>
-
-<button id="nmn-sound-btn" onclick="
-  const on = NMN_Audio.toggle();
-  this.textContent = on ? '🔊 Sound On' : '🔇 Sound Off';
-  this.style.color = on ? 'var(--gold,#c9962a)' : '#4a3c28';
-" style="position:fixed;bottom:42px;right:.75rem;z-index:998;background:rgba(12,10,7,.9);border:1px solid rgba(255,215,0,.2);color:#4a3c28;font-family:Josefin Sans,sans-serif;font-size:.42rem;letter-spacing:.1em;padding:.35rem .6rem;cursor:pointer;transition:all .3s">🔇 Sound Off</button>
-<script id="nmn-glow">
-(function(){
-  var r=document.createElement('div');
-  r.id='pickaxe-glow';
-  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
-  document.body.appendChild(r);
-  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
-  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
-  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
-})();
-</script>
-
-<!-- Monetag Service Worker Registration -->
 <script>
 if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
+    navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
 }
 </script>
 
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
-</div>
 </body>
 </html>
