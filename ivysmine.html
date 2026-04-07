@@ -7,13 +7,17 @@
 <link rel="stylesheet" href="nmn-theme.css">
 
 <style>
-:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28;--lg:#6aaa4a;--dg:#2a5a1a;--rock:#1a1510}
+:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28;--lg:#6aaa4a;--dg:#2a5a1a;--rock:#1a1510;--nela:#d97736;--felik:#6c7a89;}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-sans);background:#070a05;color:var(--cream);min-height:100vh;background-image:linear-gradient(45deg,#070a05 25%,#0a0f07 25%,#0a0f07 50%,#070a05 50%,#070a05 75%,#0a0f07 75%,#0a0f07 100%);background-size:4px 4px;padding-bottom:50px}
-header{padding:.8rem 2rem;border-bottom:1px solid rgba(106,170,74,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(7,10,5,.97);position:sticky;top:0;z-index:20}
-.logo{font-family:var(--font-serif);font-style:italic;color:var(--lg);font-size:1rem;text-decoration:none}
+body{font-family:var(--font-sans);background:#040404;color:var(--cream);min-height:100vh;
+background-image:
+  linear-gradient(rgba(4, 4, 4, 0.9), rgba(4, 4, 4, 0.95)),
+  repeating-linear-gradient(45deg, #070a05 0%, #070a05 5px, #0a0f07 5px, #0a0f07 10px);
+padding-bottom:50px}
+header{padding:.8rem 2rem;border-bottom:1px solid rgba(232,184,75,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(4,4,4,.97);position:sticky;top:0;z-index:20}
+.logo{font-family:var(--font-serif);font-style:italic;color:var(--gb);font-size:1rem;text-decoration:none}
 .back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
-.back:hover{color:var(--lg)}
+.back:hover{color:var(--gold)}
 
 /* ── SCREENS ── */
 .screen{display:none;animation:fadeIn .5s ease}
@@ -22,268 +26,242 @@ header{padding:.8rem 2rem;border-bottom:1px solid rgba(106,170,74,.15);display:f
 
 /* ── CHARACTER CREATION ── */
 #createScreen{max-width:560px;margin:0 auto;padding:2.5rem 1.5rem}
-.create-title{font-family:var(--font-serif);font-size:2rem;color:var(--cream);text-align:center;margin-bottom:.3rem}
-.create-title em{color:var(--lg);font-style:italic}
+.create-title{font-family:var(--font-serif);font-size:2rem;color:var(--cream);text-align:center;margin-bottom:.3rem; text-shadow: 0 0 10px rgba(255,215,0,0.2);}
+.create-title em{color:var(--gold);font-style:italic}
 .create-sub{font-size:.7rem;color:var(--muted);text-align:center;line-height:1.9;margin-bottom:2rem;font-family:var(--font-serif);font-style:italic}
-.create-label{font-size:.5rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dg);margin-bottom:.5rem;display:block}
-.create-input{width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.03);border:1px solid rgba(106,170,74,.2);color:var(--cream);font-family:var(--font-serif);font-style:italic;font-size:1rem;outline:none;margin-bottom:1.25rem;transition:border-color .3s}
-.create-input:focus{border-color:rgba(106,170,74,.5)}
+.create-label{font-size:.5rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gd);margin-bottom:.5rem;display:block}
+.create-input{width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.02);border:1px solid rgba(232,184,75,.2);color:var(--cream);font-family:var(--font-serif);font-style:italic;font-size:1rem;outline:none;margin-bottom:1.25rem;transition:border-color .3s; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);}
+.create-input:focus{border-color:rgba(255,215,0,.5)}
 .trait-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.5rem}
-.trait-card{border:1px solid rgba(106,170,74,.15);padding:1rem;cursor:pointer;transition:all .25s;text-align:center;background:rgba(255,255,255,.02)}
-.trait-card:hover{border-color:rgba(106,170,74,.4);background:rgba(106,170,74,.04)}
-.trait-card.selected{border-color:var(--lg);background:rgba(106,170,74,.08)}
+.trait-card{border:1px solid rgba(232,184,75,.15);padding:1rem;cursor:pointer;transition:all .25s;text-align:center;background:rgba(255,255,255,.02)}
+.trait-card:hover{border-color:rgba(255,215,0,.4);background:rgba(232,184,75,.04)}
+.trait-card.selected{border-color:var(--gold);background:rgba(232,184,75,.08); box-shadow: 0 0 15px rgba(255,215,0,0.1);}
 .trait-icon{font-size:1.5rem;display:block;margin-bottom:.4rem}
 .trait-name{font-family:var(--font-serif);font-size:.95rem;color:var(--cream);margin-bottom:.2rem}
 .trait-desc{font-size:.52rem;color:var(--muted);line-height:1.6}
-.start-btn{width:100%;padding:1rem;background:var(--lg);color:#020503;font-family:var(--font-sans);font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;border:none;cursor:pointer;transition:all .3s}
-.start-btn:hover{background:#7acc5a}
-.dedication{font-family:var(--font-serif);font-style:italic;font-size:.75rem;color:var(--dg);text-align:center;margin-top:1.25rem;line-height:1.7;padding:.75rem;border:1px solid rgba(106,170,74,.08)}
+.start-btn{width:100%;padding:1rem;background:var(--gd);color:#020503;font-family:var(--font-sans);font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;border:1px solid var(--gold);cursor:pointer;transition:all .3s}
+.start-btn:hover{background:var(--gold); box-shadow: 0 0 20px rgba(255,215,0,0.3);}
+.dedication{font-family:var(--font-serif);font-style:italic;font-size:.75rem;color:var(--muted);text-align:center;margin-top:1.25rem;line-height:1.7;padding:.75rem;border:1px solid rgba(232,184,75,.08)}
 
 /* ── MAIN GAME ── */
-#gameScreen{max-width:900px;margin:0 auto;padding:1.5rem;position:relative;}
+#gameScreen{max-width:1000px;margin:0 auto;padding:1.5rem;position:relative;}
 
-/* HUD */
-.hud-container { display: flex; gap: 1rem; margin-bottom: 1.25rem; align-items: stretch; flex-wrap: wrap; }
-.hud{flex: 1; background:rgba(7,10,5,.95);border:1px solid rgba(106,170,74,.15);padding:1rem 1.25rem;display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:1rem;align-items:center}
-@media(max-width: 768px) { .hud { grid-template-columns: 1fr 1fr; } }
-.hud-info{display:flex;flex-direction:column}
-.hud-name{font-family:var(--font-serif);font-size:1rem;color:var(--cream)}
-.hud-name em{color:var(--lg);font-style:italic}
-.hud-day{font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dg)}
-.hud-gold{font-family:var(--font-serif);font-size:1.3rem;color:var(--gold);text-align:center}
-.hud-gold-label{font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gd);text-align:center}
-.hud-reset{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);background:transparent;border:1px solid rgba(255,255,255,.06);cursor:pointer;padding:.3rem .6rem;transition:all .3s}
-.hud-reset:hover{color:#aa4444;border-color:#aa4444}
+/* HUD & ACTIVITY TRACKER */
+.top-dashboard { display: grid; grid-template-columns: 300px 1fr; gap: 1rem; margin-bottom: 1.25rem; }
+@media(max-width: 800px) { .top-dashboard { grid-template-columns: 1fr; } }
 
-/* MINE SIM OBSERVER */
-.mine-sim-window {
-  width: 140px; background: #020104; border: 1px solid rgba(106,170,74,.3);
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.8); z-index: 10;
-  display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0;
-}
-.mine-sim-header {
-  background: rgba(106,170,74,.15); color: var(--lg); font-size: 0.35rem; padding: 4px;
-  text-align: center; text-transform: uppercase; border-bottom: 1px solid rgba(106,170,74,.2);
-  letter-spacing: 0.1em;
-}
-.mine-sim-view {
-  flex: 1; position: relative; background: #050408;
-  background-image: repeating-linear-gradient(45deg, #0a080c 0, #0a080c 2px, transparent 2px, transparent 4px);
-  min-height: 60px;
-}
-.worker-dot {
-  position: absolute; width: 3px; height: 3px; background: var(--lg);
-  box-shadow: 0 0 5px var(--lg); border-radius: 50%;
-  animation: dig 2s infinite alternate ease-in-out;
-}
-@keyframes dig { 0% { transform: translate(5px, 20px); } 100% { transform: translate(40px, 25px); } }
+.hud{background:rgba(4,4,4,.95);border:1px solid rgba(232,184,75,.15);padding:1.25rem;display:flex;flex-direction:column;gap:1rem; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);}
+.hud-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.hud-name{font-family:var(--font-serif);font-size:1.1rem;color:var(--cream)}
+.hud-name em{color:var(--gold);font-style:italic; text-shadow: 0 0 5px rgba(255,215,0,0.3);}
+.hud-day{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd); margin-top: 0.3rem;}
+.hud-gold-container { text-align: right; }
+.hud-gold{font-family:var(--font-serif);font-size:1.8rem;color:var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.2);}
+.hud-gold-label{font-size:.45rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gd);}
+.hud-weather { font-size:.65rem;color:var(--muted);font-family:var(--font-serif);font-style:italic; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.05); }
+
+/* ACTIVE MINER LOG (Replaces the simple dot) */
+.active-tracker { background: #020104; border: 1px solid rgba(232,184,75,.2); display: flex; flex-direction: column; overflow: hidden; position: relative; }
+.tracker-header { background: rgba(232,184,75,.05); color: var(--gold); font-size: 0.45rem; padding: 8px 12px; text-transform: uppercase; border-bottom: 1px solid rgba(232,184,75,.1); letter-spacing: 0.2em; display: flex; justify-content: space-between;}
+.tracker-window { flex: 1; padding: 1rem; font-family: var(--font-sans); font-size: 0.6rem; color: var(--cream); overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.2) 2px, rgba(0,0,0,0.2) 4px); }
+.tracker-event { display: flex; gap: 0.5rem; align-items: flex-start; animation: slideIn 0.3s ease forwards; opacity: 0; transform: translateX(-10px); }
+.tracker-event.system { color: var(--muted); font-style: italic; font-family: var(--font-serif); }
+.tracker-event.action { color: var(--gb); }
+.tracker-event.loot { color: var(--gold); font-weight: bold; }
+@keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
 
 /* NEEDS BARS */
-.needs{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:1.25rem}
+.needs{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
 @media(max-width: 600px) { .needs { grid-template-columns: repeat(2,1fr); } }
-.need-bar{background:rgba(255,255,255,.02);border:1px solid rgba(106,170,74,.1);padding:.6rem .75rem}
-.need-label{font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:.35rem}
-.need-track{height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden}
-.need-fill{height:100%;border-radius:3px;transition:width .6s ease}
-.need-val{font-size:.5rem;color:var(--muted);text-align:right;margin-top:.2rem}
-.need-rest .need-fill{background:linear-gradient(to right,#4a8a6a,#6aaa8a)}
-.need-food .need-fill{background:linear-gradient(to right,#8a6a2a,#c9962a)}
-.need-connection .need-fill{background:linear-gradient(to right,#6a4a9a,#9a6aaa)}
-.need-spirit .need-fill{background:linear-gradient(to right,#2a6a8a,#4a9aaa)}
+.need-bar{background:rgba(255,255,255,.01);border:1px solid rgba(255,255,255,.05);padding:.8rem}
+.need-label{font-size:.45rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem; display: flex; justify-content: space-between;}
+.need-track{height:4px;background:rgba(0,0,0,.5);overflow:hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);}
+.need-fill{height:100%;transition:width .6s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px currentColor;}
+.need-rest .need-fill{background:var(--gd); color: var(--gd);}
+.need-food .need-fill{background:#8a6a2a; color: #8a6a2a;}
+.need-connection .need-fill{background:#6a4a9a; color: #6a4a9a;}
+.need-spirit .need-fill{background:#2a6a8a; color: #2a6a8a;}
 
-/* APARTMENT */
-.apartment-label{font-size:.52rem;letter-spacing:.3em;text-transform:uppercase;color:var(--dg);margin-bottom:.75rem;display:flex;align-items:center;gap:.75rem}
-.apartment-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(106,170,74,.2),transparent)}
-.apartment-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:1.25rem}
-@media(max-width:600px){.apartment-grid{grid-template-columns:repeat(2,1fr)}}
-.room{border:1px solid rgba(106,170,74,.1);padding:.75rem;background:rgba(7,10,5,.8);cursor:pointer;transition:all .25s;position:relative;min-height:80px}
-.room:hover{border-color:rgba(106,170,74,.3);background:rgba(106,170,74,.04)}
-.room.level-2{border-color:rgba(106,170,74,.2);background:rgba(106,170,74,.03)}
-.room.level-3{border-color:rgba(255,215,0,.3);background:rgba(255,215,0,.04)}
-.room-icon{font-size:1.4rem;display:block;margin-bottom:.3rem}
-.room-name{font-family:var(--font-serif);font-size:.85rem;color:var(--cream);margin-bottom:.2rem}
-.room-desc{font-size:.48rem;color:var(--muted);line-height:1.5}
-.room-level{position:absolute;top:.4rem;right:.4rem;font-size:.38rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gd)}
-.upgrade-btn{display:block;width:100%;margin-top:.5rem;padding:.3rem;background:transparent;border:1px solid rgba(255,215,0,.2);color:var(--gd);font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .25s}
-.upgrade-btn:hover{border-color:var(--gold);color:var(--gold)}
+/* TOWN GRID */
+.section-label{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gd);margin-bottom:1rem;display:flex;align-items:center;gap:1rem; text-shadow: 0 0 5px rgba(255,215,0,0.2);}
+.section-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(232,184,75,.3),transparent)}
 
-/* ACTIONS */
-.actions-label{font-size:.52rem;letter-spacing:.3em;text-transform:uppercase;color:var(--dg);margin-bottom:.75rem;display:flex;align-items:center;gap:.75rem}
-.actions-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(106,170,74,.2),transparent)}
-.actions-label span{font-size:.42rem;color:var(--faint)}
-.actions-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;margin-bottom:1.25rem}
-@media(max-width:480px){.actions-grid{grid-template-columns:1fr}}
-.action-btn{border:1px solid rgba(106,170,74,.15);padding:.85rem 1rem;background:rgba(255,255,255,.02);cursor:pointer;transition:all .25s;text-align:left;font-family:var(--font-sans)}
-.action-btn:hover:not(:disabled){border-color:rgba(106,170,74,.4);background:rgba(106,170,74,.05);transform:translateY(-1px)}
-.action-btn:disabled{opacity:.4;cursor:default}
-.action-btn.used{border-color:rgba(255,215,0,.2);background:rgba(255,215,0,.04)}
-.action-icon{font-size:1.1rem;display:block;margin-bottom:.3rem}
-.action-name{font-size:.62rem;color:var(--cream);display:block;margin-bottom:.2rem;font-family:var(--font-serif)}
-.action-effects{font-size:.48rem;color:var(--muted);line-height:1.5}
-.end-day-btn{width:100%;padding:.9rem;background:var(--dg);border:1px solid rgba(106,170,74,.3);color:var(--cream);font-family:var(--font-sans);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s;margin-bottom:1.25rem}
-.end-day-btn:hover{background:var(--lg);color:#020503}
-.end-day-btn:disabled{opacity:.4;cursor:default}
+.town-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:0.75rem;margin-bottom:2rem}
+.action-btn{border:1px solid rgba(255,255,255,.05);padding:1rem;background:rgba(255,255,255,.02);cursor:pointer;transition:all .3s;text-align:left; position: relative; overflow: hidden;}
+.action-btn::before { content: ''; position: absolute; top: 0; left: 0; width: 2px; height: 100%; background: var(--gd); opacity: 0; transition: opacity 0.3s; }
+.action-btn:hover:not(:disabled){border-color:rgba(232,184,75,.4);background:rgba(232,184,75,.05);transform:translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.5);}
+.action-btn:hover:not(:disabled)::before { opacity: 1; }
+.action-btn:disabled{opacity:.3;cursor:default; filter: grayscale(100%);}
+.action-btn.used{border-color:rgba(255,215,0,.2);background:rgba(255,215,0,.04);}
+.action-icon{font-size:1.5rem;display:block;margin-bottom:.5rem; filter: drop-shadow(0 0 5px rgba(255,215,0,0.2));}
+.action-name{font-size:.7rem;color:var(--cream);display:block;margin-bottom:.3rem;font-family:var(--font-serif); letter-spacing: 0.05em;}
+.action-effects{font-size:.45rem;color:var(--muted);line-height:1.6; text-transform: uppercase; letter-spacing: 0.1em;}
+
+/* EXPLORATION MODAL */
+.explore-overlay{display:none;position:fixed;inset:0;background:rgba(2,1,2,.95);z-index:100;align-items:center;justify-content:center;padding:1.5rem; backdrop-filter: blur(5px);}
+.explore-overlay.open{display:flex; animation: fadeIn 0.4s ease;}
+.explore-box{max-width:600px;width:100%;background:#040404;border:1px solid var(--gd);padding:2rem; box-shadow: 0 0 30px rgba(139, 105, 20, 0.2); position: relative;}
+.explore-title { font-family: var(--font-serif); font-size: 1.5rem; color: var(--gold); text-align: center; margin-bottom: 1rem; font-style: italic;}
+.explore-text { font-size: 0.85rem; line-height: 1.8; color: var(--cream); margin-bottom: 2rem; text-align: center; min-height: 80px;}
+.explore-choices { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.explore-choice-btn { padding: 0.8rem 1.5rem; background: transparent; border: 1px solid rgba(232,184,75,.3); color: var(--gb); font-family: var(--font-sans); font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.3s; }
+.explore-choice-btn:hover { background: rgba(232,184,75,.1); border-color: var(--gold); box-shadow: 0 0 10px rgba(255,215,0,0.2); }
+
+.end-day-btn{width:100%;padding:1.2rem;background:transparent;border:1px solid var(--gd);color:var(--gold);font-family:var(--font-sans);font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;margin-bottom:1.25rem; position: relative;}
+.end-day-btn:hover:not(:disabled){background:rgba(139,105,20,0.1); box-shadow: inset 0 0 20px rgba(139,105,20,0.4), 0 0 15px rgba(255,215,0,0.1);}
+.end-day-btn:disabled{opacity:.2;cursor:default; border-color: rgba(255,255,255,0.1); color: var(--muted);}
 
 /* STORY LOG */
-.log-label{font-size:.52rem;letter-spacing:.3em;text-transform:uppercase;color:var(--dg);margin-bottom:.75rem;display:flex;align-items:center;gap:.75rem}
-.log-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(106,170,74,.2),transparent)}
-.story-log{border:1px solid rgba(106,170,74,.1);background:rgba(7,10,5,.6);max-height:200px;overflow-y:auto;padding:.75rem}
-.log-entry{font-family:var(--font-serif);font-style:italic;font-size:.82rem;color:var(--muted);line-height:1.8;padding:.3rem 0;border-bottom:1px solid rgba(106,170,74,.06)}
-.log-entry:last-child{border-bottom:none;color:var(--cream)}
+.story-log{border:1px solid rgba(255,255,255,.05);background:rgba(0,0,0,.6);max-height:250px;overflow-y:auto;padding:1rem; box-shadow: inset 0 0 10px rgba(0,0,0,1);}
+.log-entry{font-family:var(--font-serif);font-style:italic;font-size:.85rem;color:var(--muted);line-height:1.8;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.02)}
+.log-entry:last-child{border-bottom:none;color:var(--cream); text-shadow: 0 0 5px rgba(255,255,255,0.2);}
 
 /* NPC DIALOG */
-.npc-overlay{display:none;position:fixed;inset:0;background:rgba(3,2,1,.88);z-index:50;align-items:center;justify-content:center;padding:1.5rem}
+.npc-overlay{display:none;position:fixed;inset:0;background:rgba(3,2,1,.9);z-index:50;align-items:center;justify-content:center;padding:1.5rem;}
 .npc-overlay.open{display:flex}
-.npc-box{max-width:480px;width:100%;background:#070a05;border:1px solid rgba(106,170,74,.2);padding:1.75rem}
-.npc-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
-.npc-avatar{font-size:2rem}
-.npc-name{font-family:var(--font-serif);font-size:1.1rem;color:var(--lg)}
-.npc-line{font-family:var(--font-serif);font-style:italic;font-size:1rem;color:var(--cream);line-height:1.8;margin-bottom:1rem}
-.npc-close{width:100%;padding:.7rem;background:transparent;border:1px solid rgba(106,170,74,.2);color:var(--lg);font-family:var(--font-sans);font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .3s}
-.npc-close:hover{background:rgba(106,170,74,.08)}
+.npc-box{max-width:500px;width:100%;background:#040404;border:1px solid var(--gd);padding:2rem; position: relative;}
+.npc-box::before { content: ''; position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px; border: 1px solid rgba(255,215,0,0.1); pointer-events: none; }
+.npc-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem}
+.npc-avatar{font-size:2.5rem; filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));}
+.npc-name{font-family:var(--font-serif);font-size:1.3rem;color:var(--gold); letter-spacing: 0.05em;}
+.npc-line{font-family:var(--font-serif);font-style:italic;font-size:1.1rem;color:var(--cream);line-height:1.8;margin-bottom:1.5rem}
+.npc-close{width:100%;padding:.8rem;background:transparent;border:1px solid rgba(232,184,75,.3);color:var(--gb);font-family:var(--font-sans);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.npc-close:hover{background:rgba(232,184,75,.1); border-color: var(--gold);}
 
 /* LORD ORO APPEARANCE */
 .oro-overlay{display:none;position:fixed;inset:0;z-index:60;pointer-events:none}
 .oro-overlay.show{display:block}
-.oro-shadow{position:absolute;right:-100px;bottom:10%;width:60px;height:150px;background:linear-gradient(to left,rgba(0,0,0,.7),transparent);clip-path:polygon(20% 0%,80% 0%,100% 5%,100% 95%,80% 100%,20% 100%,0% 95%,0% 5%);filter:blur(2px);opacity:0;transition:right 3s ease,opacity 2s ease}
-.oro-overlay.show .oro-shadow{opacity:.7;right:0}
-.oro-eyes{position:absolute;right:18px;bottom:calc(10% + 95px);display:flex;gap:8px;opacity:0;transition:opacity 2s ease 1s}
+.oro-shadow{position:absolute;right:-100px;bottom:10%;width:80px;height:200px;background:linear-gradient(to left,rgba(0,0,0,.9),transparent);clip-path:polygon(20% 0%,80% 0%,100% 5%,100% 95%,80% 100%,20% 100%,0% 95%,0% 5%);filter:blur(3px);opacity:0;transition:right 3s ease,opacity 2s ease}
+.oro-overlay.show .oro-shadow{opacity:.8;right:0}
+.oro-eyes{position:absolute;right:25px;bottom:calc(10% + 120px);display:flex;gap:10px;opacity:0;transition:opacity 2s ease 1s}
 .oro-overlay.show .oro-eyes{opacity:1}
-.oro-eye{width:5px;height:5px;border-radius:50%;background:#e8b84b;box-shadow:0 0 6px #e8b84b;animation:eyeGlow 2s ease-in-out infinite}
-@keyframes eyeGlow{0%,100%{opacity:.6}50%{opacity:1}}
-.oro-line{position:absolute;right:70px;bottom:calc(10% + 70px);background:rgba(3,2,1,.9);border:1px solid rgba(255,215,0,.2);border-left:2px solid var(--gold);padding:.6rem .9rem;max-width:220px;opacity:0;transition:opacity 1s ease 2s;pointer-events:all}
+.oro-eye{width:6px;height:6px;border-radius:50%;background:#e8b84b;box-shadow:0 0 10px #e8b84b, 0 0 20px #FFD700;animation:eyeGlow 3s ease-in-out infinite}
+@keyframes eyeGlow{0%,100%{opacity:.4; transform: scale(1);}50%{opacity:1; transform: scale(1.2);}}
+.oro-line{position:absolute;right:90px;bottom:calc(10% + 80px);background:rgba(2,1,2,.95);border:1px solid rgba(255,215,0,.1);border-left:3px solid var(--gold);padding:1rem;max-width:280px;opacity:0;transition:opacity 1s ease 2s;pointer-events:all; box-shadow: 0 10px 30px rgba(0,0,0,0.8);}
 .oro-overlay.show .oro-line{opacity:1}
-.oro-line p{font-family:var(--font-serif);font-style:italic;font-size:.82rem;color:var(--cream);line-height:1.6}
-.oro-line small{font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gd);display:block;margin-top:.3rem}
+.oro-line p{font-family:var(--font-serif);font-style:italic;font-size:.9rem;color:var(--cream);line-height:1.7}
+.oro-line small{font-size:.45rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd);display:block;margin-top:.5rem}
 
-/* DEPTH GAUGE */
-.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:34px;background:rgba(7,10,5,.97);border-top:1px solid rgba(106,170,74,.15);display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:999;padding:0 1rem}
-.dg-stat{font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
-.dg-link{font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-decoration:none}
-.dg-link:hover{color:var(--lg)}
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); }
+::-webkit-scrollbar-thumb { background: var(--gd); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
 </style>
-<style id="nmn-cursor">
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
-</style>
-<style id="floating-gauge">
-.depth-gauge{
-  position:fixed!important;bottom:12px!important;left:50%!important;
-  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
-  height:42px!important;background:rgba(12,10,7,.88)!important;
-  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
-  padding:0 18px!important;pointer-events:none!important;
-  z-index:9999!important;backdrop-filter:blur(4px)!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  gap:1.2rem!important;flex-wrap:nowrap!important;
-  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
-}
-.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
-body{padding-bottom:65px!important}
-</style>
-
 </head>
 <body>
-<script src="nmn-nav.js"></script>
 <header>
-  <a href="ivytunnel.html" class="logo">🌿 Poison Ivy's Tunnel</a>
-  <a href="ivytunnel.html" class="back">← Back Through the Vines</a>
+  <a href="#" class="logo">⛏️ Ivy's Corner</a>
+  <a href="#" class="back">← The Surface</a>
 </header>
 
 <div class="screen active" id="createScreen">
   <h1 class="create-title">Ivy's <em>Mine</em></h1>
-  <p class="create-sub">"No objectives. No win screen. No end. Just life in the mine — and the mine responds to you."</p>
+  <p class="create-sub">"The stone remembers. Lord Oro watches. What will you unearth?"</p>
 
   <label class="create-label">Your Name</label>
-  <input type="text" class="create-input" id="minerName" placeholder="What do the miners call you?" maxlength="24">
+  <input type="text" class="create-input" id="minerName" placeholder="What do the shadows call you?" maxlength="24">
 
-  <label class="create-label">Your Trait — Who Are You in the Mine?</label>
+  <label class="create-label">Your Origin in the Lore</label>
   <div class="trait-grid">
     <div class="trait-card" onclick="selectTrait('Builder')" id="trait-Builder">
       <span class="trait-icon">⚒️</span>
       <div class="trait-name">The Builder</div>
-      <div class="trait-desc">You upgrade rooms faster. The mine responds to your hands. +5 gold on work days.</div>
+      <div class="trait-desc">You shape the stone. Rooms upgrade faster. +5 gold on deep digs.</div>
     </div>
     <div class="trait-card" onclick="selectTrait('Dreamer')" id="trait-Dreamer">
       <span class="trait-icon">🌙</span>
       <div class="trait-name">The Dreamer</div>
-      <div class="trait-desc">Spirit drains slower. The window crack gives you more. Tora reads you differently.</div>
+      <div class="trait-desc">Spirit drains slower. You see traces of Pyro and Helios in the dark.</div>
     </div>
     <div class="trait-card" onclick="selectTrait('Wanderer')" id="trait-Wanderer">
       <span class="trait-icon">🧭</span>
       <div class="trait-name">The Wanderer</div>
-      <div class="trait-desc">Connection builds faster with all NPCs. Lord Oro appears more often. You are easy to find.</div>
+      <div class="trait-desc">Felik and Nela trust you. Connection builds fast. Lord Oro lingers longer.</div>
     </div>
     <div class="trait-card" onclick="selectTrait('Goldseeker')" id="trait-Goldseeker">
       <span class="trait-icon">⬡</span>
       <div class="trait-name">The Goldseeker</div>
-      <div class="trait-desc">Gold accumulates faster. Every action has a small chance of a rare find. The mine trusts you.</div>
+      <div class="trait-desc">The mountain yields to you. High chance of rare finds during exploration.</div>
     </div>
   </div>
 
-  <button class="start-btn" onclick="startGame()">⬡ Descend Into the Mine</button>
-  <div class="dedication">"For Ivy Martin — who bought every expansion pack not to win, but because she wanted more world to live in."</div>
+  <button class="start-btn" onclick="startGame()">Descend Into the Dark</button>
+  <div class="dedication">"A small town buried in gold and memory. Welcome to Ivy's Corner."</div>
 </div>
 
 <div class="screen" id="gameScreen">
 
-  <div class="hud-container">
+  <div class="top-dashboard">
     <div class="hud">
-      <div class="hud-info">
-        <div class="hud-name" id="hudName"></div>
-        <div class="hud-day" id="hudDay">Day 1</div>
+      <div class="hud-header">
+        <div>
+          <div class="hud-name" id="hudName"></div>
+          <div class="hud-day" id="hudDay">Day 1</div>
+        </div>
+        <div class="hud-gold-container">
+          <div class="hud-gold" id="hudGold">50</div>
+          <div class="hud-gold-label">⬡ Gold</div>
+        </div>
       </div>
-      <div>
-        <div class="hud-gold" id="hudGold">50</div>
-        <div class="hud-gold-label">⬡ Gold</div>
-      </div>
-      <div style="font-size:.62rem;color:var(--muted);font-family:var(--font-serif);font-style:italic" id="hudWeather"></div>
-      <button class="hud-reset" onclick="confirmReset()">↺ New Life</button>
+      <div class="hud-weather" id="hudWeather"></div>
+      <button class="end-day-btn" style="margin:0; padding: 0.6rem; font-size: 0.5rem; letter-spacing: 0.1em; border-color: rgba(255,255,255,0.1);" onclick="confirmReset()">↺ Surrender to the Surface (Reset)</button>
     </div>
 
-    <div class="mine-sim-window">
-      <div class="mine-sim-header">Live Feed</div>
-      <div class="mine-sim-view" id="mine-sim-bg">
-        <div class="worker-dot" style="left: 10px; top: 15px; animation-duration: 2.3s;"></div>
-        <div class="worker-dot" style="left: 30px; top: 25px; animation-duration: 1.8s; animation-delay: 0.5s; background: var(--gold); box-shadow: 0 0 5px var(--gold);"></div>
-        <div class="worker-dot" style="left: 60px; top: 10px; animation-duration: 2.6s; animation-delay: 1.2s;"></div>
+    <div class="active-tracker">
+      <div class="tracker-header">
+        <span>Live Log: <span id="trackerLocation">Ivy's Corner</span></span>
+        <span id="trackerStatus" style="color:var(--muted)">Idle</span>
+      </div>
+      <div class="tracker-window" id="trackerWindow">
+        <div class="tracker-event system">» Tracking system initiated. The mountain is awake.</div>
       </div>
     </div>
   </div>
 
   <div class="needs">
     <div class="need-bar need-rest">
-      <div class="need-label">🌙 Rest</div>
+      <div class="need-label"><span>🌙 Rest</span> <span id="val-rest">80</span></div>
       <div class="need-track"><div class="need-fill" id="need-rest" style="width:80%"></div></div>
-      <div class="need-val" id="val-rest">80</div>
     </div>
     <div class="need-bar need-food">
-      <div class="need-label">🍲 Food</div>
+      <div class="need-label"><span>🍲 Food</span> <span id="val-food">80</span></div>
       <div class="need-track"><div class="need-fill" id="need-food" style="width:80%"></div></div>
-      <div class="need-val" id="val-food">80</div>
     </div>
     <div class="need-bar need-connection">
-      <div class="need-label">🤝 Connection</div>
+      <div class="need-label"><span>🤝 Bond</span> <span id="val-connection">80</span></div>
       <div class="need-track"><div class="need-fill" id="need-connection" style="width:80%"></div></div>
-      <div class="need-val" id="val-connection">80</div>
     </div>
     <div class="need-bar need-spirit">
-      <div class="need-label">✨ Spirit</div>
+      <div class="need-label"><span>✨ Spirit</span> <span id="val-spirit">80</span></div>
       <div class="need-track"><div class="need-fill" id="need-spirit" style="width:80%"></div></div>
-      <div class="need-val" id="val-spirit">80</div>
     </div>
   </div>
 
-  <div class="apartment-label">Your Apartment</div>
-  <div class="apartment-grid" id="apartmentGrid"></div>
+  <div class="section-label">Ivy's Corner (Town Actions) <span style="font-size:0.45rem; color:var(--muted); text-transform:none; letter-spacing:normal;" id="actionsLeft">(2 remaining today)</span></div>
+  <div class="town-grid" id="actionsGrid"></div>
+  
+  <div class="section-label" style="margin-top: 1.5rem;">The Depths</div>
+  <button class="action-btn" style="width: 100%; text-align: center; border-color: var(--gd); margin-bottom: 1.5rem;" onclick="startExploration()" id="exploreBtn">
+    <span class="action-icon" style="font-size: 2rem;">⛏️</span>
+    <span class="action-name" style="font-size: 0.9rem;">Explore the Deep Seam</span>
+    <span class="action-effects">Venture into the unknown. Costs 20 Rest, 15 Food. High Risk, High Reward.</span>
+  </button>
 
-  <div class="actions-label">Choose Two Actions <span id="actionsLeft">(2 remaining today)</span></div>
-  <div class="actions-grid" id="actionsGrid"></div>
-  <button class="end-day-btn" id="endDayBtn" onclick="endDay()" disabled>Sleep — End the Day</button>
+  <button class="end-day-btn" id="endDayBtn" onclick="endDay()" disabled>Retire to Quarters — End the Day</button>
 
-  <div class="log-label">Story Log</div>
+  <div class="section-label">Memory Log</div>
   <div class="story-log" id="storyLog"></div>
 
+</div>
+
+<div class="explore-overlay" id="exploreOverlay">
+  <div class="explore-box">
+    <div class="explore-title" id="exploreTitle">The Descent</div>
+    <div class="explore-text" id="exploreText">The air grows cold. The lantern light flickers against the obsidian walls.</div>
+    <div class="explore-choices" id="exploreChoices">
+      </div>
+  </div>
 </div>
 
 <div class="npc-overlay" id="npcOverlay">
@@ -293,7 +271,7 @@ body{padding-bottom:65px!important}
       <div class="npc-name" id="npcName"></div>
     </div>
     <div class="npc-line" id="npcLine"></div>
-    <button class="npc-close" onclick="closeNPC()">⬡ Close</button>
+    <button class="npc-close" onclick="closeNPC()">⬡ Acknowledge</button>
   </div>
 </div>
 
@@ -306,165 +284,183 @@ body{padding-bottom:65px!important}
   </div>
 </div>
 
-<div class="depth-gauge">
-  <span class="dg-stat">🏠 Ivy's Mine — Day <span id="dgDay">1</span></span>
-  <a href="ivytunnel.html" class="dg-link">🌿 Ivy's Tunnel</a>
-  <a href="index.html" class="dg-link">⛏ The Mine</a>
-</div>
-
 <script>
-// ── THE MINE DATA ─────────────────────────────────────────────────────
+// ── LORE & NPC DATA ───────────────────────────────────────────────────
+const NPC_AVATARS = { ivy:'💎', pip:'🤖', tora:'🔮', nela:'🦁', felik:'🌗' };
+const NPC_NAMES = { ivy:'Ivy Martin', pip:'Pip the Scrapper', tora:'Tora the Seer', nela:'Nela the Lioness', felik:'Felik' };
 
-const ROOMS = [
-  { id:'sleeping', icon:'🛏️', name:'Sleeping Quarters',
-    levels:['Rough stone floor, a rolled mat, darkness that feels earned.','Woven moss rug. A lamp that stays lit. The dark is gentler now.','Velvet-lined obsidian bed. The mine gave you this. You earned it.'],
-    upgradeCost:[0,40,100], needBonus:{rest:15} },
-  { id:'kitchen', icon:'🍳', name:'The Shaft Kitchen',
-    levels:['A rusty iron pot. Whatever you cook tastes like effort.','Copper kettle and a stone stove. The tea is real now.','3D-printed gold-filament utensils. Ivy had them made. They are absurd and perfect.'],
-    upgradeCost:[0,35,90], needBonus:{food:15} },
-  { id:'sitting', icon:'🪨', name:'The Sitting Rock',
-    levels:['A jagged boulder. Comfortable if you know how to sit.','Carved smooth. Someone spent time on this. You wonder who.','A throne of raw amber. Lord Oro has sat here. You can tell.'],
-    upgradeCost:[0,30,80], needBonus:{spirit:10} },
-  { id:'workbench', icon:'🔨', name:'The Work Bench',
-    levels:['Rotting wood plank. Gets the job done.','Sturdy iron table. The work is better now.','Floating magnetic desk. The mine built this. You do not ask how.'],
-    upgradeCost:[0,45,110], needBonus:{} },
-  { id:'window', icon:'🌌', name:'The Window Crack',
-    levels:['A narrow gap in the rock. Cold air. A sliver of impossibility.','Polished glass pane. The view sharpens. You see further.','Crystal lens that magnifies the stars. Tora says each one is a name.'],
-    upgradeCost:[0,50,120], needBonus:{spirit:20} },
-  { id:'door', icon:'🚪', name:'The Door',
-    levels:['A hanging tarp. Anything could come through. Sometimes something does.','Reinforced timber. You have a door now. This matters.','Intricately carved gold-leaf archway. Lord Oro stood here last night. You are certain.'],
-    upgradeCost:[0,60,150], needBonus:{connection:10} },
-];
-
-const ACTIONS = [
-  { id:'work', icon:'⛏️', name:'Work the Seam', effects:'+20 Gold, -15 Rest, -10 Food',
-    apply(G){G.gold+=20+(G.trait==='Builder'?5:0)+(G.trait==='Goldseeker'&&Math.random()>.7?15:0);G.needs.rest=Math.max(5,G.needs.rest-15);G.needs.food=Math.max(5,G.needs.food-10);if(Math.random()>.75){G.rel.pip=Math.min(100,G.rel.pip+5);return{npc:'pip',line:RND(PIP_LINES)};}return null;},
-    log(G){return`Day ${G.day} — You worked the seam. The gold was stubborn but so were you.`} },
-  { id:'ivy', icon:'💎', name:"Visit Ivy's Shop", effects:'+15 Connection, +15 Spirit, -10 Gold',
-    apply(G){G.gold=Math.max(0,G.gold-10);G.needs.connection=Math.min(100,G.needs.connection+15);G.needs.spirit=Math.min(100,G.needs.spirit+15);G.rel.ivy=Math.min(100,G.rel.ivy+10);return{npc:'ivy',line:RND(IVY_LINES)};},
-    log(G){return`Day ${G.day} — You visited Ivy's shop. She found you something worth keeping.`} },
-  { id:'pip', icon:'🤖', name:'Share a Meal with Pip', effects:'+20 Connection, +20 Food, -10 Gold',
-    apply(G){G.gold=Math.max(0,G.gold-10);G.needs.food=Math.min(100,G.needs.food+20);G.needs.connection=Math.min(100,G.needs.connection+20);G.rel.pip=Math.min(100,G.rel.pip+12);return{npc:'pip',line:RND(PIP_LINES)};},
-    log(G){return`Day ${G.day} — You shared a meal with Pip. He simulated the sound of a crackling fire. You both agreed it was close enough.`} },
-  { id:'bench', icon:'🔨', name:'Tinker at the Bench', effects:'+20 Spirit, -10 Food',
-    apply(G){G.needs.spirit=Math.min(100,G.needs.spirit+20);G.needs.food=Math.max(5,G.needs.food-10);return null;},
-    log(G){return`Day ${G.day} — You tinkered at the bench. Something clicked. You are not sure what but the mine noticed.`} },
-  { id:'window', icon:'🌌', name:'Sit at the Window Crack', effects:'+25 Spirit, -10 Connection',
-    apply(G){G.needs.spirit=Math.min(100,G.needs.spirit+(G.trait==='Dreamer'?35:25));G.needs.connection=Math.max(5,G.needs.connection-10);return null;},
-    log(G){return`Day ${G.day} — You sat at the window crack. The stars seemed to pulse in time with something you haven't named yet.`} },
-  { id:'tora', icon:'🔮', name:"Visit Tora's Descent", effects:'+15 Connection, +15 Spirit, +5 Rest',
-    apply(G){G.needs.connection=Math.min(100,G.needs.connection+15);G.needs.spirit=Math.min(100,G.needs.spirit+15);G.needs.rest=Math.min(100,G.needs.rest+5);G.rel.tora=Math.min(100,G.rel.tora+10);return{npc:'tora',line:RND(TORA_LINES)};},
-    log(G){return`Day ${G.day} — You visited Tora. Her words felt like a cold breeze in a hot tunnel. You are still thinking about them.`} },
-];
-
-// ── NPC LINES ─────────────────────────────────────────────────────────
 const IVY_LINES = [
-  "Welcome back. I saved something special — I had a feeling you'd be in today.",
-  "The baby kept me up all night but honestly? I'd rather be here. The gems don't cry.",
-  "Oh, that ruby? It's got a fracture, but that's where the light gets in. Just like us.",
-  "Don't tell the others, but I saved this piece of amber for you. It's got a prehistoric moth inside.",
-  "You look like you've been working too hard. Here, have a piece of dried fruit on the house.",
-  "Gold is nice, but have you seen the way this obsidian catches the shadows?",
-  "Being a shopkeeper is just like being a miner — you're always looking for something hidden.",
-  "This gemstone is from the lower shafts. It's older than the mountain itself.",
-  "How are the neighbors? I heard Pip found some high-grade scrap metal again.",
-  "Every gem has a story. This one says it wants to go home with you.",
-  "I remember when this whole shaft was just a crawl-space. Look at us now.",
-  "Business is slow today, which is perfect for a long chat. Sit a while.",
-  "Come back tomorrow. I'm expecting a shipment of star-stones from the surface.",
-  "You need the amber one. I don't know why. I just know.",
-  "The mine gives you what you need. Today it sent you here. That means something.",
+  "Welcome back. I saved a piece of fractured ruby for you. It's where the light gets in.",
+  "Being a shopkeeper here is like being a miner — we're all looking for something hidden.",
+  "Don't tell the others, but I saved this amber for you. It holds a prehistoric moth.",
+  "Gold is nice, but have you seen the way this obsidian catches the shadows?"
 ];
-
 const PIP_LINES = [
-  "Greetings, neighbor! I have calculated a 98% chance of gold in the North Seam today.",
-  "I found this piece of copper wire. It is redundant for me. Please accept it.",
-  "My sensors detect your fatigue levels are elevated. Please utilize the Sitting Rock.",
-  "I like living in the mine. The silence does not interfere with my processors.",
-  "Ivy gave me a gemstone today. I do not have pockets, so I will hold it forever.",
-  "Do you require assistance with your Work Bench? My torque is superior.",
-  "I am learning to hum. Does this sound like the mountain to you?",
-  "I have processed your story log. It is a highly efficient narrative.",
-  "The Window Crack shows the stars. My optical sensors find them logically pleasing.",
-  "I will stand by your door while you sleep. I do not require Rest.",
-  "I observed Lord Oro at your door. My internal clock stopped for 0.4 seconds.",
-  "I have been thinking about the word 'home.' I believe it is a coordinate I have already reached.",
+  "I have calculated a 98% chance of survival today. This is an improvement.",
+  "I found copper wire. It is redundant for me. Please accept it as 'friendship'.",
+  "I observed Lord Oro near your quarters. My internal clock paused for 0.4 seconds.",
+  "My optical sensors find the Window Crack logically pleasing."
 ];
-
 const TORA_LINES = [
-  "The mountain says your path is narrow, but the floor is solid. Walk on.",
-  "I see a vein of shadow in your future. Do not hide from it — mine it.",
-  "The dust is settling. What is revealed beneath is yours to keep.",
-  "You are looking for gold, but the mountain is offering you iron. Take the iron.",
   "A door will open that has no handle. You must speak to it.",
-  "The stars are out of alignment, but the stone is true. Trust the stone.",
-  "Someone is coming with a gift. It will look like a burden. Accept it.",
-  "Your lantern is bright, but your shadow is longer. Both are necessary.",
-  "The mine has a secret for you. You will find it when you stop looking.",
-  "You are not here by accident. The mine sent you a long time ago. You are only now arriving.",
+  "The dust is settling. What is revealed beneath is yours to bear.",
+  "The stars are out of alignment, but the stone is true. Trust the stone."
 ];
-
+const NELA_LINES = [
+  "The stone is hard, but we must be harder. Keep your guard up in the lower shafts.",
+  "I patrol the perimeter so you can dig. Do not waste the safety I provide.",
+  "I smelled smoke from the Deep Seam today. It wasn't natural. Be careful.",
+  "A lioness does not fear the dark, but she respects what hunts within it."
+];
+const FELIK_LINES = [
+  "One path leads to gold, the other to shadows. I walk both. Which will you choose?",
+  "A man with two souls understands the mountain better than most. It is divided, just like us.",
+  "I saw a mural of two boys down there—one of fire, one of light. The past is bleeding through.",
+  "Do not let the greed consume your first soul, nor the fear consume your second."
+];
 const ORO_LINES = [
   "The stone remembers your name. Do you?",
-  "Gold is just a color until you give it a purpose.",
   "The deepest mines aren't in the earth. They are in the memory.",
-  "I saw Nayla today. She asked if you were still digging.",
-  "You look tired. The mine will wait. Rest is a form of work.",
+  "I saw Nela today. She asked if you were still digging. Do not disappoint her.",
   "Felik once told me that a man with two souls is never truly alone.",
-  "The stars you see through that crack? They are watching back.",
   "Do not be afraid of the dark. The dark is where the gold lives.",
   "Every strike of the pickaxe is a word in your own story.",
-  "Ivy tells me you're a good neighbor. That matters more than the gold.",
-  "The echo you hear? That's just the mountain breathing.",
-  "Some things are only visible when the lantern goes out.",
-  "Juni has lived a thousand years. He says you're doing fine.",
-  "A kingdom is just a cave until a lord decides to lead.",
-  "The best ore is found at the intersection of fear and faith.",
-  "I am not here. I am just a reflection of what you've found.",
-  "The mine gives what you need, not always what you want.",
-  "Keep the lamp lit. The shadows are hungry tonight.",
-  "Is the air heavy today? Or is it just the thoughts you brought down?",
-  "You have been here before. You are not the same person who was here last time.",
+  "A kingdom is just a cave until a lord decides to lead."
 ];
 
 const WEATHER = [
   "The mine is quiet today. Even the stone is listening.",
-  "A warm current from the deep. Someone lit a fire nearby.",
-  "Cold air through the window crack. Something is moving in the upper shafts.",
-  "The gold veins are bright today. The mine is in a good mood.",
-  "Dust motes in the lantern light. You could count them. You don't.",
-  "The walls are sweating. The mine is thinking.",
-  "Still. The kind of still that means something is about to happen.",
-  "The echoes are longer today. Sound travels differently when the mine is awake.",
+  "Cold air sweeps through the tunnel. Nela is on patrol.",
+  "The gold veins glow faintly. The mountain is dreaming.",
+  "The echoes are longer today. Sound travels differently when the mine is awake."
 ];
 
 function RND(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
-// ── GAME STATE ─────────────────────────────────────────────────────────
-const SAVE_KEY = 'nmn_ivysmine_v1';
+// ── ACTIONS ────────────────────────────────────────────────────────────
+const ACTIONS = [
+  { id:'ivy', icon:'💎', name:"Ivy's Gem Shop", effects:'+15 Bond, +15 Spirit, -10 Gold',
+    apply(G){G.gold=Math.max(0,G.gold-10);G.needs.connection=Math.min(100,G.needs.connection+15);G.needs.spirit=Math.min(100,G.needs.spirit+15);return{npc:'ivy',line:RND(IVY_LINES)};},
+    log:"You visited Ivy. She traded a shiny rock for your gold and a piece of her sanity." },
+  { id:'pip', icon:'🤖', name:'Pip\'s Scrap Heap', effects:'+20 Bond, +10 Food, -5 Gold',
+    apply(G){G.gold=Math.max(0,G.gold-5);G.needs.food=Math.min(100,G.needs.food+10);G.needs.connection=Math.min(100,G.needs.connection+20);return{npc:'pip',line:RND(PIP_LINES)};},
+    log:"You sat with Pip. He simulated the sound of a crackling fire. Close enough." },
+  { id:'nela', icon:'🦁', name:'Nela\'s Watchpost', effects:'+20 Rest, +10 Bond',
+    apply(G){G.needs.rest=Math.min(100,G.needs.rest+20);G.needs.connection=Math.min(100,G.needs.connection+10);return{npc:'nela',line:RND(NELA_LINES)};},
+    log:"You stood watch with Nela. Just being near her made you feel secure enough to rest your eyes." },
+  { id:'felik', icon:'🌗', name:'Felik\'s Crossroads', effects:'+25 Spirit, -10 Rest',
+    apply(G){G.needs.spirit=Math.min(100,G.needs.spirit+25);G.needs.rest=Math.max(5,G.needs.rest-10);return{npc:'felik',line:RND(FELIK_LINES)};},
+    log:"You spoke with Felik. His two voices overlapped, filling you with strange, ancient inspiration." }
+];
+
+// ── EXPLORATION LOGIC ──────────────────────────────────────────────────
+let inExploration = false;
+let exploreStep = 0;
+
+const EXPLORE_EVENTS = [
+  {
+    title: "The Shimmering Vein", text: "You strike the wall and a bright yellow glow spills out. Do you dig carefully or smash it open?",
+    choices: [
+      { label: "Dig Carefully", apply: (G) => { G.gold += 15; trackLog("Mined carefully. +15 Gold.", "loot"); return "You extract the gold without collapsing the tunnel."; } },
+      { label: "Smash It", apply: (G) => { let g = Math.random()>0.5?30:5; G.gold += g; G.needs.rest -= 10; trackLog(`Smashed wall. Found ${g} Gold. -10 Rest.`, "action"); return "Rubble flies everywhere. It was reckless, but you got what you could."; } }
+    ]
+  },
+  {
+    title: "The Forgotten Mural", text: "Your lantern illuminates a dusty wall painting: a boy of pure fire holding hands with a boy of brilliant light. Pyro and Helios.",
+    choices: [
+      { label: "Study the Lore", apply: (G) => { G.needs.spirit += 25; trackLog("Studied ancient lore. +25 Spirit.", "action"); return "The story of their journey home fills you with hope."; } },
+      { label: "Keep Moving", apply: (G) => { trackLog("Ignored the mural.", "system"); return "You have no time for myths. Gold awaits."; } }
+    ]
+  },
+  {
+    title: "A Shadow in the Dark", text: "You hear a growl echoing from the lower shaft. A shadow detaches from the wall.",
+    choices: [
+      { label: "Call for Nela", apply: (G) => { G.needs.connection += 10; trackLog("Called Nela. Shadow retreated.", "action"); return "Nela's roar echoes from above. The shadow vanishes instantly."; } },
+      { label: "Stand Your Ground", apply: (G) => { G.needs.rest -= 20; G.needs.spirit -= 15; trackLog("Fought off fear. -20 Rest, -15 Spirit.", "system"); return "It was just a trick of the light... but it exhausted your nerves."; } }
+    ]
+  }
+];
+
+function startExploration() {
+  if(actionsUsedToday.length >= 2 || G.needs.rest < 20 || G.needs.food < 15) {
+    alert("You are too tired, hungry, or have no time left to explore the Deep Seam today.");
+    return;
+  }
+  
+  actionsUsedToday.push('explore');
+  G.actionsUsed = actionsUsedToday;
+  G.needs.rest -= 20;
+  G.needs.food -= 15;
+  
+  trackLog("Miner has entered the Deep Seam.", "system");
+  document.getElementById('trackerStatus').textContent = "Exploring";
+  document.getElementById('trackerStatus').style.color = "var(--gold)";
+  
+  inExploration = true;
+  exploreStep = 0;
+  renderGame();
+  
+  setTimeout(() => showExploreEvent(), 800);
+}
+
+function showExploreEvent() {
+  const ev = RND(EXPLORE_EVENTS);
+  document.getElementById('exploreTitle').textContent = ev.title;
+  document.getElementById('exploreText').textContent = ev.text;
+  
+  const choicesContainer = document.getElementById('exploreChoices');
+  choicesContainer.innerHTML = '';
+  
+  ev.choices.forEach(choice => {
+    const btn = document.createElement('button');
+    btn.className = 'explore-choice-btn';
+    btn.textContent = choice.label;
+    btn.onclick = () => {
+      const resultText = choice.apply(G);
+      document.getElementById('exploreText').textContent = resultText;
+      choicesContainer.innerHTML = `<button class="explore-choice-btn" onclick="endExploration()">Return to Town</button>`;
+      save(G);
+      renderGame();
+    };
+    choicesContainer.appendChild(btn);
+  });
+  
+  document.getElementById('exploreOverlay').classList.add('open');
+}
+
+function endExploration() {
+  document.getElementById('exploreOverlay').classList.remove('open');
+  trackLog("Miner returned to Ivy's Corner.", "system");
+  document.getElementById('trackerStatus').textContent = "Idle";
+  document.getElementById('trackerStatus').style.color = "var(--muted)";
+  inExploration = false;
+  
+  G.log.push(`Day ${G.day} — You explored the Deep Seam. The mountain tested you, but you survived.`);
+  save(G);
+  renderGame();
+  
+  if(Math.random() > 0.6) setTimeout(()=>showNPC('felik', RND(FELIK_LINES)), 500);
+}
+
+
+// ── GAME STATE & CORE LOOP ─────────────────────────────────────────────
+const SAVE_KEY = 'nmn_ivysmine_v2';
+let G = null;
+let selectedTrait = null;
+let actionsUsedToday = [];
 
 function defaultState(name, trait) {
   return {
-    name, trait,
-    day: 1,
-    gold: 50,
+    name, trait, day: 1, gold: 50,
     needs: { rest:80, food:80, connection:80, spirit:80 },
-    rel: { ivy:10, pip:10, tora:5 },
-    rooms: { sleeping:1, kitchen:1, sitting:1, workbench:1, window:1, door:1 },
-    log: [`Day 1 — You arrived at the shaft. The air is heavy but the gold is real.`],
-    actionsUsed: [],
-    oroSeen: 0,
+    log: [`Day 1 — You arrived at Ivy's Corner. The air is heavy, but Lord Oro's presence is felt.`],
+    actionsUsed: [], oroSeen: 0
   };
 }
 
 function save(G){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify(G)); }catch(e){} }
 function load(){ try{ const r=localStorage.getItem(SAVE_KEY); return r?JSON.parse(r):null; }catch(e){ return null; } }
 
-let G = null;
-let selectedTrait = null;
-let actionsUsedToday = [];
-
-// ── CREATE ─────────────────────────────────────────────────────────────
 function selectTrait(t) {
   selectedTrait = t;
   document.querySelectorAll('.trait-card').forEach(c=>c.classList.remove('selected'));
@@ -475,12 +471,9 @@ function startGame() {
   const name = document.getElementById('minerName').value.trim() || 'The Miner';
   if(!selectedTrait){ selectTrait('Dreamer'); }
   const saved = load();
-  if(saved && saved.name) {
-    G = saved;
-  } else {
-    G = defaultState(name, selectedTrait);
-    save(G);
-  }
+  if(saved && saved.name) { G = saved; } 
+  else { G = defaultState(name, selectedTrait); save(G); }
+  
   actionsUsedToday = G.actionsUsed || [];
   showScreen('gameScreen');
   renderGame();
@@ -492,37 +485,28 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
 }
 
-// ── RENDER ─────────────────────────────────────────────────────────────
+function trackLog(msg, type="action") {
+  const win = document.getElementById('trackerWindow');
+  const d = new Date();
+  const time = `${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
+  win.innerHTML += `<div class="tracker-event ${type}">[${time}] ${msg}</div>`;
+  win.scrollTop = win.scrollHeight;
+}
+
 function renderGame() {
   document.getElementById('hudName').innerHTML = `<em>${G.name}</em> — ${G.trait}`;
-  document.getElementById('hudDay').textContent = `Day ${G.day} in the Mine`;
-  document.getElementById('hudGold').textContent = G.gold;
+  document.getElementById('hudDay').textContent = `Day ${G.day} in Ivy's Corner`;
+  document.getElementById('hudGold').textContent = Math.floor(G.gold);
   document.getElementById('hudWeather').textContent = RND(WEATHER);
-  document.getElementById('dgDay').textContent = G.day;
 
   // Needs
   ['rest','food','connection','spirit'].forEach(n=>{
-    const val = Math.round(G.needs[n]);
+    const val = Math.max(0, Math.min(100, Math.round(G.needs[n])));
     document.getElementById('need-'+n).style.width = val+'%';
     document.getElementById('val-'+n).textContent = val;
     const fill = document.getElementById('need-'+n);
-    fill.style.opacity = val < 25 ? '0.5' : '1';
+    fill.style.opacity = val < 25 ? '0.4' : '1';
   });
-
-  // Rooms
-  const grid = document.getElementById('apartmentGrid');
-  grid.innerHTML = ROOMS.map(room => {
-    const lvl = G.rooms[room.id] || 1;
-    const upgCost = room.upgradeCost[lvl] || null;
-    const canUpgrade = upgCost && G.gold >= upgCost;
-    return `<div class="room level-${lvl}" onclick="visitRoom('${room.id}')">
-      <span class="room-icon">${room.icon}</span>
-      <div class="room-name">${room.name}</div>
-      <div class="room-desc">${room.levels[lvl-1]}</div>
-      <div class="room-level">Lv ${lvl}</div>
-      ${upgCost ? `<button class="upgrade-btn" onclick="upgradeRoom(event,'${room.id}',${upgCost})" ${canUpgrade?'':'disabled'} style="opacity:${canUpgrade?1:.4}">Upgrade — ${upgCost} Gold</button>` : '<div style="font-size:.42rem;color:var(--gd);margin-top:.4rem">✦ Fully Upgraded</div>'}
-    </div>`;
-  }).join('');
 
   // Actions
   const actGrid = document.getElementById('actionsGrid');
@@ -530,38 +514,40 @@ function renderGame() {
   document.getElementById('actionsLeft').textContent = `(${remaining} remaining today)`;
   actGrid.innerHTML = ACTIONS.map(a => {
     const used = actionsUsedToday.includes(a.id);
-    return `<button class="action-btn ${used?'used':''}" onclick="doAction('${a.id}')" ${used||remaining<=0?'disabled':''}>
+    const exhausted = remaining <= 0;
+    return `<button class="action-btn ${used?'used':''}" onclick="doAction('${a.id}')" ${used||exhausted?'disabled':''}>
       <span class="action-icon">${a.icon}</span>
       <span class="action-name">${a.name}</span>
       <span class="action-effects">${a.effects}</span>
     </button>`;
   }).join('');
 
-  document.getElementById('endDayBtn').disabled = actionsUsedToday.length < 2;
+  const exploreBtn = document.getElementById('exploreBtn');
+  exploreBtn.disabled = remaining <= 0 || actionsUsedToday.includes('explore') || G.needs.rest < 20 || G.needs.food < 15;
+
+  document.getElementById('endDayBtn').disabled = remaining > 0;
 
   // Story log
   const logEl = document.getElementById('storyLog');
   logEl.innerHTML = [...G.log].reverse().slice(0,20).map(e=>`<div class="log-entry">${e}</div>`).join('');
 }
 
-// ── ACTIONS ────────────────────────────────────────────────────────────
 function doAction(id) {
-  if(actionsUsedToday.includes(id)) return;
-  if(actionsUsedToday.length >= 2) return;
-
+  if(actionsUsedToday.length >= 2 || actionsUsedToday.includes(id)) return;
   const action = ACTIONS.find(a=>a.id===id);
   if(!action) return;
 
   actionsUsedToday.push(id);
   G.actionsUsed = actionsUsedToday;
+  trackLog(`Interacting with ${action.name}...`, "action");
 
   const result = action.apply(G);
-  G.log.push(action.log(G));
+  G.log.push(`Day ${G.day} — ${action.log}`);
   save(G);
   renderGame();
 
   if(result && result.npc) {
-    setTimeout(()=>showNPC(result.npc, result.line), 400);
+    setTimeout(()=>showNPC(result.npc, result.line), 300);
   }
 }
 
@@ -569,63 +555,24 @@ function endDay() {
   if(actionsUsedToday.length < 2) return;
 
   // Drain needs overnight
-  G.needs.rest = Math.min(100, G.needs.rest + 15);
-  G.needs.food = Math.max(5, G.needs.food - 8);
-  G.needs.connection = Math.max(5, G.needs.connection - 5);
-  G.needs.spirit = Math.max(5, G.needs.spirit - 3);
-
-  // Room bonuses
-  ROOMS.forEach(room => {
-    const lvl = G.rooms[room.id] || 1;
-    if(lvl > 1 && room.needBonus) {
-      Object.entries(room.needBonus).forEach(([need, bonus]) => {
-        G.needs[need] = Math.min(100, G.needs[need] + (bonus * (lvl-1) * 0.3));
-      });
-    }
-  });
+  G.needs.rest = Math.min(100, G.needs.rest + 30);
+  G.needs.food = Math.max(0, G.needs.food - 15);
+  G.needs.connection = Math.max(0, G.needs.connection - 10);
+  G.needs.spirit = Math.max(0, G.needs.spirit - 10);
 
   G.day++;
   actionsUsedToday = [];
   G.actionsUsed = [];
-  G.log.push(`Day ${G.day} — Another day in the mine begins. The stone is patient. So are you.`);
-  save(G);
-  document.getElementById('dgDay').textContent = G.day;
-  renderGame();
-
-  // Maybe Oro appears
-  if(Math.random() > 0.7) setTimeout(maybeShowOro, 2000);
-
-  // Scroll log to top
-  setTimeout(()=>{
-    const log = document.getElementById('storyLog');
-    if(log) log.scrollTop = 0;
-  }, 300);
-}
-
-// ── ROOMS ──────────────────────────────────────────────────────────────
-function visitRoom(id) {
-  const room = ROOMS.find(r=>r.id===id);
-  if(!room) return;
-  const lvl = G.rooms[id];
-  showNPCCustom('🏠', room.name, `${room.levels[lvl-1]}`);
-}
-
-function upgradeRoom(e, id, cost) {
-  e.stopPropagation();
-  if(G.gold < cost) return;
-  G.gold -= cost;
-  G.rooms[id] = (G.rooms[id] || 1) + 1;
-  const room = ROOMS.find(r=>r.id===id);
-  const newLvl = G.rooms[id];
-  G.log.push(`Day ${G.day} — You upgraded ${room.name}. ${room.levels[newLvl-1]}`);
+  G.log.push(`Day ${G.day} — You wake up in your quarters. The mountain has shifted in the night.`);
+  
+  trackLog(`=== DAY ${G.day} BEGAN ===`, "system");
   save(G);
   renderGame();
+
+  if(Math.random() > 0.75) setTimeout(maybeShowOro, 2000);
 }
 
-// ── NPCs ───────────────────────────────────────────────────────────────
-const NPC_AVATARS = { ivy:'💎', pip:'🤖', tora:'🔮' };
-const NPC_NAMES = { ivy:'Ivy Martin', pip:'Pip', tora:'Tora' };
-
+// ── NPCs & ORO ─────────────────────────────────────────────────────────
 function showNPC(npcId, line) {
   document.getElementById('npcAvatar').textContent = NPC_AVATARS[npcId]||'⬡';
   document.getElementById('npcName').textContent = NPC_NAMES[npcId]||npcId;
@@ -633,43 +580,27 @@ function showNPC(npcId, line) {
   document.getElementById('npcOverlay').classList.add('open');
 }
 
-function showNPCCustom(avatar, name, line) {
-  document.getElementById('npcAvatar').textContent = avatar;
-  document.getElementById('npcName').textContent = name;
-  document.getElementById('npcLine').textContent = line;
-  document.getElementById('npcOverlay').classList.add('open');
-}
+function closeNPC() { document.getElementById('npcOverlay').classList.remove('open'); }
 
-function closeNPC() {
-  document.getElementById('npcOverlay').classList.remove('open');
-}
-
-// ── LORD ORO ───────────────────────────────────────────────────────────
 function maybeShowOro() {
-  const chance = G.trait==='Wanderer' ? 0.4 : 0.25;
+  const chance = G.trait==='Wanderer' ? 0.5 : 0.3;
   if(Math.random() > chance) return;
   const line = ORO_LINES[G.oroSeen % ORO_LINES.length];
   G.oroSeen++;
   document.getElementById('oroLineText').textContent = line;
   const overlay = document.getElementById('oroOverlay');
   overlay.classList.add('show');
-  G.log.push(`Day ${G.day} — Lord Oro appeared in the doorway. He said: "${line}" You turned to respond. He was already gone.`);
+  trackLog("A golden presence was detected.", "system");
+  G.log.push(`Day ${G.day} — Lord Oro spoke: "${line}"`);
   save(G);
-  setTimeout(()=>{
-    overlay.classList.remove('show');
-    renderGame();
-  }, 6000);
+  setTimeout(()=>{ overlay.classList.remove('show'); renderGame(); }, 6000);
 }
 
-// ── RESET ──────────────────────────────────────────────────────────────
 function confirmReset() {
-  if(confirm(`Start a new life in the mine? Day ${G.day} will be left behind.`)) {
+  if(confirm(`Abandon this life in the mine? All gold and bonds will be lost.`)) {
     localStorage.removeItem(SAVE_KEY);
     G = null;
     actionsUsedToday = [];
-    selectedTrait = null;
-    document.getElementById('minerName').value = '';
-    document.querySelectorAll('.trait-card').forEach(c=>c.classList.remove('selected'));
     showScreen('createScreen');
   }
 }
@@ -682,32 +613,9 @@ window.addEventListener('DOMContentLoaded', ()=>{
     actionsUsedToday = G.actionsUsed || [];
     showScreen('gameScreen');
     renderGame();
-    setTimeout(maybeShowOro, 3000);
+    trackLog("System resumed. Miner returned.", "system");
   }
 });
 </script>
-<script id="nmn-glow">
-(function(){
-  var r=document.createElement('div');
-  r.id='pickaxe-glow';
-  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
-  document.body.appendChild(r);
-  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
-  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
-  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
-})();
-</script>
-
-<script>
-if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
-}
-</script>
-
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
-</div>
 </body>
 </html>
