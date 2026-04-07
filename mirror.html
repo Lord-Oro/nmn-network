@@ -3,131 +3,222 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Mirror Room — NMN</title>
+<title>The Mirror Room — NMN Retro</title>
+
+<link rel="icon" href="logo.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="logo.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="logo.jpg">
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
 
 <style>
-:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-sans);background:#05030a;color:var(--cream);min-height:100vh}
-header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.1);display:flex;justify-content:space-between;align-items:center;background:rgba(5,3,10,.95);position:sticky;top:0;z-index:10}
-.logo{font-family:var(--font-serif);font-style:italic;color:var(--gold);font-size:.95rem;text-decoration:none}
-.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
-.back:hover{color:var(--gold)}
-main{max-width:620px;margin:0 auto;padding:3rem 2rem 5rem}
-.mirror-hero{text-align:center;margin-bottom:2.5rem}
-.mirror-frame{width:120px;height:160px;margin:0 auto 1.5rem;border:3px solid var(--gd);background:linear-gradient(135deg,#0a0818,#050312);position:relative;overflow:hidden}
-.mirror-frame::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,transparent 50%,rgba(255,215,0,.04) 100%)}
-.mirror-reflection{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-style:italic;font-size:2.5rem;color:rgba(255,215,0,.2);animation:mirrorBreath 5s ease-in-out infinite}
-@keyframes mirrorBreath{0%,100%{opacity:.2}50%{opacity:.4}}
-.mirror-eyebrow{font-size:.55rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gd);margin-bottom:.75rem}
-.mirror-title{font-family:var(--font-serif);font-size:clamp(1.8rem,4vw,3rem);color:var(--cream);margin-bottom:.4rem}
-.mirror-title em{color:var(--gold);font-style:italic}
-.mirror-sub{font-size:.72rem;color:var(--muted);line-height:2;max-width:460px;margin:0 auto}
-/* QUESTIONS */
-.question-block{display:none;margin-bottom:2rem}
-.question-block.active{display:block}
-.q-step{font-size:.48rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gd);margin-bottom:.75rem;display:flex;align-items:center;gap:.75rem}
-.q-step::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(255,215,0,.2),transparent)}
-.q-prompt{font-family:var(--font-serif);font-style:italic;font-size:1.1rem;color:var(--cream);line-height:1.8;margin-bottom:1rem}
-.q-input{width:100%;padding:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,215,0,.15);color:var(--cream);font-family:var(--font-serif);font-style:italic;font-size:1rem;resize:none;outline:none;height:90px;line-height:1.7;transition:border-color .3s}
-.q-input:focus{border-color:rgba(255,215,0,.4)}
-.q-input::placeholder{color:var(--faint);font-style:italic}
-.q-next{display:block;width:100%;margin-top:.75rem;padding:.8rem;background:transparent;border:1px solid rgba(255,215,0,.2);color:var(--muted);font-family:var(--font-sans);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s}
-.q-next:hover{border-color:var(--gold);color:var(--gold)}
-/* PROGRESS */
-.progress-dots{display:flex;gap:.4rem;justify-content:center;margin-bottom:2rem}
-.prog-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,215,0,.15);transition:background .3s}
-.prog-dot.done{background:var(--gold)}
-.prog-dot.active{background:var(--gb)}
-/* REFLECTION */
-.reflection-block{display:none}
-.reflection-block.active{display:block;animation:fadeIn 1.5s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.reflection-eyebrow{font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gd);text-align:center;margin-bottom:1rem}
-.reflection-mirror{border:1px solid rgba(255,215,0,.2);background:rgba(255,215,0,.04);padding:2rem;position:relative;margin-bottom:1.5rem}
-.reflection-mirror::before{content:'⬡';position:absolute;top:-.7rem;left:50%;transform:translateX(-50%);background:#05030a;padding:0 .5rem;color:var(--gd);font-size:.8rem}
-.reflection-label{font-size:.48rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gd);margin-bottom:.75rem;text-align:center}
-.reflection-text{font-family:var(--font-serif);font-style:italic;font-size:1.05rem;color:var(--cream);line-height:1.9;text-align:center}
-.reflection-sig{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd);text-align:right;margin-top:.75rem}
-.reflection-note{font-size:.5rem;color:var(--faint);line-height:1.8;text-align:center;margin-top:1rem}
-.reflection-again{display:block;margin:.75rem auto 0;padding:.7rem 2rem;background:transparent;border:1px solid rgba(255,215,0,.2);color:var(--muted);font-family:var(--font-sans);font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s}
-.reflection-again:hover{border-color:var(--gold);color:var(--gold)}
-</style>
-
-<style id="depth-gauge-style">
-.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:36px;background:rgba(12,10,7,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:2rem;z-index:999;padding:0 1rem;flex-wrap:wrap}
-.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28}
-.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
-.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s}
-.dg-link:hover{color:#FFD700}
-.dg-sep{color:#2a1808;font-size:.6rem}
-</style>
-
-<style id="nmn-cursor">
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
-</style>
-<style id="floating-gauge">
-.depth-gauge{
-  position:fixed!important;bottom:12px!important;left:50%!important;
-  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
-  height:42px!important;background:rgba(12,10,7,.88)!important;
-  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
-  padding:0 18px!important;pointer-events:none!important;
-  z-index:9999!important;backdrop-filter:blur(4px)!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  gap:1.2rem!important;flex-wrap:nowrap!important;
-  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+:root {
+  --gold: #FFD700;
+  --gb: #e8b84b;
+  --gd: #AA7700;
+  --bg-color: #000000;
+  --panel-bg: #111111;
+  --cream: #f0e6cc;
+  --muted: #aaaaaa;
+  --lg: #55FF55; 
+  --blue: #5555FF;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-text: 'VT323', monospace;
 }
-.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
-body{padding-bottom:65px!important}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; }
+
+body {
+  font-family: var(--font-text);
+  color: var(--cream);
+  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
+  padding-bottom: 60px;
+  font-size: 1.2rem;
+}
+
+/* 16-BIT UI BORDER HELPER */
+.retro-box {
+  background: var(--panel-bg);
+  border: 4px solid #FFF;
+  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
+}
+
+/* HEADER */
+header {
+  padding: 1rem 2rem; border-bottom: 4px solid var(--gd);
+  display: flex; justify-content: space-between; align-items: center;
+  background: #000; z-index: 1000; position: sticky; top: 0;
+}
+.logo { font-family: var(--font-pixel); color: var(--gold); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
+.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.back:hover { color: var(--gold); }
+
+main { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center;}
+
+/* HERO */
+.mirror-hero { text-align: center; margin-bottom: 2rem; width: 100%;}
+
+/* CANVAS MIRROR */
+.mirror-canvas { width: 128px; height: 160px; image-rendering: pixelated; margin: 0 auto 1.5rem auto; display: block; filter: drop-shadow(4px 4px 0 #000); animation: float 4s ease-in-out infinite; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+.mirror-eyebrow { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); margin-bottom: 1rem; text-shadow: 2px 2px 0 #000; }
+.mirror-title { font-family: var(--font-pixel); font-size: 1.6rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 3px 3px 0 #553300;}
+.mirror-title em { color: var(--gold); font-style: normal; }
+.mirror-sub { font-size: 1.3rem; color: var(--muted); line-height: 1.5; max-width: 600px; margin: 0 auto; }
+
+.btn { display: inline-block; padding: 1.2rem 2rem; background: var(--gd); border: 4px solid #FFF; color: var(--cream); font-family: var(--font-pixel); font-size: 0.7rem; text-transform: uppercase; cursor: pointer; transition: transform 0.1s; text-decoration: none; box-shadow: 4px 4px 0 #000; margin-top: 1.5rem;}
+.btn:hover { background: var(--gold); color: #000; transform: translateY(-4px); border-color: var(--cream);}
+
+/* PROGRESS */
+.progress-container { width: 100%; max-width: 600px; margin-bottom: 2rem; display: none;}
+.progress-label { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gold); margin-bottom: 0.5rem; text-align: left; text-shadow: 2px 2px 0 #000;}
+.progress-bar-bg { width: 100%; height: 16px; background: #000; border: 4px solid #444; }
+.progress-bar-fill { height: 100%; background: var(--gold); width: 0%; transition: width 0.3s; }
+
+/* QUESTIONS */
+.question-block { display: none; width: 100%; max-width: 600px; }
+.question-block.active { display: block; animation: flashIn 0.2s steps(2); }
+@keyframes flashIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+.q-box { background: #000; border: 4px solid var(--gd); padding: 1.5rem; margin-bottom: 1.5rem; position: relative; box-shadow: inset 0 0 0 4px #000, 4px 4px 0 #000; }
+.q-step { position: absolute; top: -0.8rem; left: 1rem; background: var(--gd); color: #000; font-family: var(--font-pixel); font-size: 0.6rem; padding: 0.4rem 0.8rem; border: 2px solid #FFF;}
+.q-prompt { font-size: 1.6rem; color: var(--cream); line-height: 1.5; min-height: 60px; margin-bottom: 1.5rem;}
+
+.q-input { width: 100%; padding: 1rem; background: #111; border: 4px solid #444; color: var(--lg); font-family: var(--font-text); font-size: 1.4rem; resize: none; outline: none; height: 120px; line-height: 1.5; transition: border-color 0.1s; box-shadow: inset 4px 4px 0 #000;}
+.q-input:focus { border-color: var(--gold); }
+.q-input::placeholder { color: #444; }
+
+/* REFLECTION */
+.reflection-block { display: none; width: 100%; max-width: 600px; text-align: center;}
+.reflection-block.active { display: block; animation: flashIn 0.2s steps(2); }
+
+.reflection-mirror { background: #000; border: 4px solid var(--gold); padding: 2.5rem 1.5rem; position: relative; margin-bottom: 1.5rem; box-shadow: inset 0 0 0 4px #000, inset 0 0 0 8px var(--gd), 6px 6px 0 #553300; text-align: left;}
+.reflection-eyebrow { position: absolute; top: -0.8rem; left: 50%; transform: translateX(-50%); background: var(--gold); color: #000; font-family: var(--font-pixel); font-size: 0.6rem; padding: 0.4rem 0.8rem; border: 2px solid #FFF; white-space: nowrap;}
+
+.reflection-label { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--muted); margin-bottom: 1rem; }
+.reflection-text { font-size: 1.6rem; color: var(--cream); line-height: 1.6; min-height: 80px;}
+.reflection-text::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 1rem; color: var(--gold);}
+.reflection-sig { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gd); text-align: right; margin-top: 1.5rem; }
+
+.reflection-note { font-size: 1rem; color: var(--muted); line-height: 1.5; text-align: center; margin-bottom: 1.5rem; }
+
+/* HUD (BOTTOM) */
+.hud { display: flex; justify-content: center; align-items: center; padding: 1rem 2rem; background: #000; border-top: 4px solid #333; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; flex-wrap: wrap; gap: 20px; }
+.hud-stat { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; }
+.hud-val { color: var(--gold); font-size: 1rem; text-shadow: 2px 2px 0 #553300; }
+.hud-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
+.hud-link:hover { color: #000; background: var(--gd); }
+
+/* ── MOUSE FIX ── */
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
 </style>
-
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
-
-
 </head>
 <body>
+
 <script src="nmn-nav.js"></script>
+
 <header>
-  <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="oracle.html" class="back">← Oracle's Chamber</a>
+  <a href="index.html" class="logo">NMN MIRROR ROOM</a>
+  <a href="oracle.html" class="back">← RETURN TO ORACLE</a>
 </header>
+
 <main>
-  <div class="mirror-hero">
-    <div class="mirror-frame"><div class="mirror-reflection">◈</div></div>
-    <div class="mirror-eyebrow">The Oracle's Chamber</div>
-    <h1 class="mirror-title">The Mirror <em>Room</em></h1>
-    <p class="mirror-sub">Lord Oro holds up a lantern to your interior world. Five questions. No right answers. No data saved. At the end he reflects one line back at you — drawn from what you wrote. Look closer.</p>
+  <div class="mirror-hero" id="startBlock">
+    <canvas id="mirrorCanvas" class="mirror-canvas" width="32" height="40"></canvas>
+    <div class="mirror-eyebrow">THE ORACLE'S CHAMBER</div>
+    <h1 class="mirror-title">THE MIRROR <em>ROOM</em></h1>
+    <p class="mirror-sub">Lord Oro holds up a lantern to your interior world. Five questions. No right answers. No data saved. At the end he reflects one line back at you.</p>
+    
+    <div style="font-size: 1.2rem; color: var(--gd); max-width: 500px; margin: 2rem auto; padding: 1.5rem; background: #000; border: 4px dashed #333; font-style: italic;">
+      "The mirror doesn't show you what you look like. It shows you what you're made of. Those are different things." — Lord Oro
+    </div>
+    
+    <button class="btn" onclick="startMirror()">LOOK INTO THE MIRROR</button>
   </div>
 
-  <div class="progress-dots" id="progressDots"></div>
-
-  <div id="startBlock" style="text-align:center;margin-bottom:2rem">
-    <div style="font-family:var(--font-serif);font-style:italic;font-size:1rem;color:var(--gd);line-height:1.8;max-width:420px;margin:0 auto 1.5rem;padding:1rem;border:1px solid rgba(255,215,0,.1)">"The mirror doesn't show you what you look like. It shows you what you're made of. Those are different things." — Lord Oro</div>
-    <button class="q-next" style="max-width:300px;margin:0 auto" onclick="startMirror()">▶ Look Into the Mirror</button>
+  <div class="progress-container" id="progressContainer">
+    <div class="progress-label" id="progressLabel">QUESTION 1/5</div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
   </div>
 
   <div id="questionsBlock"></div>
+  
   <div class="reflection-block" id="reflectionBlock"></div>
 </main>
 
+<div class="hud">
+  <div class="hud-stat">GOLD: <span class="hud-val" id="dgGold">0</span></div>
+  <div class="hud-stat">LORE: <span class="hud-val" id="dgLore">0</span></div>
+  <a href="lorevault.html" class="hud-link">VAULT</a>
+  <a href="lantern.html" class="hud-link">LANTERN</a>
+</div>
+
 <script>
+// ── PROCEDURAL MIRROR CANVAS ──
+function drawMirror() {
+  const canvas = document.getElementById('mirrorCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  let frame = 0;
+  
+  function render() {
+    ctx.clearRect(0, 0, 32, 40);
+    
+    // Frame
+    ctx.fillStyle = '#8B6914';
+    ctx.fillRect(0, 0, 32, 40);
+    ctx.fillStyle = '#FFD700';
+    ctx.fillRect(2, 2, 28, 36);
+    ctx.fillStyle = '#111';
+    ctx.fillRect(4, 4, 24, 32);
+    
+    // Glass Base
+    ctx.fillStyle = '#0a0a2a';
+    ctx.fillRect(5, 5, 22, 30);
+    
+    // Animated Glint
+    const offset = (frame % 120) - 20;
+    
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.beginPath();
+    ctx.moveTo(5, offset);
+    ctx.lineTo(27, offset + 22);
+    ctx.lineTo(27, offset + 30);
+    ctx.lineTo(5, offset + 8);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.beginPath();
+    ctx.moveTo(5, offset + 12);
+    ctx.lineTo(27, offset + 34);
+    ctx.lineTo(27, offset + 38);
+    ctx.lineTo(5, offset + 16);
+    ctx.fill();
+    
+    frame++;
+    requestAnimationFrame(render);
+  }
+  render();
+}
+drawMirror();
+
+// ── DATA ──
 const QUESTIONS = [
-  { step: 'The First Question', prompt: '"What are you most afraid you will never finish?"' },
-  { step: 'The Second Question', prompt: '"What did you want to be before someone told you to be practical?"' },
-  { step: 'The Third Question', prompt: '"What would you do with your life if success was already guaranteed?"' },
-  { step: 'The Fourth Question', prompt: '"Who do you become when no one is watching?"' },
-  { step: 'The Fifth Question', prompt: '"What does the word goldmine mean to you — not here, not in Lord Oro\'s world. In yours."' },
+  { step: 'THE FIRST QUESTION', prompt: 'What are you most afraid you will never finish?' },
+  { step: 'THE SECOND QUESTION', prompt: 'What did you want to be before someone told you to be practical?' },
+  { step: 'THE THIRD QUESTION', prompt: 'What would you do with your life if success was already guaranteed?' },
+  { step: 'THE FOURTH QUESTION', prompt: 'Who do you become when no one is watching?' },
+  { step: 'THE FIFTH QUESTION', prompt: 'What does the word goldmine mean to you — not here, not in Lord Oro\'s world. In yours.' },
 ];
 
-// Reflection generators — reads the answers and generates a single line
 function generateReflection(answers) {
   const a = answers.map(s => s.toLowerCase());
   const combined = a.join(' ');
-  // Pattern matching for themes
+  
   if (combined.match(/book|write|story|novel|poem|song|music|album/))
     return "The thing you keep coming back to — that's not a hobby. That's the mine. Keep digging it.";
   if (combined.match(/family|children|son|daughter|parent|mother|father|kids/))
@@ -142,47 +233,54 @@ function generateReflection(answers) {
     return "The empire is already inside you. The mine is just the first tunnel. Keep going down.";
   if (combined.match(/fear|afraid|scared|fail|failure|wrong/))
     return "The fear you named — that's not a warning. That's a map. Everything you're afraid of not finishing is worth finishing.";
-  // Default — use the 5th answer about goldmine
+    
   const lastAnswer = answers[4] || '';
   if (lastAnswer.length > 10)
     return `"${lastAnswer.trim().charAt(0).toUpperCase() + lastAnswer.trim().slice(1, 60)}..." — Lord Oro heard that. The mine already knew.`;
+    
   return "You answered honestly. That alone is rarer than you think. The mine respects you for it.";
 }
 
 let answers = [];
 let currentQ = 0;
+let typeTimer = null;
 
-function makeDots() {
-  const dots = document.getElementById('progressDots');
-  dots.innerHTML = QUESTIONS.map((_, i) => `<div class="prog-dot" id="dot${i}"></div>`).join('');
-}
-
-function updateDots() {
-  QUESTIONS.forEach((_, i) => {
-    const d = document.getElementById('dot' + i);
-    d.className = 'prog-dot' + (i < currentQ ? ' done' : i === currentQ ? ' active' : '');
-  });
+function typeText(elId, text, speed=25) {
+  const el = document.getElementById(elId);
+  el.textContent = "";
+  if(typeTimer) clearInterval(typeTimer);
+  let i = 0;
+  typeTimer = setInterval(() => {
+    el.textContent += text.charAt(i++);
+    if (i >= text.length) clearInterval(typeTimer);
+  }, speed);
 }
 
 function startMirror() {
   document.getElementById('startBlock').style.display = 'none';
-  makeDots();
-  updateDots();
+  document.getElementById('progressContainer').style.display = 'block';
   renderQuestion(0);
 }
 
 function renderQuestion(idx) {
   const q = QUESTIONS[idx];
   const block = document.getElementById('questionsBlock');
+  
+  document.getElementById('progressLabel').textContent = `QUESTION ${idx + 1}/${QUESTIONS.length}`;
+  document.getElementById('progressBar').style.width = `${((idx) / QUESTIONS.length) * 100}%`;
+
   block.innerHTML = `
     <div class="question-block active">
-      <div class="q-step">${q.step}</div>
-      <div class="q-prompt">${q.prompt}</div>
-      <textarea class="q-input" id="currentInput" placeholder="Write honestly. No one will read this but Lord Oro — and he only uses it to reflect something back to you."></textarea>
-      <button class="q-next" onclick="nextQuestion()">▶ ${idx < QUESTIONS.length - 1 ? 'Next Question' : 'Show Me the Reflection'}</button>
+      <div class="q-box">
+        <div class="q-step">${q.step}</div>
+        <div class="q-prompt" id="qPrompt"></div>
+        <textarea class="q-input" id="currentInput" placeholder="> AWAITING INPUT... NO DATA WILL BE SAVED TO SERVERS."></textarea>
+      </div>
+      <button class="btn" style="width:100%; margin-top: 0;" onclick="nextQuestion()">${idx < QUESTIONS.length - 1 ? 'NEXT QUESTION' : 'SHOW ME THE REFLECTION'}</button>
     </div>`;
-  updateDots();
-  document.getElementById('currentInput').focus();
+    
+  typeText('qPrompt', q.prompt);
+  setTimeout(() => document.getElementById('currentInput').focus(), 500);
 }
 
 function nextQuestion() {
@@ -198,23 +296,30 @@ function nextQuestion() {
 
 function showReflection() {
   document.getElementById('questionsBlock').innerHTML = '';
-  document.getElementById('progressDots').innerHTML = '';
+  document.getElementById('progressContainer').style.display = 'none';
+  
   const reflection = generateReflection(answers);
   const rb = document.getElementById('reflectionBlock');
   rb.classList.add('active');
   rb.innerHTML = `
-    <div class="reflection-eyebrow">Lord Oro Reflects</div>
     <div class="reflection-mirror">
-      <div class="reflection-label">What the mirror sees</div>
-      <div class="reflection-text">"${reflection}"</div>
-      <div class="reflection-sig">— Lord Oro, The Mirror Room</div>
+      <div class="reflection-eyebrow">LORD ORO REFLECTS</div>
+      <div class="reflection-label">SYSTEM OUTPUT:</div>
+      <div class="reflection-text" id="rText"></div>
+      <div class="reflection-sig">— LORD ORO, THE MIRROR ROOM</div>
     </div>
     <div class="reflection-note">Your answers were not saved, sent, or recorded anywhere. They exist only in this session. When you close this page, they're gone. The reflection is yours to keep.</div>
-    <button class="reflection-again" onclick="restartMirror()">▶ Look Again</button>`;
-  // Save to lore vault just the reflection
-  const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
-  vault.push({ text: reflection, source: 'The Mirror Room', date: new Date().toLocaleDateString() });
-  localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
+    <button class="btn btn-gold" onclick="restartMirror()">LOOK AGAIN</button>`;
+    
+  typeText('rText', `"${reflection}"`, 30);
+  
+  // Save to lore vault
+  try {
+    const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
+    vault.push({ text: reflection, source: 'The Mirror Room', date: new Date().toLocaleDateString() });
+    localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
+    document.getElementById('dgLore').textContent = vault.length;
+  } catch(e) {}
 }
 
 function restartMirror() {
@@ -224,264 +329,25 @@ function restartMirror() {
   document.getElementById('startBlock').style.display = 'block';
 }
 
-// Enter to advance
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && e.ctrlKey && document.getElementById('currentInput')) nextQuestion();
 });
-</script>
 
-<div class="depth-gauge" id="depthGauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
-  <span class="dg-sep">⬡</span>
-  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> Lore Fragments</div>
-  <span class="dg-sep">⬡</span>
-  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span> Creatures</div>
-  <span class="dg-sep">⬡</span>
-  <a href="lorevault.html" class="dg-link">📜 Vault</a>
-  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
-  <a href="ledger.html" class="dg-link">📖 Ledger</a>
-</div>
-<script>
+// ── LOCAL STORAGE HUD ──
 (function(){
   try{
-    var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
-    var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
-    var gold=parseInt(localStorage.getItem('nmn_total_gold')||'0');
-    var el=document.getElementById('dgGold');if(el)el.textContent=gold;
-    var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
-    var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
+    document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+    document.getElementById('dgGold').textContent=localStorage.getItem('nmn_total_gold')||'0';
   }catch(e){}
 })();
-</script>
-
-<script>
-window.NMN_CONTEXT = "oracle";
-// NMN LIVING SOUNDSCAPE — Excavation Committee
-// Gemini's Quad-Track Engine + Claude's integration layer
-// Zero external files. Under 2KB. Procedural — never repeats exactly.
-
-const NMN_Audio = {
-  ctx: null,
-  running: false,
-  masterGain: null,
-  layers: {},
-
-  init() {
-    if (this.ctx) return;
-    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
-    this.masterGain.connect(this.ctx.destination);
-  },
-
-  // TRACK 1 — The Deep Earth (continuous, low hum)
-  playHum() {
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(55, this.ctx.currentTime); // G1
-    gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
-    // Slow breathing — mine is alive
-    // Gemini's LFO: 0.08Hz = one breath every 12.5 seconds
-    const lfo = this.ctx.createOscillator();
-    const lfoGain = this.ctx.createGain();
-    lfo.type = 'sine';
-    lfo.frequency.value = 0.08;
-    lfoGain.gain.value = 0.01; // depth of breath
-    lfo.connect(lfoGain);
-    lfoGain.connect(gain.gain);
-    lfo.start();
-    osc.connect(gain);
-    gain.connect(this.masterGain);
-    osc.start();
-    this.layers.hum = { osc, gain };
-  },
-
-  // TRACK 2 — The Air Shaft (filtered noise / wind)
-  playWind() {
-    const bufferSize = 2 * this.ctx.sampleRate;
-    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-    const output = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
-    const whiteNoise = this.ctx.createBufferSource();
-    whiteNoise.buffer = noiseBuffer;
-    whiteNoise.loop = true;
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 400;
-    const g = this.ctx.createGain();
-    g.gain.setValueAtTime(0.012, this.ctx.currentTime);
-    whiteNoise.connect(filter);
-    filter.connect(g);
-    g.connect(this.masterGain);
-    whiteNoise.start();
-    this.layers.wind = { src: whiteNoise, gain: g };
-  },
-
-  // TRACK 3 — The Distant Strike (random pickaxe echoes)
-  playStrike() {
-    const tick = () => {
-      if (!this.running) return;
-      if (Math.random() > 0.75) {
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        // Metallic strike freq
-        osc.frequency.setValueAtTime(140 + Math.random() * 80, this.ctx.currentTime);
-        osc.type = 'sawtooth';
-        g.gain.setValueAtTime(0.04, this.ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.6);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.6);
-      }
-      // Randomize interval — 3s to 6s — never predictable
-      setTimeout(tick, 3000 + Math.random() * 3000);
-    };
-    setTimeout(tick, 2000);
-  },
-
-  // TRACK 4 — The Gold Shimmer (crystal high tones)
-  playShimmer() {
-    const tick = () => {
-      if (!this.running) return;
-      if (Math.random() > 0.85) {
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = 'triangle';
-        // Gold harmonic range — slightly randomized each time
-        osc.frequency.setValueAtTime(2200 + Math.random() * 1400, this.ctx.currentTime);
-        g.gain.setValueAtTime(0, this.ctx.currentTime);
-        g.gain.linearRampToValueAtTime(0.012, this.ctx.currentTime + 1.2);
-        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2.5);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 2.5);
-      }
-      setTimeout(tick, 5000 + Math.random() * 4000);
-    };
-    setTimeout(tick, 4000);
-  },
-
-  // TRACK 5 — The Subterranean Drip (Gemini's finalized version)
-  // Fast pitch-drop simulates the physics of water hitting a cavern pool
-  playWaterDrip() {
-    const tick = () => {
-      if (!this.running) return;
-      if (Math.random() > 0.6) {
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = 'sine';
-        // Start mid-freq, drop 50% in 80ms — exact droplet physics
-        osc.frequency.setValueAtTime(400 + Math.random() * 100, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.08);
-        g.gain.setValueAtTime(0.02, this.ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.08);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.08);
-      }
-      // 2-8 second random interval — no rhythmic pattern ever emerges
-      setTimeout(tick, 2000 + Math.random() * 6000);
-    };
-    setTimeout(tick, 5000 + Math.random() * 3000);
-  },
-
-  // TRACK 6 — The Oracle's Pad
-  playOraclePad() {
-    const AMAJ = [220, 277.18, 329.63];
-    const tick = () => {
-      if (!this.running) return;
-      AMAJ.forEach((freq, i) => {
-        const osc = this.ctx.createOscillator();
-        const filter = this.ctx.createBiquadFilter();
-        const g = this.ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-        filter.type = 'lowpass'; filter.frequency.value = 800;
-        g.gain.setValueAtTime(0, this.ctx.currentTime);
-        g.gain.linearRampToValueAtTime(0.03, this.ctx.currentTime + 2);
-        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 9);
-        osc.connect(filter); filter.connect(g); g.connect(this.masterGain);
-        osc.start(this.ctx.currentTime + i * 0.08);
-        osc.stop(this.ctx.currentTime + 9.5);
-      });
-      setTimeout(tick, 9000);
-    };
-    setTimeout(tick, 8000);
-  },
-
-  // Page-context aware — different mix per section
-  startAll(context) {
-    if (this.running) return;
-    this.init();
-    this.running = true;
-    this.playHum();
-    this.playWind();
-    this.playStrike();
-    this.playShimmer();
-    this.playOraclePad();
-    // Only add water drip on deep mine pages
-    if (context === 'deep' || context === 'oracle' || context === 'vigil') {
-      this.playWaterDrip();
-    }
-    // Tora gets a slightly higher shimmer frequency (more ethereal)
-    if (context === 'tora') {
-      this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
-    }
-  },
-
-  stop() {
-    if (!this.running) return;
-    this.running = false;
-    if (this.masterGain) {
-      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
-    }
-  },
-
-  toggle() {
-    if (this.running) { this.stop(); return false; }
-    else { this.startAll(window.NMN_CONTEXT || 'mine'); return true; }
-  }
-};
-
-// Trigger on first interaction — browser autoplay policy requires user gesture
-document.addEventListener('click', () => {
-  if (!NMN_Audio.running) NMN_Audio.startAll(window.NMN_CONTEXT || 'mine');
-}, { once: true });
 
 </script>
 
-<button id="nmn-sound-btn" onclick="
-  const on = NMN_Audio.toggle();
-  this.textContent = on ? '🔊 Sound On' : '🔇 Sound Off';
-  this.style.color = on ? 'var(--gold,#c9962a)' : '#4a3c28';
-" style="position:fixed;bottom:42px;right:.75rem;z-index:998;background:rgba(12,10,7,.9);border:1px solid rgba(255,215,0,.2);color:#4a3c28;font-family:Josefin Sans,sans-serif;font-size:.42rem;letter-spacing:.1em;padding:.35rem .6rem;cursor:pointer;transition:all .3s">🔇 Sound Off</button>
-<script id="nmn-glow">
-(function(){
-  var r=document.createElement('div');
-  r.id='pickaxe-glow';
-  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
-  document.body.appendChild(r);
-  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
-  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
-  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
-})();
-</script>
-
-<!-- Monetag Service Worker Registration -->
 <script>
 if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
+    navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
 }
 </script>
 
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
-</div>
 </body>
 </html>
