@@ -9,7 +9,7 @@
 <style>
 :root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-sans);background:var(--coal);color:var(--cream);min-height:100vh;background-image:radial-gradient(ellipse at 50% 0%,rgba(255,215,0,.06) 0%,transparent 60%),linear-gradient(45deg,#0c0a07 25%,#110e0a 25%,#110e0a 50%,#0c0a07 50%,#0c0a07 75%,#110e0a 75%,#110e0a 100%);background-size:100% 100%,4px 4px}
+body{font-family:var(--font-sans);background:var(--coal);color:var(--cream);min-height:100vh;background-image:radial-gradient(ellipse at 50% 0%,rgba(255,215,0,.06) 0%,transparent 60%),linear-gradient(45deg,#0c0a07 25%,#110e0a 25%,#110e0a 50%,#0c0a07 50%,#0c0a07 75%,#110e0a 75%,#110e0a 100%);background-size:100% 100%,4px 4px;padding-bottom:65px !important;}
 header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(12,10,7,.95);position:sticky;top:0;z-index:10}
 .logo{font-family:var(--font-serif);font-style:italic;color:var(--gold);font-size:.95rem;text-decoration:none}
 .back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
@@ -22,12 +22,14 @@ main{max-width:800px;margin:0 auto;padding:3rem 2rem 6rem}
 .sub{font-size:.75rem;color:var(--muted);line-height:2;max-width:520px;margin:0 auto}
 .section-tag{font-size:.55rem;letter-spacing:.35em;text-transform:uppercase;color:var(--gd);display:flex;align-items:center;gap:.75rem;margin:2.5rem 0 1.25rem}
 .section-tag::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(255,215,0,.2),transparent)}
+
 /* ALBUM */
 .album-header{border:1px solid rgba(255,215,0,.15);padding:1.5rem;background:rgba(255,215,0,.03);margin-bottom:1.5rem;display:flex;gap:1.5rem;align-items:flex-start;flex-wrap:wrap}
 .album-art{width:100px;height:100px;border:2px solid var(--gd);background:linear-gradient(135deg,#1a1208,#2a1a08);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:2.5rem}
 .album-info h2{font-family:var(--font-serif);font-size:1.5rem;color:var(--gold);margin-bottom:.25rem;font-style:italic}
 .album-info p{font-size:.68rem;color:var(--muted);line-height:1.9}
 .album-status{font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd);margin-top:.5rem}
+
 /* TRACKS */
 .track-list{display:flex;flex-direction:column;gap:.5rem;margin-bottom:2rem}
 .track{border:1px solid rgba(255,215,0,.1);padding:1.25rem;display:flex;gap:1.25rem;align-items:flex-start;transition:border-color .3s;position:relative}
@@ -50,11 +52,13 @@ main{max-width:800px;margin:0 auto;padding:3rem 2rem 6rem}
 .st-planned{color:var(--faint)}
 .track-desc{font-size:.68rem;color:var(--muted);line-height:1.8;margin-bottom:.4rem}
 .track-excerpt{font-family:var(--font-serif);font-style:italic;font-size:.85rem;color:var(--gd);line-height:1.6;padding:.6rem;border:1px solid rgba(255,215,0,.1);background:rgba(255,215,0,.02)}
+
 /* MAKING OF */
 .making-entry{border:1px solid rgba(255,215,0,.1);padding:1.25rem;margin-bottom:.75rem;transition:border-color .3s}
 .making-entry:hover{border-color:rgba(255,215,0,.3)}
 .making-q{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gd);margin-bottom:.6rem}
 .making-a{font-family:var(--font-serif);font-style:italic;font-size:1rem;color:var(--cream);line-height:1.8}
+
 /* CHANNELS */
 .channel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem}
 .channel-card{border:1px solid rgba(255,215,0,.12);padding:1rem;text-align:center;transition:all .3s;text-decoration:none;display:block}
@@ -62,22 +66,8 @@ main{max-width:800px;margin:0 auto;padding:3rem 2rem 6rem}
 .ch-flag{font-size:1.5rem;display:block;margin-bottom:.5rem}
 .ch-name{font-family:var(--font-serif);font-size:1rem;color:var(--cream);margin-bottom:.25rem}
 .ch-sub{font-size:.55rem;color:var(--muted);letter-spacing:.1em}
-</style>
 
-<style id="depth-gauge-style">
-.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:36px;background:rgba(12,10,7,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:2rem;z-index:999;padding:0 1rem;flex-wrap:wrap}
-.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28}
-.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
-.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s}
-.dg-link:hover{color:#FFD700}
-.dg-sep{color:#2a1808;font-size:.6rem}
-</style>
-
-<style id="nmn-cursor">
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
-</style>
-<style id="floating-gauge">
+/* DEPTH GAUGE */
 .depth-gauge{
   position:fixed!important;bottom:12px!important;left:50%!important;
   transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
@@ -89,16 +79,18 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
   gap:1.2rem!important;flex-wrap:nowrap!important;
   box-shadow:0 0 20px rgba(255,215,0,.08)!important;
 }
-.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
-body{padding-bottom:65px!important}
+.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28;pointer-events:auto!important;}
+.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
+.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s;pointer-events:auto!important;}
+.dg-link:hover{color:#FFD700}
+.dg-sep{color:#2a1808;font-size:.6rem;pointer-events:auto!important;}
 </style>
 
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
-
+<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
 
 </head>
 <body>
+<script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
 <header>
   <a href="index.html" class="logo">NMN — Lord Oro</a>
@@ -235,13 +227,14 @@ body{padding-bottom:65px!important}
   <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
   <a href="ledger.html" class="dg-link">📖 Ledger</a>
 </div>
+
 <script>
 (function(){
   try{
+    var w = typeof NMNWallet !== 'undefined' ? NMNWallet.get() : {gold:0};
     var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
     var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
-    var gold=parseInt(localStorage.getItem('nmn_total_gold')||'0');
-    var el=document.getElementById('dgGold');if(el)el.textContent=gold;
+    var el=document.getElementById('dgGold');if(el)el.textContent=w.gold;
     var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
     var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
   }catch(e){}
@@ -453,26 +446,20 @@ document.addEventListener('click', () => {
   this.textContent = on ? '🔊 Sound On' : '🔇 Sound Off';
   this.style.color = on ? 'var(--gold,#c9962a)' : '#4a3c28';
 " style="position:fixed;bottom:42px;right:.75rem;z-index:998;background:rgba(12,10,7,.9);border:1px solid rgba(255,215,0,.2);color:#4a3c28;font-family:Josefin Sans,sans-serif;font-size:.42rem;letter-spacing:.1em;padding:.35rem .6rem;cursor:pointer;transition:all .3s">🔇 Sound Off</button>
-<script id="nmn-glow">
-(function(){
-  var r=document.createElement('div');
-  r.id='pickaxe-glow';
-  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
-  document.body.appendChild(r);
-  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
-  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
-  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
-})();
-</script>
 
-<!-- Monetag Service Worker Registration -->
 <script>
-if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(function(registration) {
+      console.log('NMN SW registered with scope:', registration.scope);
+    })
+    .catch(function(err){
+      console.log('NMN SW error:', err);
+    });
 }
 </script>
 
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28;margin-top:2rem">
   <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
   <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
   <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
