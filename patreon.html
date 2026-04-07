@@ -6,8 +6,6 @@
 <title>Join the Vault — Lord Oro on Patreon | NMN</title>
 <meta name="description" content="Support Lord Oro on Patreon. Three tiers: Copper $5, Silver $10, Gold $25. Early access to books, ad-free games, exclusive lore, and your name etched in the mine forever.">
 <link rel="stylesheet" href="nmn-theme.css">
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
 
 <style>
 body{padding-top:56px}
@@ -112,11 +110,18 @@ body{padding-top:56px}
 @keyframes streak{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}
 .vein-sub-sm{font-family:var(--font-pixel);font-size:.3rem;color:var(--faint)}
 </style>
+
+<style id="nmn-cursor">
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
+</style>
+
+<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
+
 </head>
 <body>
 <script src="nmn-nav.js"></script>
 
-<!-- HERO -->
 <div class="patreon-hero">
   <div>
     <div class="hero-eyes-small"><div class="hero-eye-sm"></div><div class="hero-eye-sm"></div></div>
@@ -130,19 +135,16 @@ body{padding-top:56px}
   </div>
 </div>
 
-<!-- MANIFESTO -->
 <div class="manifesto">
   <div class="manifesto-quote">"A lord leads people to victory in their minds. His sword is his pen. His kingdom is the human interior world. The goldmine is within — and you found the entrance."</div>
   <p class="manifesto-body">Lord Oro is a Brooklyn-born storyteller building a transmedia empire from the inside out. Four published books. Twelve games. An oracle, a sound shaft, a lore vault, and a concept album in progress. Every piece of it built independently — no label, no publisher, no investors. Just the mine and the people willing to descend into it.</p>
   <p class="manifesto-body">Patreon is what keeps the lanterns burning. It funds new books, new games, new tunnels. When you join, you're not a subscriber — you're a stakeholder in the mine.</p>
 </div>
 
-<!-- TIERS -->
 <div class="tiers-section" id="tiers">
   <div class="tiers-label">⛏ CHOOSE YOUR ORE ⛏</div>
   <div class="tiers-grid">
 
-    <!-- COPPER -->
     <div class="tier-card tier-copper">
       <span class="tier-ore">🪨</span>
       <span class="tier-name">COPPER TIER</span>
@@ -158,7 +160,6 @@ body{padding-top:56px}
       <a href="https://patreon.com/lordoro" target="_blank" class="tier-btn">⛏ JOIN COPPER</a>
     </div>
 
-    <!-- SILVER -->
     <div class="tier-card tier-silver">
       <span class="tier-ore">🪙</span>
       <span class="tier-name">SILVER TIER</span>
@@ -175,7 +176,6 @@ body{padding-top:56px}
       <a href="https://patreon.com/lordoro" target="_blank" class="tier-btn">⛏ JOIN SILVER</a>
     </div>
 
-    <!-- GOLD -->
     <div class="tier-card tier-gold">
       <span class="tier-ore">🏅</span>
       <span class="tier-name">GOLD TIER</span>
@@ -196,7 +196,6 @@ body{padding-top:56px}
   </div>
 </div>
 
-<!-- WHAT IT FUNDS -->
 <div class="impact-section">
   <p class="impact-label">⛏ WHAT YOUR SUPPORT BUILDS</p>
   <div class="impact-grid">
@@ -223,14 +222,12 @@ body{padding-top:56px}
   </div>
 </div>
 
-<!-- GOFUNDME BAR -->
 <div class="vein-section">
   <p class="vein-label-sm">EXPEDITION FUND — GOFUNDME</p>
   <div class="vein-bar"><div class="vein-fill" style="width:12%"></div></div>
   <p class="vein-sub-sm">12% of $3,000 goal · Every dollar digs deeper</p>
 </div>
 
-<!-- ALSO SUPPORT -->
 <div class="also-support">
   <p class="also-label">⛏ OTHER WAYS TO SUPPORT THE MINE</p>
   <div class="also-row">
@@ -249,7 +246,15 @@ body{padding-top:56px}
 </div>
 
 <script>
-if('serviceWorker' in navigator){
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(function(registration) {
+      console.log('NMN SW registered with scope:', registration.scope);
+    })
+    .catch(function(err){
+      console.log('NMN SW error:', err);
+    });
+}
 </script>
 </body>
 </html>
