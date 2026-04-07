@@ -39,10 +39,6 @@ h1 em{color:var(--gold);font-style:italic}
 body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
 </style>
 
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
-
-
 </head>
 <body>
 <script src="nmn-nav.js"></script>
@@ -119,10 +115,15 @@ function openJournal(id) {
 (function(){var r=document.createElement('div');r.id='pickaxe-glow';r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';document.body.appendChild(r);document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});})();
 </script>
 
-<!-- Monetag Service Worker Registration -->
 <script>
-if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(function(registration) {
+      console.log('NMN SW registered with scope:', registration.scope);
+    })
+    .catch(function(err){
+      console.log('NMN SW error:', err);
+    });
 }
 </script>
 
