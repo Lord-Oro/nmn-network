@@ -9,7 +9,7 @@
 <style>
 :root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-sans);background:#030201;color:var(--cream);min-height:100vh;overflow-x:hidden;padding-bottom:50px}
+body{font-family:var(--font-sans);background:#030201;color:var(--cream);min-height:100vh;overflow-x:hidden;padding-bottom:65px !important;}
 header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(3,2,1,.97);position:sticky;top:0;z-index:10}
 .logo{font-family:var(--font-pixel);color:var(--gold);font-size:.5rem;text-decoration:none;text-shadow:0 0 15px rgba(255,215,0,.4);letter-spacing:1px}
 .back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
@@ -116,17 +116,6 @@ header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.15);display:fl
 .cta-replay:hover{color:var(--gold)}
 
 /* DEPTH GAUGE */
-.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:34px;background:rgba(3,2,1,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:5;padding:0 1rem}
-.dg-stat{font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
-.dg-link{font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-decoration:none}
-.dg-link:hover{color:var(--gold)}
-</style>
-
-<style id="nmn-cursor">
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
-</style>
-<style id="floating-gauge">
 .depth-gauge{
   position:fixed!important;bottom:12px!important;left:50%!important;
   transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
@@ -138,16 +127,18 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
   gap:1.2rem!important;flex-wrap:nowrap!important;
   box-shadow:0 0 20px rgba(255,215,0,.08)!important;
 }
-.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
-body{padding-bottom:65px!important}
+.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28;pointer-events:auto!important;}
+.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
+.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s;pointer-events:auto!important;}
+.dg-link:hover{color:#FFD700}
+.dg-sep{color:#2a1808;font-size:.6rem;pointer-events:auto!important;}
 </style>
 
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
-
+<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
 
 </head>
 <body>
+<script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
 <header>
   <a href="index.html" class="logo">NMN — Lord Oro</a>
@@ -163,19 +154,16 @@ body{padding-bottom:65px!important}
 
 <div class="reel-grid" id="reelGrid"></div>
 
-<!-- CINEMA OVERLAY -->
 <div class="cinema" id="cinema">
   <div class="short-frame" id="shortFrame">
     <div class="short-progress"><div class="short-progress-fill" id="progressFill"></div></div>
 
-    <!-- Scene BG and FX -->
     <div class="scene-bg" id="sceneBg"></div>
     <div class="shaft-line" style="left:15%"></div>
     <div class="shaft-line" style="left:85%"></div>
     <div class="lantern-light" id="lanternLight"></div>
     <div class="speak-glow" id="speakGlow"></div>
 
-    <!-- Lord Oro specific -->
     <div class="doorframe" id="doorframe" style="display:none">
       <div class="doorframe-left"></div>
       <div class="doorframe-right"></div>
@@ -187,24 +175,20 @@ body{padding-bottom:65px!important}
       <div class="oro-eye" style="animation-delay:.3s"></div>
     </div>
 
-    <!-- Generic character -->
     <div class="character" id="character" style="display:none"></div>
 
-    <!-- Title card -->
     <div class="title-card" id="titleCard">
       <div class="tc-label">Nonsense Media Network</div>
       <div class="tc-title" id="tcTitle"></div>
       <div class="tc-char" id="tcChar"></div>
     </div>
 
-    <!-- Dialogue -->
     <div class="dialogue-box" id="dialogueBox" style="opacity:0;transition:opacity .4s">
       <div class="dialogue-speaker" id="dialogueSpeaker"></div>
       <div class="dialogue-text" id="dialogueText"><span class="dialogue-cursor"></span></div>
       <div class="dialogue-continue" id="dialogueContinue" style="display:none">▼ tap to continue</div>
     </div>
 
-    <!-- CTA -->
     <div class="cta-overlay" id="ctaOverlay">
       <div class="cta-oro-line" id="ctaLine"></div>
       <a href="newsletter.html" class="cta-btn cta-primary">⬡ Join the Goldmine</a>
@@ -217,11 +201,31 @@ body{padding-bottom:65px!important}
   <button class="cinema-skip" onclick="skipToEnd()" id="skipBtn">Skip →</button>
 </div>
 
-<div class="depth-gauge">
-  <span class="dg-stat">The Projection Room — NMN</span>
-  <a href="archives.html" class="dg-link">📖 Archives</a>
-  <a href="index.html" class="dg-link">⛏ The Mine</a>
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> Lore Fragments</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span> Creatures</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
+  <a href="ledger.html" class="dg-link">📖 Ledger</a>
 </div>
+
+<script>
+(function(){
+  try{
+    // Integrated with V2 NMNWallet
+    var w = typeof NMNWallet !== 'undefined' ? NMNWallet.get() : {gold:0};
+    var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+    var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
+    var el=document.getElementById('dgGold');if(el)el.textContent=w.gold;
+    var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
+    var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
+  }catch(e){}
+})();
+</script>
 
 <script>
 // ── SUPERSTAR SAGA ENGINE ─────────────────────────────────────────────
@@ -265,6 +269,7 @@ async function typeDialogue(text, charKey, speed=65) {
   el.innerHTML = '';
   let beepCounter = 0;
   for(let i=0; i<text.length; i++) {
+    if(aborted) break; // Kills the typing/beeping loop if skipped
     const ch = text[i];
     el.innerHTML = text.slice(0,i+1) + cursor;
     if(ch !== ' ' && ch !== '\n') {
@@ -502,6 +507,7 @@ document.getElementById('dialogueBox').addEventListener('click', ()=>{
 
 renderReels();
 </script>
+
 <script id="nmn-glow">
 (function(){
   var r=document.createElement('div');
@@ -514,17 +520,16 @@ renderReels();
 })();
 </script>
 
-<!-- Monetag Service Worker Registration -->
 <script>
-if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(function(registration) {
+      console.log('NMN SW registered with scope:', registration.scope);
+    })
+    .catch(function(err){
+      console.log('NMN SW error:', err);
+    });
 }
 </script>
-
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
-</div>
 </body>
 </html>
