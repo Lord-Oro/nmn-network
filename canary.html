@@ -1,161 +1,359 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Canary's Song — NMN</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Canary's Song — NMN Retro</title>
+
+<link rel="icon" href="logo.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="logo.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="logo.jpg">
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
 
 <style>
-:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-sans);background:#030201;color:var(--cream);min-height:100vh;padding-bottom:65px;display:flex;flex-direction:column}
-header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(3,2,1,.97);position:sticky;top:0;z-index:10}
-.logo{font-family:var(--font-pixel);color:var(--gold);font-size:.5rem;text-decoration:none;text-shadow:0 0 15px rgba(255,215,0,.4);letter-spacing:1px}
-.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
-main{max-width:560px;margin:0 auto;padding:2.5rem 1.5rem;flex:1;text-align:center}
-h1{font-family:var(--font-serif);font-size:2.5rem;color:var(--cream);margin-bottom:.3rem}
-h1 em{color:var(--gold);font-style:italic}
-.sub{font-family:var(--font-serif);font-style:italic;color:var(--muted);font-size:.9rem;margin-bottom:2rem;line-height:1.8}
-.canary-icon{font-size:4rem;display:block;margin-bottom:1.5rem;animation:canaryBob 2s ease-in-out infinite}
-@keyframes canaryBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.notes-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:2rem}
-.note-btn{padding:1.5rem .5rem;border:2px solid rgba(255,215,0,.2);background:rgba(255,215,0,.04);cursor:pointer;transition:all .2s;font-size:1.5rem;display:flex;flex-direction:column;align-items:center;gap:.4rem}
-.note-btn:hover{border-color:var(--gold);background:rgba(255,215,0,.1);transform:scale(1.05)}
-.note-btn.lit{border-color:var(--gb)!important;background:rgba(232,184,75,.2)!important;box-shadow:0 0 20px rgba(232,184,75,.4)}
-.note-btn.wrong{border-color:#cc4444!important;background:rgba(204,68,68,.1)!important}
-.note-label{font-size:.45rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gd)}
-.status-line{font-family:var(--font-serif);font-style:italic;color:var(--muted);min-height:2rem;margin-bottom:1rem;font-size:.95rem;line-height:1.7}
-.score-line{font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd);margin-bottom:1.5rem}
-.start-btn{padding:.85rem 2rem;background:transparent;border:1px solid rgba(255,215,0,.3);color:var(--gold);font-family:var(--font-sans);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s}
-.start-btn:hover{background:rgba(255,215,0,.08);border-color:var(--gold)}
-.depth-gauge{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:auto;max-width:92%;height:42px;background:rgba(3,2,1,.88);border:1px solid rgba(255,215,0,.3);border-radius:22px;padding:0 18px;pointer-events:none;z-index:9999;display:flex;align-items:center;gap:1rem;justify-content:center}
-.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-decoration:none;pointer-events:auto}
-.dg-link:hover{color:var(--gold)}
+:root {
+  --gold: #FFD700;
+  --gb: #e8b84b;
+  --gd: #AA7700;
+  --bg-color: #000000;
+  --panel-bg: #111111;
+  --cream: #f0e6cc;
+  --muted: #aaaaaa;
+  --lg: #55FF55; 
+  --red: #FF5555;
+  --blue: #5555FF;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-text: 'VT323', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; }
+
+body {
+  font-family: var(--font-text);
+  color: var(--cream);
+  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
+  padding-bottom: 60px;
+  font-size: 1.2rem;
+}
+
+/* 16-BIT UI BORDER HELPER */
+.retro-box {
+  background: var(--panel-bg);
+  border: 4px solid #FFF;
+  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
+}
+
+/* HEADER */
+header {
+  padding: 1rem 2rem; border-bottom: 4px solid var(--lg);
+  display: flex; justify-content: space-between; align-items: center;
+  background: #000; z-index: 1000; position: sticky; top: 0;
+}
+.logo { font-family: var(--font-pixel); color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
+.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.back:hover { color: var(--gold); }
+
+main { max-width: 600px; margin: 0 auto; padding: 2rem 1rem; flex: 1; display: flex; flex-direction: column;}
+
+/* HERO */
+.canary-hero { text-align: center; margin-bottom: 1.5rem; background: #000; padding: 1.5rem; border: 4px solid #444; }
+.canary-title { font-family: var(--font-pixel); font-size: 1.2rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 3px 3px 0 #553300;}
+.canary-title em { color: var(--gold); font-style: normal; }
+.canary-sub { font-size: 1.2rem; color: var(--muted); line-height: 1.5; }
+
+/* DIALOGUE / SCORE */
+.dialogue-box { background: #000; border: 4px solid var(--gd); padding: 1.5rem; margin-bottom: 1.5rem; text-align: left; position: relative; box-shadow: inset 0 0 0 4px #000, 4px 4px 0 #000; min-height: 100px;}
+.dialogue-name { position: absolute; top: -0.8rem; left: 1rem; background: var(--gd); color: #000; font-family: var(--font-pixel); font-size: 0.5rem; padding: 0.3rem 0.6rem; border: 2px solid #FFF;}
+.dialogue-text { font-size: 1.4rem; color: var(--cream); line-height: 1.5; }
+.dialogue-text::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 1rem; color: var(--gold);}
+@keyframes blink { 0%, 50%, 100% { opacity: 1; } 25%, 75% { opacity: 0; } }
+
+.score-hud { display: flex; justify-content: space-between; font-family: var(--font-pixel); font-size: 0.7rem; color: var(--gold); margin-bottom: 1.5rem; background: #111; padding: 1rem; border: 4px solid #333; text-shadow: 2px 2px 0 #000; }
+
+/* GAME BOARD */
+.game-board { background: #000; padding: 1.5rem; }
+.notes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+
+.note-btn { background: #111; border: 4px solid #444; padding: 1.5rem 0.5rem; cursor: pointer; transition: all 0.1s; display: flex; flex-direction: column; align-items: center; gap: 1rem; box-shadow: 4px 4px 0 #000; }
+.note-btn:active { transform: translate(4px, 4px); box-shadow: 0 0 0 #000; }
+
+/* Dynamic States */
+.note-btn.lit-0 { border-color: var(--gd); background: rgba(170, 119, 0, 0.2); box-shadow: inset 0 0 20px var(--gd), 4px 4px 0 #000; }
+.note-btn.lit-1 { border-color: var(--blue); background: rgba(85, 85, 255, 0.2); box-shadow: inset 0 0 20px var(--blue), 4px 4px 0 #000; }
+.note-btn.lit-2 { border-color: var(--muted); background: rgba(170, 170, 170, 0.2); box-shadow: inset 0 0 20px var(--muted), 4px 4px 0 #000; }
+.note-btn.lit-3 { border-color: var(--lg); background: rgba(85, 255, 85, 0.2); box-shadow: inset 0 0 20px var(--lg), 4px 4px 0 #000; }
+
+.note-btn.wrong { border-color: var(--red) !important; background: rgba(255, 85, 85, 0.3) !important; box-shadow: inset 0 0 30px var(--red) !important; animation: shake 0.3s; }
+
+@keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
+
+.note-canvas { width: 64px; height: 64px; image-rendering: pixelated; filter: drop-shadow(4px 4px 0 #000); pointer-events: none;}
+.note-label { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--cream); text-transform: uppercase; pointer-events: none;}
+
+.start-btn { display: block; width: 100%; padding: 1.5rem; background: var(--gd); border: 4px solid #FFF; color: var(--cream); font-family: var(--font-pixel); font-size: 0.8rem; text-transform: uppercase; cursor: pointer; transition: transform 0.1s; box-shadow: 4px 4px 0 #000; margin-top: 1rem;}
+.start-btn:hover { background: var(--gold); color: #000; transform: translateY(-4px); }
+
+/* ARCADE HUD (BOTTOM) */
+.hud { display: flex; justify-content: center; align-items: center; padding: 1rem 2rem; background: #000; border-top: 4px solid #333; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; flex-wrap: wrap; gap: 20px; }
+.hud-stat { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; }
+.hud-val { color: var(--gold); font-size: 1rem; text-shadow: 2px 2px 0 #553300; }
+.hud-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
+.hud-link:hover { color: #000; background: var(--gd); }
+
+/* ── MOUSE FIX ── */
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
 </style>
-<style id="nmn-cursor">
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-</style>
-
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
-
 
 </head>
 <body>
-<script src="nmn-nav.js"></script>
+
 <header>
-  <a href="oracle.html" class="logo">🔮 The Oracle's Chamber</a>
-  <a href="oracle.html" class="back">← Back</a>
+  <a href="oracle.html" class="logo">NMN ORACLE</a>
+  <a href="oracle.html" class="back">← RETURN TO CHAMBER</a>
 </header>
+
 <main>
-  <span class="canary-icon">🐦</span>
-  <h1>The Canary's <em>Song</em></h1>
-  <p class="sub">The mine speaks in four notes. Listen. Repeat. The silence is heavier than the stone.</p>
-  <div class="status-line" id="statusLine">Press Start to hear the mine.</div>
-  <div class="score-line" id="scoreLine">Round: 0 — Best: 0</div>
-  <div class="notes-grid">
-    <div class="note-btn" id="btn0" onclick="playerNote(0)"><span>⛏️</span><span class="note-label">Strike</span></div>
-    <div class="note-btn" id="btn1" onclick="playerNote(1)"><span>💧</span><span class="note-label">Drip</span></div>
-    <div class="note-btn" id="btn2" onclick="playerNote(2)"><span>💨</span><span class="note-label">Wind</span></div>
-    <div class="note-btn" id="btn3" onclick="playerNote(3)"><span>✨</span><span class="note-label">Shimmer</span></div>
+  <div class="canary-hero retro-box">
+    <h1 class="canary-title">THE CANARY'S <em>SONG</em></h1>
+    <p class="canary-sub">The mine speaks in four frequencies. Listen. Repeat. Survive.</p>
   </div>
-  <button class="start-btn" id="startBtn" onclick="startGame()">⬡ Listen to the Mine</button>
+
+  <div class="dialogue-box">
+    <div class="dialogue-name">THE CANARY</div>
+    <div class="dialogue-text" id="statusLine"></div>
+  </div>
+
+  <div class="score-hud">
+    <div>ROUND: <span id="valRound" style="color:var(--cream);">0</span></div>
+    <div>BEST: <span id="valBest" style="color:var(--lg);">0</span></div>
+  </div>
+
+  <div class="game-board retro-box">
+    <div class="notes-grid">
+      <div class="note-btn" id="btn0" onclick="playerNote(0)">
+        <canvas id="canv0" class="note-canvas" width="12" height="12"></canvas>
+        <span class="note-label">STRIKE</span>
+      </div>
+      <div class="note-btn" id="btn1" onclick="playerNote(1)">
+        <canvas id="canv1" class="note-canvas" width="12" height="12"></canvas>
+        <span class="note-label">DRIP</span>
+      </div>
+      <div class="note-btn" id="btn2" onclick="playerNote(2)">
+        <canvas id="canv2" class="note-canvas" width="12" height="12"></canvas>
+        <span class="note-label">WIND</span>
+      </div>
+      <div class="note-btn" id="btn3" onclick="playerNote(3)">
+        <canvas id="canv3" class="note-canvas" width="12" height="12"></canvas>
+        <span class="note-label">SHIMMER</span>
+      </div>
+    </div>
+    <button class="start-btn" id="startBtn" onclick="startGame()">INITIALIZE SEQUENCE</button>
+  </div>
 </main>
-<div class="depth-gauge">
-  <a href="oracle.html" class="dg-link">🔮 Chamber</a>
-  <span style="color:var(--faint);font-size:.4rem">⬡</span>
-  <a href="index.html" class="dg-link">⛏ Mine</a>
+
+<div class="hud">
+  <div class="hud-stat">GOLD: <span class="hud-val" id="dgGold">0</span></div>
+  <a href="index.html" class="hud-link">MINE</a>
+  <a href="oracle.html" class="hud-link">ORACLE</a>
 </div>
+
 <script>
-const FREQS = [180,280,380,520]; // Strike, Drip, Wind, Shimmer
-const TYPES = ['square','sine','triangle','sawtooth'];
+// ── PROCEDURAL ICON GENERATOR ──
+function drawIcon(canvasId, seedStr, colorHex) {
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 12, 12);
+  
+  let seed = 0;
+  for(let i=0; i<seedStr.length; i++) { seed = seed * 31 + seedStr.charCodeAt(i); }
+  const random = () => { let x = Math.sin(seed++) * 10000; return x - Math.floor(x); };
+
+  ctx.fillStyle = colorHex;
+  ctx.shadowColor = colorHex;
+  ctx.shadowBlur = 8;
+  
+  for(let x=0; x<6; x++) {
+    for(let y=0; y<12; y++) {
+      if(random() > 0.3) {
+        ctx.fillRect(x + 3, y, 1, 1); 
+        ctx.fillRect(12 - (x + 3) - 1, y, 1, 1); 
+      }
+    }
+  }
+  ctx.shadowBlur = 0;
+}
+
+// Generate the 4 node icons
+window.addEventListener('DOMContentLoaded', () => {
+  drawIcon('canv0', 'PickaxeRockStrike', '#AA7700'); // Strike
+  drawIcon('canv1', 'WaterCavernDrip', '#5555FF');   // Drip
+  drawIcon('canv2', 'AirCurrentWind', '#AAAAAA');    // Wind
+  drawIcon('canv3', 'CrystalShineGleam', '#55FF55'); // Shimmer
+  typeText("SYSTEM STANDBY. AWAITING INITIALIZATION.");
+  updateGlobalHUD();
+});
+
+// ── TYPEWRITER TEXT ──
+let typeTimer = null;
+function typeText(text) {
+  const el = document.getElementById('statusLine');
+  el.textContent = "";
+  if(typeTimer) clearInterval(typeTimer);
+  let i = 0;
+  typeTimer = setInterval(() => {
+    el.textContent += text.charAt(i++);
+    if (i >= text.length) clearInterval(typeTimer);
+  }, 25);
+}
+
+// ── AUDIO & GAME LOGIC ──
+const FREQS = [180, 280, 380, 520]; 
+const TYPES = ['square', 'sine', 'triangle', 'sawtooth'];
 const MESSAGES = [
-  ["Listen to the air...","The stone remembers...","Four notes. Four truths."],
-  ["The mine is testing you.","Repeat what you heard.","The canary is watching."],
-  ["Your memory runs deep.","The gold approves.","Lord Oro nods from the doorway."],
-  ["Few miners reach this depth.","The silence trusts you.","The Canary sings for you now."]
+  ["Listen to the air...", "The stone remembers...", "Four notes. Four truths."],
+  ["The mine is testing you.", "Repeat what you heard.", "The canary is watching."],
+  ["Your memory runs deep.", "The gold approves.", "Lord Oro nods from the doorway."],
+  ["Few miners reach this depth.", "The silence trusts you.", "The Canary sings for you now."]
 ];
-let ctx=null,seq=[],playerSeq=[],round=0,best=0,listening=false,playing=false;
-function getCtx(){if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();return ctx;}
-function playNote(idx,duration=0.3){
-  const c=getCtx();
-  const osc=c.createOscillator(),g=c.createGain();
-  osc.type=TYPES[idx];osc.frequency.value=FREQS[idx];
-  g.gain.setValueAtTime(0.12,c.currentTime);
-  g.gain.exponentialRampToValueAtTime(0.0001,c.currentTime+duration);
+
+let ctx = null, seq = [], playerSeq = [], round = 0, best = 0;
+let listening = false, playing = false;
+
+function getCtx(){ if(!ctx) ctx = new(window.AudioContext || window.webkitAudioContext)(); return ctx; }
+
+function playNote(idx, duration=0.3) {
+  const c = getCtx();
+  const osc = c.createOscillator(), g = c.createGain();
+  osc.type = TYPES[idx]; 
+  osc.frequency.value = FREQS[idx];
+  
+  g.gain.setValueAtTime(0.12, c.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + duration);
+  
   osc.connect(g).connect(c.destination);
-  osc.start();osc.stop(c.currentTime+duration);
-  const btn=document.getElementById('btn'+idx);
-  if(btn){btn.classList.add('lit');setTimeout(()=>btn.classList.remove('lit'),duration*900);}
+  osc.start(); osc.stop(c.currentTime + duration);
+  
+  const btn = document.getElementById('btn' + idx);
+  if(btn) {
+    btn.classList.add('lit-' + idx);
+    setTimeout(() => btn.classList.remove('lit-' + idx), duration * 800);
+  }
 }
-async function playSequence(){
-  playing=true;
-  document.querySelectorAll('.note-btn').forEach(b=>b.style.pointerEvents='none');
-  document.getElementById('statusLine').textContent='Listen to the mine...';
+
+async function playSequence() {
+  playing = true;
+  document.querySelectorAll('.note-btn').forEach(b => b.style.pointerEvents = 'none');
+  typeText("TRANSMITTING FREQUENCIES...");
+  
   await sleep(600);
-  for(let i=0;i<seq.length;i++){playNote(seq[i]);await sleep(700);}
-  document.querySelectorAll('.note-btn').forEach(b=>b.style.pointerEvents='auto');
-  const msgs=MESSAGES[Math.min(Math.floor(round/3),MESSAGES.length-1)];
-  document.getElementById('statusLine').textContent=msgs[Math.floor(Math.random()*msgs.length)];
-  playing=false;listening=true;playerSeq=[];
+  
+  let speed = Math.max(300, 700 - (round * 25)); 
+  
+  for(let i=0; i<seq.length; i++) {
+    playNote(seq[i], speed / 1000);
+    await sleep(speed + 100);
+  }
+  
+  document.querySelectorAll('.note-btn').forEach(b => b.style.pointerEvents = 'auto');
+  
+  const msgs = MESSAGES[Math.min(Math.floor(round / 3), MESSAGES.length - 1)];
+  typeText(msgs[Math.floor(Math.random() * msgs.length)]);
+  
+  playing = false; listening = true; playerSeq = [];
 }
-function startGame(){
-  seq=[];round=0;
-  document.getElementById('startBtn').style.display='none';
+
+function startGame() {
+  seq = []; round = 0;
+  document.getElementById('startBtn').style.display = 'none';
   nextRound();
 }
-async function nextRound(){
+
+async function nextRound() {
   round++;
-  seq.push(Math.floor(Math.random()*4));
-  document.getElementById('scoreLine').textContent='Round: '+round+' — Best: '+best;
-  await sleep(400);
+  seq.push(Math.floor(Math.random() * 4));
+  
+  document.getElementById('valRound').textContent = round;
+  document.getElementById('valBest').textContent = best;
+  
+  await sleep(500);
   playSequence();
 }
-function playerNote(idx){
-  if(playing||!listening)return;
-  playNote(idx,0.25);
+
+function playerNote(idx) {
+  if(playing || !listening) return;
+  playNote(idx, 0.25);
   playerSeq.push(idx);
-  const pos=playerSeq.length-1;
-  if(playerSeq[pos]!==seq[pos]){
-    wrong();return;
+  
+  const pos = playerSeq.length - 1;
+  if(playerSeq[pos] !== seq[pos]) {
+    wrong(); return;
   }
-  if(playerSeq.length===seq.length){
-    listening=false;
-    if(round>best)best=round;
-    document.getElementById('scoreLine').textContent='Round: '+round+' — Best: '+best;
-    document.getElementById('statusLine').textContent='The mine approves. Descending deeper...';
-    setTimeout(nextRound,1200);
+  
+  if(playerSeq.length === seq.length) {
+    listening = false;
+    if(round > best) best = round;
+    
+    document.getElementById('valRound').textContent = round;
+    document.getElementById('valBest').textContent = best;
+    
+    // Reward System: Earn Gold based on Round
+    let goldReward = round * 2;
+    rewardGold(goldReward);
+    
+    typeText(`SEQUENCE VERIFIED. +${goldReward} GOLD AWARDED.`);
+    setTimeout(nextRound, 1500);
   }
 }
-function wrong(){
-  listening=false;
-  document.querySelectorAll('.note-btn').forEach(b=>{b.classList.add('wrong');setTimeout(()=>b.classList.remove('wrong'),600);});
-  document.getElementById('statusLine').textContent='The song breaks. The air grows thin. '+round+' round'+(round!==1?'s':'')+' survived.';
-  if(round>best)best=round;
-  document.getElementById('scoreLine').textContent='Round: '+round+' — Best: '+best;
-  setTimeout(()=>{
-    seq=[];round=0;
-    document.getElementById('startBtn').style.display='inline-block';
-    document.getElementById('statusLine').textContent='The mine is quiet again. Try once more.';
-  },2000);
+
+function wrong() {
+  listening = false;
+  // Play failure sound
+  const c = getCtx();
+  const osc = c.createOscillator(), g = c.createGain();
+  osc.type = 'sawtooth'; osc.frequency.value = 80;
+  g.gain.setValueAtTime(0.15, c.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + 0.5);
+  osc.connect(g).connect(c.destination);
+  osc.start(); osc.stop(c.currentTime + 0.5);
+
+  document.querySelectorAll('.note-btn').forEach(b => {
+    b.classList.add('wrong');
+    setTimeout(() => b.classList.remove('wrong'), 600);
+  });
+  
+  typeText(`SIGNAL LOST. SURVIVED ${round - 1} ROUNDS.`);
+  
+  if(round - 1 > best) best = round - 1;
+  document.getElementById('valBest').textContent = best;
+  
+  setTimeout(() => {
+    seq = []; round = 0;
+    document.getElementById('startBtn').style.display = 'block';
+    typeText("SYSTEM RESET. READY FOR NEW SEQUENCE.");
+  }, 2500);
 }
-function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
-</script>
-<script id="nmn-glow">
-(function(){var r=document.createElement('div');r.id='pickaxe-glow';r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';document.body.appendChild(r);document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});})();
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── GLOBAL GOLD SYSTEM ──
+function rewardGold(amount) {
+  try {
+    let currentGold = parseInt(localStorage.getItem('nmn_total_gold') || '0');
+    localStorage.setItem('nmn_total_gold', currentGold + amount);
+    updateGlobalHUD();
+  } catch(e) {}
+}
+
+function updateGlobalHUD() {
+  try {
+    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold') || '0';
+  } catch(e) {}
+}
 </script>
 
-<!-- Monetag Service Worker Registration -->
-<script>
-if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
-}
-</script>
-
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
-</div>
 </body>
 </html>
