@@ -3,333 +3,300 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Battle of the Mines — NMN</title>
-<link rel="stylesheet" href="nmn-theme.css">
+<title>Mine Siege — Sector 1</title>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P5WL9XNDY8');
+</script>
+<link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
 <style>
+/* ── CORE NMN VARIABLES & AESTHETIC ── */
 :root {
-  --gold: #FFD700; --gold-bright: #e8b84b; --gold-dim: #7a5a18;
-  --coal: #0c0a07; --shaft: #110e09; --cream: #f0e6cc;
-  --muted: #8a7654; --faint: #4a3c28;
+  --gold: #FFD700; --gb: #e8b84b; --gd: #8B6914;
+  --coal: #050308; --shaft: #08060A; --rock: #0A080C;
+  --cream: #E8E0D0; --neon-green: #00FF88;
+  --font-pixel: 'Press Start 2P', cursive;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: var(--font-sans);
-  background: var(--coal); color: var(--cream);
-  height: 100vh; display: flex; flex-direction: column; overflow: hidden;
-  background-image: linear-gradient(45deg, #0c0a07 25%, #110e0a 25%, #110e0a 50%, #0c0a07 50%, #0c0a07 75%, #110e0a 75%, #110e0a 100%);
-  background-size: 4px 4px;
-}
-header {
-  padding: 0.8rem 2rem; flex-shrink: 0;
-  border-bottom: 1px solid rgba(255,215,0,0.15);
-  display: flex; justify-content: space-between; align-items: center;
-  background: rgba(12,10,7,0.95); z-index: 10;
-}
-.logo { font-family: var(--font-serif); font-style: italic; color: var(--gold); font-size: 0.95rem; text-decoration: none; }
-.back { font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
-.back:hover { color: var(--gold); }
+html, body { height: 100%; overflow: hidden; background: var(--coal); }
 
+body {
+  font-family: var(--font-pixel);
+  color: var(--cream);
+  display: flex; flex-direction: column;
+  background-image: 
+    linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
+  background-size: 32px 32px;
+}
+
+/* OVERRIDE ALL OLD FONTS */
+h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
+
+/* CRT SCANLINES & VIGNETTE */
+body::after {
+  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
+  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.08) 50%),
+              linear-gradient(90deg,rgba(232,184,75,0.015),rgba(197,146,0,0.008),rgba(255,215,0,0.015));
+  background-size:100% 3px,3px 100%; pointer-events:none; z-index:10000; opacity:0.18;
+}
+body::before {
+  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
+  background:radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.65) 100%);
+  pointer-events:none; z-index:9999;
+}
+
+/* HEADER */
+header {
+  padding: 1rem 2rem; border-bottom: 2px solid var(--gd);
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(5,3,14,.95); z-index: 1000; flex-shrink: 0;
+}
+.logo { color: var(--gold); font-size: .65rem; text-decoration: none; text-shadow: 0 0 10px rgba(255,215,0,.4); }
+.back-btn { font-size: .45rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+.back-btn:hover { color: var(--gold); }
+
+/* ARCADE HUD */
 .hud {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 0.4rem 1.5rem; background: rgba(12,10,7,0.9);
-  border-bottom: 1px solid rgba(255,215,0,0.08); flex-shrink: 0;
-  flex-wrap: wrap; gap: 0.5rem;
+  padding: 0.5rem 2rem; background: rgba(5,3,8,0.9);
+  border-bottom: 1px solid rgba(255,215,0,0.15); flex-shrink: 0; z-index: 50;
 }
-.hud-stat { text-align: center; }
-.hud-val { font-family: var(--font-serif); font-size: 1.2rem; color: var(--gold); line-height: 1; }
-.hud-lab { font-size: 0.45rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--faint); }
+.hud-side { display: flex; flex-direction: column; width: 35%; }
+.hud-side.right { align-items: flex-end; text-align: right; }
+.player-name { font-size: 0.5rem; color: var(--cream); margin-bottom: 0.4rem; }
+.hp-bar-bg { width: 100%; height: 12px; background: #222; border: 2px solid var(--gd); position: relative; }
+.hp-bar-fill { height: 100%; background: var(--gold); transition: width 0.3s, background-color 0.3s; }
+.right .hp-bar-fill { margin-left: auto; background: #ff4444; }
 
-.game-area { flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-canvas { display: block; }
+.round-info { text-align: center; color: var(--gold); font-size: 0.6rem; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+
+/* GAME CANVAS */
+.game-area { flex: 1; position: relative; overflow: hidden; background: transparent; }
+canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
 
 /* MINE SELECT SCREEN */
 .mine-select {
-  position: absolute; inset: 0; background: rgba(12,10,7,0.97);
+  position: absolute; inset: 0; background: rgba(5,3,8,0.98);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  z-index: 30; padding: 1rem;
+  z-index: 100; padding: 1rem;
 }
-.select-title { font-family: var(--font-serif); font-size: clamp(1.8rem, 4vw, 3rem); color: var(--gold); margin-bottom: 0.5rem; text-align: center; }
-.select-title em { font-style: italic; }
-.select-sub { font-size: 0.7rem; color: var(--muted); margin-bottom: 2rem; text-align: center; letter-spacing: 0.08em; }
-.mine-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; max-width: 700px; width: 100%; }
+.select-title { font-size: 1.2rem; color: var(--gold); margin-bottom: 1rem; text-shadow: 0 0 20px rgba(255,215,0,0.4); text-align: center; line-height: 1.5; }
+.select-sub { font-size: 0.45rem; color: var(--gd); margin-bottom: 2.5rem; text-align: center; line-height: 1.8; max-width: 600px; }
+.mine-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; max-width: 900px; }
 .mine-card {
-  padding: 1.2rem 0.5rem; text-align: center; border: 1px solid rgba(255,215,0,0.15);
-  background: rgba(255,255,255,0.02); cursor: pointer; transition: all 0.3s;
-  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  padding: 1.5rem; text-align: center; border: 2px solid var(--gd);
+  background: #000; cursor: pointer; transition: all 0.2s;
+  width: 160px; display: flex; flex-direction: column; align-items: center; gap: 0.8rem;
 }
-.mine-card:hover { border-color: rgba(255,215,0,0.5); background: rgba(255,215,0,0.08); transform: translateY(-3px); }
-.mine-card.selected { border-color: var(--gold); background: rgba(255,215,0,0.12); }
-.mine-icon { font-size: 2rem; }
-.mine-name { font-family: var(--font-serif); font-size: 0.9rem; color: var(--cream); }
-.mine-type { font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 0.2rem; }
-.mine-bonus { font-size: 0.55rem; color: var(--faint); line-height: 1.4; margin-top: 0.3rem; }
-.start-btn {
-  margin-top: 1.5rem; padding: 0.8rem 3rem;
-  background: var(--gold); color: var(--coal);
-  font-family: var(--font-sans); font-size: 0.7rem;
-  letter-spacing: 0.2em; text-transform: uppercase;
-  border: none; cursor: pointer; transition: all 0.3s;
-}
-.start-btn:hover { background: var(--gold-bright); }
-.start-btn:disabled { opacity: 0.3; cursor: default; }
+.mine-card:hover { border-color: var(--gold); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.8), inset 0 0 15px rgba(255,215,0,0.2); }
+.mine-card.selected { border-color: var(--neon-green); background: rgba(0,255,136,0.05); box-shadow: 0 0 20px rgba(0,255,136,0.3); }
+.mine-icon { font-size: 2.5rem; }
+.mine-name { font-size: 0.55rem; color: var(--cream); }
+.mine-type { font-size: 0.4rem; }
+.mine-bonus { font-size: 0.35rem; color: var(--muted); line-height: 1.5; }
 
-/* AMMO SELECTOR */
+.start-btn {
+  margin-top: 3rem; padding: 1rem 2rem; background: var(--gold); color: #000;
+  font-size: 0.6rem; border: none; cursor: pointer; transition: all 0.3s;
+}
+.start-btn:hover { background: #fff; box-shadow: 0 0 20px rgba(255,215,0,0.6); transform: scale(1.05); }
+.start-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* HUD ELEMENTS */
 .ammo-bar {
-  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
-  display: flex; gap: 6px; z-index: 15; background: rgba(12,10,7,0.85);
-  padding: 6px 10px; border: 1px solid rgba(255,215,0,0.2);
+  position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 10px; z-index: 15; background: rgba(5,3,8,0.9);
+  padding: 10px; border: 2px solid var(--gd);
 }
 .ammo-btn {
-  width: 40px; height: 40px; border: 1px solid rgba(255,215,0,0.2);
-  background: rgba(255,255,255,0.02); cursor: pointer;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  font-size: 1.1rem; transition: all 0.2s; position: relative;
+  width: 45px; height: 45px; border: 2px solid var(--gd); background: #000;
+  cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 1.2rem; position: relative; transition: 0.2s;
 }
-.ammo-btn.active { border-color: var(--gold); background: rgba(255,215,0,0.15); }
-.ammo-btn:hover { border-color: var(--gold-dim); }
-.ammo-count { font-size: 0.45rem; color: var(--gold-dim); position: absolute; bottom: 2px; right: 3px; }
+.ammo-btn.active { border-color: var(--neon-green); background: rgba(0,255,136,0.1); }
+.ammo-count { font-size: 0.35rem; color: var(--gold); position: absolute; bottom: 3px; right: 3px; }
 
-/* OVERLAYS */
-.overlay {
-  position: absolute; inset: 0; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  background: rgba(12,10,7,0.94); z-index: 20;
-}
-.overlay-title { font-family: var(--font-serif); font-size: clamp(1.8rem, 4vw, 3rem); color: var(--gold); margin-bottom: 0.5rem; text-align: center; }
-.overlay-title em { font-style: italic; }
-.overlay-sub { font-size: 0.7rem; color: var(--muted); margin-bottom: 1.5rem; text-align: center; max-width: 380px; line-height: 1.8; }
-.btn { padding: 0.7rem 1.8rem; font-family: var(--font-sans); font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; border: none; transition: all 0.3s; display: inline-block; text-decoration: none; margin: 0.25rem; }
-.btn-gold { background: var(--gold); color: var(--coal); }
-.btn-gold:hover { background: var(--gold-bright); }
-.btn-outline { background: transparent; color: var(--gold); border: 1px solid rgba(255,215,0,0.4); }
-.btn-outline:hover { background: rgba(255,215,0,0.08); }
-
-/* WIND INDICATOR */
 .wind-bar {
-  position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
-  background: rgba(12,10,7,0.85); border: 1px solid rgba(255,215,0,0.2);
-  padding: 4px 12px; font-size: 0.55rem; letter-spacing: 0.15em;
-  text-transform: uppercase; color: var(--gold-dim); z-index: 15;
-  display: flex; align-items: center; gap: 8px;
+  position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
+  background: rgba(5,3,8,0.9); border: 2px solid var(--gd);
+  padding: 8px 15px; font-size: 0.5rem; color: var(--cream); z-index: 15;
+  display: flex; align-items: center; gap: 10px;
 }
-.wind-arrow { font-size: 1rem; color: var(--gold); transition: transform 0.5s; }
+.wind-arrow { color: var(--neon-green); font-size: 0.8rem; }
+
 .turn-indicator {
-  position: absolute; top: 8px; right: 10px;
-  background: rgba(12,10,7,0.85); border: 1px solid rgba(255,215,0,0.2);
-  padding: 4px 10px; font-size: 0.55rem; letter-spacing: 0.15em;
-  text-transform: uppercase; color: var(--gold-dim); z-index: 15;
+  position: absolute; top: 15px; right: 20px;
+  background: rgba(5,3,8,0.9); border: 2px solid var(--gold);
+  padding: 8px 15px; font-size: 0.5rem; color: var(--gold); z-index: 15;
+  animation: pulse 1.5s infinite;
 }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-@media (max-width: 600px) {
-  .mine-grid { grid-template-columns: repeat(3, 1fr); }
-  .ammo-btn { width: 34px; height: 34px; font-size: 0.9rem; }
+/* GAME OVER OVERLAY */
+.overlay {
+  position: absolute; inset: 0; display: none; flex-direction: column;
+  align-items: center; justify-content: center; background: rgba(5,3,8,0.95); z-index: 100;
 }
-
-/* LORE TOAST — non-disruptive, corner notification */
-.lore-toast{position:fixed;bottom:50px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(12,10,7,.92);border:1px solid rgba(255,215,0,.3);border-left:3px solid var(--gold,#c9962a);padding:.6rem 1rem;max-width:280px;width:90%;z-index:500;opacity:0;transition:opacity .4s,transform .4s;pointer-events:none;font-family:var(--font-sans)}
-.lore-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.lore-toast-label{font-size:.38rem;letter-spacing:.2em;text-transform:uppercase;color:#7a5a18;margin-bottom:.25rem}
-.lore-toast-text{font-size:.58rem;color:#f0e6cc;line-height:1.5;font-style:italic}
+.overlay-title { font-size: 2rem; color: var(--gold); margin-bottom: 1rem; text-shadow: 0 0 20px rgba(255,215,0,0.5); }
+.overlay-sub { font-size: 0.6rem; color: var(--cream); margin-bottom: 2rem; text-align: center; line-height: 1.8; }
+.btn-group { display: flex; gap: 1rem; }
+.btn-outline { background: transparent; border: 2px solid var(--gold); color: var(--gold); padding: 0.8rem 1.5rem; font-size: 0.5rem; cursor: pointer; text-decoration: none; }
+.btn-outline:hover { background: rgba(255,215,0,0.1); }
 </style>
-
-<style id="depth-gauge-style">
-.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:36px;background:rgba(12,10,7,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:2rem;z-index:999;padding:0 1rem;flex-wrap:wrap}
-.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28}
-.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
-.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s}
-.dg-link:hover{color:#FFD700}
-.dg-sep{color:#2a1808;font-size:.6rem}
-</style>
-
-<style id="nmn-cursor">
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
-</style>
-<style id="gemini-viewport">
-.mining-frame{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-height:85vh;margin:0 auto;overflow:hidden}
-canvas{max-width:95%;height:auto!important}
-.active-glow{animation:pulseGold 2s infinite;color:#fff!important;text-shadow:0 0 10px #c9962a}
-@keyframes pulseGold{0%{opacity:.7}50%{opacity:1}100%{opacity:.7}}
-</style>
-<style id="floating-gauge">
-.depth-gauge{
-  position:fixed!important;bottom:12px!important;left:50%!important;
-  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
-  height:42px!important;background:rgba(12,10,7,.88)!important;
-  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
-  padding:0 18px!important;pointer-events:none!important;
-  z-index:9999!important;backdrop-filter:blur(4px)!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  gap:1.2rem!important;flex-wrap:nowrap!important;
-  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
-}
-.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
-body{padding-bottom:65px!important}
-</style>
-
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
-
-
 </head>
 <body>
-<script src="nmn-nav.js"></script>
-<script src="nmn-scene.js"></script>
+
 <header>
   <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="games.html" class="back">← Recreation Hall</a>
+  <a href="games.html" class="back-btn">← Return to Forge</a>
 </header>
+
 <div class="hud">
-  <div class="hud-stat"><div class="hud-val" id="p1hp">100</div><div class="hud-lab">Your HP</div></div>
-  <div class="hud-stat"><div class="hud-val" id="p1name" style="font-size:0.8rem">—</div><div class="hud-lab">Your Mine</div></div>
-  <div class="hud-stat"><div class="hud-val" id="roundVal">1</div><div class="hud-lab">Round</div></div>
-  <div class="hud-stat"><div class="hud-val" id="p2name" style="font-size:0.8rem">—</div><div class="hud-lab">Enemy Mine</div></div>
-  <div class="hud-stat"><div class="hud-val" id="p2hp">100</div><div class="hud-lab">Enemy HP</div></div>
+  <div class="hud-side">
+    <div class="player-name" id="p1name">PLAYER MINE</div>
+    <div class="hp-bar-bg"><div class="hp-bar-fill" id="p1hp"></div></div>
+  </div>
+  <div class="round-info">ROUND <span id="roundVal">1</span></div>
+  <div class="hud-side right">
+    <div class="player-name" id="p2name">ENEMY MINE</div>
+    <div class="hp-bar-bg"><div class="hp-bar-fill" id="p2hp"></div></div>
+  </div>
 </div>
 
 <div class="game-area">
   <canvas id="c"></canvas>
 
   <div class="wind-bar" id="windBar" style="display:none">
-    <span>Wind</span>
-    <span class="wind-arrow" id="windArrow">→</span>
-    <span id="windStr">Calm</span>
+    <span>WIND</span> <span class="wind-arrow" id="windArrow">→</span> <span id="windStr">CALM</span>
   </div>
-  <div class="turn-indicator" id="turnIndicator" style="display:none">Your Turn</div>
+  <div class="turn-indicator" id="turnIndicator" style="display:none">YOUR TURN</div>
 
-  <!-- AMMO BAR -->
   <div class="ammo-bar" id="ammoBar" style="display:none">
     <div class="ammo-btn active" data-ammo="0" onclick="selectAmmo(0)">
-      <span id="ammoIcon0">⬡</span>
-      <span class="ammo-count" id="ammoCount0">∞</span>
+      <span id="ammoIcon0">⬡</span><span class="ammo-count" id="ammoCount0">∞</span>
     </div>
     <div class="ammo-btn" data-ammo="1" onclick="selectAmmo(1)">
-      <span id="ammoIcon1">🔥</span>
-      <span class="ammo-count" id="ammoCount1">5</span>
+      <span id="ammoIcon1">🔥</span><span class="ammo-count" id="ammoCount1">5</span>
     </div>
     <div class="ammo-btn" data-ammo="2" onclick="selectAmmo(2)">
-      <span id="ammoIcon2">💎</span>
-      <span class="ammo-count" id="ammoCount2">3</span>
+      <span id="ammoIcon2">💎</span><span class="ammo-count" id="ammoCount2">3</span>
     </div>
     <div class="ammo-btn" data-ammo="3" onclick="selectAmmo(3)">
-      <span id="ammoIcon3">💣</span>
-      <span class="ammo-count" id="ammoCount3">2</span>
-    </div>
-    <div class="ammo-btn" data-ammo="4" onclick="selectAmmo(4)">
-      <span id="ammoIcon4">🌊</span>
-      <span class="ammo-count" id="ammoCount4">3</span>
+      <span id="ammoIcon3">💣</span><span class="ammo-count" id="ammoCount3">2</span>
     </div>
   </div>
 
-  <!-- MINE SELECT -->
   <div class="mine-select" id="mineSelect">
-    <div class="select-title">Choose Your <em>Mine</em></div>
-    <p class="select-sub">Each mine type carries different ore — and different elemental power. Choose wisely.</p>
+    <div class="select-title">[ MINE SIEGE ]<br>SELECT PROTOCOL</div>
+    <p class="select-sub">Each mine type extracts different elemental power. Choose your fortress.</p>
     <div class="mine-grid">
       <div class="mine-card" onclick="selectMine(0)">
         <span class="mine-icon">⬡</span>
-        <div class="mine-name">Goldmine</div>
-        <div class="mine-type" style="color:#FFD700">Metal Type</div>
-        <div class="mine-bonus">Balanced. More ammo. Lord Oro's home mine.</div>
+        <div class="mine-name">GOLDMINE</div>
+        <div class="mine-type" style="color:#FFD700">METAL</div>
+        <div class="mine-bonus">Balanced. Extra Ammo.</div>
       </div>
       <div class="mine-card" onclick="selectMine(1)">
         <span class="mine-icon">💎</span>
-        <div class="mine-name">Diamond Mine</div>
-        <div class="mine-type" style="color:#88ccff">Crystal Type</div>
-        <div class="mine-bonus">High damage. Low ammo. Pierces armor.</div>
+        <div class="mine-name">DIAMOND</div>
+        <div class="mine-type" style="color:#88ccff">CRYSTAL</div>
+        <div class="mine-bonus">Piercing. High Damage.</div>
       </div>
       <div class="mine-card" onclick="selectMine(2)">
         <span class="mine-icon">❤️</span>
-        <div class="mine-name">Ruby Mine</div>
-        <div class="mine-type" style="color:#ff4444">Flame Type</div>
-        <div class="mine-bonus">Burns over time. Beats Diamond. Weak to Water.</div>
+        <div class="mine-name">RUBY</div>
+        <div class="mine-type" style="color:#ff4444">FLAME</div>
+        <div class="mine-bonus">Incendiary. Burns target.</div>
       </div>
       <div class="mine-card" onclick="selectMine(3)">
         <span class="mine-icon">⚪</span>
-        <div class="mine-name">Silver Mine</div>
-        <div class="mine-type" style="color:#aaaacc">Shadow Type</div>
-        <div class="mine-bonus">Homing ore. Harder to dodge. Weak to Gold.</div>
+        <div class="mine-name">SILVER</div>
+        <div class="mine-type" style="color:#aaaacc">SHADOW</div>
+        <div class="mine-bonus">Homing. Hard to dodge.</div>
       </div>
       <div class="mine-card" onclick="selectMine(4)">
         <span class="mine-icon">🖤</span>
-        <div class="mine-name">Obsidian Mine</div>
-        <div class="mine-type" style="color:#886688">Void Type</div>
-        <div class="mine-bonus">Massive single shot. Long reload. Beats all but Gold.</div>
+        <div class="mine-name">OBSIDIAN</div>
+        <div class="mine-type" style="color:#886688">VOID</div>
+        <div class="mine-bonus">Heavy impact. Explosive.</div>
       </div>
     </div>
-    <button class="start-btn" id="startBtn" onclick="startBattle()" disabled>Select a Mine to Begin</button>
+    <button class="start-btn" id="startBtn" onclick="startBattle()" disabled>AWAITING SELECTION</button>
   </div>
 
-  <!-- GAME OVER -->
-  <div class="overlay" id="gameOverOv" style="display:none">
-    <div class="overlay-title" id="goTitle">Victory</div>
+  <div class="overlay" id="gameOverOv">
+    <div class="overlay-title" id="goTitle">VICTORY</div>
     <p class="overlay-sub" id="goSub"></p>
-    <button class="btn btn-outline" onclick="shareScore(score, 'Battle of the Mines')" style="margin-right:.5rem">⬡ Share Score</button>
-<button class="btn btn-gold" onclick="resetGame()">Fight Again</button>
-    <a href="games.html" class="btn btn-outline">Return to Hall</a>
+    <div class="btn-group">
+      <button class="start-btn" style="margin-top:0;" onclick="resetGame()">FIGHT AGAIN</button>
+      <a href="games.html" class="btn-outline">EXIT</a>
+    </div>
   </div>
 </div>
 
-
-<script id="nmn-bridge">
-(function(){
-  try{
-    if(!localStorage.getItem('nmn_collector_v2'))
-      localStorage.setItem('nmn_collector_v2',JSON.stringify({G:{team:[],grimoire:{},starter:null,activeIdx:0,gold:0,clearedZones:['surface'],battles:0}}));
-    if(!localStorage.getItem('nmn_total_gold'))
-      localStorage.setItem('nmn_total_gold','0');
-  }catch(e){}
-})();
-</script>
 <script>
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
 
-// MINE TYPES
+// MINE & AMMO DATA
 const MINES = [
-  { name: 'Goldmine', icon: '⬡', color: '#c9962a', type: 'Metal', bonus: 'ammo', hpColor: '#c9962a' },
-  { name: 'Diamond', icon: '💎', color: '#88ccff', type: 'Crystal', bonus: 'pierce', hpColor: '#88ccff' },
-  { name: 'Ruby', icon: '❤️', color: '#ff4444', type: 'Flame', bonus: 'burn', hpColor: '#ff4444' },
-  { name: 'Silver', icon: '⚪', color: '#aaaacc', type: 'Shadow', bonus: 'homing', hpColor: '#aaaacc' },
-  { name: 'Obsidian', icon: '🖤', color: '#886688', type: 'Void', bonus: 'heavy', hpColor: '#886688' },
+  { name: 'Goldmine', icon: '⬡', color: '#c9962a', type: 'Metal' },
+  { name: 'Diamond', icon: '💎', color: '#88ccff', type: 'Crystal' },
+  { name: 'Ruby', icon: '❤️', color: '#ff4444', type: 'Flame' },
+  { name: 'Silver', icon: '⚪', color: '#aaaacc', type: 'Shadow' },
+  { name: 'Obsidian', icon: '🖤', color: '#886688', type: 'Void' }
 ];
 
-// ORE AMMO TYPES
 const AMMOS = [
-  { name: 'Gold Ore', icon: '⬡', color: '#c9962a', damage: 15, speed: 8, r: 6, count: Infinity, desc: 'Standard shot' },
-  { name: 'Fire Ore', icon: '🔥', color: '#ff6622', damage: 25, speed: 7, r: 8, count: 5, burn: 3, desc: '+3 burn/turn' },
-  { name: 'Diamond Shard', icon: '💎', color: '#88ccff', damage: 35, speed: 10, r: 5, count: 3, pierce: true, desc: 'High damage' },
-  { name: 'Dynamite', icon: '💣', color: '#ffaa00', damage: 50, speed: 5, r: 10, count: 2, explode: true, desc: 'Massive AoE' },
-  { name: 'Water Ore', icon: '🌊', color: '#4488ff', damage: 20, speed: 6, r: 7, count: 3, slow: true, desc: 'Extinguishes burn' },
+  { name: 'Gold Ore', icon: '⬡', color: '#c9962a', damage: 15, r: 6, count: Infinity },
+  { name: 'Fire Ore', icon: '🔥', color: '#ff4444', damage: 20, r: 8, count: 5, burn: 5 },
+  { name: 'Diamond', icon: '💎', color: '#88ccff', damage: 30, r: 5, count: 3, pierce: true },
+  { name: 'Dynamite', icon: '💣', color: '#ffaa00', damage: 45, r: 10, count: 2, explode: true }
 ];
 
-// TYPE MATCHUPS
+// MATCHUPS (Simple Rock Paper Scissors)
 const MATCHUPS = {
-  'Metal': { strong: ['Shadow', 'Crystal'], weak: [] },
-  'Crystal': { strong: ['Void', 'Shadow'], weak: ['Flame'] },
-  'Flame': { strong: ['Crystal', 'Shadow'], weak: ['Water', 'Metal'] },
-  'Shadow': { strong: ['Crystal', 'Void'], weak: ['Metal', 'Flame'] },
-  'Void': { strong: ['Crystal', 'Flame'], weak: ['Metal', 'Shadow'] },
+  'Metal': { strong: ['Shadow'], weak: ['Flame'] },
+  'Crystal': { strong: ['Void'], weak: ['Metal'] },
+  'Flame': { strong: ['Metal'], weak: ['Crystal'] },
+  'Shadow': { strong: ['Void'], weak: ['Metal'] },
+  'Void': { strong: ['Crystal'], weak: ['Shadow'] }
 };
 
 let W, H, gameRunning = false;
-let p1, p2, projectiles, particles, wind, turn, round;
-let selectedMine = -1, selectedAmmo = 0;
-let aiTimer = 0, ammoStock = [];
+let p1, p2, projectiles = [], particles = [], floatTexts = [];
+let wind = { x: 0, str: 'CALM' }, turn = 'player', round = 1;
+let selectedMine = -1, selectedAmmo = 0, ammoStock = [];
+let mouseX = 0, mouseY = 0;
+let screenShake = 0;
 
 function resize() {
-  const area = canvas.parentElement;
-  W = canvas.width = area.clientWidth;
-  H = canvas.height = area.clientHeight;
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = canvas.parentElement.clientHeight;
 }
+window.addEventListener('resize', resize);
+resize();
+
+// MOUSE TRACKING FOR AIMING
+canvas.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  mouseX = e.clientX - rect.left;
+  mouseY = e.clientY - rect.top;
+});
 
 function selectMine(idx) {
   selectedMine = idx;
   document.querySelectorAll('.mine-card').forEach((c, i) => c.classList.toggle('selected', i === idx));
   const btn = document.getElementById('startBtn');
   btn.disabled = false;
-  btn.textContent = `Enter Battle with ${MINES[idx].name}`;
+  btn.textContent = `INITIALIZE ${MINES[idx].name.toUpperCase()}`;
 }
 
 function startBattle() {
@@ -339,53 +306,26 @@ function startBattle() {
   document.getElementById('turnIndicator').style.display = 'block';
   document.getElementById('ammoBar').style.display = 'flex';
 
-  resize();
-
-  // AI gets random mine different from player
   let aiMine = selectedMine;
   while (aiMine === selectedMine) aiMine = Math.floor(Math.random() * 5);
 
-  // Setup ammo stock
-  ammoStock = AMMOS.map(a => ({ ...a, remaining: a.count === Infinity ? Infinity : a.count }));
-  if (MINES[selectedMine].bonus === 'ammo') ammoStock.forEach(a => { if (a.remaining !== Infinity) a.remaining += 2; });
+  ammoStock = AMMOS.map(a => ({ ...a, remaining: a.count }));
+  
+  p1 = { x: Math.min(W*0.15, 150), y: H - 80, w: 60, h: 60, hp: 100, maxHp: 100, mine: selectedMine, burn: 0 };
+  p2 = { x: Math.max(W*0.85 - 60, W - 200), y: H - 80, w: 60, h: 60, hp: 100, maxHp: 100, mine: aiMine, burn: 0 };
 
-  p1 = {
-    x: 80, y: H - 80, w: 50, h: 60,
-    hp: 100, maxHp: 100,
-    mine: selectedMine, angle: -45, power: 60,
-    burn: 0, name: MINES[selectedMine].name,
-    color: MINES[selectedMine].color
-  };
+  projectiles = []; particles = []; floatTexts = [];
+  randomizeWind(); turn = 'player'; round = 1; gameRunning = true; screenShake = 0;
 
-  p2 = {
-    x: W - 130, y: H - 80, w: 50, h: 60,
-    hp: 100, maxHp: 100,
-    mine: aiMine, angle: -135, power: 55,
-    burn: 0, name: MINES[aiMine].name,
-    color: MINES[aiMine].color
-  };
-
-  projectiles = []; particles = [];
-  wind = { x: (Math.random() - 0.5) * 0.3, str: 'Calm' };
-  turn = 'player'; round = 1;
-  gameRunning = true;
-
-  updateHUD();
-  updateWindBar();
-  if(window._battleRAF) cancelAnimationFrame(window._battleRAF);
+  updateHUD(); updateAmmoBar();
   requestAnimationFrame(loop);
 }
 
-function resetGame() {
-  document.getElementById('gameOverOv').style.display = 'none';
-  document.getElementById('mineSelect').style.display = 'flex';
-  document.getElementById('windBar').style.display = 'none';
-  document.getElementById('turnIndicator').style.display = 'none';
-  document.getElementById('ammoBar').style.display = 'none';
-  selectedMine = -1; gameRunning = false;
-  document.getElementById('startBtn').disabled = true;
-  document.getElementById('startBtn').textContent = 'Select a Mine to Begin';
-  document.querySelectorAll('.mine-card').forEach(c => c.classList.remove('selected'));
+function randomizeWind() {
+  wind.x = (Math.random() - 0.5) * 0.4;
+  wind.str = Math.abs(wind.x) < 0.1 ? 'CALM' : Math.abs(wind.x) < 0.25 ? 'BREEZE' : 'GALE';
+  document.getElementById('windArrow').textContent = wind.x > 0.05 ? '→' : wind.x < -0.05 ? '←' : '·';
+  document.getElementById('windStr').textContent = wind.str;
 }
 
 function selectAmmo(idx) {
@@ -394,81 +334,94 @@ function selectAmmo(idx) {
   document.querySelectorAll('.ammo-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
 }
 
-function fire(shooter, target) {
+// FIRE MECHANIC (Uses Mouse Position)
+canvas.addEventListener('click', () => {
+  if (!gameRunning || turn !== 'player' || projectiles.length > 0) return;
+  if (ammoStock[selectedAmmo].remaining <= 0) { selectAmmo(0); return; }
+  
   const ammo = { ...AMMOS[selectedAmmo] };
-  const dx = target.x - shooter.x;
-  const dy = target.y - shooter.y;
-  const dist = Math.sqrt(dx*dx + dy*dy);
-  const vx = (dx / dist) * ammo.speed * (shooter === p1 ? 1 : -1);
-  const vy = -ammo.speed * 0.8;
-
+  const startX = p1.x + p1.w/2;
+  const startY = p1.y;
+  
+  // Calculate vector based on mouse pull
+  const dx = mouseX - startX;
+  const dy = mouseY - startY;
+  
+  // Limit power
+  const maxPower = 20;
+  const dist = Math.min(Math.sqrt(dx*dx + dy*dy) * 0.05, maxPower);
+  const angle = Math.atan2(dy, dx);
+  
   projectiles.push({
-    x: shooter.x + (shooter === p1 ? 50 : 0),
-    y: shooter.y + 20,
-    vx: shooter === p1 ? Math.abs(vx) * 0.7 : -Math.abs(vx) * 0.7,
-    vy: -ammo.speed * 0.9,
-    ammo, shooter, target,
-    homing: MINES[shooter.mine].bonus === 'homing' && Math.random() > 0.5
+    x: startX, y: startY,
+    vx: Math.cos(angle) * dist,
+    vy: Math.sin(angle) * dist,
+    ammo, shooter: p1, target: p2
   });
 
   if (ammoStock[selectedAmmo].remaining !== Infinity) ammoStock[selectedAmmo].remaining--;
   updateAmmoBar();
-}
+  document.getElementById('turnIndicator').style.display = 'none'; // Hide until next turn
+});
 
+// ENEMY AI
 function aiShoot() {
-  const spread = (Math.random() - 0.5) * 60;
+  const ammo = { ...AMMOS[Math.floor(Math.random() * 2)] }; // AI uses basic/fire
+  const startX = p2.x + p2.w/2;
+  const startY = p2.y;
+  const targetX = p1.x + p1.w/2;
+  
+  // Physics calculation to hit player (with intentional error)
+  const dist = targetX - startX;
+  const error = (Math.random() - 0.5) * 100; // AI miss factor
+  const neededVx = (dist + error) / 60; // Assume 60 frames hangtime
+  const neededVy = -15; // Fixed arc height
+  
+  // Adjust for wind
+  const adjustedVx = neededVx - (wind.x * 30); 
+
   projectiles.push({
-    x: p2.x,
-    y: p2.y + 20,
-    vx: -(5 + Math.random() * 3),
-    vy: -(7 + Math.random() * 3),
-    ammo: { ...AMMOS[Math.floor(Math.random() * Math.min(3, AMMOS.length))], damage: AMMOS[0].damage },
-    shooter: p2, target: p1,
-    homing: MINES[p2.mine].bonus === 'homing'
+    x: startX, y: startY,
+    vx: adjustedVx, vy: neededVy,
+    ammo, shooter: p2, target: p1
   });
 }
 
-function spawnParticles(x, y, color, count = 8) {
-  for (let i = 0; i < count; i++) {
-    const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
+function spawnExplosion(x, y, color, heavy) {
+  screenShake = heavy ? 20 : 5;
+  for (let i = 0; i < (heavy ? 40 : 15); i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * (heavy ? 8 : 4);
     particles.push({
-      x, y,
-      vx: Math.cos(angle) * (2 + Math.random() * 4),
-      vy: Math.sin(angle) * (2 + Math.random() * 4),
-      life: 1, color, r: 2 + Math.random() * 3
+      x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+      life: 1, color, r: Math.random() * 4 + 2
     });
   }
 }
 
-function getTypeMultiplier(attackerMine, defenderMine) {
-  const attackType = MINES[attackerMine].type;
-  const defendType = MINES[defenderMine].type;
-  const matchup = MATCHUPS[attackType];
-  if (matchup.strong.includes(defendType)) return 1.5;
-  if (matchup.weak.includes(defendType)) return 0.5;
-  return 1.0;
+function spawnFloatText(x, y, text, color) {
+  floatTexts.push({ x, y, text, color, life: 1, vy: -1 });
 }
 
 function applyDamage(target, ammo, shooter) {
-  const mult = getTypeMultiplier(shooter.mine, target.mine);
+  const attackType = MINES[shooter.mine].type;
+  const defendType = MINES[target.mine].type;
+  let mult = 1.0;
+  
+  if (MATCHUPS[attackType].strong.includes(defendType)) mult = 1.5;
+  if (MATCHUPS[attackType].weak.includes(defendType)) mult = 0.5;
+  
   let dmg = Math.round(ammo.damage * mult);
-  if (ammo.pierce && target.mine === 1) dmg = Math.round(dmg * 1.3);
   target.hp = Math.max(0, target.hp - dmg);
-  if (ammo.burn) target.burn = (target.burn || 0) + ammo.burn;
-  if (ammo.slow) { target.burn = 0; } // water extinguishes
+  if (ammo.burn) target.burn += ammo.burn;
 
-  spawnParticles(target.x + 25, target.y + 20,
-    mult > 1 ? '#ff4444' : mult < 1 ? '#4488ff' : MINES[shooter.mine].color,
-    ammo.explode ? 20 : 10
-  );
-
-  // Type effectiveness message
-  const msg = document.createElement('div');
-  msg.style.cssText = `position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--font-serif);font-size:1.5rem;color:${mult > 1 ? '#ff4444' : mult < 1 ? '#4488ff' : '#c9962a'};pointer-events:none;z-index:100;font-style:italic;text-shadow:0 0 10px currentColor;transition:opacity 0.5s,transform 0.5s;`;
-  msg.textContent = mult > 1.2 ? 'Super Effective!' : mult < 0.8 ? 'Not Very Effective...' : `${dmg} damage`;
-  document.body.appendChild(msg);
-  setTimeout(() => { msg.style.opacity = '0'; msg.style.transform = 'translate(-50%,-80%)'; }, 800);
-  setTimeout(() => msg.remove(), 1300);
+  spawnExplosion(target.x + target.w/2, target.y + target.h/2, MINES[shooter.mine].color, ammo.explode);
+  
+  let msg = `-${dmg}`;
+  let col = '#fff';
+  if (mult > 1) { msg = 'CRITICAL! ' + msg; col = '#ff4444'; }
+  if (mult < 1) { msg = 'RESISTED! ' + msg; col = '#88ccff'; }
+  spawnFloatText(target.x + target.w/2, target.y - 20, msg, col);
 
   updateHUD();
   checkGameOver();
@@ -478,567 +431,172 @@ function checkGameOver() {
   if (p1.hp <= 0 || p2.hp <= 0) {
     gameRunning = false;
     const won = p2.hp <= 0;
-    document.getElementById('goTitle').textContent = won ? 'Victory!' : 'Defeated';
-    document.getElementById('goSub').textContent = won
-      ? `Your ${MINES[p1.mine].name} conquered the ${MINES[p2.mine].name}. The gold is yours.`
-      : `The ${MINES[p2.mine].name} prevailed. Return stronger.`;
+    document.getElementById('goTitle').textContent = won ? 'EXTRACTION COMPLETE' : 'SYSTEM FAILURE';
+    document.getElementById('goSub').textContent = won ? 'Enemy mine destroyed. Gold secured.' : 'Your structure collapsed.';
     document.getElementById('gameOverOv').style.display = 'flex';
   }
 }
 
 function endTurn() {
-  // Apply burn damage
-  if (turn === 'player' && p1.burn > 0) {
-    p1.hp = Math.max(0, p1.hp - p1.burn);
-    p1.burn = Math.max(0, p1.burn - 1);
-    updateHUD();
-    checkGameOver();
-  }
-  if (turn === 'enemy' && p2.burn > 0) {
-    p2.hp = Math.max(0, p2.hp - p2.burn);
-    p2.burn = Math.max(0, p2.burn - 1);
-    updateHUD();
-    checkGameOver();
-  }
+  if (!gameRunning) return;
+  
+  // Apply burn
+  [p1, p2].forEach(p => {
+    if (p.burn > 0) {
+      p.hp = Math.max(0, p.hp - p.burn);
+      spawnFloatText(p.x + p.w/2, p.y, `-${p.burn} BURN`, '#ff4444');
+      p.burn--;
+      updateHUD(); checkGameOver();
+    }
+  });
 
-  // Change wind
-  if (round % 3 === 0) {
-    wind.x = (Math.random() - 0.5) * 0.5;
-    wind.str = Math.abs(wind.x) < 0.1 ? 'Calm' : Math.abs(wind.x) < 0.3 ? 'Breeze' : 'Strong';
-    updateWindBar();
-  }
-
+  if (round % 2 === 0) randomizeWind();
+  
   turn = turn === 'player' ? 'enemy' : 'player';
   round++;
   document.getElementById('roundVal').textContent = Math.ceil(round / 2);
-  document.getElementById('turnIndicator').textContent = turn === 'player' ? 'Your Turn' : 'Enemy Turn';
-
+  
   if (turn === 'enemy') {
-    aiTimer = 90; // AI shoots after delay
+    document.getElementById('turnIndicator').style.display = 'block';
+    document.getElementById('turnIndicator').textContent = 'ENEMY TARGETING...';
+    setTimeout(aiShoot, 1500);
+    setTimeout(endTurn, 4000);
+  } else {
+    document.getElementById('turnIndicator').style.display = 'block';
+    document.getElementById('turnIndicator').textContent = 'YOUR TURN';
   }
 }
 
 function updateHUD() {
-  document.getElementById('p1hp').textContent = Math.max(0, p1?.hp || 0);
-  document.getElementById('p2hp').textContent = Math.max(0, p2?.hp || 0);
-  document.getElementById('p1name').textContent = p1 ? MINES[p1.mine].icon + ' ' + p1.name : '—';
-  document.getElementById('p2name').textContent = p2 ? MINES[p2.mine].icon + ' ' + p2.name : '—';
-}
-
-function updateWindBar() {
-  document.getElementById('windArrow').textContent = wind.x > 0.05 ? '→' : wind.x < -0.05 ? '←' : '·';
-  document.getElementById('windStr').textContent = wind.str;
+  document.getElementById('p1hp').style.width = `${p1.hp}%`;
+  document.getElementById('p2hp').style.width = `${p2.hp}%`;
+  document.getElementById('p1name').textContent = MINES[p1.mine].name.toUpperCase();
+  document.getElementById('p2name').textContent = MINES[p2.mine].name.toUpperCase();
 }
 
 function updateAmmoBar() {
-  ammoStock.forEach((a, i) => {
-    document.getElementById(`ammoCount${i}`).textContent = a.remaining === Infinity ? '∞' : a.remaining;
-  });
+  ammoStock.forEach((a, i) => { document.getElementById(`ammoCount${i}`).textContent = a.remaining === Infinity ? '∞' : a.remaining; });
 }
 
-function update() {
-  // AI shoot timer
-  if (turn === 'enemy' && aiTimer > 0) {
-    aiTimer--;
-    if (aiTimer === 0) {
-      aiShoot();
-      setTimeout(endTurn, 1500);
-    }
-  }
-
-  // Update projectiles
-  projectiles.forEach(p => {
-    p.vx += wind.x;
-    p.vy += 0.25; // gravity
-    if (p.homing) {
-      const dx = p.target.x - p.x;
-      const dy = p.target.y - p.y;
-      const dist = Math.sqrt(dx*dx + dy*dy);
-      p.vx += (dx / dist) * 0.15;
-      p.vy += (dy / dist) * 0.15;
-    }
-    p.x += p.vx; p.y += p.vy;
-
-    // Hit detection
-    const target = p.shooter === p1 ? p2 : p1;
-    if (
-      p.x > target.x && p.x < target.x + target.w &&
-      p.y > target.y && p.y < target.y + target.h
-    ) {
-      applyDamage(target, p.ammo, p.shooter);
-      p.dead = true;
-      if (p.shooter === p1 && gameRunning) setTimeout(endTurn, 800);
-    }
-
-    // Hit ground
-    if (p.y > H) {
-      p.dead = true;
-      spawnParticles(p.x, H - 5, p.ammo.color, 5);
-      if (p.shooter === p1 && gameRunning) setTimeout(endTurn, 400);
-    }
-
-    // Off screen
-    if (p.x < 0 || p.x > W) {
-      p.dead = true;
-      if (p.shooter === p1 && gameRunning) setTimeout(endTurn, 300);
-    }
-  });
-
-  projectiles = projectiles.filter(p => !p.dead);
-
-  // Particles
-  particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += 0.1; p.life -= 0.04; });
-  particles = particles.filter(p => p.life > 0);
-}
-
-function drawMine(mine, x, y, flipped = false) {
-  const m = MINES[mine.mine];
+function drawMine(mine, x, y, isEnemy) {
   ctx.save();
-  if (flipped) { ctx.scale(-1, 1); ctx.translate(-x*2 - mine.w, 0); }
+  const m = MINES[mine.mine];
+  
+  // Draw 16-bit Fort structure
+  ctx.fillStyle = '#1a1a1a'; ctx.fillRect(x, y, mine.w, mine.h); // Base
+  ctx.fillStyle = m.color; ctx.fillRect(x, y, mine.w, 4); // Roof trim
+  ctx.fillRect(x, y, 4, mine.h); ctx.fillRect(x + mine.w - 4, y, 4, mine.h); // Pillars
+  
+  // Central Eye / Core
+  ctx.fillStyle = '#000'; ctx.fillRect(x + mine.w/2 - 10, y + 20, 20, 20);
+  ctx.fillStyle = m.color; ctx.font = '16px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText(m.icon, x + mine.w/2, y + 36);
 
-  // Base platform
-  ctx.fillStyle = '#2a1b0a';
-  ctx.fillRect(x - 5, y + mine.h, mine.w + 10, 15);
-
-  // Mine structure
-  ctx.fillStyle = m.color + '33';
-  ctx.fillRect(x, y, mine.w, mine.h);
-  ctx.strokeStyle = m.color;
-  ctx.lineWidth = 2;
-  ctx.strokeRect(x, y, mine.w, mine.h);
-
-  // Mine icon
-  ctx.font = '1.5rem serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(m.icon, x + mine.w/2, y + mine.h * 0.55);
-
-  // HP bar
-  const hpPct = mine.hp / mine.maxHp;
-  ctx.fillStyle = '#1a1208';
-  ctx.fillRect(x, y - 12, mine.w, 6);
-  ctx.fillStyle = hpPct > 0.5 ? m.color : hpPct > 0.25 ? '#ffaa00' : '#ff4444';
-  ctx.fillRect(x, y - 12, mine.w * hpPct, 6);
-
-  // Burn indicator
+  // Burn FX
   if (mine.burn > 0) {
-    ctx.font = '0.8rem serif';
-    ctx.fillText('🔥'.repeat(Math.min(mine.burn, 3)), x + mine.w/2, y - 16);
+    ctx.fillStyle = `rgba(255, 68, 68, ${0.5 + Math.random()*0.5})`;
+    ctx.fillRect(x + Math.random()*mine.w, y - 10 + Math.random()*mine.h, 6, 6);
   }
-
   ctx.restore();
 }
 
 function draw() {
-  ctx.fillStyle = '#0c0a07';
-  ctx.fillRect(0, 0, W, H);
-
-  // Ground
-  ctx.fillStyle = '#1a1510';
-  ctx.fillRect(0, H - 40, W, 40);
-  ctx.strokeStyle = 'rgba(255,215,0,0.1)';
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(0, H - 40); ctx.lineTo(W, H - 40); ctx.stroke();
-
-  // Background shaft lines
-  ctx.strokeStyle = 'rgba(255,215,0,0.03)';
-  for (let y = 0; y < H; y += 50) {
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  ctx.fillStyle = '#050308'; ctx.fillRect(0, 0, W, H);
+  
+  // Screen Shake logic
+  ctx.save();
+  if (screenShake > 0) {
+    ctx.translate((Math.random()-0.5)*screenShake, (Math.random()-0.5)*screenShake);
+    screenShake *= 0.9;
+    if (screenShake < 0.5) screenShake = 0;
   }
 
-  if (!p1 || !p2) return;
+  // Draw Ground Line
+  ctx.strokeStyle = '#8B6914'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, H - 20); ctx.lineTo(W, H - 20); ctx.stroke();
 
-  // Draw mines
-  drawMine(p1, p1.x, p1.y);
+  if (!p1 || !p2) { ctx.restore(); return; }
+
+  // Draw Mines
+  drawMine(p1, p1.x, p1.y, false);
   drawMine(p2, p2.x, p2.y, true);
 
-  // Trajectory preview for player turn
-  if (turn === 'player' && projectiles.length === 0 && gameRunning) {
-    ctx.strokeStyle = 'rgba(255,215,0,0.2)';
-    ctx.setLineDash([4, 8]);
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    let px = p1.x + 50, py = p1.y + 20;
-    let pvx = AMMOS[selectedAmmo].speed * 0.7, pvy = -AMMOS[selectedAmmo].speed * 0.9;
-    ctx.moveTo(px, py);
-    for (let i = 0; i < 30; i++) {
-      pvx += wind.x; pvy += 0.25;
-      px += pvx; py += pvy;
-      if (py > H) break;
-      ctx.lineTo(px, py);
+  // Draw Trajectory Aiming Line (Player Turn)
+  if (turn === 'player' && gameRunning && projectiles.length === 0) {
+    const startX = p1.x + p1.w/2, startY = p1.y;
+    const dx = mouseX - startX, dy = mouseY - startY;
+    const maxPower = 20;
+    const dist = Math.min(Math.sqrt(dx*dx + dy*dy) * 0.05, maxPower);
+    const angle = Math.atan2(dy, dx);
+    
+    let simX = startX, simY = startY;
+    let simVx = Math.cos(angle) * dist, simVy = Math.sin(angle) * dist;
+    
+    ctx.strokeStyle = 'rgba(255,215,0,0.4)'; ctx.setLineDash([5, 5]);
+    ctx.beginPath(); ctx.moveTo(simX, simY);
+    for (let i = 0; i < 20; i++) {
+      simVx += wind.x; simVy += 0.3; // gravity
+      simX += simVx; simY += simVy;
+      if (simY > H) break;
+      ctx.lineTo(simX, simY);
     }
-    ctx.stroke();
-    ctx.setLineDash([]);
+    ctx.stroke(); ctx.setLineDash([]);
   }
 
-  // Draw projectiles
+  // Update & Draw Projectiles
   projectiles.forEach(p => {
-    const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.ammo.r * 2);
-    grd.addColorStop(0, p.ammo.color);
-    grd.addColorStop(1, p.ammo.color + '00');
-    ctx.fillStyle = grd;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.ammo.r * 2, 0, Math.PI*2);
-    ctx.fill();
-    ctx.fillStyle = p.ammo.color;
-    ctx.font = `${p.ammo.r * 2.5}px serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText(p.ammo.icon, p.x, p.y + p.ammo.r * 0.8);
-  });
+    p.vx += wind.x; p.vy += 0.3; // Gravity
+    p.x += p.vx; p.y += p.vy;
 
-  // Particles
-  particles.forEach(p => {
-    ctx.globalAlpha = p.life;
-    ctx.fillStyle = p.color;
-    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+    // Collisions
+    const t = p.shooter === p1 ? p2 : p1;
+    if (p.x > t.x && p.x < t.x + t.w && p.y > t.y && p.y < t.y + t.h) {
+      applyDamage(t, p.ammo, p.shooter); p.dead = true;
+    }
+    if (p.y > H - 20) {
+      spawnExplosion(p.x, H - 20, p.ammo.color, p.ammo.explode); p.dead = true;
+    }
+
+    // Render projectile
+    ctx.fillStyle = p.ammo.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.ammo.r, 0, Math.PI*2); ctx.fill();
+    ctx.shadowBlur = 10; ctx.shadowColor = p.ammo.color; ctx.fill(); ctx.shadowBlur = 0;
   });
-  ctx.globalAlpha = 1;
-  ctx.textAlign = 'left';
+  projectiles = projectiles.filter(p => !p.dead);
+
+  // Particles & Text
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.vy += 0.2; p.life -= 0.02;
+    ctx.fillStyle = p.color; ctx.globalAlpha = Math.max(0, p.life);
+    ctx.fillRect(p.x, p.y, p.r, p.r);
+  });
+  particles = particles.filter(p => p.life > 0);
+
+  floatTexts.forEach(ft => {
+    ft.y += ft.vy; ft.life -= 0.02;
+    ctx.globalAlpha = Math.max(0, ft.life); ctx.fillStyle = ft.color;
+    ctx.font = '12px "Press Start 2P"'; ctx.textAlign = 'center';
+    ctx.fillText(ft.text, ft.x, ft.y);
+  });
+  floatTexts = floatTexts.filter(ft => ft.life > 0);
+
+  ctx.restore();
 }
 
 function loop() {
-  if (!gameRunning) return;
-  update(); draw();
-  window._battleRAF = requestAnimationFrame(loop);
+  if(gameRunning) draw();
+  requestAnimationFrame(loop);
 }
 
-// CLICK TO FIRE
-canvas.addEventListener('click', () => {
-  if (!gameRunning || turn !== 'player' || projectiles.length > 0) return;
-  if (ammoStock[selectedAmmo].remaining <= 0) { selectedAmmo = 0; selectAmmo(0); return; }
-  fire(p1, p2);
-  setTimeout(endTurn, 1800);
-});
-
-canvas.addEventListener('touchstart', e => {
-  e.preventDefault();
-  if (!gameRunning || turn !== 'player' || projectiles.length > 0) return;
-  if (ammoStock[selectedAmmo].remaining <= 0) { selectedAmmo = 0; selectAmmo(0); return; }
-  fire(p1, p2);
-  setTimeout(endTurn, 1800);
-}, { passive: false });
-
-window.addEventListener('resize', resize);
-resize();
-</script>
-
-<div class="depth-gauge" id="depthGauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
-  <span class="dg-sep">⬡</span>
-  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> Lore Fragments</div>
-  <span class="dg-sep">⬡</span>
-  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span> Creatures</div>
-  <span class="dg-sep">⬡</span>
-  <a href="lorevault.html" class="dg-link">📜 Vault</a>
-  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
-  <a href="ledger.html" class="dg-link">📖 Ledger</a>
-</div>
-<script>
-(function(){
-  try{
-    var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
-    var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
-    var gold=parseInt(localStorage.getItem('nmn_total_gold')||'0');
-    var el=document.getElementById('dgGold');if(el)el.textContent=gold;
-    var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
-    var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
-  }catch(e){}
-})();
-
-function shareScore(score, game, extra) {
-  const text = extra || `I just scored ${score} in ${game} on Lord Oro's mine! 🏔️ nonsensemedianetwork.com`;
-  const url = 'https://nonsensemedianetwork.com';
-  
-  // Native share sheet on mobile (iOS/Android)
-  if(navigator.share) {
-    navigator.share({ title: game + ' — NMN', text: text, url: url })
-      .catch(()=>{});
-    return;
-  }
-  
-  // Desktop fallback — show share panel
-  const panel = document.getElementById('sharePanel');
-  if(panel) { panel.style.display='flex'; return; }
-  
-  const p = document.createElement('div');
-  p.id = 'sharePanel';
-  p.style.cssText = 'position:fixed;inset:0;background:rgba(3,2,1,.92);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem';
-  p.innerHTML = `
-    <div style="background:#1a1208;border:1px solid rgba(255,215,0,.3);padding:2rem;max-width:400px;width:100%;text-align:center">
-      <div style="font-family:Cormorant Garamond,serif;font-style:italic;font-size:1.3rem;color:#e8b84b;margin-bottom:.5rem">${game}</div>
-      <div style="font-size:.65rem;color:#8a7654;margin-bottom:1.5rem;line-height:1.8">${text}</div>
-      <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem">
-        <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}" target="_blank"
-           style="padding:.65rem;background:#1da1f2;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
-          𝕏 Share on X / Twitter
-        </a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}" target="_blank"
-           style="padding:.65rem;background:#1877f2;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
-          Share on Facebook
-        </a>
-        <a href="https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}" target="_blank"
-           style="padding:.65rem;background:#ff4500;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
-          Post to Reddit
-        </a>
-        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(text+' '+url)}" target="_blank"
-           style="padding:.65rem;background:#25d366;color:white;text-decoration:none;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase">
-          Send on WhatsApp
-        </a>
-        <button onclick="navigator.clipboard.writeText('${text.replace(/'/g,"\'")} ${url}').then(()=>this.textContent='✓ Copied!')"
-           style="padding:.65rem;background:transparent;border:1px solid rgba(255,215,0,.3);color:#FFD700;font-family:Josefin Sans,sans-serif;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer">
-          Copy Link
-        </button>
-      </div>
-      <button onclick="document.getElementById('sharePanel').style.display='none'"
-        style="font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:#4a3c28;background:transparent;border:none;cursor:pointer;padding:.5rem">
-        Close
-      </button>
-    </div>`;
-  document.body.appendChild(p);
+function resetGame() {
+  document.getElementById('gameOverOv').style.display = 'none';
+  document.getElementById('mineSelect').style.display = 'flex';
+  document.getElementById('windBar').style.display = 'none';
+  document.getElementById('turnIndicator').style.display = 'none';
+  document.getElementById('ammoBar').style.display = 'none';
+  gameRunning = false;
 }
 </script>
 
-<script>
-window.NMN_CONTEXT = "mine";
-// NMN LIVING SOUNDSCAPE — Excavation Committee
-// Gemini's Quad-Track Engine + Claude's integration layer
-// Zero external files. Under 2KB. Procedural — never repeats exactly.
-
-const NMN_Audio = {
-  ctx: null,
-  running: false,
-  masterGain: null,
-  layers: {},
-
-  init() {
-    if (this.ctx) return;
-    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
-    this.masterGain.connect(this.ctx.destination);
-  },
-
-  // TRACK 1 — The Deep Earth (continuous, low hum)
-  playHum() {
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(55, this.ctx.currentTime); // G1
-    gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
-    // Slow breathing — mine is alive
-    // Gemini's LFO: 0.08Hz = one breath every 12.5 seconds
-    const lfo = this.ctx.createOscillator();
-    const lfoGain = this.ctx.createGain();
-    lfo.type = 'sine';
-    lfo.frequency.value = 0.08;
-    lfoGain.gain.value = 0.01; // depth of breath
-    lfo.connect(lfoGain);
-    lfoGain.connect(gain.gain);
-    lfo.start();
-    osc.connect(gain);
-    gain.connect(this.masterGain);
-    osc.start();
-    this.layers.hum = { osc, gain };
-  },
-
-  // TRACK 2 — The Air Shaft (filtered noise / wind)
-  playWind() {
-    const bufferSize = 2 * this.ctx.sampleRate;
-    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-    const output = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
-    const whiteNoise = this.ctx.createBufferSource();
-    whiteNoise.buffer = noiseBuffer;
-    whiteNoise.loop = true;
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 400;
-    const g = this.ctx.createGain();
-    g.gain.setValueAtTime(0.012, this.ctx.currentTime);
-    whiteNoise.connect(filter);
-    filter.connect(g);
-    g.connect(this.masterGain);
-    whiteNoise.start();
-    this.layers.wind = { src: whiteNoise, gain: g };
-  },
-
-  // TRACK 3 — The Distant Strike (random pickaxe echoes)
-  playStrike() {
-    const tick = () => {
-      if (!this.running) return;
-      if (Math.random() > 0.75) {
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        // Metallic strike freq
-        osc.frequency.setValueAtTime(140 + Math.random() * 80, this.ctx.currentTime);
-        osc.type = 'sawtooth';
-        g.gain.setValueAtTime(0.04, this.ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.6);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.6);
-      }
-      // Randomize interval — 3s to 6s — never predictable
-      setTimeout(tick, 3000 + Math.random() * 3000);
-    };
-    setTimeout(tick, 2000);
-  },
-
-  // TRACK 4 — The Gold Shimmer (crystal high tones)
-  playShimmer() {
-    const tick = () => {
-      if (!this.running) return;
-      if (Math.random() > 0.85) {
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = 'triangle';
-        // Gold harmonic range — slightly randomized each time
-        osc.frequency.setValueAtTime(2200 + Math.random() * 1400, this.ctx.currentTime);
-        g.gain.setValueAtTime(0, this.ctx.currentTime);
-        g.gain.linearRampToValueAtTime(0.012, this.ctx.currentTime + 1.2);
-        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2.5);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 2.5);
-      }
-      setTimeout(tick, 5000 + Math.random() * 4000);
-    };
-    setTimeout(tick, 4000);
-  },
-
-  // TRACK 5 — The Subterranean Drip (Gemini's finalized version)
-  // Fast pitch-drop simulates the physics of water hitting a cavern pool
-  playWaterDrip() {
-    const tick = () => {
-      if (!this.running) return;
-      if (Math.random() > 0.6) {
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = 'sine';
-        // Start mid-freq, drop 50% in 80ms — exact droplet physics
-        osc.frequency.setValueAtTime(400 + Math.random() * 100, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.08);
-        g.gain.setValueAtTime(0.02, this.ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.08);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.08);
-      }
-      // 2-8 second random interval — no rhythmic pattern ever emerges
-      setTimeout(tick, 2000 + Math.random() * 6000);
-    };
-    setTimeout(tick, 5000 + Math.random() * 3000);
-  },
-
-  // TRACK 6 — The Oracle's Pad
-  playOraclePad() {
-    const AMAJ = [220, 277.18, 329.63];
-    const tick = () => {
-      if (!this.running) return;
-      AMAJ.forEach((freq, i) => {
-        const osc = this.ctx.createOscillator();
-        const filter = this.ctx.createBiquadFilter();
-        const g = this.ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-        filter.type = 'lowpass'; filter.frequency.value = 800;
-        g.gain.setValueAtTime(0, this.ctx.currentTime);
-        g.gain.linearRampToValueAtTime(0.03, this.ctx.currentTime + 2);
-        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 9);
-        osc.connect(filter); filter.connect(g); g.connect(this.masterGain);
-        osc.start(this.ctx.currentTime + i * 0.08);
-        osc.stop(this.ctx.currentTime + 9.5);
-      });
-      setTimeout(tick, 9000);
-    };
-    setTimeout(tick, 8000);
-  },
-
-  // Page-context aware — different mix per section
-  startAll(context) {
-    if (this.running) return;
-    this.init();
-    this.running = true;
-    this.playHum();
-    this.playWind();
-    this.playStrike();
-    this.playShimmer();
-    this.playOraclePad();
-    // Only add water drip on deep mine pages
-    if (context === 'deep' || context === 'oracle' || context === 'vigil') {
-      this.playWaterDrip();
-    }
-    // Tora gets a slightly higher shimmer frequency (more ethereal)
-    if (context === 'tora') {
-      this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
-    }
-  },
-
-  stop() {
-    if (!this.running) return;
-    this.running = false;
-    if (this.masterGain) {
-      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
-    }
-  },
-
-  toggle() {
-    if (this.running) { this.stop(); return false; }
-    else { this.startAll(window.NMN_CONTEXT || 'mine'); return true; }
-  }
-};
-
-// Trigger on first interaction — browser autoplay policy requires user gesture
-document.addEventListener('click', () => {
-  if (!NMN_Audio.running) NMN_Audio.startAll(window.NMN_CONTEXT || 'mine');
-}, { once: true });
-
-</script>
-
-<button id="nmn-sound-btn" onclick="
-  const on = NMN_Audio.toggle();
-  this.textContent = on ? '🔊 Sound On' : '🔇 Sound Off';
-  this.style.color = on ? 'var(--gold,#c9962a)' : '#4a3c28';
-" style="position:fixed;bottom:42px;right:.75rem;z-index:998;background:rgba(12,10,7,.9);border:1px solid rgba(255,215,0,.2);color:#4a3c28;font-family:Josefin Sans,sans-serif;font-size:.42rem;letter-spacing:.1em;padding:.35rem .6rem;cursor:pointer;transition:all .3s">🔇 Sound Off</button>
-
-<div class="lore-toast" id="loreToast">
-  <div class="lore-toast-label">⬡ Lore Fragment</div>
-  <div class="lore-toast-text" id="loreToastText"></div>
-</div>
-<script id="nmn-glow">
-(function(){
-  var r=document.createElement('div');
-  r.id='pickaxe-glow';
-  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
-  document.body.appendChild(r);
-  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
-  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
-  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
-})();
-</script>
-<script id="gemini-init">
-window.addEventListener('load',function(){
-  if(!localStorage.getItem('nmn_total_gold')) localStorage.setItem('nmn_total_gold','0');
-  document.querySelectorAll('canvas').forEach(function(g){
-    if(g.parentElement&&!g.parentElement.classList.contains('mining-frame'))
-      g.parentElement.classList.add('mining-frame');
-  });
-});
-</script>
-
-<!-- Monetag Service Worker Registration -->
-<script>
-if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
-}
-</script>
-
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
-</div>
 </body>
 </html>
