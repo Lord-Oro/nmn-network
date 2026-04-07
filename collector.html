@@ -50,6 +50,9 @@ header { padding: 1rem 2rem; background: #000; border-bottom: 4px solid var(--lg
 .back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; }
 .back:hover { color: var(--gold); }
 
+/* ── MOUSE FIX ── */
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+
 #gameScreen { max-width: 800px; margin: 1rem auto; padding: 0 1rem; }
 
 .tabs { display: flex; gap: 1rem; margin-bottom: 1rem; }
@@ -218,7 +221,6 @@ function drawSprite(canvasId, seedStr, colorHex) {
 
   ctx.fillStyle = colorHex || `hsl(${Math.floor(random() * 360)}, 70%, 60%)`;
   
-  // Draw 6x12 left side, then mirror to right side
   for(let x=0; x<6; x++) {
     for(let y=0; y<12; y++) {
       if(random() > 0.5) {
@@ -320,11 +322,17 @@ function init() {
 }
 
 function switchTab(tabId) {
-  if (STATE.isAnimating) return;
+  // THE FIX: Allow forced switches to 'battle' even if there's no tab button
+  if (STATE.isAnimating && tabId !== 'battle') return; 
+  
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-  document.getElementById('tab-' + tabId).classList.add('active');
-  document.getElementById('view-' + tabId).classList.add('active');
+  
+  const tabBtn = document.getElementById('tab-' + tabId);
+  if(tabBtn) tabBtn.classList.add('active');
+  
+  const viewSec = document.getElementById('view-' + tabId);
+  if(viewSec) viewSec.classList.add('active');
 }
 
 function updateHUD() {
