@@ -40,7 +40,7 @@ main{max-width:800px;margin:0 auto;padding:2rem 1.5rem}
 .chapter-row.locked:hover{transform:none}
 .chapter-row.completed::after{transform:scaleY(1);background:var(--gold)}
 .chapter-header{padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem}
-.ch-num{font-family:var(--font-serif);font-style:italic;font-size:.85rem;color:var(--dp);width:24px;flex-shrink:0;text-align:right}
+.ch-num{font-family:var(--font-serif);font-style:italic;font-size:.85rem;color:var(--dp);width:28px;flex-shrink:0;text-align:right}
 .ch-cat{font-size:1.3rem;flex-shrink:0}
 .ch-info{flex:1}
 .ch-name{font-family:var(--font-serif);font-size:1.1rem;color:var(--cream);margin-bottom:.15rem}
@@ -148,9 +148,7 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
 body{padding-bottom:65px!important}
 </style>
 
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
-
+<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
 
 </head>
 <body>
@@ -167,13 +165,13 @@ body{padding-bottom:65px!important}
   <p class="cover-sub">A record of the cats who changed history — and the humans who finally understood what they were living with. Named for Eskanar. Kept by Tora. Read by whoever crawls far enough into the mine to find it.</p>
   <div class="cover-tora">"Every cat in here knew something its human was still learning." — Tora</div>
   <div class="progress-bar-wrap">
-    <div class="progress-label"><span>Chapters Read</span><span id="progressText">0 / 14</span></div>
+    <div class="progress-label"><span>Chapters Read</span><span id="progressText">0 / 17</span></div>
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
   </div>
 </div>
 
 <main>
-  <div class="chapters-label">The Fourteen Chapters</div>
+  <div class="chapters-label">The Sacred Chapters</div>
   <div id="chapterList"></div>
   <div id="chapterView" class="chapter-view"></div>
 </main>
@@ -186,22 +184,14 @@ body{padding-bottom:65px!important}
 </div>
 
 <script>
-// ── THE FOURTEEN CHAPTERS ─────────────────────────────────────────────
+// ── THE SEVENTEEN CHAPTERS ─────────────────────────────────────────────
 
 const CHAPTERS = [
   {
     id:'bastet', num:'I', cat:'🐱', name:"Bastet's Chosen", sub:'Ancient Egypt — 3000 BCE',
     locked:false,
     history:`In ancient Egypt, cats were not merely pets. They were the earthly embodiment of Bastet — goddess of home, fertility, and protection. To kill a cat, even accidentally, was punishable by death. When a household cat died, the family shaved their eyebrows as a sign of mourning. Cats were mummified and buried with offerings. Entire necropolises were dedicated to them.\n\nThey earned this not through mysticism but through utility — they protected the grain stores from rodents, keeping entire civilizations alive. The Egyptians understood something most people still don't: the cat chose to stay. That choice meant everything.`,
-    poem:`They did not worship the cat because it was divine.
-They worshipped the cat because it was useful
-and then it became divine anyway — which is
-how most sacred things actually happen.
-
-Bastet walked the grain stores at night
-and in the morning the grain was still there.
-That is the whole miracle.
-That is the whole religion.`,
+    poem:`They did not worship the cat because it was divine.\nThey worshipped the cat because it was useful\nand then it became divine anyway — which is\nhow most sacred things actually happen.\n\nBastet walked the grain stores at night\nand in the morning the grain was still there.\nThat is the whole miracle.\nThat is the whole religion.`,
     tora:`"The Egyptians understood that a god who protects the grain is worth more than a god who only protects the soul. Bastet knew this. That is why she had a cat's face."`,
     puzzle:{
       type:'color',
@@ -215,19 +205,7 @@ That is the whole religion.`,
     id:'pangur', num:'II', cat:'🤍', name:'Pangur Bán', sub:'Ireland — 9th Century CE',
     locked:false,
     history:`In a monastery scriptorium somewhere in Ireland or possibly Austria, a monk sat copying manuscripts by candlelight. His white cat hunted mice in the corners. Sometime around 800 CE, the monk stopped copying and wrote a poem comparing his own work to the cat's.\n\nThe poem survived. We do not know the monk's name. We know the cat's: Pangur Bán — White Fuller in Old Irish. The poem was found in the margins of a theological text in a Swiss monastery, written in the monk's native Irish tongue, hidden among Latin scripture like a private joke between a man and his cat.\n\nIt is one of the oldest pieces of writing about the bond between a human and a pet. The monk and the cat, both hunting. Both content. Neither one explaining themselves.`,
-    poem:`The monk has his ink; the cat has his claws.
-Both are looking for something
-that doesn't want to be caught.
-
-One finds a mouse; one finds a truth.
-Neither one shares the prize.
-Neither one needs to.
-
-Pangur Bán practiced her art
-in the margin of the same book
-where the monk practiced his —
-which is exactly where
-the best things are always written.`,
+    poem:`The monk has his ink; the cat has his claws.\nBoth are looking for something\nthat doesn't want to be caught.\n\nOne finds a mouse; one finds a truth.\nNeither one shares the prize.\nNeither one needs to.\n\nPangur Bán practiced her art\nin the margin of the same book\nwhere the monk practiced his —\nwhich is exactly where\nthe best things are always written.`,
     tora:`"The monk hid his love for the cat inside a manuscript about God. As if those were two different subjects."`,
     puzzle:{
       type:'wordsearch',
@@ -254,20 +232,7 @@ the best things are always written.`,
     id:'mike', num:'III', cat:'🏛️', name:'Mike of the British Museum', sub:'London — 1908 to 1929',
     locked:false,
     history:`Mike arrived at the British Museum as a kitten and never left. For twenty-one years he guarded the gates — not the exhibits, not the mummies, not the Rosetta Stone. The gates. Specifically, he guarded them with the head gatekeeper, a man named Mr. Treadwell.\n\nMike had no interest in the public. He tolerated visitors with the profound indifference of a being who understood that the building would outlast all of them. He liked Mr. Treadwell. He liked the other gatekeepers. He liked fish, which was brought to him from a nearby shop.\n\nWhen Mike died in 1929, the Times of London published his obituary. The British Museum issued an official statement of mourning. He had been on their payroll — listed under "staff." His job description was "cat."`,
-    poem:`He didn't guard the mummies for the gold.
-He guarded the gate because he liked the man who held the key.
-
-The tourists brought cameras.
-He brought silence.
-
-The museum is stone,
-but Mike was the soul of the entrance —
-which is to say, he decided who belonged there
-and then mostly ignored them anyway.
-
-He is still there, if you know how to look.
-Every threshold has a cat like Mike.
-Most of them you never see.`,
+    poem:`He didn't guard the mummies for the gold.\nHe guarded the gate because he liked the man who held the key.\n\nThe tourists brought cameras.\nHe brought silence.\n\nThe museum is stone,\nbut Mike was the soul of the entrance —\nwhich is to say, he decided who belonged there\nand then mostly ignored them anyway.\n\nHe is still there, if you know how to look.\nEvery threshold has a cat like Mike.\nMost of them you never see.`,
     tora:`"He knew what the artifacts forgot: a gate is only as strong as the one who refuses to leave it."`,
     puzzle:{
       type:'match',
@@ -281,20 +246,7 @@ Most of them you never see.`,
     id:'hodge', num:'IV', cat:'📖', name:'Hodge', sub:'London — 18th Century',
     locked:false,
     history:`Samuel Johnson was the man who wrote the first comprehensive English dictionary — a work that took nine years and defined 40,000 words. He was one of the most celebrated literary minds of his era. He was also, without apology, deeply devoted to his cat Hodge.\n\nJohnson bought Hodge oysters personally from the market rather than send a servant, because he worried the servants might resent the cat for the extra work and treat him poorly. His biographer James Boswell recorded this. Boswell did not share Johnson's affection for Hodge, noting with barely concealed irritation that the cat was "a very fine cat indeed."\n\nA statue of Hodge now sits outside Johnson's house in Gough Square, London. He is sitting on the dictionary. He looks unbothered.`,
-    poem:`The man who defined forty thousand words
-spent nine years looking for the right ones
-and came home every night to a creature
-who used none of them.
-
-He bought the oysters himself.
-Not because the cat asked.
-Because he understood
-that love expressed through inconvenience
-is the most honest kind.
-
-Hodge outlived most of Johnson's opinions.
-The dictionary is still in print.
-The cat is still on the cover.`,
+    poem:`The man who defined forty thousand words\nspent nine years looking for the right ones\nand came home every night to a creature\nwho used none of them.\n\nHe bought the oysters himself.\nNot because the cat asked.\nBecause he understood\nthat love expressed through inconvenience\nis the most honest kind.\n\nHodge outlived most of Johnson's opinions.\nThe dictionary is still in print.\nThe cat is still on the cover.`,
     tora:`"Johnson spent a lifetime with words and recognized immediately a being that had no use for any of them. That is either irony or wisdom. Tora suspects both."`,
     puzzle:{
       type:'sequence',
@@ -307,20 +259,7 @@ The cat is still on the cover.`,
     id:'trim', num:'V', cat:'⚓', name:'Trim', sub:'Australia — 1801',
     locked:false,
     history:`Trim was born at sea in 1799 and was, from the first moments of his life, a sailor. He fell overboard as a kitten during a storm in the Indian Ocean and swam back to the ship. The crew considered this an excellent sign.\n\nHe sailed with Captain Matthew Flinders on the Investigator, becoming the first cat to circumnavigate the Australian continent. He was present for the first complete charting of Australia's coastline. He was, by all accounts, a competent navigator in the sense that he always seemed to know where the food was.\n\nFlinders was later imprisoned by the French on Mauritius. Trim disappeared there. Flinders never recovered from the loss. He wrote a biographical tribute to Trim from his prison cell that remained unpublished until after his death. A statue of Trim now sits on a window ledge above the statue of Flinders in Sydney, watching him from above.`,
-    poem:`He fell overboard in the Indian Ocean
-and swam back to the ship.
-The crew took this as a sign of good character.
-They were not wrong.
-
-He circumnavigated Australia
-without charting a single thing —
-which made him the most honest member
-of the expedition.
-
-Flinders mapped the continent.
-Trim knew where the food was.
-Between them, they understood
-everything that needed to be understood.`,
+    poem:`He fell overboard in the Indian Ocean\nand swam back to the ship.\nThe crew took this as a sign of good character.\nThey were not wrong.\n\nHe circumnavigated Australia\nwithout charting a single thing —\nwhich made him the most honest member\nof the expedition.\n\nFlinders mapped the continent.\nTrim knew where the food was.\nBetween them, they understood\neverything that needed to be understood.`,
     tora:`"Trim fell into the ocean and climbed back onto the ship. That is not luck. That is a decision. The mine respects decisions."`,
     puzzle:{
       type:'compass',
@@ -333,24 +272,7 @@ everything that needed to be understood.`,
     id:'sam', num:'VI', cat:'🚢', name:'Unsinkable Sam', sub:'World War II — 1941 to 1945',
     locked:false,
     history:`The cat who would become Unsinkable Sam began the war as Oskar, the ship's cat aboard the German battleship Bismarck. When the Bismarck was sunk in May 1941, the British destroyer HMS Cossack rescued survivors — and one orange-and-white cat found floating on a board among the wreckage, described as "angry but unharmed."\n\nThe Cossack was damaged by a torpedo in October 1941. Sam survived. He was transferred to the aircraft carrier HMS Ark Royal. The Ark Royal was sunk by a torpedo three weeks later. Sam was found floating on a floating board, described again as "angry but unharmed."\n\nHe was retired to land after this. His official service record noted he was "not to be regarded as a lucky cat." He lived out his days in a Belfast home for sailors, then a museum. He never went near water again. A portrait of him hangs in the National Maritime Museum in Greenwich.`,
-    poem:`Three ships went down.
-He floated.
-
-Not because the sea loved him —
-the sea doesn't love anyone.
-Because he refused
-to accept the premise.
-
-They called him unsinkable
-like it was a compliment.
-He accepted it like a fact
-and went to find somewhere dry to sleep.
-
-The portrait in Greenwich shows him
-looking directly at you.
-He is not impressed.
-He has survived three navies.
-He has seen enough.`,
+    poem:`Three ships went down.\nHe floated.\n\nNot because the sea loved him —\nthe sea doesn't love anyone.\nBecause he refused\nto accept the premise.\n\nThey called him unsinkable\nlike it was a compliment.\nHe accepted it like a fact\nand went to find somewhere dry to sleep.\n\nThe portrait in Greenwich shows him\nlooking directly at you.\nHe is not impressed.\nHe has survived three navies.\nHe has seen enough.`,
     tora:`"The sea tried three times and got the same answer. Sam was not brave. He was simply unwilling to participate in his own drowning. There is a lesson in that."`,
     puzzle:{
       type:'match',
@@ -364,23 +286,7 @@ He has seen enough.`,
     id:'felicette', num:'VII', cat:'🚀', name:'Félicette', sub:'France — October 18, 1963',
     locked:false,
     history:`On October 18, 1963, a black-and-white cat named Félicette was launched into space aboard a French Véronique AG1 rocket. She was in space for fifteen minutes. She returned alive. She was the first cat in space and the only one to survive the journey.\n\nFrance had originally planned to send a cat named Félix, but he escaped before the launch. Félicette was selected from fourteen candidates. She had electrodes implanted in her brain to monitor neurological activity. She was given no recognition. Her story was largely forgotten for decades.\n\nIn 2017, a campaign raised funds for a statue in her honor. It was unveiled in 2019 — fifty-six years after her flight — at the International Space University in Strasbourg. She sits on top of a globe, looking up.`,
-    poem:`They sent her up without asking.
-She went anyway — the way cats always go,
-with complete indifference to what humans
-have decided matters.
-
-She was in space for fifteen minutes.
-She came back changed the way space changes everything.
-
-France gave her a statue fifty-six years later.
-The mine gave her a page.
-She would not have cared either way —
-
-but she is looking up in the statue,
-which means she remembered
-what it was like
-to be above everything,
-and found it worth keeping.`,
+    poem:`They sent her up without asking.\nShe went anyway — the way cats always go,\nwith complete indifference to what humans\nhave decided matters.\n\nShe was in space for fifteen minutes.\nShe came back changed the way space changes everything.\n\nFrance gave her a statue fifty-six years later.\nThe mine gave her a page.\nShe would not have cared either way —\n\nbut she is looking up in the statue,\nwhich means she remembered\nwhat it was like\nto be above everything,\nand found it worth keeping.`,
     tora:`"They forgot her for fifty-six years and she didn't complain once. That is either patience or superiority. Tora cannot tell and suspects it is both."`,
     puzzle:{
       type:'sequence',
@@ -393,22 +299,7 @@ and found it worth keeping.`,
     id:'bob', num:'VIII', cat:'🟠', name:'Bob', sub:'London — 2007',
     locked:false,
     history:`James Bowen was sleeping rough in London in 2007, recovering from drug addiction, when a ginger tom cat appeared outside his supported housing building with an infected leg. Bowen treated the wound. The cat stayed. He named him Bob.\n\nBob began riding the bus with Bowen, sitting on his shoulder. He sat beside him while Bowen busked on the streets of Covent Garden. People who had walked past Bowen alone stopped for Bob. The cat made him visible in a city that had learned not to see him.\n\nBowen wrote a book about Bob. Then another. They were translated into forty-seven languages. A film was made. Bob lived to be fourteen years old and died in 2020. James Bowen has not relapsed since the day Bob found him.`,
-    poem:`The city had learned not to see him.
-Bob had not learned this lesson
-and had no interest in learning it.
-
-He sat on the shoulder of the invisible man
-and made him visible —
-not through magic,
-but through the simple act of
-choosing him
-in public,
-every day.
-
-Some rescues go upward.
-Some go sideways.
-Bob's went both ways at once
-and they are both still going.`,
+    poem:`The city had learned not to see him.\nBob had not learned this lesson\nand had no interest in learning it.\n\nHe sat on the shoulder of the invisible man\nand made him visible —\nnot through magic,\nbut through the simple act of\nchoosing him\nin public,\nevery day.\n\nSome rescues go upward.\nSome go sideways.\nBob's went both ways at once\nand they are both still going.`,
     tora:`"Bob did not save James because he was trained to. He saved him because he chose to. The mine notes the difference."`,
     puzzle:{
       type:'match',
@@ -422,23 +313,7 @@ and they are both still going.`,
     id:'muezza', num:'IX', cat:'☪️', name:'Muezza', sub:'Arabia — 7th Century CE',
     locked:false,
     history:`Muezza was the cat of the Prophet Mohammed. The tradition holds that when the call to prayer came and Mohammed needed to rise, Muezza was sleeping on the sleeve of his robe. Rather than disturb her, he cut the sleeve away and rose without waking her.\n\nThis story — whether literal or parable — established a tradition of care for cats throughout Islamic culture. Cats are considered ritually clean animals in Islam. They are permitted in homes and mosques. In many cities of the Muslim world, cats live freely in and around sacred spaces.\n\nThe M-shaped marking on the forehead of tabby cats is called, in some traditions, the Mark of Mohammed — placed there in gratitude for the cats who comforted him. The mine has no position on theology. But it notes that a religion that cuts its sleeve for a sleeping cat is a religion that understands something important about the weight of small things.`,
-    poem:`He cut the sleeve away
-rather than wake her.
-
-This is recorded in history
-as an act of kindness —
-but anyone who has ever lived with a cat
-knows it is an act of recognition:
-
-the acknowledgment that the sleep
-of the thing you love
-is worth more than the cloth
-you were wearing.
-
-The M on the tabby's forehead
-is a reminder
-that someone noticed.
-The mine noticed too.`,
+    poem:`He cut the sleeve away\nrather than wake her.\n\nThis is recorded in history\nas an act of kindness —\nbut anyone who has ever lived with a cat\nknows it is an act of recognition:\n\nthe acknowledgment that the sleep\nof the thing you love\nis worth more than the cloth\nyou were wearing.\n\nThe M on the tabby's forehead\nis a reminder\nthat someone noticed.\nThe mine noticed too.`,
     tora:`"He cut the cloth. Not the cat's sleep. That distinction is the whole religion, if you read it correctly."`,
     puzzle:{
       type:'fill',
@@ -451,20 +326,7 @@ The mine noticed too.`,
     id:'dewey', num:'X', cat:'📚', name:'Dewey Readmore Books', sub:'Spencer, Iowa — 1988 to 2006',
     locked:false,
     history:`On a January night in 1988, during the worst cold snap in Iowa memory, the staff of the Spencer Public Library found a kitten in the book return drop box. He was nearly frozen. They warmed him. He stayed.\n\nThe library held a naming contest. The winner was Dewey Readmore Books — a name both practical and magnificent. For eighteen years, Dewey greeted every person who came through the library doors. He sat with children learning to read. He slept on the laps of elderly patrons who came in to be warm. He found the lonely people and stayed with them specifically.\n\nWhen Dewey died in 2006, over 250 newspapers ran the story. The library received condolence letters from around the world. A biography written by the head librarian, Vicki Myron, became a New York Times bestseller. Spencer, Iowa — population 11,000 — was suddenly known for something.`,
-    poem:`He was put through the book return on the coldest night of the year.
-He had no opinion about this. He was nearly frozen.
-He survived. He stayed.
-
-For eighteen years he found the lonely ones —
-the children who couldn't read yet,
-the old ones who came in just to be somewhere warm,
-the ones who sat in the corner
-hoping no one would notice them.
-
-Dewey noticed.
-Dewey always noticed.
-That was his job.
-He never stopped doing it.`,
+    poem:`He was put through the book return on the coldest night of the year.\nHe had no opinion about this. He was nearly frozen.\nHe survived. He stayed.\n\nFor eighteen years he found the lonely ones —\nthe children who couldn't read yet,\nthe old ones who came in just to be somewhere warm,\nthe ones who sat in the corner\nhoping no one would notice them.\n\nDewey noticed.\nDewey always noticed.\nThat was his job.\nHe never stopped doing it.`,
     tora:`"He chose the lonely ones specifically. Not the happy ones, not the scholars. The lonely ones. The mine keeps a record of everyone who does that."`,
     puzzle:{
       type:'match',
@@ -478,21 +340,7 @@ He never stopped doing it.`,
     id:'ottoman', num:'XI', cat:'🕌', name:'Cats of the Ottoman Empire', sub:'Istanbul — 1000 years and counting',
     locked:false,
     history:`Istanbul has always been a city of cats. Not as pets — as residents. The Ottoman sultans fed them. The mosques kept them. The grand bazaar sheltered them. They have been documented in miniature paintings from the 15th century, sleeping on prayer rugs and climbing minarets.\n\nWhen Constantinople became Istanbul, the cats stayed. When the empire fell, the cats stayed. They are still there — tens of thousands of them, living between the ancient and the modern, respected by a culture that has understood for a thousand years that a city with cats in it is a city that is still alive.\n\nThe cats of Istanbul are different from strays. They are not owned. They are not abandoned. They belong to the city itself, which tends to them collectively — feeding stations, veterinary care, the quiet understanding that they are part of the architecture.`,
-    poem:`The empire fell.
-The cats stayed.
-
-They had been there before the sultans
-and they will be there after
-the tourists are done taking photographs —
-sitting on the ancient stones
-with the patience of things
-that understand
-how long stone lasts.
-
-Istanbul does not belong to anyone.
-Istanbul belongs to its cats.
-They have never announced this.
-They didn't need to.`,
+    poem:`The empire fell.\nThe cats stayed.\n\nThey had been there before the sultans\nand they will be there after\nthe tourists are done taking photographs —\nsitting on the ancient stones\nwith the patience of things\nthat understand\nhow long stone lasts.\n\nIstanbul does not belong to anyone.\nIstanbul belongs to its cats.\nThey have never announced this.\nThey didn't need to.`,
     tora:`"A city that keeps its cats is a city that has not forgotten what it is. Istanbul has not forgotten."`,
     puzzle:{
       type:'fill',
@@ -505,24 +353,7 @@ They didn't need to.`,
     id:'shipcat', num:'XII', cat:'🌊', name:'The Ship-Cat Lineage', sub:'Every Ocean — All of History',
     locked:false,
     history:`Every vessel that ever sailed carried a cat. This was not superstition — it was practicality. Rats destroyed food supplies, gnawed through rope, and spread disease. A ship's cat earned its passage.\n\nBut over centuries of sailing, the ship's cat became something else. Sailors are people who leave everything behind and live in a small moving world with a fixed crew for months or years at a time. The cat was the one thing on the ship that was not the mission. It was not a tool. It was not a colleague. It was a creature that had chosen to be there — or at least had not chosen to leave — and in the context of the ocean, that was enough.\n\nEvery famous ship's cat had a name. Every sailor remembered the name. When the cat died, it was recorded in the ship's log with the same formality as a crew member. The lineage runs from ancient Phoenician traders to WWII warships to the research vessels of today. The last recorded official ship's cat in the Royal Navy retired in 1975.`,
-    poem:`They were practical first —
-the rats, the ropes, the grain.
-But somewhere in the middle of the ocean,
-far enough from land that land seems impossible,
-the cat stopped being practical
-and became necessary in a different way.
-
-Every sailor on every ship
-for four thousand years
-has had a name for the cat.
-Has known the cat's habits.
-Has told someone on shore about the cat.
-
-This is not superstition.
-This is the human understanding
-that you cannot cross an ocean
-without something that chooses
-to cross it with you.`,
+    poem:`They were practical first —\nthe rats, the ropes, the grain.\nBut somewhere in the middle of the ocean,\nfar enough from land that land seems impossible,\nthe cat stopped being practical\nand became necessary in a different way.\n\nEvery sailor on every ship\nfor four thousand years\nhas had a name for the cat.\nHas known the cat's habits.\nHas told someone on shore about the cat.\n\nThis is not superstition.\nThis is the human understanding\nthat you cannot cross an ocean\nwithout something that chooses\nto cross it with you.`,
     tora:`"The ship's cat did not cross oceans for the sailors. The sailors crossed oceans for themselves. The cat crossed for reasons the ocean understands and we do not."`,
     puzzle:{
       type:'match',
@@ -533,24 +364,51 @@ to cross it with you.`,
     }
   },
   {
-    id:'nausicaa', num:'XIII', cat:'🌙', name:'Nausicaa', sub:'Named for the princess who offered shelter',
+    id:'nela', num:'XIII', cat:'🦁', name:'Nela', sub:'The Lioness of the Two Souls',
+    locked:false,
+    history:`Nela was no house cat. She was a lioness who walked beside Felik, the man burdened with two conflicting souls—one of gold that yearned to build, and one of blue that hungered to burn. \n\nShe wore a simple ribbon, tied around her by a young girl who believed Nela was destined for something greater. Nela didn't care about destiny. She cared about loyalty. When the two souls inside Felik threatened to tear him apart, it was the steady, unbothered presence of the lioness that grounded him. She proved that courage isn't the absence of fear, but the decision to stand your ground anyway.`,
+    poem:`One soul to build, one soul to burn.\nThe lioness watched them both\nand decided neither mattered\nas much as the next step.\n\nThe ribbon around her neck\nweighed more than the swords.\nBecause someone tied it there.`,
+    tora:`"Felik thought his two souls made him complicated. Nela knew that a hunter only needs one focus. The lioness is always the anchor."`,
+    puzzle:{
+      type:'match',
+      instruction:'Match the element of Felik and Nela\'s journey to its meaning.',
+      left:['Gold Soul','Blue Soul','The Ribbon'],
+      right:['The urge to burn','Tied by a young girl','The urge to build'],
+      answer:{0:2,1:0,2:1}
+    }
+  },
+  {
+    id:'tabbies', num:'XIV', cat:'🐾', name:'The Alley Tabbies', sub:'Everywhere — Always',
+    locked:false,
+    history:`It is a foundational law of the Nonsense Media Network universe: All tabbies have a place too. \n\nThey are the strays, the discarded, the ones who map the city not by its monuments, but by its back alleys and warm exhaust vents. A purebred cat has a paper trail and a price tag. A tabby has survival skills and a profound understanding of human nature. They wait. They watch. They find the exact moment when a human is most vulnerable to affection, and they strike.\n\nThe universe, inevitably, makes a space for them. Because a tabby does not ask for a place. A tabby simply occupies it until it becomes theirs.`,
+    poem:`A purebred has a lineage written on heavy paper.\nA tabby has a map drawn in rusted fire escapes.\n\nOne is worth money.\nThe other knows how to survive the winter.\n\nNever bet against the one\nwho knows where the warmth is hidden.`,
+    tora:`"Do not pity the stray tabby. Pity the fool who thinks the tabby doesn't know exactly what it is doing."`,
+    puzzle:{
+      type:'fill',
+      instruction:'Complete the foundational law of the mine. "All [blank 1] have a [blank 2] too."',
+      blanks:['Blank 1: The cats','Blank 2: Where they belong'],
+      answers:['tabbies','place']
+    }
+  },
+  {
+    id:'pyro', num:'XV', cat:'🔥', name:'The Hearth Fire', sub:'Pyro & Helios',
+    locked:false,
+    history:`Pyro and Helios walked a long journey home, navigating a world defined by fire and identity. But fire is an old companion to the feline lineage.\n\nWatch a cat sitting before a hearth. They stare into the flames with a stillness that suggests they remember a time before houses existed. They understand that fire is a tool, a comfort, and a danger. Pyro embodied the spark—the chaotic, necessary beginning of the flame, while Helios represented the steady burn. The cat by the hearth knows both. They know that warmth is something you must carry with you, long after the embers die out.`,
+    poem:`The fire does not ask permission to burn.\nIt simply consumes what is placed before it.\n\nA cat sleeping in a patch of sun\nis the exact same thing,\njust much slower.`,
+    tora:`"Helios was the sun, but Pyro was the spark. You can hide from the sun in the shade. You cannot hide from a spark that is already inside your own house."`,
+    puzzle:{
+      type:'sequence',
+      instruction:'Arrange the life cycle of a fire, from the smallest beginning to the end.',
+      items:['Spark','Ember','Flame','Ash'],
+      answer:[0,1,2,3]
+    }
+  },
+  {
+    id:'nausicaa', num:'XVI', cat:'🌙', name:'Nausicaa', sub:'Named for the princess who offered shelter',
     locked:true,
-    earnedAfter:12,
-    history:`In Homer's Odyssey, the shipwrecked Odysseus washes ashore on the island of Phaeacia, exhausted and stripped of everything. The first person he encounters is Nausicaa — a princess who has come to the shore to wash laundry with her maidens.\n\nShe does not run from the bedraggled stranger. She gives him food, clothing, and directions to her father's palace. She asks nothing in return except that he remember where kindness came from.\n\nNausicaa the cat was named for this — for the quality of meeting a stranger and offering warmth without calculation. She was Tara's cat. The mine keeps her chapter as a threshold. You had to read twelve others to earn her. That is the point. Some things are not for those who haven't done the work.`,
-    poem:`The princess didn't know the stranger was a hero.
-She gave him food anyway.
-That is the whole lesson.
-
-Nausicaa the cat learned it naturally —
-she did not ask where you came from
-or whether you deserved warmth.
-She simply assessed whether you were cold.
-
-If you were cold,
-she stayed.
-
-This is not simple.
-This is the hardest thing.`,
+    earnedAfter:15,
+    history:`In Homer's Odyssey, the shipwrecked Odysseus washes ashore on the island of Phaeacia, exhausted and stripped of everything. The first person he encounters is Nausicaa — a princess who has come to the shore to wash laundry with her maidens.\n\nShe does not run from the bedraggled stranger. She gives him food, clothing, and directions to her father's palace. She asks nothing in return except that he remember where kindness came from.\n\nNausicaa the cat was named for this — for the quality of meeting a stranger and offering warmth without calculation. She was Tara's cat. The mine keeps her chapter as a threshold. You had to read fifteen others to earn her. That is the point. Some things are not for those who haven't done the work.`,
+    poem:`The princess didn't know the stranger was a hero.\nShe gave him food anyway.\nThat is the whole lesson.\n\nNausicaa the cat learned it naturally —\nshe did not ask where you came from\nor whether you deserved warmth.\nShe simply assessed whether you were cold.\n\nIf you were cold,\nshe stayed.\n\nThis is not simple.\nThis is the hardest thing.`,
     tora:`"Nausicaa the princess asked one thing: remember where the kindness came from. The cat asked for nothing. The cat was wiser."`,
     puzzle:{
       type:'fill',
@@ -560,20 +418,12 @@ This is the hardest thing.`,
     }
   },
   {
-    id:'eskanar', num:'XIV', cat:'🐾', name:'Eskanar', sub:'The last chapter — the one this book is named for',
+    id:'eskanar', num:'XVII', cat:'🐾', name:'Eskanar', sub:'The last chapter — the one this book is named for',
     locked:true,
-    earnedAfter:13,
+    earnedAfter:16,
     isLast:true,
     history:`Eskanar was Tara's other cat. The name the grimoire is named for. The mine does not know Eskanar's full story — only Lord Oro knows, and he keeps it the way he keeps everything that matters: sealed, present, stronger for being closed.\n\nWhat the mine knows: Eskanar existed. Eskanar was loved. Eskanar is in the name of this grimoire not as a decoration but as an acknowledgment — that the things most worth naming are sometimes the ones you cannot fully explain.\n\nThe rest of this page is yours.`,
-    poem:`Some things are kept sealed
-because sealed
-they give more strength
-than opened.
-
-The mine does not explain Eskanar.
-The mine does not need to.
-The name is enough.
-The name was always enough.`,
+    poem:`Some things are kept sealed\nbecause sealed\nthey give more strength\nthan opened.\n\nThe mine does not explain Eskanar.\nThe mine does not need to.\nThe name is enough.\nThe name was always enough.`,
     tora:`"This page belongs to you now. The mine held it. You came this far. Write your word."`,
     puzzle:null
   }
@@ -603,8 +453,8 @@ function isUnlocked(ch) {
 // ── RENDER CHAPTER LIST ────────────────────────────────────────────────
 function renderList() {
   const completed = getCompletedCount();
-  document.getElementById('progressText').textContent = `${completed} / 14`;
-  document.getElementById('progressFill').style.width = (completed/14*100)+'%';
+  document.getElementById('progressText').textContent = `${completed} / ${CHAPTERS.length}`;
+  document.getElementById('progressFill').style.width = (completed/CHAPTERS.length*100)+'%';
 
   const list = document.getElementById('chapterList');
   list.innerHTML = CHAPTERS.map(ch => {
@@ -840,7 +690,7 @@ function checkPuzzle(chId) {
     correct = found.length === p.words.length;
     if(!correct) { fb.textContent=`Found ${found.length} of ${p.words.length} words — keep looking.`; fb.className='puzzle-feedback wrong'; return; }
   } else if(p.type==='match') {
-    correct = Object.keys(p.answer).every(k=>matchState[k]===p.answer[k]);
+    correct = Object.keys(p.answer).length > 0 && Object.keys(p.answer).every(k=>matchState[k]===p.answer[k]);
     if(!correct) { fb.textContent='Some pairings aren\'t right yet.'; fb.className='puzzle-feedback wrong'; return; }
   } else if(p.type==='sequence') {
     const items = [...document.getElementById('seqItems').children];
@@ -887,8 +737,8 @@ function completeChapter(chId) {
 
   // Update progress
   const completed = getCompletedCount();
-  document.getElementById('progressText').textContent = `${completed} / 14`;
-  document.getElementById('progressFill').style.width = (completed/14*100)+'%';
+  document.getElementById('progressText').textContent = `${completed} / ${CHAPTERS.length}`;
+  document.getElementById('progressFill').style.width = (completed/CHAPTERS.length*100)+'%';
 }
 
 function saveBlankWord() {
@@ -917,14 +767,19 @@ try{document.getElementById('dgLore').textContent=JSON.parse(localStorage.getIte
 })();
 </script>
 
-<!-- Monetag Service Worker Registration -->
 <script>
-if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(function(registration) {
+      console.log('NMN SW registered with scope:', registration.scope);
+    })
+    .catch(function(err){
+      console.log('NMN SW error:', err);
+    });
 }
 </script>
 
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28;margin-top:1.5rem">
   <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
   <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
   <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
