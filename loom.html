@@ -6,32 +6,30 @@
 <title>Weaver's Loom — NMN</title>
 <link rel="stylesheet" href="nmn-theme.css">
 <style>
-body{padding-top:56px;overflow:hidden}
+body{padding-top:56px;overflow:hidden;background:var(--coal);}
 .game-wrap{max-width:820px;margin:0 auto;padding:.75rem 1rem}
 .hud{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding:.5rem .75rem;background:rgba(0,0,0,.5);border:1px solid rgba(255,215,0,.1);margin-bottom:8px}
 .hud-stat{font-family:var(--font-pixel);font-size:.46rem;color:var(--gold)}
 .hud-stat span{color:var(--cream)}
-.canvas-wrap{position:relative;background:var(--coal);border:2px solid rgba(255,215,0,.2);box-shadow:inset 0 0 40px rgba(0,0,0,.8)}
+.canvas-wrap{position:relative;background:#070605;border:2px solid rgba(255,215,0,.2);box-shadow:inset 0 0 40px rgba(0,0,0,.8)}
 canvas{display:block;width:100%;image-rendering:pixelated}
 .controls{display:flex;gap:6px;padding:.5rem .75rem;background:rgba(0,0,0,.4);border:1px solid rgba(255,215,0,.08);border-top:none;flex-wrap:wrap}
-.ctrl-btn{font-family:var(--font-pixel);font-size:.38rem;background:var(--stone2);color:var(--muted);border:1px solid rgba(255,215,0,.2);padding:5px 10px;letter-spacing:.05em;transition:all .2s}
-.ctrl-btn:hover{color:var(--gold);border-color:var(--gold)}
+.ctrl-btn{font-family:var(--font-pixel);font-size:.38rem;background:var(--shaft);color:var(--muted);border:1px solid rgba(255,215,0,.2);padding:5px 10px;letter-spacing:.05em;transition:all .2s;cursor:pointer;}
+.ctrl-btn:hover{color:var(--gold);border-color:var(--gold);background:rgba(255,215,0,0.1);}
 .overlay{position:absolute;inset:0;background:rgba(7,6,5,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;z-index:10}
 .overlay.hidden{display:none}
 .ov-title{font-family:var(--font-display);font-size:clamp(1.4rem,4vw,2.2rem);color:var(--gold);text-shadow:0 0 30px rgba(255,215,0,.4);text-align:center}
 .ov-sub{font-family:var(--font-pixel);font-size:.4rem;color:var(--muted);text-align:center;line-height:2.2;max-width:340px}
-.ov-btn{font-family:var(--font-pixel);font-size:.48rem;background:var(--gold);color:var(--coal);border:none;padding:.75rem 2rem;letter-spacing:.1em;transition:all .2s;margin-top:.5rem}
+.ov-btn{font-family:var(--font-pixel);font-size:.48rem;background:var(--gold);color:var(--coal);border:none;padding:.75rem 2rem;letter-spacing:.1em;transition:all .2s;margin-top:.5rem;cursor:pointer;}
 .ov-btn:hover{background:#fff;box-shadow:0 0 25px rgba(255,215,0,.7)}
 .ov-stat{font-family:var(--font-pixel);font-size:.52rem;color:var(--cream);text-align:center}
 .ov-stat strong{color:var(--gold)}
 .gem-row{display:flex;gap:4px}
-.gem-pip{width:14px;height:14px;border:1px solid rgba(255,215,0,.3);background:var(--stone2);font-size:7px;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.gem-pip.lit{border-color:var(--gold);background:#1a1500;box-shadow:0 0 6px var(--gold)}
+.gem-pip{width:14px;height:14px;border:1px solid rgba(255,215,0,.3);background:var(--shaft);font-size:7px;display:flex;align-items:center;justify-content:center;transition:all .2s;color:transparent;}
+.gem-pip.lit{border-color:var(--gold);background:#1a1500;box-shadow:0 0 6px var(--gold);color:var(--gold);}
 </style>
 
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
-
+<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
 
 </head>
 <body>
@@ -39,13 +37,18 @@ canvas{display:block;width:100%;image-rendering:pixelated}
 <script src="nmn-nav.js"></script>
 <script src="nmn-scene.js"></script>
 
+<header style="padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(12,10,7,.95);">
+  <a href="index.html" style="font-family:var(--font-serif);font-style:italic;color:var(--gold);font-size:.95rem;text-decoration:none">NMN — Lord Oro</a>
+  <a href="games.html" style="font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none">← Recreation Hall</a>
+</header>
+
 <div class="game-wrap">
   <div class="hud">
     <span class="hud-stat">SCORE <span id="h-score">0</span></span>
     <span class="hud-stat">LVL <span id="h-level">1</span></span>
     <span class="hud-stat">MOVES <span id="h-moves">20</span></span>
     <span class="hud-stat">COMBO <span id="h-combo">x1</span></span>
-    <div class="gem-row">
+    <div class="gem-row" title="3 Gems = 100 Gold">
       <div class="gem-pip" id="gp0">◆</div><div class="gem-pip" id="gp1">◆</div>
       <div class="gem-pip" id="gp2">◆</div><div class="gem-pip" id="gp3">◆</div>
       <div class="gem-pip" id="gp4">◆</div>
@@ -62,267 +65,367 @@ canvas{display:block;width:100%;image-rendering:pixelated}
     <div class="overlay hidden" id="ov-over">
       <p class="ov-title">Loom Stopped</p>
       <div class="ov-stat">SCORE <strong id="final-score">0</strong></div>
-      <div class="ov-stat">GOLD <strong id="final-gold">0</strong> 💎</div>
+      <div class="ov-stat">GOLD EARNED <strong id="final-gold">0</strong> ⛏</div>
       <button class="ov-btn" onclick="startGame()">⛏ REWEAVE</button>
-      <a href="gemshop.html" style="font-family:var(--font-pixel);font-size:.38rem;color:var(--muted);text-decoration:none;margin-top:.25rem">💎 SPEND GOLD →</a>
+      <a href="gemshop.html" style="font-family:var(--font-pixel);font-size:.38rem;color:var(--muted);text-decoration:none;margin-top:1rem;display:inline-block;border:1px solid rgba(255,215,0,0.3);padding:0.5rem 1rem;">💎 ENTER GEM SHOP →</a>
     </div>
   </div>
 
   <div class="controls">
     <button class="ctrl-btn" onclick="startGame()">▶ NEW GAME</button>
-    <button class="ctrl-btn" onclick="NMNWallet.convertGems()">⚗ CONVERT</button>
+    <button class="ctrl-btn" onclick="convertGems()">⚗ CONVERT GEMS</button>
     <span style="font-family:var(--font-pixel);font-size:.32rem;color:var(--faint);margin-left:auto;align-self:center">CLICK/TAP TO SWAP TILES</span>
   </div>
 </div>
 
 <script>
-const cv=document.getElementById('cv');
-const ctx=cv.getContext('2d');
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
 
 function resize(){
-  const W=Math.min(cv.parentElement.clientWidth,820);
-  cv.width=W; cv.height=Math.floor(W*.6);
-  cv.style.width=W+'px'; cv.style.height=cv.height+'px';
+  const W = Math.min(cv.parentElement.clientWidth, 820);
+  cv.width = W; 
+  cv.height = Math.floor(W * 0.6);
+  cv.style.width = W + 'px'; 
+  cv.style.height = cv.height + 'px';
 }
-resize(); window.addEventListener('resize',resize);
+resize(); 
+window.addEventListener('resize', resize);
 
-// 6 VERY DISTINCT colors — no similar hues
-const COLORS=['#FF2020','#1E90FF','#FFD700','#20D050','#CC22FF','#FF8C00'];
-const CNAMES=['COPPER','SAPPHIRE','GOLD','EMERALD','AMETHYST','EMBER'];
-const ROWS=8, COLS=11;
-const TILE=()=>Math.min(Math.floor(cv.width/COLS),Math.floor(cv.height/ROWS));
+// Lore-themed ore colors
+const COLORS = [
+  '#FF2020', // Pyro's Flame
+  '#1E90FF', // Calypso's Tide
+  '#FFD700', // Lord Oro's Gold
+  '#20D050', // Ivy's Emerald
+  '#CC22FF', // Juni's Amethyst
+  '#FF8C00'  // Nayla's Ember
+];
+const ROWS = 8, COLS = 11;
+const TILE = () => Math.min(Math.floor(cv.width/COLS), Math.floor(cv.height/ROWS));
 
-let G=null, _locked=false;
+let G = null, _locked = false;
 
 function initState(){
   return {
-    score:0,level:1,cycle:1,moves:20,combo:1,
-    grid:makeGrid(),sel:null,
-    animQueue:[],running:true,
-    sessionGold:0,
+    score: 0, level: 1, cycle: 1, moves: 20, combo: 1,
+    grid: makeGrid(), sel: null,
+    animQueue: [], running: true,
+    sessionGold: 0,
   };
 }
 
 function makeGrid(){
-  const g=Array(ROWS).fill(0).map(()=>
-    Array(COLS).fill(0).map(()=>({c:COLORS[Math.floor(Math.random()*COLORS.length)],scale:1,flash:0}))
+  const g = Array(ROWS).fill(0).map(() =>
+    Array(COLS).fill(0).map(() => ({c: COLORS[Math.floor(Math.random()*COLORS.length)], scale: 1, flash: 0}))
   );
   // Ensure no pre-existing matches
-  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
-    let attempts=0;
-    while(hasMatchAt(g,r,c)&&attempts<10){
-      g[r][c].c=COLORS[Math.floor(Math.random()*COLORS.length)];
-      attempts++;
-    }
+  for(let r=0; r<ROWS; r++) {
+      for(let c=0; c<COLS; c++){
+        let attempts = 0;
+        while(hasMatchAt(g, r, c) && attempts < 10){
+          g[r][c].c = COLORS[Math.floor(Math.random()*COLORS.length)];
+          attempts++;
+        }
+      }
   }
   return g;
 }
 
-function hasMatchAt(g,r,c){
-  const col=g[r][c].c;
-  if(c>=2&&g[r][c-1].c===col&&g[r][c-2].c===col)return true;
-  if(r>=2&&g[r-1][c].c===col&&g[r-2][c].c===col)return true;
+function hasMatchAt(g, r, c){
+  const col = g[r][c].c;
+  if(c >= 2 && g[r][c-1].c === col && g[r][c-2].c === col) return true;
+  if(r >= 2 && g[r-1][c].c === col && g[r-2][c].c === col) return true;
   return false;
 }
 
 function startGame(){
-  if(_locked)return; _locked=true;
-  NMNScene.destroy();
-  G=initState();
+  if(_locked) return; 
+  _locked = true;
+  
+  if (window.NMNScene) NMNScene.destroy();
+  G = initState();
+  
   document.getElementById('ov-start').classList.add('hidden');
   document.getElementById('ov-over').classList.add('hidden');
   updateHUD();
-  NMNScene.raf(loop);
-  _locked=false;
+  
+  if (window.NMNScene) {
+      NMNScene.raf(loop);
+  } else {
+      requestAnimationFrame(loop);
+  }
+  
+  _locked = false;
 }
 
 // ── INPUT ──
-NMNScene.on(cv,'click',e=>{
-  if(!G||!G.running)return;
-  const T=TILE();
-  const OX=Math.floor((cv.width-COLS*T)/2);
-  const OY=Math.floor((cv.height-ROWS*T)/2);
-  const r=cv.getBoundingClientRect();
-  const mx=(e.clientX-r.left)*(cv.width/r.width);
-  const my=(e.clientY-r.top)*(cv.height/r.height);
-  const col=Math.floor((mx-OX)/T);
-  const row=Math.floor((my-OY)/T);
-  if(col<0||col>=COLS||row<0||row>=ROWS)return;
-  handleClick(row,col);
-});
+const handleInput = (e) => {
+  if(!G || !G.running) return;
+  const T = TILE();
+  const OX = Math.floor((cv.width - COLS*T)/2);
+  const OY = Math.floor((cv.height - ROWS*T)/2);
+  const r = cv.getBoundingClientRect();
+  
+  // Handle both mouse and touch events
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  
+  const mx = (clientX - r.left) * (cv.width/r.width);
+  const my = (clientY - r.top) * (cv.height/r.height);
+  
+  const col = Math.floor((mx - OX)/T);
+  const row = Math.floor((my - OY)/T);
+  
+  if(col < 0 || col >= COLS || row < 0 || row >= ROWS) return;
+  handleClick(row, col);
+};
 
-function handleClick(row,col){
+cv.addEventListener('click', handleInput);
+cv.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e); }, {passive: false});
+
+function handleClick(row, col){
   if(!G.sel){
-    G.sel={row,col};
-    G.grid[row][col].scale=1.15;
+    G.sel = {row, col};
+    G.grid[row][col].scale = 1.15;
     return;
   }
-  const {row:r2,col:c2}=G.sel;
-  G.grid[r2][c2].scale=1;
-  if(row===r2&&col===c2){G.sel=null;return;}
-  if(Math.abs(row-r2)+Math.abs(col-c2)===1){
-    swap(row,col,r2,c2);
-    const cleared=clearMatches();
-    if(cleared>0){
+  const {row: r2, col: c2} = G.sel;
+  G.grid[r2][c2].scale = 1;
+  
+  if(row === r2 && col === c2) { G.sel = null; return; }
+  
+  if(Math.abs(row-r2) + Math.abs(col-c2) === 1){
+    swap(row, col, r2, c2);
+    const cleared = clearMatches();
+    
+    if(cleared > 0){
       G.combo++;
-      const pts=cleared*15*G.combo*G.cycle;
-      G.score+=pts;
-      G.sessionGold+=Math.ceil(pts/8);
-      NMNWallet.addXP(cleared*8);
-      for(let i=0;i<Math.min(cleared,3);i++) NMNWallet.addGem();
+      const pts = cleared * 15 * G.combo * G.cycle;
+      G.score += pts;
+      
+      const goldEarned = Math.ceil(pts/8);
+      G.sessionGold += goldEarned;
+      
+      if(window.NMNWallet) {
+          NMNWallet.addGold(goldEarned);
+          NMNWallet.addXP(cleared * 8);
+          // Award up to 3 gems based on combo
+          for(let i=0; i<Math.min(cleared, 3); i++) NMNWallet.addGem();
+      }
+      
       checkLevelUp();
     } else {
-      swap(row,col,r2,c2); // swap back
-      G.combo=1;
+      swap(row, col, r2, c2); // swap back if no match
+      G.combo = 1;
     }
+    
     G.moves--;
-    if(G.moves<=0){
-      // Level complete — refresh board
-      G.level++; if(G.level>8){G.level=1;G.cycle++;}
-      G.moves=20+G.level*2;
-      G.grid=makeGrid();
-      G.combo=1;
+    
+    if(G.moves <= 0){
+      G.running = false;
+      document.getElementById('final-score').textContent = G.score;
+      document.getElementById('final-gold').textContent = G.sessionGold;
+      document.getElementById('ov-over').classList.remove('hidden');
     }
     updateHUD();
   }
-  G.sel=null;
+  G.sel = null;
 }
 
-function swap(r1,c1,r2,c2){
-  const tmp=G.grid[r1][c1];
-  G.grid[r1][c1]=G.grid[r2][c2];
-  G.grid[r2][c2]=tmp;
+function swap(r1, c1, r2, c2){
+  const tmp = G.grid[r1][c1];
+  G.grid[r1][c1] = G.grid[r2][c2];
+  G.grid[r2][c2] = tmp;
 }
 
 function clearMatches(){
-  const g=G.grid;let cleared=0;const toRemove=new Set();
+  const g = G.grid; 
+  let cleared = 0; 
+  const toRemove = new Set();
+  
   // Horizontal
-  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS-2;c++){
-    if(g[r][c].c&&g[r][c].c===g[r][c+1].c&&g[r][c].c===g[r][c+2].c){
-      toRemove.add(`${r},${c}`);toRemove.add(`${r},${c+1}`);toRemove.add(`${r},${c+2}`);
-    }
+  for(let r=0; r<ROWS; r++) {
+      for(let c=0; c<COLS-2; c++){
+        if(g[r][c].c && g[r][c].c === g[r][c+1].c && g[r][c].c === g[r][c+2].c){
+          toRemove.add(`${r},${c}`); 
+          toRemove.add(`${r},${c+1}`); 
+          toRemove.add(`${r},${c+2}`);
+        }
+      }
   }
   // Vertical
-  for(let r=0;r<ROWS-2;r++) for(let c=0;c<COLS;c++){
-    if(g[r][c].c&&g[r][c].c===g[r+1][c].c&&g[r][c].c===g[r+2][c].c){
-      toRemove.add(`${r},${c}`);toRemove.add(`${r+1},${c}`);toRemove.add(`${r+2},${c}`);
-    }
+  for(let r=0; r<ROWS-2; r++) {
+      for(let c=0; c<COLS; c++){
+        if(g[r][c].c && g[r][c].c === g[r+1][c].c && g[r][c].c === g[r+2][c].c){
+          toRemove.add(`${r},${c}`); 
+          toRemove.add(`${r+1},${c}`); 
+          toRemove.add(`${r+2},${c}`);
+        }
+      }
   }
-  toRemove.forEach(k=>{
-    const [r,c]=k.split(',').map(Number);
-    g[r][c].flash=8; cleared++;
+  
+  toRemove.forEach(k => {
+    const [r, c] = k.split(',').map(Number);
+    g[r][c].flash = 8; 
+    cleared++;
   });
+  
   // Drop and refill
-  setTimeout(()=>{
-    toRemove.forEach(k=>{
-      const [r,c]=k.split(',').map(Number);
-      g[r][c].c=null;
+  setTimeout(() => {
+    toRemove.forEach(k => {
+      const [r,c] = k.split(',').map(Number);
+      g[r][c].c = null;
     });
+    
     // Gravity
-    for(let c=0;c<COLS;c++){
-      let empty=ROWS-1;
-      for(let r=ROWS-1;r>=0;r--){
+    for(let c=0; c<COLS; c++){
+      let empty = ROWS-1;
+      for(let r=ROWS-1; r>=0; r--){
         if(g[r][c].c){
-          g[empty][c].c=g[r][c].c;
-          if(empty!==r)g[r][c].c=null;
+          g[empty][c].c = g[r][c].c;
+          if(empty !== r) g[r][c].c = null;
           empty--;
         }
       }
-      for(let r=empty;r>=0;r--) g[r][c]={c:COLORS[Math.floor(Math.random()*COLORS.length)],scale:1,flash:0};
+      for(let r=empty; r>=0; r--) {
+          g[r][c] = {c: COLORS[Math.floor(Math.random()*COLORS.length)], scale: 1, flash: 0};
+      }
     }
-  },180);
+  }, 180);
+  
   return cleared;
 }
 
 function checkLevelUp(){
-  if(G.score>=G.level*600*G.cycle){
-    G.level++; if(G.level>8){G.level=1;G.cycle++;}
-    G.moves=Math.min(G.moves+5,30);
-    nmnToast(`⬆ LEVEL ${G.level} — LOOM DEEPENS`);
+  if(G.score >= G.level * 600 * G.cycle){
+    G.level++; 
+    if(G.level > 8){ G.level=1; G.cycle++; }
+    G.moves = Math.min(G.moves + 5, 30);
+    if(window.nmnToast) nmnToast(`⬆ LEVEL ${G.level} — LOOM DEEPENS`);
   }
+}
+
+function convertGems() {
+    if(window.NMNWallet) {
+        NMNWallet.convertGems();
+        updateHUD();
+    }
 }
 
 // ── DRAW ──
 function draw(){
-  const W=cv.width,H=cv.height;
-  ctx.fillStyle='#070605'; ctx.fillRect(0,0,W,H);
+  const W = cv.width, H = cv.height;
+  ctx.fillStyle = '#070605'; 
+  ctx.fillRect(0, 0, W, H);
+  
   // Background grid texture
-  ctx.strokeStyle='rgba(255,215,0,.03)'; ctx.lineWidth=1;
-  for(let x=0;x<W;x+=24){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  for(let y=0;y<H;y+=24){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  ctx.strokeStyle = 'rgba(255,215,0,.03)'; 
+  ctx.lineWidth = 1;
+  for(let x=0; x<W; x+=24) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for(let y=0; y<H; y+=24) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
 
-  if(!G)return;
-  const T=TILE();
-  const OX=Math.floor((W-COLS*T)/2);
-  const OY=Math.floor((H-ROWS*T)/2);
+  if(!G) return;
+  
+  const T = TILE();
+  const OX = Math.floor((W - COLS*T)/2);
+  const OY = Math.floor((H - ROWS*T)/2);
 
   // Tiles
-  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
-    const tile=G.grid[r][c];
-    if(!tile.c)continue;
-    const tx=OX+c*T,ty=OY+r*T;
-    const s=tile.scale||1;
-    const pad=Math.floor(T*(1-s)/2);
-    const sz=T-4;
+  for(let r=0; r<ROWS; r++) {
+      for(let c=0; c<COLS; c++){
+        const tile = G.grid[r][c];
+        if(!tile.c) continue;
+        
+        const tx = OX + c*T, ty = OY + r*T;
+        const s = tile.scale || 1;
+        const pad = Math.floor(T*(1-s)/2);
+        const sz = T - 4;
 
-    // Flash
-    if(tile.flash>0){
-      tile.flash--;
-      ctx.fillStyle='rgba(255,255,255,0.6)';
-      ctx.fillRect(tx+2,ty+2,sz,sz);
-    }
-    // Tile
-    ctx.fillStyle=tile.c;
-    ctx.fillRect(tx+2+pad,ty+2+pad,sz-pad*2,sz-pad*2);
-    // Shine
-    ctx.fillStyle='rgba(255,255,255,.22)';
-    ctx.fillRect(tx+3+pad,ty+3+pad,Math.floor(sz*.3),Math.floor(sz*.3));
-    // Dark shadow
-    ctx.fillStyle='rgba(0,0,0,.25)';
-    ctx.fillRect(tx+sz-4+pad,ty+sz-4+pad,6,6);
+        // Flash
+        if(tile.flash > 0){
+          tile.flash--;
+          ctx.fillStyle = 'rgba(255,255,255,0.6)';
+          ctx.fillRect(tx+2, ty+2, sz, sz);
+        }
+        
+        // Tile Base
+        ctx.fillStyle = tile.c;
+        ctx.fillRect(tx+2+pad, ty+2+pad, sz-pad*2, sz-pad*2);
+        
+        // Shine
+        ctx.fillStyle = 'rgba(255,255,255,.22)';
+        ctx.fillRect(tx+3+pad, ty+3+pad, Math.floor(sz*.3), Math.floor(sz*.3));
+        
+        // Dark shadow
+        ctx.fillStyle = 'rgba(0,0,0,.25)';
+        ctx.fillRect(tx+sz-4+pad, ty+sz-4+pad, 6, 6);
 
-    // Selected
-    if(G.sel&&G.sel.row===r&&G.sel.col===c){
-      ctx.strokeStyle='#fff'; ctx.lineWidth=2;
-      ctx.strokeRect(tx+2,ty+2,sz,sz);
-    }
+        // Selected outline
+        if(G.sel && G.sel.row === r && G.sel.col === c){
+          ctx.strokeStyle = '#fff'; 
+          ctx.lineWidth = 2;
+          ctx.strokeRect(tx+2, ty+2, sz, sz);
+        }
+      }
   }
 
   // Combo display
-  if(G.combo>1){
-    ctx.save(); ctx.globalAlpha=Math.min(1,G.combo*.2);
-    ctx.fillStyle='#FFD700'; ctx.font=`${Math.min(G.combo*2,12)}px "Press Start 2P"`;
-    ctx.textAlign='center'; ctx.fillText(`${G.combo}x COMBO CHAIN`,W/2,18);
-    ctx.restore(); ctx.textAlign='left';
+  if(G.combo > 1){
+    ctx.save(); 
+    ctx.globalAlpha = Math.min(1, G.combo*.2);
+    ctx.fillStyle = '#FFD700'; 
+    ctx.font = `${Math.min(G.combo*2, 12)}px "Press Start 2P"`;
+    ctx.textAlign = 'center'; 
+    ctx.fillText(`${G.combo}x COMBO CHAIN`, W/2, 18);
+    ctx.restore(); 
+    ctx.textAlign = 'left';
   }
 }
 
 function loop(){
   draw();
-  NMNScene.raf(loop);
+  if(window.NMNScene) {
+      NMNScene.raf(loop);
+  } else {
+      requestAnimationFrame(loop);
+  }
 }
 
 function updateHUD(){
-  document.getElementById('h-score').textContent=G.score;
-  document.getElementById('h-level').textContent=G.level;
-  document.getElementById('h-moves').textContent=G.moves;
-  document.getElementById('h-combo').textContent='x'+G.combo;
-  const w=NMNWallet.get();
-  for(let i=0;i<5;i++){const p=document.getElementById('gp'+i);if(p)p.classList.toggle('lit',w.gems[i]);}
+  document.getElementById('h-score').textContent = G.score;
+  document.getElementById('h-level').textContent = G.level;
+  document.getElementById('h-moves').textContent = G.moves;
+  document.getElementById('h-combo').textContent = 'x' + G.combo;
+  
+  if (window.NMNWallet) {
+      const w = NMNWallet.get();
+      const gemCount = w.gems || 0;
+      for(let i=0; i<5; i++){
+        const p = document.getElementById('gp'+i);
+        if(p) p.classList.toggle('lit', i < gemCount);
+      }
+  }
 }
 
-// initial render
-ctx.fillStyle='#070605'; ctx.fillRect(0,0,cv.width,cv.height);
+// initial render background
+ctx.fillStyle = '#070605'; 
+ctx.fillRect(0, 0, cv.width, cv.height);
 </script>
 
-<!-- Monetag Service Worker Registration -->
 <script>
-if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(function(registration) {
+      console.log('NMN SW registered with scope:', registration.scope);
+    })
+    .catch(function(err){
+      console.log('NMN SW error:', err);
+    });
 }
 </script>
 
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28;margin-top:1rem;">
   <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
   <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
   <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
