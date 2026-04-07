@@ -2,265 +2,501 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ore Flow — NMN</title>
-<link rel="stylesheet" href="nmn-theme.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Ore Flow — Sector 1</title>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P5WL9XNDY8');
+</script>
+<link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
 <style>
-body{padding-top:56px;background:var(--coal);display:flex;flex-direction:column;align-items:center;min-height:100vh}
-.game-header{text-align:center;padding:2rem 1rem 1rem}
-.game-header h1{font-family:var(--font-display);font-size:clamp(1.6rem,5vw,2.8rem);color:var(--gold);text-shadow:0 0 30px rgba(255,215,0,.4);margin-bottom:.5rem}
-.game-header p{font-family:var(--font-pixel);font-size:.34rem;color:var(--muted);letter-spacing:.14em;line-height:2.2}
-#gameCanvas{border:2px solid rgba(255,215,0,.4);box-shadow:0 0 30px rgba(255,215,0,.1),0 0 80px rgba(0,0,0,.8);display:block;image-rendering:pixelated;cursor:crosshair;max-width:95vw;touch-action:none}
-.hud{display:flex;gap:2rem;padding:.75rem 1.5rem;background:rgba(0,0,0,.6);border:1px solid rgba(255,215,0,.2);border-top:none;font-family:var(--font-pixel);font-size:.42rem;color:var(--gold);margin-bottom:.75rem;flex-wrap:wrap;justify-content:center}
-.hud span{display:flex;flex-direction:column;align-items:center;gap:3px}
-.hud .label{font-size:.28rem;color:var(--muted);letter-spacing:.12em}
-.level-select{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap;justify-content:center}
-.lvl-btn{font-family:var(--font-pixel);font-size:.3rem;padding:.4rem .8rem;background:transparent;border:1px solid rgba(255,215,0,.18);color:var(--muted);cursor:pointer;transition:all .2s;letter-spacing:.08em}
-.lvl-btn:hover,.lvl-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,.06)}
-.btn-row{display:flex;gap:.75rem;margin-bottom:2rem;flex-wrap:wrap;justify-content:center}
-.g-btn{font-family:var(--font-pixel);font-size:.42rem;padding:.6rem 1.5rem;letter-spacing:.1em;cursor:pointer;border:none;transition:all .2s}
-.g-btn.start{background:var(--gold);color:var(--coal)}
-.g-btn.start:hover{background:#fff;box-shadow:0 0 20px rgba(255,215,0,.6)}
-.g-btn.back{background:transparent;color:var(--muted);border:1px solid rgba(255,215,0,.2)}
-.g-btn.back:hover{border-color:var(--gold);color:var(--gold)}
-#winMsg{display:none;font-family:var(--font-pixel);font-size:.44rem;color:var(--gold);text-align:center;padding:1.5rem 2rem;border:2px solid rgba(255,215,0,.5);background:rgba(0,0,0,.92);margin-bottom:1rem;max-width:420px;line-height:2.6;letter-spacing:.06em;box-shadow:0 0 30px rgba(255,215,0,.15)}
-.controls{font-family:var(--font-pixel);font-size:.3rem;color:var(--faint);text-align:center;margin-bottom:.75rem;letter-spacing:.1em;line-height:2.2}
+/* ── CORE NMN VARIABLES & AESTHETIC ── */
+:root {
+  --gold: #FFD700; --gb: #e8b84b; --gd: #8B6914;
+  --coal: #050308; --shaft: #08060A; --rock: #0A080C;
+  --cream: #E8E0D0; --neon-green: #00FF88;
+  --font-pixel: 'Press Start 2P', cursive;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow-x: hidden; background: var(--coal); }
+
+body {
+  font-family: var(--font-pixel);
+  color: var(--cream);
+  display: flex; flex-direction: column;
+  background-image: 
+    linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
+  background-size: 32px 32px;
+}
+
+/* OVERRIDE ALL OLD FONTS */
+h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
+
+/* CRT SCANLINES & VIGNETTE */
+body::after {
+  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
+  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.08) 50%),
+              linear-gradient(90deg,rgba(232,184,75,0.015),rgba(197,146,0,0.008),rgba(255,215,0,0.015));
+  background-size:100% 3px,3px 100%; pointer-events:none; z-index:10000; opacity:0.18;
+}
+body::before {
+  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
+  background:radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.65) 100%);
+  pointer-events:none; z-index:9999;
+}
+
+/* HEADER */
+header {
+  padding: 1rem 2rem; border-bottom: 2px solid var(--gd);
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(5,3,14,.95); z-index: 1000; flex-shrink: 0;
+}
+.logo { color: var(--gold); font-size: .65rem; text-decoration: none; text-shadow: 0 0 10px rgba(255,215,0,.4); }
+.back-btn { font-size: .45rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+.back-btn:hover { color: var(--gold); }
+
+/* GAME HUD & INFO */
+.game-header { text-align: center; padding: 2rem 1rem 1rem; position: relative; z-index: 2; }
+.game-header h1 { font-size: clamp(1.2rem, 4vw, 2.2rem); color: var(--gold); text-shadow: 0 0 20px rgba(255,215,0,.4); margin-bottom: 0.5rem; }
+.game-header p { font-size: .4rem; color: var(--gd); letter-spacing: .1em; line-height: 2; }
+
+.hud {
+  display: flex; gap: 2rem; padding: .75rem 1.5rem; background: rgba(5,3,8,0.9);
+  border: 2px solid var(--gd); font-size: .45rem; color: var(--gold);
+  margin: 0 auto 1rem; flex-wrap: wrap; justify-content: center; position: relative; z-index: 2;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+}
+.hud span { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.hud .label { font-size: .35rem; color: var(--muted); letter-spacing: .1em; }
+.hud-val { text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+
+.level-select { display: flex; gap: .5rem; margin: 0 auto 1.5rem; flex-wrap: wrap; justify-content: center; position: relative; z-index: 2; max-width: 900px; }
+.lvl-btn {
+  font-size: .4rem; padding: .6rem 1rem; background: rgba(0,0,0,0.8);
+  border: 1px solid rgba(255,215,0,.2); color: var(--gd); cursor: pointer; transition: all .2s;
+}
+.lvl-btn:hover, .lvl-btn.active { border-color: var(--neon-green); color: var(--neon-green); background: rgba(0,255,136,.05); box-shadow: 0 0 15px rgba(0,255,136,0.2); }
+
+/* CANVAS AREA */
+.game-area { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; padding-bottom: 2rem; }
+.canvas-wrap { position: relative; padding: 4px; background: #000; border: 2px solid var(--gd); box-shadow: inset 0 0 30px rgba(0,0,0,1), 0 0 40px rgba(255,215,0,0.1); }
+#gameCanvas { display: block; image-rendering: pixelated; cursor: crosshair; touch-action: none; background: #050306; }
+
+/* OVERLAYS */
+.overlay {
+  position: absolute; inset: 0; background: rgba(5,3,8,.95); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1rem; z-index: 10; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.overlay.visible { opacity: 1; pointer-events: all; }
+.ov-title { font-size: 1.5rem; color: var(--neon-green); text-shadow: 0 0 20px rgba(0,255,136,.5); text-align: center; line-height: 1.5; }
+.ov-sub { font-size: .45rem; color: var(--cream); text-align: center; line-height: 2; }
+.ov-gold { font-size: .8rem; color: var(--gold); margin: 1rem 0; text-shadow: 0 0 15px rgba(255,215,0,0.4); }
+
+.btn {
+  font-size: .45rem; padding: .8rem 1.5rem; letter-spacing: .1em; cursor: pointer; border: none; transition: all .2s; text-decoration: none;
+}
+.btn-gold { background: var(--gold); color: #000; }
+.btn-gold:hover { background: #fff; box-shadow: 0 0 20px rgba(255,215,0,.6); transform: scale(1.05); }
+.btn-outline { background: transparent; color: var(--gold); border: 2px solid var(--gold); }
+.btn-outline:hover { background: rgba(255,215,0,0.1); }
+
+.btn-row { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: center; position: relative; z-index: 2; }
+
+/* FLOATING GAUGE */
+.depth-gauge {
+  position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:92%!important; height:42px!important; background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important; border-radius:22px!important; padding:0 18px!important;
+  z-index:9999!important; backdrop-filter:blur(4px)!important; display:flex!important; align-items:center!important;
+  justify-content:center!important; gap:1.2rem!important; box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat { font-size: 0.4rem; color: var(--gd); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
+.dg-val { color: var(--gold); font-size: 0.6rem; }
+.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+.dg-link:hover { color: var(--gold); }
+
+/* CUSTOM CURSOR */
+body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
 </style>
 </head>
 <body>
-<script src="nmn-wallet.js"></script>
-<script src="nmn-nav.js"></script>
-<div class="game-header">
-  <h1>&#9935; Ore Flow</h1>
-  <p>CONNECT THE ORE VEINS &mdash; FILL EVERY CELL &mdash; NO CROSSINGS</p>
-</div>
-<div id="winMsg">&#11041; VEIN COMPLETE &#11041;<br>All ore paths sealed.<br>The mine runs clean.<br><br>+25 GOLD EXTRACTED</div>
-<canvas id="gameCanvas"></canvas>
-<div class="hud">
-  <span><span id="hudMoves">0</span><span class="label">MOVES</span></span>
-  <span><span id="hudFill">0%</span><span class="label">FILLED</span></span>
-  <span><span id="hudPairs">0/0</span><span class="label">VEINS SEALED</span></span>
-</div>
-<div class="level-select" id="levelSelect"></div>
-<div class="btn-row">
-  <button class="g-btn start" onclick="resetLevel()">&#9935; RESET</button>
-  <button class="g-btn start" onclick="nextLevel()">NEXT LEVEL &rarr;</button>
-  <button class="g-btn back" onclick="location.href='games.html'">&larr; BACK TO MINE</button>
-</div>
-<div class="controls">CLICK + DRAG to draw ore veins &nbsp;|&nbsp; TOUCH + DRAG on mobile &nbsp;|&nbsp; Fill every cell to win</div>
-<script>
-const CELL=56;
-const COLORS=['#FFD700','#00BFFF','#9B59B6','#2ECC71','#E74C3C','#FF8C00','#E8F0F0','#FF69B4'];
 
-// [gridSize, [[r1,c1,r2,c2,colorIdx],...]]
-// These levels are designed so every cell can be covered
-const LEVELS=[
-  [5,[
-    [0,0,4,0,0],
-    [0,4,4,4,1],
-    [0,1,0,3,2],
-    [4,1,4,3,3]
-  ]],
-  [6,[
-    [0,0,5,0,0],
-    [0,5,5,5,1],
-    [0,2,5,2,2],
-    [0,3,5,3,3],
-    [2,1,2,4,4]
-  ]],
-  [7,[
-    [0,0,6,0,0],
-    [0,6,6,6,1],
-    [0,3,6,3,2],
-    [3,0,3,6,3],
-    [1,1,5,5,4],
-    [1,5,5,1,5]
-  ]],
-  [8,[
-    [0,0,7,0,0],
-    [0,7,7,7,1],
-    [0,3,7,4,2],
-    [3,0,4,7,3],
-    [1,1,6,6,4],
-    [1,6,6,1,5],
-    [0,5,7,2,6]
-  ]],
-  [9,[
-    [0,0,8,0,0],
-    [0,8,8,8,1],
-    [0,4,8,4,2],
-    [4,0,4,8,3],
-    [1,1,7,7,4],
-    [1,7,7,1,5],
-    [0,6,8,2,6]
-  ]]
+<header>
+  <a href="index.html" class="logo">NMN — Lord Oro</a>
+  <a href="games.html" class="back-btn">← Return to Forge</a>
+</header>
+
+<div class="game-header">
+  <h1>ORE FLOW</h1>
+  <p>CONNECT THE ORE VEINS · FILL EVERY CELL · DO NOT CROSS STREAMS</p>
+</div>
+
+<div class="level-select" id="levelSelect"></div>
+
+<div class="game-area">
+  <div class="hud">
+    <span><span class="hud-val" id="hudMoves">0</span><span class="label">MOVES</span></span>
+    <span><span class="hud-val" id="hudFill">0%</span><span class="label">FILLED</span></span>
+    <span><span class="hud-val" id="hudPairs">0/0</span><span class="label">VEINS SEALED</span></span>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="gameCanvas"></canvas>
+    
+    <div class="overlay" id="winOverlay">
+      <div class="ov-title">VEIN SEALED</div>
+      <p class="ov-sub">The energy flows cleanly. The mine provides.</p>
+      <div class="ov-gold">+25 GOLD EXTRACTED</div>
+      <div style="display:flex; gap:10px; margin-top:10px;">
+        <button class="btn btn-gold" onclick="nextLevel()">NEXT PROTOCOL</button>
+        <button class="btn btn-outline" onclick="resetLevel()">REPLAY</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-outline" onclick="resetLevel()">RESET GRID</button>
+  </div>
+</div>
+
+<div class="depth-gauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
+</div>
+
+<script>
+window.NMN_CONTEXT = "mine";
+const NMN_Audio = {
+  ctx: null, running: false, masterGain: null,
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  },
+  playHum() {
+    const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+    osc.type = 'sine'; osc.frequency.setValueAtTime(55, this.ctx.currentTime);
+    gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
+    osc.connect(gain); gain.connect(this.masterGain); osc.start();
+  },
+  startAll() {
+    if (this.running) return;
+    this.init(); this.running = true; this.playHum();
+  }
+};
+document.addEventListener('click', () => { if (!NMN_Audio.running) NMN_Audio.startAll(); }, { once: true });
+
+const SFX = {
+  play(freq, type, dur, vol = 0.1) {
+    if (!NMN_Audio.ctx) return;
+    const osc = NMN_Audio.ctx.createOscillator(); const gain = NMN_Audio.ctx.createGain();
+    osc.type = type; osc.frequency.setValueAtTime(freq, NMN_Audio.ctx.currentTime);
+    gain.gain.setValueAtTime(0, NMN_Audio.ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(vol, NMN_Audio.ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, NMN_Audio.ctx.currentTime + dur);
+    osc.connect(gain); gain.connect(NMN_Audio.masterGain);
+    osc.start(); osc.stop(NMN_Audio.ctx.currentTime + dur);
+  },
+  draw() { this.play(600 + Math.random()*100, 'sine', 0.1, 0.05); },
+  connect() { this.play(1200, 'triangle', 0.3, 0.1); setTimeout(()=>this.play(1600, 'triangle', 0.4, 0.1), 100); },
+  win() { this.play(400, 'square', 0.2); setTimeout(()=>this.play(600, 'square', 0.2), 150); setTimeout(()=>this.play(800, 'square', 0.6), 300); }
+};
+</script>
+
+<script>
+let CELL = 56;
+const MAX_BOARD_SIZE = 500;
+const COLORS = ['#FFD700', '#00BFFF', '#9B59B6', '#2ECC71', '#E74C3C', '#FF8C00', '#E8F0F0', '#FF69B4'];
+
+const LEVELS = [
+  [5, [[0,0,4,0,0], [0,4,4,4,1], [0,1,0,3,2], [4,1,4,3,3]]],
+  [6, [[0,0,5,0,0], [0,5,5,5,1], [0,2,5,2,2], [0,3,5,3,3], [2,1,2,4,4]]],
+  [7, [[0,0,6,0,0], [0,6,6,6,1], [0,3,6,3,2], [3,0,3,6,3], [1,1,5,5,4], [1,5,5,1,5]]],
+  [8, [[0,0,7,0,0], [0,7,7,7,1], [0,3,7,4,2], [3,0,4,7,3], [1,1,6,6,4], [1,6,6,1,5], [0,5,7,2,6]]],
+  [9, [[0,0,8,0,0], [0,8,8,8,1], [0,4,8,4,2], [4,0,4,8,3], [1,1,7,7,4], [1,7,7,1,5], [0,6,8,2,6]]]
 ];
 
-let curLevel=0,N=0,grid=[],paths=[],completed=[],dots=[],drawing=false,activeColor=-1,activePath=[],moves=0;
-const canvas=document.getElementById('gameCanvas');
-const ctx=canvas.getContext('2d');
+let curLevel = 0, N = 0, grid = [], paths = [], completed = [], dots = [];
+let drawing = false, activeColor = -1, activePath = [], moves = 0;
+let particles = [], screenShake = 0;
+let loopId = null, isWon = false;
 
-function buildLevelSelect(){
-  const el=document.getElementById('levelSelect');el.innerHTML='';
-  LEVELS.forEach((_,i)=>{
-    const b=document.createElement('button');
-    b.className='lvl-btn'+(i===curLevel?' active':'');
-    b.textContent='VEIN '+(i+1);
-    b.onclick=()=>{curLevel=i;buildLevelSelect();loadLevel();};
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+function buildLevelSelect() {
+  const el = document.getElementById('levelSelect'); el.innerHTML = '';
+  LEVELS.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'lvl-btn' + (i === curLevel ? ' active' : '');
+    b.textContent = 'VEIN ' + (i + 1);
+    b.onclick = () => { curLevel = i; buildLevelSelect(); loadLevel(); };
     el.appendChild(b);
   });
 }
 
-function loadLevel(){
-  document.getElementById('winMsg').style.display='none';
-  const[n,pairs]=LEVELS[curLevel];N=n;
-  canvas.width=canvas.height=N*CELL;
-  grid=Array.from({length:N},()=>Array(N).fill(-1));
-  paths=pairs.map(()=>[]);
-  completed=pairs.map(()=>false);
-  dots=pairs.map(([r1,c1,r2,c2,ci])=>({r1,c1,r2,c2,ci}));
-  dots.forEach(({r1,c1,r2,c2,ci})=>{grid[r1][c1]=ci;grid[r2][c2]=ci;});
-  moves=0;drawing=false;activeColor=-1;activePath=[];
-  updateHUD();draw();
+function loadLevel() {
+  document.getElementById('winOverlay').classList.remove('visible');
+  const [n, pairs] = LEVELS[curLevel]; N = n;
+  
+  // Responsive cell sizing
+  const availableWidth = Math.min(window.innerWidth * 0.9, MAX_BOARD_SIZE);
+  CELL = Math.floor(availableWidth / N);
+  canvas.width = canvas.height = N * CELL;
+  
+  grid = Array.from({length:N}, () => Array(N).fill(-1));
+  paths = pairs.map(() => []);
+  completed = pairs.map(() => false);
+  dots = pairs.map(([r1,c1,r2,c2,ci]) => ({r1,c1,r2,c2,ci}));
+  dots.forEach(({r1,c1,r2,c2,ci}) => { grid[r1][c1] = ci; grid[r2][c2] = ci; });
+  
+  moves = 0; drawing = false; activeColor = -1; activePath = [];
+  particles = []; screenShake = 0; isWon = false;
+  
+  updateHUD();
+  if(!loopId) loop();
 }
 
-const isDot=(r,c)=>dots.some(d=>(d.r1===r&&d.c1===c)||(d.r2===r&&d.c2===c));
-const dotColorOf=(r,c)=>{const d=dots.find(d=>(d.r1===r&&d.c1===c)||(d.r2===r&&d.c2===c));return d?d.ci:-1;};
+const isDot = (r,c) => dots.some(d => (d.r1===r && d.c1===c) || (d.r2===r && d.c2===c));
+const dotColorOf = (r,c) => { const d = dots.find(d => (d.r1===r && d.c1===c) || (d.r2===r && d.c2===c)); return d ? d.ci : -1; };
 
-function clearPath(ci){
-  if(paths[ci]){paths[ci].forEach(([r,c])=>{if(!isDot(r,c))grid[r][c]=-1;});}
-  paths[ci]=[];completed[ci]=false;
+function clearPath(ci) {
+  if(paths[ci]) { paths[ci].forEach(([r,c]) => { if(!isDot(r,c)) grid[r][c] = -1; }); }
+  paths[ci] = []; completed[ci] = false;
 }
 
-function cellAt(x,y){return[Math.floor(y/CELL),Math.floor(x/CELL)];}
+function cellAt(x,y) { return [Math.floor(y/CELL), Math.floor(x/CELL)]; }
 
-function startDraw(r,c){
-  if(r<0||r>=N||c<0||c>=N)return;
-  const ci=dotColorOf(r,c);
-  if(ci>=0){
+function spawnParticles(x, y, color, count) {
+  for(let i=0; i<count; i++) {
+    particles.push({
+      x, y, vx: (Math.random()-0.5)*8, vy: (Math.random()-0.5)*8,
+      life: 1, decay: 0.03 + Math.random()*0.03, color, r: Math.random()*3+1
+    });
+  }
+}
+
+function startDraw(r, c) {
+  if (isWon || r < 0 || r >= N || c < 0 || c >= N) return;
+  const ci = dotColorOf(r,c);
+  if (ci >= 0) {
     clearPath(ci);
-    activeColor=ci;activePath=[[r,c]];
-    paths[ci]=[[r,c]];grid[r][c]=ci;
-    drawing=true;moves++;
-  } else if(grid[r][c]>=0){
-    const ci2=grid[r][c];
-    if(completed[ci2]) return; // don't resume a sealed path mid-cell
-    const idx=paths[ci2].findIndex(([pr,pc])=>pr===r&&pc===c);
-    if(idx>=0){
-      const removed=paths[ci2].splice(idx+1);
-      removed.forEach(([pr,pc])=>{if(!isDot(pr,pc))grid[pr][pc]=-1;});
-      completed[ci2]=false;
-      activeColor=ci2;activePath=[...paths[ci2]];
-      drawing=true;moves++;
+    activeColor = ci; activePath = [[r,c]];
+    paths[ci] = [[r,c]]; grid[r][c] = ci;
+    drawing = true; moves++; SFX.draw();
+  } else if (grid[r][c] >= 0) {
+    const ci2 = grid[r][c];
+    if (completed[ci2]) return;
+    const idx = paths[ci2].findIndex(([pr,pc]) => pr === r && pc === c);
+    if (idx >= 0) {
+      const removed = paths[ci2].splice(idx + 1);
+      removed.forEach(([pr,pc]) => { if(!isDot(pr,pc)) grid[pr][pc] = -1; });
+      completed[ci2] = false;
+      activeColor = ci2; activePath = [...paths[ci2]];
+      drawing = true; moves++; SFX.draw();
     }
   }
 }
 
-function continueDraw(r,c){
-  if(!drawing||r<0||r>=N||c<0||c>=N)return;
-  const last=activePath[activePath.length-1];
-  if(last[0]===r&&last[1]===c)return;
-  if(Math.abs(r-last[0])+Math.abs(c-last[1])!==1)return;
+function continueDraw(r, c) {
+  if (!drawing || isWon || r < 0 || r >= N || c < 0 || c >= N) return;
+  const last = activePath[activePath.length - 1];
+  if (last[0] === r && last[1] === c) return;
+  if (Math.abs(r - last[0]) + Math.abs(c - last[1]) !== 1) return;
 
-  // Backtrack
-  if(activePath.length>1){
-    const prev=activePath[activePath.length-2];
-    if(prev[0]===r&&prev[1]===c){
-      const[lr,lc]=activePath.pop();
+  if (activePath.length > 1) {
+    const prev = activePath[activePath.length - 2];
+    if (prev[0] === r && prev[1] === c) {
+      const [lr,lc] = activePath.pop();
       paths[activeColor].pop();
-      if(!isDot(lr,lc))grid[lr][lc]=-1;
-      completed[activeColor]=false;
-      draw();return;
+      if (!isDot(lr,lc)) grid[lr][lc] = -1;
+      completed[activeColor] = false;
+      return;
     }
   }
 
-  // Don't re-enter our own path (prevents loops)
-  if(grid[r][c]===activeColor) return;
-
-  // Clear another color that occupies the target cell
-  const existing=grid[r][c];
-  if(existing>=0&&existing!==activeColor) clearPath(existing);
+  if (grid[r][c] === activeColor) return;
+  
+  const existing = grid[r][c];
+  if (existing >= 0 && existing !== activeColor) clearPath(existing);
 
   activePath.push([r,c]);
-  paths[activeColor]=[...activePath];
-  grid[r][c]=activeColor;
-  draw();
+  paths[activeColor] = [...activePath];
+  grid[r][c] = activeColor;
+  SFX.draw();
 
-  // Detect if we've reached the OTHER endpoint
-  const d=dots[activeColor];
-  const[sr,sc]=activePath[0];
-  const otherR=(d.r1===sr&&d.c1===sc)?d.r2:d.r1;
-  const otherC=(d.r1===sr&&d.c1===sc)?d.c2:d.c1;
+  const d = dots[activeColor];
+  const [sr,sc] = activePath[0];
+  const otherR = (d.r1 === sr && d.c1 === sc) ? d.r2 : d.r1;
+  const otherC = (d.r1 === sr && d.c1 === sc) ? d.c2 : d.c1;
 
-  if(r===otherR&&c===otherC&&activePath.length>1){
-    completed[activeColor]=true;
-    drawing=false;
+  if (r === otherR && c === otherC && activePath.length > 1) {
+    completed[activeColor] = true;
+    drawing = false;
+    SFX.connect();
+    spawnParticles(c*CELL + CELL/2, r*CELL + CELL/2, COLORS[activeColor], 20);
+    screenShake = 5;
     checkWin();
   }
 }
 
-function checkWin(){
-  const allSealed=completed.every(Boolean);
-  const filledCells=grid.flat().filter(v=>v>=0).length;
-  if(allSealed&&filledCells===N*N){
-    document.getElementById('winMsg').style.display='block';
+function checkWin() {
+  const allSealed = completed.every(Boolean);
+  const filledCells = grid.flat().filter(v => v >= 0).length;
+  if (allSealed && filledCells === N*N) {
+    isWon = true;
+    SFX.win();
+    screenShake = 15;
+    
+    // Award Gold
+    try {
+      let currentGold = parseInt(localStorage.getItem('nmn_total_gold') || '0');
+      localStorage.setItem('nmn_total_gold', currentGold + 25);
+      document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold');
+    } catch(e) {}
+
+    setTimeout(() => {
+      document.getElementById('winOverlay').classList.add('visible');
+    }, 800);
   }
   updateHUD();
 }
 
-function updateHUD(){
-  document.getElementById('hudMoves').textContent=moves;
-  const filled=grid.flat().filter(v=>v>=0).length;
-  document.getElementById('hudFill').textContent=Math.round(filled/(N*N)*100)+'%';
-  const conn=completed.filter(Boolean).length;
-  document.getElementById('hudPairs').textContent=conn+'/'+dots.length;
+function updateHUD() {
+  document.getElementById('hudMoves').textContent = moves;
+  const filled = grid.flat().filter(v => v >= 0).length;
+  document.getElementById('hudFill').textContent = Math.round(filled/(N*N)*100) + '%';
+  const conn = completed.filter(Boolean).length;
+  document.getElementById('hudPairs').textContent = conn + '/' + dots.length;
 }
 
-function draw(){
+function draw() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle='#090807';ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.strokeStyle='rgba(255,215,0,0.065)';ctx.lineWidth=1;
-  for(let i=0;i<=N;i++){
-    ctx.beginPath();ctx.moveTo(i*CELL,0);ctx.lineTo(i*CELL,N*CELL);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(N*CELL,i*CELL);ctx.stroke();
+  
+  ctx.save();
+  if (screenShake > 0) {
+    ctx.translate((Math.random()-0.5)*screenShake, (Math.random()-0.5)*screenShake);
+    screenShake *= 0.85;
+    if (screenShake < 0.5) screenShake = 0;
   }
-  paths.forEach((path,ci)=>{
-    if(path.length<2)return;
-    ctx.strokeStyle=COLORS[ci];ctx.lineWidth=CELL*.38;ctx.lineCap='round';ctx.lineJoin='round';
-    ctx.shadowColor=COLORS[ci];ctx.shadowBlur=10;
+
+  // Background Grid Lines
+  ctx.strokeStyle = 'rgba(255,215,0,0.1)'; ctx.lineWidth = 2;
+  for (let i = 0; i <= N; i++) {
+    ctx.beginPath(); ctx.moveTo(i*CELL, 0); ctx.lineTo(i*CELL, N*CELL); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, i*CELL); ctx.lineTo(N*CELL, i*CELL); ctx.stroke();
+  }
+
+  const time = Date.now() * 0.003;
+
+  // Draw Paths
+  paths.forEach((path, ci) => {
+    if (path.length < 2) return;
+    const isCompleted = completed[ci];
+    
+    ctx.strokeStyle = COLORS[ci];
+    ctx.lineWidth = CELL * 0.35;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    
+    // Pulse effect if completed
+    if (isCompleted) {
+      ctx.shadowColor = COLORS[ci];
+      ctx.shadowBlur = 10 + Math.sin(time + ci) * 5;
+      ctx.lineWidth = CELL * 0.38 + Math.sin(time + ci) * 2;
+    } else {
+      ctx.shadowBlur = 0;
+    }
+
     ctx.beginPath();
-    path.forEach(([r,c],i)=>{const x=c*CELL+CELL/2,y=r*CELL+CELL/2;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
-    ctx.stroke();ctx.shadowBlur=0;
+    path.forEach(([r,c], i) => {
+      const x = c*CELL + CELL/2, y = r*CELL + CELL/2;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.stroke(); ctx.shadowBlur = 0;
   });
-  dots.forEach(({r1,c1,r2,c2,ci})=>{
-    [[r1,c1],[r2,c2]].forEach(([r,c])=>{
-      const x=c*CELL+CELL/2,y=r*CELL+CELL/2;
-      ctx.beginPath();ctx.arc(x,y,CELL*.34,0,Math.PI*2);
-      ctx.fillStyle=COLORS[ci];ctx.shadowColor=COLORS[ci];ctx.shadowBlur=14;ctx.fill();ctx.shadowBlur=0;
-      ctx.beginPath();ctx.arc(x,y,CELL*.16,0,Math.PI*2);ctx.fillStyle='rgba(0,0,0,.75)';ctx.fill();
-      ctx.fillStyle='rgba(255,255,255,.35)';ctx.fillRect(x-CELL*.11,y-CELL*.18,CELL*.1,CELL*.09);
+
+  // Draw Dots (Terminals)
+  dots.forEach(({r1,c1,r2,c2,ci}) => {
+    [[r1,c1],[r2,c2]].forEach(([r,c]) => {
+      const x = c*CELL + CELL/2, y = r*CELL + CELL/2;
+      const isConnected = completed[ci];
+      
+      ctx.beginPath(); ctx.arc(x, y, CELL * (isConnected ? 0.38 : 0.32), 0, Math.PI*2);
+      ctx.fillStyle = COLORS[ci];
+      ctx.shadowColor = COLORS[ci]; ctx.shadowBlur = isConnected ? 15 : 5;
+      ctx.fill(); ctx.shadowBlur = 0;
+      
+      // Inner Tech Core
+      ctx.beginPath(); ctx.arc(x, y, CELL*0.15, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(0,0,0,0.8)'; ctx.fill();
+      ctx.fillStyle = isConnected ? '#fff' : 'rgba(255,255,255,0.4)';
+      ctx.fillRect(x - CELL*0.05, y - CELL*0.05, CELL*0.1, CELL*0.1);
     });
   });
+
+  // Particles
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.life -= p.decay;
+    ctx.globalAlpha = Math.max(0, p.life);
+    ctx.fillStyle = p.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+  });
+  particles = particles.filter(p => p.life > 0);
+  ctx.globalAlpha = 1;
+
+  ctx.restore();
 }
 
-function resetLevel(){loadLevel();}
-function nextLevel(){curLevel=(curLevel+1)%LEVELS.length;buildLevelSelect();loadLevel();}
-
-function getRC(e){
-  const r=canvas.getBoundingClientRect();
-  const cx=((e.clientX||(e.touches&&e.touches[0]?e.touches[0].clientX:0))||0)-r.left;
-  const cy=((e.clientY||(e.touches&&e.touches[0]?e.touches[0].clientY:0))||0)-r.top;
-  return cellAt(cx*(canvas.width/r.width),cy*(canvas.height/r.height));
+function loop() {
+  draw();
+  loopId = requestAnimationFrame(loop);
 }
 
-canvas.addEventListener('mousedown',e=>{const[r,c]=getRC(e);startDraw(r,c);draw();});
-canvas.addEventListener('mousemove',e=>{if(drawing){const[r,c]=getRC(e);continueDraw(r,c);}});
-canvas.addEventListener('mouseup',()=>{drawing=false;updateHUD();});
-canvas.addEventListener('touchstart',e=>{e.preventDefault();const[r,c]=getRC(e);startDraw(r,c);draw();},{passive:false});
-canvas.addEventListener('touchmove',e=>{e.preventDefault();if(drawing){const[r,c]=getRC(e);continueDraw(r,c);}},{passive:false});
-canvas.addEventListener('touchend',()=>{drawing=false;updateHUD();});
+function resetLevel() { loadLevel(); }
+function nextLevel() { curLevel = (curLevel + 1) % LEVELS.length; buildLevelSelect(); loadLevel(); }
 
-buildLevelSelect();loadLevel();
+function getRC(e) {
+  const r = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / r.width;
+  const scaleY = canvas.height / r.height;
+  const cx = ((e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0)) || 0) - r.left;
+  const cy = ((e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0)) || 0) - r.top;
+  return cellAt(cx * scaleX, cy * scaleY);
+}
+
+canvas.addEventListener('mousedown', e => { const [r,c] = getRC(e); startDraw(r,c); });
+canvas.addEventListener('mousemove', e => { if (drawing) { const [r,c] = getRC(e); continueDraw(r,c); }});
+window.addEventListener('mouseup', () => { drawing = false; updateHUD(); });
+
+canvas.addEventListener('touchstart', e => { e.preventDefault(); const [r,c] = getRC(e); startDraw(r,c); }, {passive:false});
+canvas.addEventListener('touchmove', e => { e.preventDefault(); if (drawing) { const [r,c] = getRC(e); continueDraw(r,c); }}, {passive:false});
+window.addEventListener('touchend', () => { drawing = false; updateHUD(); });-*
+
+buildLevelSelect(); loadLevel();
 </script>
+
+<script>
+try {
+    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold') || '0';
+} catch(e) {}
+</script>
+
+<div style="text-align:center;padding:1rem;font-family:'Press Start 2P',monospace;font-size:.3rem;color:#4a3c28; margin-top: auto;">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+
 </body>
 </html>
