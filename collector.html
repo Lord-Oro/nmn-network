@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Grimoire Collector — NMN Retro</title>
+<title>Dungeon Duelers — NMN Retro</title>
 
 <link rel="icon" href="favicon.png" type="image/png">
 <link rel="shortcut icon" href="favicon.png" type="image/png">
@@ -23,6 +23,15 @@
   --lg: #55FF55; 
   --red: #FF5555;
   --purple: #AA55FF;
+  --blue: #5555FF;
+  
+  /* Tiers */
+  --t-common: #aaaaaa;
+  --t-uncommon: #55FF55;
+  --t-rare: #5555FF;
+  --t-legendary: #AA55FF;
+  --t-mythic: #FFD700;
+
   --font-pixel: 'Press Start 2P', monospace;
   --font-text: 'VT323', monospace;
 }
@@ -53,26 +62,27 @@ header { padding: 1rem 2rem; background: #000; border-bottom: 4px solid var(--lg
 /* ── MOUSE FIX ── */
 body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
 
-#gameScreen { max-width: 800px; margin: 1rem auto; padding: 0 1rem; }
+#gameScreen { max-width: 900px; margin: 1rem auto; padding: 0 1rem; }
 
-.tabs { display: flex; gap: 1rem; margin-bottom: 1rem; }
-.tab-btn { flex: 1; padding: 1rem; background: #000; border: 4px solid #444; color: var(--muted); font-family: var(--font-pixel); font-size: 0.7rem; cursor: pointer; text-transform: uppercase; }
+.tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;}
+.tab-btn { flex: 1; padding: 1rem; background: #000; border: 4px solid #444; color: var(--muted); font-family: var(--font-pixel); font-size: 0.6rem; cursor: pointer; text-transform: uppercase; min-width: 120px;}
 .tab-btn.active { border-color: #FFF; color: var(--gold); box-shadow: 4px 4px 0 #000; background: #111; }
 
 .view-section { display: none; }
 .view-section.active { display: block; animation: flashIn 0.2s steps(2); }
 @keyframes flashIn { 0% { opacity: 0; } 100% { opacity: 1; } }
 
-.hud { display: flex; justify-content: space-between; padding: 1rem; margin-bottom: 1rem; }
+.hud { display: flex; justify-content: space-between; padding: 1rem; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;}
 .hud-stat { font-family: var(--font-pixel); font-size: 0.7rem; color: var(--cream); }
 .hud-stat span { color: var(--gold); }
 
-.explore-grid { display: grid; grid-template-columns: 200px 1fr; gap: 1rem; margin-bottom: 1rem; }
-@media(max-width: 600px) { .explore-grid { grid-template-columns: 1fr; } }
+/* ── EXPLORE VIEW ── */
+.explore-grid { display: grid; grid-template-columns: 220px 1fr; gap: 1rem; margin-bottom: 1rem; }
+@media(max-width: 700px) { .explore-grid { grid-template-columns: 1fr; } }
 
 .radar-container { padding: 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .radar-title { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); margin-bottom: 1rem; text-align: center; }
-.radar { display: grid; grid-template-columns: repeat(3, 40px); grid-template-rows: repeat(3, 40px); gap: 5px; }
+.radar { display: grid; grid-template-columns: repeat(3, 45px); grid-template-rows: repeat(3, 45px); gap: 5px; }
 
 .node { background: #222; border: 4px solid #111; display: flex; align-items: center; justify-content: center; }
 .node.empty { background: transparent; border: none; }
@@ -85,7 +95,7 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
 
 .dialog-box { padding: 1.5rem; font-size: 1.5rem; line-height: 1.5; min-height: 150px; }
 
-.dpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; max-width: 200px; margin: 0 auto; }
+.dpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; max-width: 220px; margin: 0 auto; }
 .dpad-btn { padding: 1rem; background: #000; border: 4px solid var(--muted); color: var(--cream); font-family: var(--font-pixel); cursor: pointer; transition: transform 0.1s; }
 .dpad-btn.active, .dpad-btn:active { border-color: var(--gold); background: #222; transform: scale(0.95); }
 .dpad-btn:disabled { opacity: 0.2; cursor: not-allowed; }
@@ -95,8 +105,9 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
 .dpad-btn.down { grid-column: 2; grid-row: 3; }
 .dpad-hint { grid-column: 1 / -1; text-align: center; font-family: var(--font-pixel); font-size: 0.5rem; color: var(--muted); margin-top: 0.5rem; }
 
-.battle-arena { height: 300px; background: #111; border: 6px solid #FFF; position: relative; margin-bottom: 1rem; overflow: hidden; }
-.b-sprite { position: absolute; width: 120px; height: 120px; image-rendering: pixelated; filter: drop-shadow(4px 4px 0 #000); }
+/* ── BATTLE VIEW ── */
+.battle-arena { height: 350px; background: #111; border: 6px solid #FFF; position: relative; margin-bottom: 1rem; overflow: hidden; }
+.b-sprite { position: absolute; width: 140px; height: 140px; image-rendering: pixelated; filter: drop-shadow(4px 4px 0 #000); }
 .b-sprite.enemy { top: 40px; right: 50px; }
 .b-sprite.player { bottom: 40px; left: 50px; transform: scaleX(-1); }
 
@@ -105,44 +116,69 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
 .anim-blink { animation: blink 0.6s step-end; }
 .anim-capture { animation: capture 1s forwards; }
 
-.battle-hud { position: absolute; background: #000; border: 4px solid #FFF; padding: 0.5rem; width: 200px; z-index: 10; }
+.battle-hud { position: absolute; background: #000; border: 4px solid #FFF; padding: 0.5rem; width: 220px; z-index: 10; }
 .bh-enemy { top: 10px; left: 10px; }
 .bh-player { bottom: 10px; right: 10px; }
 .b-name { font-family: var(--font-pixel); font-size: 0.6rem; margin-bottom: 0.5rem; text-transform: uppercase;}
+.b-class-badge { font-family: var(--font-pixel); font-size: 0.45rem; color: var(--muted); margin-bottom: 0.5rem; display: block;}
 .hp-bar-bg { width: 100%; height: 10px; background: #333; border: 2px solid #555; }
 .hp-bar-fill { height: 100%; background: var(--lg); transition: width 0.3s; }
 
 .action-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
-.action-btn { background: #000; border: 4px solid #FFF; color: var(--cream); font-family: var(--font-pixel); font-size: 0.7rem; padding: 1rem; cursor: pointer; text-align: left;}
+.action-btn { background: #000; border: 4px solid #FFF; color: var(--cream); font-family: var(--font-pixel); font-size: 0.65rem; padding: 1rem; cursor: pointer; text-align: left; line-height: 1.5;}
 .action-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); padding-left: 1.5rem; }
 .action-btn:disabled { border-color: #444; color: #444; cursor: not-allowed;}
 
-.grimoire-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1rem; }
+/* ── GRIMOIRE VIEW ── */
+.grimoire-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
 .g-card { background: #000; border: 4px solid #444; padding: 1rem; text-align: center; display: flex; flex-direction: column; align-items: center;}
-.g-card.caught { border-color: var(--gold); background: #1a1500; }
-.g-canvas { width: 64px; height: 64px; image-rendering: pixelated; margin-bottom: 0.5rem; opacity: 0.1; }
-.g-card.caught .g-canvas { opacity: 1; filter: drop-shadow(4px 4px 0 #000); }
-.g-name { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--muted); }
+.g-card.caught { background: #1a1500; }
+.g-canvas { width: 80px; height: 80px; image-rendering: pixelated; margin-bottom: 0.5rem; opacity: 0.1; }
+.g-card.caught .g-canvas { opacity: 1; }
+.g-name { font-family: var(--font-pixel); font-size: 0.55rem; color: var(--muted); margin-bottom: 0.5rem;}
 .g-card.caught .g-name { color: var(--cream); }
+
+.g-details { font-family: var(--font-text); font-size: 1rem; color: var(--muted); text-align: center; width: 100%; display: none;}
+.g-card.caught .g-details { display: block; }
+.tier-Common { color: var(--t-common); }
+.tier-Uncommon { color: var(--t-uncommon); }
+.tier-Rare { color: var(--t-rare); }
+.tier-Legendary { color: var(--t-legendary); }
+.tier-Mythic { color: var(--t-mythic); text-shadow: 0 0 5px var(--t-mythic); }
+
+/* ── IVY'S SHOP VIEW ── */
+.shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media(max-width: 600px) { .shop-grid { grid-template-columns: 1fr; } }
+.shop-item { background: #000; border: 4px solid #444; padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: transform 0.1s;}
+.shop-item:hover { border-color: var(--lg); transform: translateY(-4px); }
+.shop-icon { font-size: 3rem; margin-bottom: 1rem; filter: drop-shadow(4px 4px 0 #000); }
+.shop-title { font-family: var(--font-pixel); font-size: 0.7rem; color: var(--cream); margin-bottom: 0.5rem; }
+.shop-desc { font-family: var(--font-text); font-size: 1.2rem; color: var(--muted); margin-bottom: 1.5rem; }
+.buy-btn { background: var(--gold); border: 4px solid #FFF; padding: 0.8rem; font-family: var(--font-pixel); font-size: 0.6rem; color: #000; cursor: pointer; text-transform: uppercase; width: 100%; box-shadow: 4px 4px 0 #000;}
+.buy-btn:hover { background: #FFF; }
+.buy-btn:disabled { background: #444; color: #888; border-color: #666; box-shadow: none; cursor: not-allowed; }
 
 </style>
 </head>
 <body>
 <header>
-  <a href="#" class="logo">THE MASTER GRIMOIRE</a>
-  <a href="#" class="back">RETURN</a>
+  <a href="#" class="logo">DUNGEON DUELERS</a>
+  <a href="#" class="back">RETURN TO SURFACE</a>
 </header>
 
 <div id="gameScreen">
   <div class="tabs">
     <button class="tab-btn active" id="tab-explore" onclick="switchTab('explore')">EXPLORE</button>
     <button class="tab-btn" id="tab-grimoire" onclick="switchTab('grimoire')">GRIMOIRE (<span id="g-count">0</span>/50)</button>
+    <button class="tab-btn" id="tab-shop" onclick="switchTab('shop')">IVY'S SHOP</button>
   </div>
 
   <div class="hud retro-box">
     <div class="hud-stat">DEPTH: <span id="hud-depth">1</span></div>
     <div class="hud-stat">HP: <span id="hud-hp">100</span>/100</div>
     <div class="hud-stat">GOLD: <span id="hud-gold">0</span></div>
+    <div class="hud-stat">POTIONS: <span id="hud-pots">0</span></div>
+    <div class="hud-stat">SIGILS: <span id="hud-sigs">0</span></div>
   </div>
 
   <div id="view-explore" class="view-section active">
@@ -156,7 +192,7 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
         </div>
       </div>
       <div class="dialog-box retro-box" id="explore-dialog">
-        The stone is shifting... check the radar. Use W, A, S, D or Arrows to move.
+        The stone is shifting... check the radar. Use W, A, S, D or Arrows to move. Red nodes contain hostile Duelers.
       </div>
     </div>
     
@@ -173,38 +209,62 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
     <div class="battle-arena">
       <div class="battle-hud bh-enemy">
         <div class="b-name" id="b-enemy-name">Ore Rat</div>
+        <div class="b-class-badge" id="b-enemy-class">BEAST - COMMON</div>
         <div class="hp-bar-bg"><div class="hp-bar-fill" id="b-enemy-hp" style="width:100%"></div></div>
       </div>
       <canvas id="b-enemy-sprite" class="b-sprite enemy" width="12" height="12"></canvas>
 
       <div class="battle-hud bh-player">
         <div class="b-name">Miner</div>
+        <div class="b-class-badge">HUMAN</div>
         <div class="hp-bar-bg"><div class="hp-bar-fill" id="b-player-hp" style="width:100%"></div></div>
       </div>
       <canvas id="b-player-sprite" class="b-sprite player" width="12" height="12"></canvas>
     </div>
 
     <div class="dialog-box retro-box" id="battle-dialog" style="margin-bottom:1rem; min-height: 80px;">
-      A wild beast attacks!
+      A wild Dueler attacks!
     </div>
 
     <div class="action-menu" id="battle-menu">
-      <button class="action-btn" onclick="battleAttack()">FIGHT</button>
-      <button class="action-btn" onclick="battleCatch()">CATCH</button>
-      <button class="action-btn" onclick="battleFlee()">RUN</button>
+      <button class="action-btn" onclick="battleAttack()">FIGHT<br><span style="color:#aaa; font-size:0.5rem">Pickaxe Strike</span></button>
+      <button class="action-btn" onclick="battleCatch()" id="btn-catch">CATCH<br><span style="color:#aaa; font-size:0.5rem">Throw Sigil</span></button>
+      <button class="action-btn" onclick="battleItem()" id="btn-item">ITEM<br><span style="color:#aaa; font-size:0.5rem">Drink Potion</span></button>
+      <button class="action-btn" onclick="battleFlee()">RUN<br><span style="color:#aaa; font-size:0.5rem">Escape</span></button>
     </div>
   </div>
 
   <div id="view-grimoire" class="view-section">
     <div class="dialog-box retro-box" style="margin-bottom:1rem; min-height:auto;">
-      Master Grimoire: 50 Entities bound to the mountain.
+      Master Grimoire: Registered Dungeon Duelers.
     </div>
     <div class="grimoire-grid" id="grimoire-grid"></div>
   </div>
+
+  <div id="view-shop" class="view-section">
+    <div class="dialog-box retro-box" style="margin-bottom:1rem; min-height:auto; color: var(--lg);">
+      Ivy: "Welcome to my corner. The gems in the mine are worth gold here. Stock up before you descend."
+    </div>
+    <div class="shop-grid">
+      <div class="shop-item">
+        <div class="shop-icon">🧪</div>
+        <div class="shop-title">HEALTH POTION</div>
+        <div class="shop-desc">Restores 50 HP during battle. Crucial for deep digs.</div>
+        <button class="buy-btn" id="buy-pot" onclick="buyItem('potion', 20)">BUY - 20 GOLD</button>
+      </div>
+      <div class="shop-item">
+        <div class="shop-icon">📜</div>
+        <div class="shop-title">BINDING SIGIL</div>
+        <div class="shop-desc">Required to capture Duelers. Thrown during battle.</div>
+        <button class="buy-btn" id="buy-sig" onclick="buyItem('sigil', 30)">BUY - 30 GOLD</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
-// ── PROCEDURAL SPRITE GENERATOR ──
+// ── PROCEDURAL SPRITE GENERATOR (NEON LIGHTING FIX) ──
 function drawSprite(canvasId, seedStr, colorHex) {
   const canvas = document.getElementById(canvasId);
   if(!canvas) return;
@@ -219,7 +279,10 @@ function drawSprite(canvasId, seedStr, colorHex) {
     return x - Math.floor(x);
   };
 
-  ctx.fillStyle = colorHex || `hsl(${Math.floor(random() * 360)}, 70%, 60%)`;
+  // Add bright base color and heavy drop shadow for neon effect
+  ctx.fillStyle = colorHex || `hsl(${Math.floor(random() * 360)}, 80%, 70%)`;
+  ctx.shadowColor = colorHex;
+  ctx.shadowBlur = 15;
   
   for(let x=0; x<6; x++) {
     for(let y=0; y<12; y++) {
@@ -229,72 +292,85 @@ function drawSprite(canvasId, seedStr, colorHex) {
       }
     }
   }
+  // Reset shadow for performance
+  ctx.shadowBlur = 0;
 }
 
-// ── THE 50 BEASTS OF NMN ──
-const BEASTS = [
-  { id: 'b01', name: 'Ore Rat', maxHp: 15, catchRate: 0.6, color: '#888888' },
-  { id: 'b02', name: 'Cave Bat', maxHp: 15, catchRate: 0.6, color: '#555555' },
-  { id: 'b03', name: 'Scrap Bot', maxHp: 20, catchRate: 0.5, color: '#AABBCC' },
-  { id: 'b04', name: 'Toxic Vine', maxHp: 25, catchRate: 0.5, color: '#22AA22' },
-  { id: 'b05', name: 'Seer Stone', maxHp: 25, catchRate: 0.4, color: '#AA55FF' },
-  { id: 'b06', name: 'Echo of Fire', maxHp: 40, catchRate: 0.3, color: '#FF4400' },
-  { id: 'b07', name: 'Echo of Light', maxHp: 40, catchRate: 0.3, color: '#FFFF88' },
-  { id: 'b08', name: 'Lion Cub', maxHp: 45, catchRate: 0.3, color: '#DDAA44' },
-  { id: 'b09', name: 'Two-Souled Shade', maxHp: 55, catchRate: 0.2, color: '#4444AA' },
-  { id: 'b10', name: 'Crown of Shadows', maxHp: 80, catchRate: 0.1, color: '#FFD700' },
-  { id: 'b11', name: 'Static Lion', maxHp: 75, catchRate: 0.15, color: '#FFFFFF' },
-  { id: 'b12', name: 'Glitch Elephant', maxHp: 90, catchRate: 0.05, color: '#00FF00' },
-  { id: 'b13', name: 'Kaltak Warrior', maxHp: 30, catchRate: 0.4, color: '#8B4513' },
-  { id: 'b14', name: 'Zhyper', maxHp: 35, catchRate: 0.35, color: '#DAA520' },
-  { id: 'b15', name: 'Lilith', maxHp: 35, catchRate: 0.35, color: '#B8860B' },
-  { id: 'b16', name: 'Orion Feline', maxHp: 20, catchRate: 0.55, color: '#C0C0C0' },
-  { id: 'b17', name: 'Rogue Demon', maxHp: 50, catchRate: 0.25, color: '#8B0000' },
-  { id: 'b18', name: 'Bound Demon', maxHp: 55, catchRate: 0.2, color: '#4B0082' },
-  { id: 'b19', name: 'Anubis Illusion', maxHp: 65, catchRate: 0.15, color: '#FFD700' },
-  { id: 'b20', name: 'Tydett Cardinal', maxHp: 25, catchRate: 0.5, color: '#FF0000' },
-  { id: 'b21', name: 'Mecha-Bird', maxHp: 30, catchRate: 0.45, color: '#708090' },
-  { id: 'b22', name: 'Thalia Wisp', maxHp: 40, catchRate: 0.35, color: '#9370DB' },
-  { id: 'b23', name: 'Artimedias Shade', maxHp: 60, catchRate: 0.2, color: '#2F4F4F' },
-  { id: 'b24', name: 'Legless Poison Frog', maxHp: 20, catchRate: 0.6, color: '#32CD32' },
-  { id: 'b25', name: 'Amazonian Tiger', maxHp: 45, catchRate: 0.3, color: '#FF8C00' },
-  { id: 'b26', name: 'Great Serpent', maxHp: 70, catchRate: 0.1, color: '#006400' },
-  { id: 'b27', name: 'Tiger-Man Beast', maxHp: 65, catchRate: 0.15, color: '#D2691E' },
-  { id: 'b28', name: 'Life Vessel Shade', maxHp: 35, catchRate: 0.4, color: '#000000' },
-  { id: 'b29', name: 'Bunker Poltergeist', maxHp: 40, catchRate: 0.35, color: '#696969' },
-  { id: 'b30', name: 'Masked Phantom', maxHp: 45, catchRate: 0.3, color: '#FF1493' },
-  { id: 'b31', name: 'Clydian Arch-Wizard', maxHp: 75, catchRate: 0.1, color: '#800080' },
-  { id: 'b32', name: 'Light Construct', maxHp: 60, catchRate: 0.2, color: '#FFFFE0' },
-  { id: 'b33', name: 'Space Ice Chunk', maxHp: 25, catchRate: 0.5, color: '#E0FFFF' },
-  { id: 'b34', name: 'Diamond Rain Element', maxHp: 50, catchRate: 0.25, color: '#00FFFF' },
-  { id: 'b35', name: 'Space Pirate', maxHp: 40, catchRate: 0.35, color: '#A0522D' },
-  { id: 'b36', name: 'Rogue Asteroid Golem', maxHp: 80, catchRate: 0.05, color: '#696969' },
-  { id: 'b37', name: 'Cartoon Manifest', maxHp: 30, catchRate: 0.45, color: '#FF69B4' },
-  { id: 'b38', name: 'Uhi', maxHp: 20, catchRate: 0.6, color: '#98FB98' },
-  { id: 'b39', name: 'Fungi Mutant', maxHp: 45, catchRate: 0.3, color: '#556B2F' },
-  { id: 'b40', name: 'Infected Official', maxHp: 50, catchRate: 0.25, color: '#8B4513' },
-  { id: 'b41', name: 'Foreign Samurai', maxHp: 60, catchRate: 0.2, color: '#B22222' },
-  { id: 'b42', name: 'Ila the Werewolf', maxHp: 55, catchRate: 0.25, color: '#A9A9A9' },
-  { id: 'b43', name: 'Massive Werebear', maxHp: 85, catchRate: 0.05, color: '#8B4513' },
-  { id: 'b44', name: 'Infected Scavenger', maxHp: 35, catchRate: 0.4, color: '#5F9EA0' },
-  { id: 'b45', name: 'Sprock the Hound', maxHp: 40, catchRate: 0.35, color: '#D2B48C' },
-  { id: 'b46', name: 'Sage the Feline', maxHp: 35, catchRate: 0.4, color: '#FFE4B5' },
-  { id: 'b47', name: 'Storm Elemental', maxHp: 70, catchRate: 0.15, color: '#4682B4' },
-  { id: 'b48', name: 'Calypso Siren', maxHp: 65, catchRate: 0.2, color: '#20B2AA' },
-  { id: 'b49', name: 'Hideous Bear Toy', maxHp: 25, catchRate: 0.5, color: '#8B0000' },
-  { id: 'b50', name: 'X-42 Jet Drone', maxHp: 60, catchRate: 0.2, color: '#778899' }
+// ── THE 50 DUNGEON DUELERS ──
+const BASE_BEASTS = [
+  { id: 'b01', name: 'Ore Rat', maxHp: 15, catchRate: 0.7, color: '#AAAAAA', class: 'Beast', moves: ['Nibble', 'Scratch'] },
+  { id: 'b02', name: 'Cave Bat', maxHp: 18, catchRate: 0.6, color: '#888888', class: 'Beast', moves: ['Screech', 'Bite'] },
+  { id: 'b03', name: 'Scrap Bot', maxHp: 25, catchRate: 0.5, color: '#AABBCC', class: 'Tech', moves: ['Gear Grind', 'Zap'] },
+  { id: 'b04', name: 'Toxic Vine', maxHp: 25, catchRate: 0.5, color: '#22FF22', class: 'Flora', moves: ['Whip', 'Poison Spore'] },
+  { id: 'b05', name: 'Seer Stone', maxHp: 30, catchRate: 0.4, color: '#AA55FF', class: 'Magic', moves: ['Glow', 'Mind Blast'] },
+  { id: 'b06', name: 'Echo of Fire', maxHp: 45, catchRate: 0.3, color: '#FF4400', class: 'Elemental', moves: ['Ember', 'Flare'] },
+  { id: 'b07', name: 'Echo of Light', maxHp: 45, catchRate: 0.3, color: '#FFFF88', class: 'Light', moves: ['Flash', 'Beam'] },
+  { id: 'b08', name: 'Lion Cub', maxHp: 50, catchRate: 0.3, color: '#FFD700', class: 'Beast', moves: ['Pounce', 'Roar'] },
+  { id: 'b09', name: 'Two-Souled Shade', maxHp: 65, catchRate: 0.2, color: '#4444FF', class: 'Shadow', moves: ['Split Strike', 'Void'] },
+  { id: 'b10', name: 'Crown of Shadows', maxHp: 90, catchRate: 0.1, color: '#FFD700', class: 'Mythic', moves: ['Royal Decree', 'Abyss'] },
+  { id: 'b11', name: 'Static Lion', maxHp: 80, catchRate: 0.15, color: '#FFFFFF', class: 'Tech', moves: ['Interference', 'Pounce'] },
+  { id: 'b12', name: 'Glitch Elephant', maxHp: 95, catchRate: 0.05, color: '#00FF00', class: 'Anomaly', moves: ['Trample', 'Corrupt Data'] },
+  { id: 'b13', name: 'Kaltak Warrior', maxHp: 35, catchRate: 0.4, color: '#AA5533', class: 'Humanoid', moves: ['Spear Thrust', 'War Cry'] },
+  { id: 'b14', name: 'Zhyper', maxHp: 40, catchRate: 0.35, color: '#FFCC00', class: 'Beast', moves: ['Claw', 'Bite'] },
+  { id: 'b15', name: 'Lilith', maxHp: 40, catchRate: 0.35, color: '#FFBB00', class: 'Beast', moves: ['Rend', 'Evade'] },
+  { id: 'b16', name: 'Orion Feline', maxHp: 20, catchRate: 0.6, color: '#CCCCCC', class: 'Tech', moves: ['Meow', 'Scavenge'] },
+  { id: 'b17', name: 'Rogue Demon', maxHp: 55, catchRate: 0.25, color: '#FF0000', class: 'Demon', moves: ['Hellfire', 'Slash'] },
+  { id: 'b18', name: 'Bound Demon', maxHp: 60, catchRate: 0.2, color: '#5500AA', class: 'Demon', moves: ['Curse', 'Crush'] },
+  { id: 'b19', name: 'Anubis Illusion', maxHp: 70, catchRate: 0.15, color: '#FFD700', class: 'Magic', moves: ['Sandstorm', 'Judge'] },
+  { id: 'b20', name: 'Tydett Cardinal', maxHp: 25, catchRate: 0.5, color: '#FF3333', class: 'Avian', moves: ['Peck', 'Gust'] },
+  { id: 'b21', name: 'Mecha-Bird', maxHp: 35, catchRate: 0.45, color: '#88AADD', class: 'Tech', moves: ['Steel Wing', 'Drill'] },
+  { id: 'b22', name: 'Thalia Wisp', maxHp: 45, catchRate: 0.35, color: '#AA55FF', class: 'Magic', moves: ['Hex', 'Float'] },
+  { id: 'b23', name: 'Artimedias Shade', maxHp: 75, catchRate: 0.2, color: '#335555', class: 'Shadow', moves: ['Dark Arts', 'Drain'] },
+  { id: 'b24', name: 'Poison Frog', maxHp: 20, catchRate: 0.6, color: '#33FF33', class: 'Beast', moves: ['Lick', 'Toxin'] },
+  { id: 'b25', name: 'Amazon Tiger', maxHp: 50, catchRate: 0.3, color: '#FF8800', class: 'Beast', moves: ['Maul', 'Stalk'] },
+  { id: 'b26', name: 'Great Serpent', maxHp: 85, catchRate: 0.1, color: '#00AA00', class: 'Beast', moves: ['Constrict', 'Venom Bite'] },
+  { id: 'b27', name: 'Tiger-Man', maxHp: 70, catchRate: 0.15, color: '#DD7722', class: 'Humanoid', moves: ['Feral Slash', 'Roar'] },
+  { id: 'b28', name: 'Vessel Shade', maxHp: 35, catchRate: 0.4, color: '#333333', class: 'Shadow', moves: ['Spook', 'Chill'] },
+  { id: 'b29', name: 'Poltergeist', maxHp: 40, catchRate: 0.35, color: '#666666', class: 'Shadow', moves: ['Throw Debris', 'Howl'] },
+  { id: 'b30', name: 'Masked Phantom', maxHp: 50, catchRate: 0.3, color: '#FF33AA', class: 'Shadow', moves: ['Illusion', 'Strike'] },
+  { id: 'b31', name: 'Clydian Wizard', maxHp: 85, catchRate: 0.1, color: '#AA00AA', class: 'Magic', moves: ['Arcane Blast', 'Shield'] },
+  { id: 'b32', name: 'Light Construct', maxHp: 65, catchRate: 0.2, color: '#FFFFBB', class: 'Light', moves: ['Prism', 'Heal'] },
+  { id: 'b33', name: 'Space Ice Chunk', maxHp: 25, catchRate: 0.5, color: '#AAFFFF', class: 'Elemental', moves: ['Freeze', 'Shatter'] },
+  { id: 'b34', name: 'Diamond Rain', maxHp: 55, catchRate: 0.25, color: '#55FFFF', class: 'Elemental', moves: ['Pierce', 'Reflect'] },
+  { id: 'b35', name: 'Space Pirate', maxHp: 45, catchRate: 0.35, color: '#AA5522', class: 'Humanoid', moves: ['Shoot', 'Loot'] },
+  { id: 'b36', name: 'Asteroid Golem', maxHp: 95, catchRate: 0.05, color: '#777777', class: 'Construct', moves: ['Quake', 'Crush'] },
+  { id: 'b37', name: 'Cartoon Manifest', maxHp: 30, catchRate: 0.45, color: '#FF88AA', class: 'Anomaly', moves: ['Bounce', 'Bonk'] },
+  { id: 'b38', name: 'Uhi Alien', maxHp: 20, catchRate: 0.6, color: '#AAFFAA', class: 'Anomaly', moves: ['Infect', 'Hide'] },
+  { id: 'b39', name: 'Fungi Mutant', maxHp: 45, catchRate: 0.3, color: '#77AA33', class: 'Flora', moves: ['Spore Cloud', 'Swipe'] },
+  { id: 'b40', name: 'Infected Guard', maxHp: 55, catchRate: 0.25, color: '#AA5533', class: 'Humanoid', moves: ['Baton Strike', 'Bite'] },
+  { id: 'b41', name: 'Foreign Samurai', maxHp: 65, catchRate: 0.2, color: '#CC3333', class: 'Humanoid', moves: ['Katana Slash', 'Parry'] },
+  { id: 'b42', name: 'Werewolf Ila', maxHp: 60, catchRate: 0.25, color: '#AAAAAA', class: 'Beast', moves: ['Moon Howl', 'Shred'] },
+  { id: 'b43', name: 'Massive Werebear', maxHp: 90, catchRate: 0.05, color: '#AA5533', class: 'Beast', moves: ['Bear Hug', 'Rampage'] },
+  { id: 'b44', name: 'Scavenger', maxHp: 35, catchRate: 0.4, color: '#55AAAA', class: 'Humanoid', moves: ['Shiv', 'Throw Dirt'] },
+  { id: 'b45', name: 'Sprock Hound', maxHp: 45, catchRate: 0.35, color: '#CCAA88', class: 'Beast', moves: ['Bite', 'Bark'] },
+  { id: 'b46', name: 'Sage Feline', maxHp: 40, catchRate: 0.4, color: '#FFDDAA', class: 'Beast', moves: ['Scratch', 'Purr'] },
+  { id: 'b47', name: 'Storm Elemental', maxHp: 75, catchRate: 0.15, color: '#55AAFF', class: 'Elemental', moves: ['Lightning', 'Thunder'] },
+  { id: 'b48', name: 'Calypso Siren', maxHp: 70, catchRate: 0.2, color: '#33AAAA', class: 'Magic', moves: ['Sing', 'Drown'] },
+  { id: 'b49', name: 'Hideous Bear Toy', maxHp: 25, catchRate: 0.5, color: '#AA0000', class: 'Anomaly', moves: ['Stare', 'Creep'] },
+  { id: 'b50', name: 'X-42 Jet Drone', maxHp: 65, catchRate: 0.2, color: '#8899AA', class: 'Tech', moves: ['Missile', 'Sonic Boom'] }
 ];
+
+// Auto-assign Tiers based on HP
+const BEASTS = BASE_BEASTS.map(b => {
+  let tier = 'Common';
+  if (b.maxHp >= 30) tier = 'Uncommon';
+  if (b.maxHp >= 50) tier = 'Rare';
+  if (b.maxHp >= 75) tier = 'Legendary';
+  if (b.maxHp >= 90) tier = 'Mythic';
+  return { ...b, tier: tier };
+});
 
 const NODE_TYPES = [
   { type: 'safe', class: 'safe', text: "An empty tunnel. Quiet." },
   { type: 'gold', class: 'gold', text: "A vein of raw ore! +Gold." },
-  { type: 'enemy', class: 'enemy', text: "Danger! A creature blocks the path." },
+  { type: 'enemy', class: 'enemy', text: "Danger! A Dueler blocks the path." },
   { type: 'stairs', class: 'stairs', text: "A shaft leading deeper." }
 ];
 
 // ── STATE ──
 let STATE = {
-  depth: 1, hp: 100, maxHp: 100, gold: 0,
+  depth: 1, hp: 100, maxHp: 100, gold: 50, // Started with 50 gold to test shop
+  potions: 2, sigils: 5,
   grimoire: JSON.parse(localStorage.getItem('nmn_grimoire_px')) || [],
   radar: { n: null, s: null, e: null, w: null },
   currentEnemy: null, isAnimating: false
@@ -322,23 +398,24 @@ function init() {
 }
 
 function switchTab(tabId) {
-  // THE FIX: Allow forced switches to 'battle' even if there's no tab button
   if (STATE.isAnimating && tabId !== 'battle') return; 
-  
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
   
   const tabBtn = document.getElementById('tab-' + tabId);
   if(tabBtn) tabBtn.classList.add('active');
-  
   const viewSec = document.getElementById('view-' + tabId);
   if(viewSec) viewSec.classList.add('active');
+  
+  if (tabId === 'shop') updateShopButtons();
 }
 
 function updateHUD() {
   document.getElementById('hud-depth').textContent = STATE.depth;
   document.getElementById('hud-hp').textContent = STATE.hp;
   document.getElementById('hud-gold').textContent = STATE.gold;
+  document.getElementById('hud-pots').textContent = STATE.potions;
+  document.getElementById('hud-sigs').textContent = STATE.sigils;
   document.getElementById('g-count').textContent = STATE.grimoire.length;
 }
 
@@ -350,7 +427,7 @@ function typeText(elId, text, callback) {
   const timer = setInterval(() => {
     el.textContent += text.charAt(i++);
     if (i >= text.length) { clearInterval(timer); setTimeout(() => { STATE.isAnimating = false; if(callback) callback(); }, 300); }
-  }, 20);
+  }, 15); // SPED UP TEXT
 }
 
 // ── RADAR ──
@@ -359,7 +436,7 @@ function generateRadar() {
     const roll = Math.random();
     let type = NODE_TYPES[0]; // safe
     if(roll < 0.15) type = NODE_TYPES[3]; // stairs
-    else if(roll < 0.35) type = NODE_TYPES[1]; // gold
+    else if(roll < 0.40) type = NODE_TYPES[1]; // gold
     else if(roll < 0.70) type = NODE_TYPES[2]; // enemy
     STATE.radar[dir] = type;
     document.getElementById('node-' + dir).className = 'node ' + type.class;
@@ -383,6 +460,22 @@ function move(dir) {
   });
 }
 
+// ── SHOP ──
+function updateShopButtons() {
+  document.getElementById('buy-pot').disabled = STATE.gold < 20;
+  document.getElementById('buy-sig').disabled = STATE.gold < 30;
+}
+
+function buyItem(type, cost) {
+  if (STATE.gold >= cost) {
+    STATE.gold -= cost;
+    if (type === 'potion') STATE.potions++;
+    if (type === 'sigil') STATE.sigils++;
+    updateHUD();
+    updateShopButtons();
+  }
+}
+
 // ── BATTLE ──
 function startBattle() {
   let pool = BEASTS.filter(b => b.maxHp <= STATE.depth * 15 + 15);
@@ -391,11 +484,20 @@ function startBattle() {
   STATE.currentEnemy.currentHp = STATE.currentEnemy.maxHp;
   
   document.getElementById('b-enemy-name').textContent = STATE.currentEnemy.name;
+  
+  const cBadge = document.getElementById('b-enemy-class');
+  cBadge.textContent = `${STATE.currentEnemy.class} - ${STATE.currentEnemy.tier}`;
+  cBadge.className = `b-class-badge tier-${STATE.currentEnemy.tier}`;
+
   document.getElementById('b-enemy-sprite').className = 'b-sprite enemy'; 
   drawSprite('b-enemy-sprite', STATE.currentEnemy.name, STATE.currentEnemy.color);
   updateBattleHUD();
   
-  switchTab('battle'); // FORCED UI SWITCH
+  // Update Buttons
+  document.getElementById('btn-item').innerHTML = `ITEM (${STATE.potions})<br><span style="color:#aaa; font-size:0.5rem">Drink Potion</span>`;
+  document.getElementById('btn-catch').innerHTML = `CATCH (${STATE.sigils})<br><span style="color:#aaa; font-size:0.5rem">Throw Sigil</span>`;
+
+  switchTab('battle'); 
   typeText('battle-dialog', `Wild ${STATE.currentEnemy.name} emerges!`);
 }
 
@@ -412,17 +514,42 @@ function tBM(show) { document.querySelectorAll('#battle-menu .action-btn').forEa
 
 function battleAttack() {
   if(STATE.isAnimating) return; tBM(false);
-  typeText('battle-dialog', `Miner swings!`, () => {
-    STATE.currentEnemy.currentHp = Math.max(0, STATE.currentEnemy.currentHp - (Math.floor(Math.random()*10)+5));
+  typeText('battle-dialog', `Miner swings Pickaxe!`, () => {
+    STATE.currentEnemy.currentHp = Math.max(0, STATE.currentEnemy.currentHp - (Math.floor(Math.random()*15)+5));
     updateBattleHUD();
     document.getElementById('b-enemy-sprite').classList.add('anim-blink');
     setTimeout(() => { document.getElementById('b-enemy-sprite').classList.remove('anim-blink'); checkWin(); }, 600);
   });
 }
 
+function battleItem() {
+  if(STATE.isAnimating) return; 
+  if(STATE.potions <= 0) {
+    typeText('battle-dialog', `You have no Potions left!`);
+    return;
+  }
+  tBM(false);
+  typeText('battle-dialog', `Miner drank a Health Potion! +50 HP.`, () => {
+    STATE.potions--;
+    STATE.hp = Math.min(STATE.maxHp, STATE.hp + 50);
+    updateHUD(); updateBattleHUD();
+    document.getElementById('btn-item').innerHTML = `ITEM (${STATE.potions})<br><span style="color:#aaa; font-size:0.5rem">Drink Potion</span>`;
+    setTimeout(() => enemyTurn(), 1000);
+  });
+}
+
 function battleCatch() {
-  if(STATE.isAnimating) return; tBM(false);
-  typeText('battle-dialog', `Threw a binding sigil!`, () => {
+  if(STATE.isAnimating) return; 
+  if(STATE.sigils <= 0) {
+    typeText('battle-dialog', `You have no Binding Sigils left!`);
+    return;
+  }
+  tBM(false);
+  STATE.sigils--;
+  updateHUD();
+  document.getElementById('btn-catch').innerHTML = `CATCH (${STATE.sigils})<br><span style="color:#aaa; font-size:0.5rem">Throw Sigil</span>`;
+  
+  typeText('battle-dialog', `Threw a Binding Sigil!`, () => {
     let chance = STATE.currentEnemy.catchRate + ((1 - (STATE.currentEnemy.currentHp / STATE.currentEnemy.maxHp)) * 0.4);
     document.getElementById('b-enemy-sprite').classList.add('anim-blink');
     setTimeout(() => {
@@ -450,8 +577,9 @@ function battleFlee() {
 }
 
 function enemyTurn() {
-  typeText('battle-dialog', `${STATE.currentEnemy.name} strikes!`, () => {
-    STATE.hp = Math.max(0, STATE.hp - (Math.floor(Math.random()*5) + (STATE.depth*2)));
+  const moveUsed = STATE.currentEnemy.moves[Math.floor(Math.random() * 2)];
+  typeText('battle-dialog', `${STATE.currentEnemy.name} uses ${moveUsed}!`, () => {
+    STATE.hp = Math.max(0, STATE.hp - (Math.floor(Math.random()*8) + (STATE.depth*3)));
     updateHUD(); updateBattleHUD();
     if (STATE.hp <= 0) typeText('battle-dialog', `Miner blacked out...`, () => setTimeout(() => location.reload(), 2000));
     else typeText('battle-dialog', `What will you do?`, () => tBM(true));
@@ -460,8 +588,8 @@ function enemyTurn() {
 
 function checkWin() {
   if (STATE.currentEnemy.currentHp <= 0) {
-    STATE.gold += 15; updateHUD();
-    typeText('battle-dialog', `${STATE.currentEnemy.name} fell! +15 Gold.`, () => setTimeout(() => endBattle(), 1000));
+    STATE.gold += 15 + STATE.depth; updateHUD();
+    typeText('battle-dialog', `${STATE.currentEnemy.name} fell! +${15 + STATE.depth} Gold.`, () => setTimeout(() => endBattle(), 1000));
   } else enemyTurn();
 }
 
@@ -475,9 +603,14 @@ function renderGrimoire() {
   const grid = document.getElementById('grimoire-grid');
   grid.innerHTML = BEASTS.map(b => {
     const c = STATE.grimoire.includes(b.id);
-    return `<div class="g-card ${c ? 'caught' : ''}">
+    return `<div class="g-card ${c ? 'caught' : ''} tier-${b.tier}">
               <canvas id="gc-${b.id}" class="g-canvas" width="12" height="12"></canvas>
               <div class="g-name">${c ? b.name : '???'}</div>
+              <div class="g-details">
+                <span class="tier-${b.tier}" style="font-size:0.8rem; text-transform:uppercase;">${b.tier}</span><br>
+                <span style="font-size:0.6rem;">Class: ${b.class}</span><br>
+                <span style="font-size:0.6rem;">Moves: ${b.moves.join(', ')}</span>
+              </div>
             </div>`;
   }).join('');
   BEASTS.forEach(b => drawSprite(`gc-${b.id}`, b.name, b.color));
