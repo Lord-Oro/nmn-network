@@ -40,10 +40,12 @@ header{padding:.8rem 2rem;border-bottom:1px solid rgba(106,170,74,.15);display:f
 .dedication{font-family:var(--font-serif);font-style:italic;font-size:.75rem;color:var(--dg);text-align:center;margin-top:1.25rem;line-height:1.7;padding:.75rem;border:1px solid rgba(106,170,74,.08)}
 
 /* ── MAIN GAME ── */
-#gameScreen{max-width:900px;margin:0 auto;padding:1.5rem}
+#gameScreen{max-width:900px;margin:0 auto;padding:1.5rem;position:relative;}
 
 /* HUD */
-.hud{background:rgba(7,10,5,.95);border:1px solid rgba(106,170,74,.15);padding:1rem 1.25rem;margin-bottom:1.25rem;display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:1rem;align-items:center}
+.hud-container { display: flex; gap: 1rem; margin-bottom: 1.25rem; align-items: stretch; flex-wrap: wrap; }
+.hud{flex: 1; background:rgba(7,10,5,.95);border:1px solid rgba(106,170,74,.15);padding:1rem 1.25rem;display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:1rem;align-items:center}
+@media(max-width: 768px) { .hud { grid-template-columns: 1fr 1fr; } }
 .hud-info{display:flex;flex-direction:column}
 .hud-name{font-family:var(--font-serif);font-size:1rem;color:var(--cream)}
 .hud-name em{color:var(--lg);font-style:italic}
@@ -53,8 +55,32 @@ header{padding:.8rem 2rem;border-bottom:1px solid rgba(106,170,74,.15);display:f
 .hud-reset{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);background:transparent;border:1px solid rgba(255,255,255,.06);cursor:pointer;padding:.3rem .6rem;transition:all .3s}
 .hud-reset:hover{color:#aa4444;border-color:#aa4444}
 
+/* MINE SIM OBSERVER */
+.mine-sim-window {
+  width: 140px; background: #020104; border: 1px solid rgba(106,170,74,.3);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.8); z-index: 10;
+  display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0;
+}
+.mine-sim-header {
+  background: rgba(106,170,74,.15); color: var(--lg); font-size: 0.35rem; padding: 4px;
+  text-align: center; text-transform: uppercase; border-bottom: 1px solid rgba(106,170,74,.2);
+  letter-spacing: 0.1em;
+}
+.mine-sim-view {
+  flex: 1; position: relative; background: #050408;
+  background-image: repeating-linear-gradient(45deg, #0a080c 0, #0a080c 2px, transparent 2px, transparent 4px);
+  min-height: 60px;
+}
+.worker-dot {
+  position: absolute; width: 3px; height: 3px; background: var(--lg);
+  box-shadow: 0 0 5px var(--lg); border-radius: 50%;
+  animation: dig 2s infinite alternate ease-in-out;
+}
+@keyframes dig { 0% { transform: translate(5px, 20px); } 100% { transform: translate(40px, 25px); } }
+
 /* NEEDS BARS */
 .needs{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:1.25rem}
+@media(max-width: 600px) { .needs { grid-template-columns: repeat(2,1fr); } }
 .need-bar{background:rgba(255,255,255,.02);border:1px solid rgba(106,170,74,.1);padding:.6rem .75rem}
 .need-label{font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:.35rem}
 .need-track{height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden}
@@ -156,10 +182,6 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
 body{padding-bottom:65px!important}
 </style>
 
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
-
-
 </head>
 <body>
 <script src="nmn-nav.js"></script>
@@ -168,7 +190,6 @@ body{padding-bottom:65px!important}
   <a href="ivytunnel.html" class="back">← Back Through the Vines</a>
 </header>
 
-<!-- CREATE SCREEN -->
 <div class="screen active" id="createScreen">
   <h1 class="create-title">Ivy's <em>Mine</em></h1>
   <p class="create-sub">"No objectives. No win screen. No end. Just life in the mine — and the mine responds to you."</p>
@@ -204,23 +225,32 @@ body{padding-bottom:65px!important}
   <div class="dedication">"For Ivy Martin — who bought every expansion pack not to win, but because she wanted more world to live in."</div>
 </div>
 
-<!-- GAME SCREEN -->
 <div class="screen" id="gameScreen">
 
-  <div class="hud">
-    <div class="hud-info">
-      <div class="hud-name" id="hudName"></div>
-      <div class="hud-day" id="hudDay">Day 1</div>
+  <div class="hud-container">
+    <div class="hud">
+      <div class="hud-info">
+        <div class="hud-name" id="hudName"></div>
+        <div class="hud-day" id="hudDay">Day 1</div>
+      </div>
+      <div>
+        <div class="hud-gold" id="hudGold">50</div>
+        <div class="hud-gold-label">⬡ Gold</div>
+      </div>
+      <div style="font-size:.62rem;color:var(--muted);font-family:var(--font-serif);font-style:italic" id="hudWeather"></div>
+      <button class="hud-reset" onclick="confirmReset()">↺ New Life</button>
     </div>
-    <div>
-      <div class="hud-gold" id="hudGold">50</div>
-      <div class="hud-gold-label">⬡ Gold</div>
+
+    <div class="mine-sim-window">
+      <div class="mine-sim-header">Live Feed</div>
+      <div class="mine-sim-view" id="mine-sim-bg">
+        <div class="worker-dot" style="left: 10px; top: 15px; animation-duration: 2.3s;"></div>
+        <div class="worker-dot" style="left: 30px; top: 25px; animation-duration: 1.8s; animation-delay: 0.5s; background: var(--gold); box-shadow: 0 0 5px var(--gold);"></div>
+        <div class="worker-dot" style="left: 60px; top: 10px; animation-duration: 2.6s; animation-delay: 1.2s;"></div>
+      </div>
     </div>
-    <div style="font-size:.62rem;color:var(--muted);font-family:var(--font-serif);font-style:italic" id="hudWeather"></div>
-    <button class="hud-reset" onclick="confirmReset()">↺ New Life</button>
   </div>
 
-  <!-- NEEDS -->
   <div class="needs">
     <div class="need-bar need-rest">
       <div class="need-label">🌙 Rest</div>
@@ -244,22 +274,18 @@ body{padding-bottom:65px!important}
     </div>
   </div>
 
-  <!-- APARTMENT -->
   <div class="apartment-label">Your Apartment</div>
   <div class="apartment-grid" id="apartmentGrid"></div>
 
-  <!-- ACTIONS -->
   <div class="actions-label">Choose Two Actions <span id="actionsLeft">(2 remaining today)</span></div>
   <div class="actions-grid" id="actionsGrid"></div>
   <button class="end-day-btn" id="endDayBtn" onclick="endDay()" disabled>Sleep — End the Day</button>
 
-  <!-- STORY LOG -->
   <div class="log-label">Story Log</div>
   <div class="story-log" id="storyLog"></div>
 
 </div>
 
-<!-- NPC DIALOG OVERLAY -->
 <div class="npc-overlay" id="npcOverlay">
   <div class="npc-box">
     <div class="npc-header">
@@ -271,7 +297,6 @@ body{padding-bottom:65px!important}
   </div>
 </div>
 
-<!-- LORD ORO APPEARANCE -->
 <div class="oro-overlay" id="oroOverlay">
   <div class="oro-shadow"></div>
   <div class="oro-eyes"><div class="oro-eye"></div><div class="oro-eye" style="animation-delay:.4s"></div></div>
@@ -673,10 +698,9 @@ window.addEventListener('DOMContentLoaded', ()=>{
 })();
 </script>
 
-<!-- Monetag Service Worker Registration -->
 <script>
 if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
+    navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
 }
 </script>
 
