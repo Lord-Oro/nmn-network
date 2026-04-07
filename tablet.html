@@ -20,6 +20,7 @@ body {
   min-height: 100vh;
   background-image: linear-gradient(45deg, #0c0a07 25%, #110e0a 25%, #110e0a 50%, #0c0a07 50%, #0c0a07 75%, #110e0a 75%, #110e0a 100%);
   background-size: 4px 4px;
+  padding-bottom: 65px !important;
 }
 header {
   padding: 1.2rem 2rem;
@@ -129,7 +130,8 @@ main { max-width: 900px; margin: 0 auto; padding: 2rem; }
 }
 .round-complete.visible { display: block; }
 .round-title { font-family: var(--font-serif); font-size: 2rem; color: var(--gold); margin-bottom: 0.5rem; }
-.round-score { font-size: 0.75rem; color: var(--muted); margin-bottom: 1.5rem; letter-spacing: 0.1em; }
+.round-score { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.5rem; letter-spacing: 0.1em; }
+.round-gold { font-size: 0.85rem; color: var(--gold); margin-bottom: 1.5rem; font-family: var(--font-pixel); }
 
 /* BUTTONS */
 .btn {
@@ -155,28 +157,8 @@ main { max-width: 900px; margin: 0 auto; padding: 2rem; }
   .stats-bar { flex-wrap: wrap; gap: 1rem; }
   .tile { font-size: 0.9rem; padding: 0.75rem; }
 }
-</style>
 
-<style id="depth-gauge-style">
-.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:36px;background:rgba(12,10,7,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:2rem;z-index:999;padding:0 1rem;flex-wrap:wrap}
-.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28}
-.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
-.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s}
-.dg-link:hover{color:#FFD700}
-.dg-sep{color:#2a1808;font-size:.6rem}
-</style>
-
-<style id="nmn-cursor">
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
-</style>
-<style id="gemini-viewport">
-.mining-frame{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-height:85vh;margin:0 auto;overflow:hidden}
-canvas{max-width:95%;height:auto!important}
-.active-glow{animation:pulseGold 2s infinite;color:#fff!important;text-shadow:0 0 10px #c9962a}
-@keyframes pulseGold{0%{opacity:.7}50%{opacity:1}100%{opacity:.7}}
-</style>
-<style id="floating-gauge">
+/* DEPTH GAUGE */
 .depth-gauge{
   position:fixed!important;bottom:12px!important;left:50%!important;
   transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
@@ -188,16 +170,18 @@ canvas{max-width:95%;height:auto!important}
   gap:1.2rem!important;flex-wrap:nowrap!important;
   box-shadow:0 0 20px rgba(255,215,0,.08)!important;
 }
-.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
-body{padding-bottom:65px!important}
+.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28;pointer-events:auto!important;}
+.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
+.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s;pointer-events:auto!important;}
+.dg-link:hover{color:#FFD700}
+.dg-sep{color:#2a1808;font-size:.6rem;pointer-events:auto!important;}
 </style>
 
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
-
+<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
 
 </head>
 <body>
+<script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
 <header>
   <a href="index.html" class="logo">NMN — Lord Oro</a>
@@ -246,6 +230,7 @@ body{padding-bottom:65px!important}
   <div class="round-complete" id="roundComplete">
     <div class="round-title">⬡ Tablet Deciphered</div>
     <div class="round-score" id="roundScore"></div>
+    <div class="round-gold" id="roundGold"></div>
     <button class="btn btn-gold" onclick="nextRound()">Next Tablet</button>
     <a href="games.html" class="btn btn-outline">Return to Hall</a>
   </div>
@@ -256,17 +241,6 @@ body{padding-bottom:65px!important}
   </div>
 </main>
 
-
-<script id="nmn-bridge">
-(function(){
-  try{
-    if(!localStorage.getItem('nmn_collector_v2'))
-      localStorage.setItem('nmn_collector_v2',JSON.stringify({G:{team:[],grimoire:{},starter:null,activeIdx:0,gold:0,clearedZones:['surface'],battles:0}}));
-    if(!localStorage.getItem('nmn_total_gold'))
-      localStorage.setItem('nmn_total_gold','0');
-  }catch(e){}
-})();
-</script>
 <script>
 // WORD PAIRS — Lord Oro's four language universe
 const wordSets = {
@@ -467,9 +441,15 @@ function roundComplete(timeout = false) {
   clearInterval(state.timerInterval);
   const bonus = timeout ? 0 : state.timeLeft * 5;
   state.score += bonus;
+  
+  // Calculate and Award Actual Gold
+  const goldEarned = Math.floor(25 + (timeout ? 0 : state.timeLeft));
+  if (window.NMNWallet) NMNWallet.addGold(goldEarned);
+  
   document.getElementById('roundComplete').classList.add('visible');
-  document.getElementById('roundScore').textContent =
-    `${state.matches}/${state.totalPairs} matched • Time bonus: +${bonus} pts • Total: ${state.score} pts`;
+  document.getElementById('roundScore').textContent = `${state.matches}/${state.totalPairs} matched • Time bonus: +${bonus} pts • Total: ${state.score} pts`;
+  document.getElementById('roundGold').textContent = `⛏ +${goldEarned} GOLD EARNED`;
+  
   updateStats();
   updateRank();
 }
@@ -507,43 +487,27 @@ resetRound();
   <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
   <a href="ledger.html" class="dg-link">📖 Ledger</a>
 </div>
+
 <script>
 (function(){
   try{
     var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
     var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
-    var gold=parseInt(localStorage.getItem('nmn_total_gold')||'0');
-    var el=document.getElementById('dgGold');if(el)el.textContent=gold;
     var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
     var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
   }catch(e){}
 })();
 </script>
-<script id="nmn-glow">
-(function(){
-  var r=document.createElement('div');
-  r.id='pickaxe-glow';
-  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
-  document.body.appendChild(r);
-  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
-  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
-  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
-})();
-</script>
-<script id="gemini-init">
-window.addEventListener('load',function(){
-  if(!localStorage.getItem('nmn_total_gold')) localStorage.setItem('nmn_total_gold','0');
-  document.querySelectorAll('canvas').forEach(function(g){
-    if(g.parentElement&&!g.parentElement.classList.contains('mining-frame'))
-      g.parentElement.classList.add('mining-frame');
-  });
-});
-</script>
 
-<!-- Monetag Service Worker Registration -->
 <script>
-if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(function(registration) {
+      console.log('NMN SW registered with scope:', registration.scope);
+    })
+    .catch(function(err){
+      console.log('NMN SW error:', err);
+    });
 }
 </script>
 
