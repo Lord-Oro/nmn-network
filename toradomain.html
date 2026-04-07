@@ -3,202 +3,260 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tora's Domain — NMN</title>
+<title>Tora's Domain — NMN Retro</title>
+
+<link rel="icon" href="logo.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="logo.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="logo.jpg">
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
 
 <style>
-:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28;--pu:#6a3a8a;--lpu:#9a6aaa;--dp:#3a1a5a}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-sans);background:#05030a;color:var(--cream);min-height:100vh;background-image:linear-gradient(45deg,#05030a 25%,#080512 25%,#080512 50%,#05030a 50%,#05030a 75%,#080512 75%,#080512 100%);background-size:4px 4px;padding-bottom:50px}
-header{padding:.8rem 2rem;border-bottom:1px solid rgba(106,58,138,.2);display:flex;justify-content:space-between;align-items:center;background:rgba(5,3,10,.97);position:sticky;top:0;z-index:10}
-.logo{font-family:var(--font-serif);font-style:italic;color:var(--lpu);font-size:1rem;text-decoration:none}
-.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
-.back:hover{color:var(--lpu)}
+:root {
+  --gold: #FFD700;
+  --gb: #e8b84b;
+  --gd: #AA7700;
+  --bg-color: #000000;
+  --panel-bg: #111111;
+  --cream: #f0e6cc;
+  --muted: #aaaaaa;
+  --lg: #55FF55; 
+  --pu: #AA55FF; /* Tora Purple */
+  --dp: #440066; /* Deep Purple */
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-text: 'VT323', monospace;
+}
 
-/* ENTRANCE */
-.entrance{text-align:center;padding:3rem 2rem 2rem;position:relative;overflow:hidden}
-.entrance::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(106,58,138,.12),transparent 70%);pointer-events:none}
-.moon{font-size:2.5rem;display:block;margin-bottom:.75rem;animation:moonFloat 6s ease-in-out infinite}
-@keyframes moonFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-8px) rotate(3deg)}}
-.entrance-eyebrow{font-size:.52rem;letter-spacing:.4em;text-transform:uppercase;color:var(--dp);margin-bottom:.75rem}
-.entrance-title{font-family:var(--font-serif);font-size:clamp(2rem,6vw,3.5rem);color:var(--cream);margin-bottom:.3rem}
-.entrance-title em{color:var(--lpu);font-style:italic;display:block}
-.entrance-sub{font-family:var(--font-serif);font-style:italic;font-size:.9rem;color:var(--muted);max-width:460px;margin:.75rem auto;line-height:1.8}
-.entrance-warning{font-size:.58rem;color:var(--dp);letter-spacing:.1em;margin-top:.5rem;font-style:italic;font-family:var(--font-serif)}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; }
+
+body {
+  font-family: var(--font-text);
+  color: var(--cream);
+  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
+  padding-bottom: 60px;
+  font-size: 1.2rem;
+}
+
+/* 16-BIT UI BORDER HELPER */
+.retro-box {
+  background: var(--panel-bg);
+  border: 4px solid #FFF;
+  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
+}
+
+/* HEADER */
+header {
+  padding: 1rem 2rem; border-bottom: 4px solid var(--pu);
+  display: flex; justify-content: space-between; align-items: center;
+  background: #000; z-index: 1000; position: sticky; top: 0;
+}
+.logo { font-family: var(--font-pixel); color: var(--pu); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
+.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.back:hover { color: var(--gold); }
+
+main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem 1rem; flex: 1; width: 100%;}
+
+/* ENTRANCE HERO */
+.entrance { text-align: center; background: #000; padding: 2rem; border: 4px solid var(--pu); margin-bottom: 2rem; position: relative; box-shadow: inset 0 0 0 4px #000, 4px 4px 0 #000;}
+.moon-canvas { width: 64px; height: 64px; image-rendering: pixelated; margin: 0 auto 1rem auto; display: block; filter: drop-shadow(4px 4px 0 #000); animation: float 4s ease-in-out infinite; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+.entrance-eyebrow { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--pu); margin-bottom: 1rem; text-shadow: 2px 2px 0 #000; }
+.entrance-title { font-family: var(--font-pixel); font-size: 1.8rem; color: var(--cream); margin-bottom: 1rem; line-height: 1.4; text-shadow: 3px 3px 0 var(--dp);}
+.entrance-title em { color: var(--pu); font-style: normal; }
+.entrance-sub { font-size: 1.3rem; color: var(--muted); line-height: 1.5; max-width: 600px; margin: 0 auto 1rem auto; }
+.entrance-warning { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gold); margin-top: 1.5rem; text-transform: uppercase; line-height: 1.6;}
+
+/* SECTION TAGS */
+.domain-tag { font-family: var(--font-pixel); font-size: 0.8rem; color: var(--pu); margin: 3rem 0 1.5rem 0; border-bottom: 4px solid #333; padding-bottom: 0.5rem; text-shadow: 2px 2px 0 #000; text-transform: uppercase;}
 
 /* GRID */
-main{max-width:900px;margin:0 auto;padding:2rem 1.5rem}
-.domain-tag{font-size:.52rem;letter-spacing:.35em;text-transform:uppercase;color:var(--dp);margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem}
-.domain-tag::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(106,58,138,.2),transparent)}
+.domain-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
 
-.domain-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:rgba(106,58,138,.08);border:1px solid rgba(106,58,138,.1);margin-bottom:2rem}
-.domain-card{padding:1.75rem 1.5rem;background:#05030a;text-decoration:none;display:block;transition:all .3s;position:relative;overflow:hidden}
-.domain-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(to right,transparent,var(--lpu),transparent);transform:scaleX(0);transition:transform .4s}
-.domain-card:hover{background:rgba(106,58,138,.06);transform:translateY(-3px)}
-.domain-card:hover::after{transform:scaleX(1)}
-.card-icon{font-size:2rem;display:block;margin-bottom:.85rem}
-.card-type{font-size:.48rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dp);margin-bottom:.4rem}
-.card-name{font-family:var(--font-serif);font-size:1.4rem;color:var(--cream);margin-bottom:.5rem;line-height:1.1}
-.card-name em{color:var(--lpu);font-style:italic}
-.card-desc{font-size:.7rem;color:var(--muted);line-height:1.8;margin-bottom:.75rem}
-.card-status{font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;display:inline-block;padding:.2rem .6rem;border:1px solid rgba(106,58,138,.3);color:var(--lpu)}
+.domain-card { background: #000; border: 4px solid #444; padding: 1.5rem; display: flex; flex-direction: column; transition: transform 0.1s; position: relative; text-decoration: none;}
+.domain-card:hover { transform: translateY(-4px); box-shadow: 4px 4px 0 #000; border-color: var(--pu); background: #111;}
 
-/* TORA QUOTE */
-.tora-close{text-align:center;margin-top:2rem;padding:1.25rem;border:1px solid rgba(106,58,138,.1);background:rgba(106,58,138,.03)}
-.tora-close p{font-family:var(--font-serif);font-style:italic;color:var(--lpu);font-size:.95rem;line-height:1.8}
-.tora-close small{font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);display:block;margin-top:.5rem}
+.domain-card.coming-soon { border-color: #333; border-style: dashed; opacity: 0.8; pointer-events: none;}
+.domain-card.coming-soon:hover { transform: none; box-shadow: none; background: #000; border-color: #333;}
 
-/* DEPTH GAUGE */
-.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:34px;background:rgba(5,3,10,.97);border-top:1px solid rgba(106,58,138,.2);display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:999;padding:0 1rem}
-.dg-stat{font-size:.4rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
-.dg-val{font-family:var(--font-serif);font-size:.8rem;color:var(--lpu)}
-.dg-link{font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-decoration:none}
-.dg-link:hover{color:var(--lpu)}
+.card-icon-canvas { width: 64px; height: 64px; image-rendering: pixelated; margin-bottom: 1rem; filter: drop-shadow(4px 4px 0 #000); }
+
+.card-type { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--muted); margin-bottom: 0.8rem; text-transform: uppercase;}
+.card-name { font-family: var(--font-pixel); font-size: 1.1rem; color: var(--cream); margin-bottom: 0.8rem; line-height: 1.4; text-shadow: 2px 2px 0 #000;}
+.card-name em { color: var(--pu); font-style: normal; }
+.card-desc { font-size: 1.2rem; color: var(--muted); line-height: 1.5; margin-bottom: 1rem; flex-grow: 1; }
+
+.card-status { font-family: var(--font-pixel); font-size: 0.5rem; display: inline-block; padding: 0.4rem; border: 2px solid; text-transform: uppercase; text-align: center;}
+.status-live { color: #000; background: var(--pu); border-color: #FFF; }
+.status-soon { color: var(--muted); background: #222; border-color: #444; }
+
+/* TORA QUOTE / JRPG BOX */
+.tora-close { background: #000; border: 4px solid var(--pu); padding: 1.5rem; margin-top: 3rem; position: relative; box-shadow: inset 0 0 0 4px #000, 4px 4px 0 #000; text-align: left; }
+.tora-name { position: absolute; top: -0.8rem; left: 1rem; background: var(--pu); color: #000; font-family: var(--font-pixel); font-size: 0.6rem; padding: 0.4rem 0.8rem; border: 2px solid #FFF;}
+.tora-text { font-size: 1.5rem; color: var(--cream); line-height: 1.6; }
+.tora-text::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 1rem; color: var(--gold);}
+
+/* HUD (BOTTOM) */
+.hud { display: flex; justify-content: center; align-items: center; padding: 1rem 2rem; background: #000; border-top: 4px solid #333; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; flex-wrap: wrap; gap: 20px; }
+.hud-stat { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; }
+.hud-val { color: var(--pu); font-size: 1rem; text-shadow: 2px 2px 0 var(--dp); }
+.hud-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
+.hud-link:hover { color: #000; background: var(--gd); }
+
+/* ── MOUSE FIX ── */
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
 </style>
-<style id="nmn-cursor">
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
-</style>
-<style id="floating-gauge">
-.depth-gauge{
-  position:fixed!important;bottom:12px!important;left:50%!important;
-  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
-  height:42px!important;background:rgba(12,10,7,.88)!important;
-  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
-  padding:0 18px!important;pointer-events:none!important;
-  z-index:9999!important;backdrop-filter:blur(4px)!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  gap:1.2rem!important;flex-wrap:nowrap!important;
-  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
-}
-.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
-body{padding-bottom:65px!important}
-</style>
-
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
-
 
 </head>
 <body>
 <script src="nmn-nav.js"></script>
 <header>
-  <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="oracle.html" class="back">← Oracle's Chamber</a>
+  <a href="index.html" class="logo">NMN TORA'S DOMAIN</a>
+  <a href="oracle.html" class="back">← RETURN TO ORACLE</a>
 </header>
 
-<div class="entrance">
-  <span class="moon">🌕</span>
-  <div class="entrance-eyebrow">Nonsense Media Network — The Völva's Quarter</div>
-  <h1 class="entrance-title">Tora's<em>Domain</em></h1>
-  <p class="entrance-sub">You don't summon Tora. You find her when you're ready to be found. This is her corner of the mine — the experiences she keeps, the creatures she tends, the reading she leaves lit for you every night.</p>
-  <div class="entrance-warning">"The mountain says your path is narrow, but the floor is solid. Walk on." — Tora</div>
-</div>
-
 <main>
-  <div class="domain-tag">🔮 Live Now — Tora's Corner</div>
+  <div class="entrance">
+    <canvas id="moon-icon" class="moon-canvas" width="16" height="16"></canvas>
+    <div class="entrance-eyebrow">THE VÖLVA'S QUARTER</div>
+    <h1 class="entrance-title">TORA'S <em>DOMAIN</em></h1>
+    <p class="entrance-sub">You don't summon Tora. You find her when you're ready to be found. This is her corner of the mine.</p>
+    <div class="entrance-warning">"The mountain says your path is narrow, but the floor is solid. Walk on."</div>
+  </div>
+
+  <div class="domain-tag">LIVE NOW — TORA'S CORNER</div>
   <div class="domain-grid">
 
     <a href="tora.html" class="domain-card">
-      <span class="card-icon">🔮</span>
-      <div class="card-type">Tarot & Numerology</div>
-      <div class="card-name">Tora the Tarot <em>Reader</em></div>
-      <div class="card-desc">Enter your birthday. Tora reads your Life Path and daily card. Freyja's energy, Lord Oro's world. Pixel art. Norse magic. She reads the mine, not the cards.</div>
-      <span class="card-status">Live Now</span>
+      <canvas id="tarot-icon" class="card-icon-canvas" width="16" height="16"></canvas>
+      <div class="card-type">TAROT & NUMEROLOGY</div>
+      <div class="card-name">Tora the <em>Tarot Reader</em></div>
+      <div class="card-desc">Enter your birthday. Tora reads your Life Path and daily card. Freyja's energy, Lord Oro's world. She reads the mine, not the cards.</div>
+      <span class="card-status status-live">ONLINE</span>
     </a>
 
     <a href="grimoire.html" class="domain-card">
-      <span class="card-icon">🐾</span>
-      <div class="card-type">Sacred Archive — 14 Chapters</div>
+      <canvas id="cat-icon" class="card-icon-canvas" width="16" height="16"></canvas>
+      <div class="card-type">SACRED ARCHIVE — 14 CHAPTERS</div>
       <div class="card-name">Eskanar's <em>Grimoire</em></div>
-      <div class="card-desc">Tora keeps this book. Fourteen cats who changed history. Lord Oro's poems. Tora's margin notes. Two chapters are earned. One blank page at the end belongs to you. Named for Eskanar.</div>
-      <span class="card-status">Live Now</span>
+      <div class="card-desc">Fourteen cats who changed history. Lord Oro's poems. Tora's margin notes. One blank page at the end belongs to you.</div>
+      <span class="card-status status-live">ONLINE</span>
     </a>
 
     <a href="apothecary.html" class="domain-card">
-      <span class="card-icon">🌿</span>
-      <div class="card-type">Gem Healing</div>
+      <canvas id="herb-icon" class="card-icon-canvas" width="16" height="16"></canvas>
+      <div class="card-type">GEM HEALING</div>
       <div class="card-name">Ivy's <em>Apothecary</em></div>
-      <div class="card-desc">Tell the mine how you're feeling. One word. The mine finds the gemstone that matches what you're carrying. Kept in Tora's Domain because Ivy and Tora understand the same thing about stones.</div>
-      <span class="card-status">Live Now</span>
+      <div class="card-desc">Tell the mine how you're feeling. The mine finds the gemstone that matches what you're carrying.</div>
+      <span class="card-status status-live">ONLINE</span>
     </a>
 
   </div>
 
-  <div class="domain-tag">🌱 Coming to the Domain — The Völva's Quarter</div>
+  <div class="domain-tag">COMING SOON — THE VÖLVA'S QUARTER</div>
   <div class="domain-grid">
 
-    <div class="domain-card" style="opacity:.7;cursor:default">
-      <span class="card-icon">🐱</span>
-      <div class="card-type">Patience Game — No Objectives</div>
+    <div class="domain-card coming-soon">
+      <canvas id="garden-icon" class="card-icon-canvas" width="16" height="16"></canvas>
+      <div class="card-type">PATIENCE GAME</div>
       <div class="card-name">Nausicaa's <em>Garden</em></div>
-      <div class="card-desc">You tend a small garden inside the mine. Cats appear on their own schedule. You cannot summon them, you cannot force them. Lord Oro sits in the corner sometimes. The whole game is patience and warmth — and seeing what arrives when you stop trying to control it.</div>
-      <span class="card-status" style="color:var(--gd);border-color:rgba(122,90,24,.3)">The Völva's Quarter</span>
+      <div class="card-desc">Tend a small garden inside the mine. Cats appear on their own schedule. The whole game is patience and warmth.</div>
+      <span class="card-status status-soon">IN DEVELOPMENT</span>
     </div>
 
-    <div class="domain-card" style="opacity:.7;cursor:default">
-      <span class="card-icon">🌕</span>
-      <div class="card-type">Nightly Ritual</div>
+    <div class="domain-card coming-soon">
+      <canvas id="watch-icon" class="card-icon-canvas" width="16" height="16"></canvas>
+      <div class="card-type">NIGHTLY RITUAL</div>
       <div class="card-name">The Völva's <em>Watch</em></div>
-      <div class="card-desc">Every night at 9pm, Tora sends one broadcast. One moon phase reading. One card. Time-gated — you have to show up. The nightly candle left lit for whoever comes. The ritual of return.</div>
-      <span class="card-status" style="color:var(--gd);border-color:rgba(122,90,24,.3)">The Völva's Quarter</span>
+      <div class="card-desc">Every night at 9pm, Tora sends one broadcast. One moon phase reading. Time-gated — you have to show up.</div>
+      <span class="card-status status-soon">IN DEVELOPMENT</span>
     </div>
 
-    <div class="domain-card" style="opacity:.7;cursor:default">
-      <span class="card-icon">📖</span>
-      <div class="card-type">Spell Crafting</div>
+    <div class="domain-card coming-soon">
+      <canvas id="spell-icon" class="card-icon-canvas" width="16" height="16"></canvas>
+      <div class="card-type">SPELL CRAFTING</div>
       <div class="card-name">Eskanar's <em>Spellbook</em></div>
-      <div class="card-desc">Tora's apprentice game. Combine gems, lore fragments, moon phases, and words to cast spells that interact with other parts of the mine. Tora never explains twice. Her handwriting is in the margins.</div>
-      <span class="card-status" style="color:var(--gd);border-color:rgba(122,90,24,.3)">The Völva's Quarter</span>
+      <div class="card-desc">Combine gems, lore fragments, moon phases, and words to cast spells. Tora never explains twice.</div>
+      <span class="card-status status-soon">IN DEVELOPMENT</span>
     </div>
 
-    <div class="domain-card" style="opacity:.7;cursor:default">
-      <span class="card-icon">🌿</span>
-      <div class="card-type">Community Weaving</div>
+    <div class="domain-card coming-soon">
+      <canvas id="loom-icon" class="card-icon-canvas" width="16" height="16"></canvas>
+      <div class="card-type">COMMUNITY WEAVING</div>
       <div class="card-name">Freyja's <em>Loom</em></div>
-      <div class="card-desc">A massive pixel-art loom. Every visitor adds one thread, one color. Tora comments on the pattern as it grows. Over weeks the community weaves a tapestry together. Low stakes. Deeply connected.</div>
-      <span class="card-status" style="color:var(--gd);border-color:rgba(122,90,24,.3)">The Völva's Quarter</span>
+      <div class="card-desc">A massive pixel-art loom. Every visitor adds one thread. Over weeks the community weaves a tapestry together.</div>
+      <span class="card-status status-soon">IN DEVELOPMENT</span>
     </div>
 
   </div>
 
   <div class="tora-close">
-    <p>"You are not here by accident. The mine sent you a long time ago. You are only now arriving."</p>
-    <small>— Tora, The Oracle's Chamber</small>
+    <div class="tora-name">TORA</div>
+    <div class="tora-text" id="toraQuote"></div>
   </div>
 </main>
 
-<div class="depth-gauge">
-  <span class="dg-stat">🌕 Tora's Domain</span>
-  <a href="oracle.html" class="dg-link">🔮 Oracle's Chamber</a>
-  <a href="index.html" class="dg-link">⛏ The Mine</a>
+<div class="hud">
+  <div class="hud-stat">DOMAIN: <span class="hud-val">TORA</span></div>
+  <a href="oracle.html" class="hud-link">ORACLE'S CHAMBER</a>
+  <a href="index.html" class="hud-link">THE MINE</a>
 </div>
+
 <script>
-try{document.getElementById && document.getElementById('dgLore') && (document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length)}catch(e){}
-</script>
-<script id="nmn-glow">
-(function(){
-  var r=document.createElement('div');
-  r.id='pickaxe-glow';
-  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
-  document.body.appendChild(r);
-  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
-  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
-  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
-})();
+// ── PROCEDURAL ICON GENERATOR ──
+function drawIcon(canvasId, seedStr, colorHex) {
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 16, 16);
+  
+  let seed = 0;
+  for(let i=0; i<seedStr.length; i++) { seed = seed * 31 + seedStr.charCodeAt(i); }
+  const random = () => { let x = Math.sin(seed++) * 10000; return x - Math.floor(x); };
+
+  ctx.fillStyle = colorHex;
+  ctx.shadowColor = colorHex;
+  ctx.shadowBlur = 5;
+  
+  for(let x=0; x<8; x++) {
+    for(let y=0; y<16; y++) {
+      if(random() > 0.4) {
+        ctx.fillRect(x, y, 1, 1); 
+        ctx.fillRect(16 - x - 1, y, 1, 1); 
+      }
+    }
+  }
+  ctx.shadowBlur = 0;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  drawIcon('moon-icon', 'ToraMoonPhase', '#AA55FF');
+  drawIcon('tarot-icon', 'OracleTarotCards', '#AA55FF');
+  drawIcon('cat-icon', 'GrimoireCatPaws', '#FFD700');
+  drawIcon('herb-icon', 'IvyApothecaryLeaf', '#55FF55');
+  drawIcon('garden-icon', 'NausicaaGardenCat', '#888888');
+  drawIcon('watch-icon', 'VolvaWatchMoon', '#888888');
+  drawIcon('spell-icon', 'SpellbookMagic', '#888888');
+  drawIcon('loom-icon', 'FreyjaLoomThread', '#888888');
+  
+  // Typewriter effect for Tora's quote
+  const text = `"You are not here by accident. The mine sent you a long time ago. You are only now arriving."`;
+  const el = document.getElementById('toraQuote');
+  let i = 0;
+  const timer = setInterval(() => {
+    el.textContent += text.charAt(i++);
+    if (i >= text.length) clearInterval(timer);
+  }, 30);
+});
 </script>
 
-<!-- Monetag Service Worker Registration -->
 <script>
 if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
+    navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
 }
 </script>
 
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
-</div>
 </body>
 </html>
