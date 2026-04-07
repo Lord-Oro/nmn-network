@@ -77,10 +77,6 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
 body{padding-bottom:65px!important}
 </style>
 
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
-
-
 </head>
 <body>
 <script src="nmn-nav.js"></script>
@@ -131,7 +127,6 @@ body{padding-bottom:65px!important}
     </div>
   </div>
 
-  <!-- NETLIFY FORM -->
   <div class="signup-form" id="signupForm">
     <form name="nmn-newsletter" netlify netlify-honeypot="bot-field" onsubmit="handleSubmit(event)">
       <input type="hidden" name="form-name" value="nmn-newsletter">
@@ -410,10 +405,15 @@ document.addEventListener('click', () => {
 })();
 </script>
 
-<!-- Monetag Service Worker Registration -->
 <script>
-if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(function(registration) {
+      console.log('NMN SW registered with scope:', registration.scope);
+    })
+    .catch(function(err){
+      console.log('NMN SW error:', err);
+    });
 }
 </script>
 
