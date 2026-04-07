@@ -2,534 +2,397 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>The Collector — Sector 1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beast Battle — NMN Retro</title>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-P5WL9XNDY8');
-</script>
-<link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="shortcut icon" href="favicon.png" type="image/png">
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
 
 <style>
-/* ── CORE NMN VARIABLES & AESTHETIC ── */
 :root {
-  --gold: #FFD700; --gb: #e8b84b; --gd: #8B6914;
-  --coal: #050308; --shaft: #08060A; --rock: #0A080C;
-  --cream: #E8E0D0; --neon-green: #00FF88;
-  --font-pixel: 'Press Start 2P', cursive;
+  --gold: #FFD700;
+  --gb: #e8b84b;
+  --gd: #AA7700;
+  --bg-color: #000000;
+  --panel-bg: #111111;
+  --cream: #f0e6cc;
+  --muted: #aaaaaa;
+  --lg: #55FF55; /* Retro green */
+  --red: #FF5555;
+  --blue: #5555FF;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-text: 'VT323', monospace;
 }
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { height: 100%; overflow: hidden; background: var(--coal); }
 
 body {
-  font-family: var(--font-pixel);
+  font-family: var(--font-text);
+  background: var(--bg-color);
   color: var(--cream);
-  display: flex; flex-direction: column;
-  background-image: 
-    linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
-    linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
-  background-size: 32px 32px;
+  min-height: 100vh;
+  /* Hard pixelated scanline effect */
+  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
+  padding-bottom: 50px;
+  font-size: 1.2rem;
 }
 
-/* OVERRIDE ALL OLD FONTS */
-h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
-
-/* CRT SCANLINES & VIGNETTE */
-body::after {
-  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
-  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.08) 50%),
-              linear-gradient(90deg,rgba(232,184,75,0.015),rgba(197,146,0,0.008),rgba(255,215,0,0.015));
-  background-size:100% 3px,3px 100%; pointer-events:none; z-index:10000; opacity:0.18;
-}
-body::before {
-  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
-  background:radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.65) 100%);
-  pointer-events:none; z-index:9999;
+/* 16-BIT UI BORDER HELPER */
+.retro-box {
+  background: var(--panel-bg);
+  border: 4px solid #FFF;
+  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
 }
 
-/* HEADER */
 header {
-  padding: 1rem 2rem; border-bottom: 2px solid var(--gd);
-  display: flex; justify-content: space-between; align-items: center;
-  background: rgba(5,3,14,.95); z-index: 1000; flex-shrink: 0;
+  padding: 1rem 2rem;
+  background: #000;
+  border-bottom: 4px solid var(--lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
-.logo { color: var(--gold); font-size: .65rem; text-decoration: none; text-shadow: 0 0 10px rgba(255,215,0,.4); }
-.back-btn { font-size: .45rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
-.back-btn:hover { color: var(--gold); }
+.logo { font-family: var(--font-pixel); color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
+.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; }
+.back:hover { color: var(--gold); }
 
-/* ARCADE HUD */
-.hud {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 0.5rem 2rem; background: rgba(5,3,8,0.9);
-  border-bottom: 1px solid rgba(255,215,0,0.15); flex-shrink: 0; z-index: 50; flex-wrap: wrap; gap: 10px;
-}
-.hud-stat { font-size: 0.5rem; color: var(--gd); display: flex; flex-direction: column; align-items: center; gap: 5px; }
-.hud-val { color: var(--gold); font-size: 0.8rem; text-shadow: 0 0 10px rgba(255,215,0,0.3); }
-.hud-val.danger { color: #ff4444; text-shadow: 0 0 10px rgba(255,68,68,0.5); }
+/* ── MOUSE FIX ── */
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
 
-/* GAME CANVAS */
-.game-area { flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-.canvas-wrap {
-  position: relative; width: 100%; max-width: 900px; height: 100%; max-height: 500px;
-  background: #050306; border: 2px solid var(--gd);
-  box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 0 30px rgba(255,215,0,0.1);
-}
-canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+/* ── BATTLE ARENA ── */
+#gameScreen { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
 
-/* OVERLAYS */
-.overlay {
-  position: absolute; inset: 0; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; background: rgba(5,3,8,0.95); z-index: 100;
-}
-.overlay.hidden { display: none !important; }
-.ov-title { font-size: 1.5rem; color: var(--gold); margin-bottom: 1rem; text-shadow: 0 0 20px rgba(255,215,0,0.5); text-align: center; line-height: 1.5; }
-.ov-sub { font-size: 0.45rem; color: var(--cream); margin-bottom: 2rem; text-align: center; line-height: 1.8; max-width: 400px; }
-.ov-stats { display: flex; gap: 2rem; margin-bottom: 2rem; }
-.ov-stat-box { text-align: center; }
-.ov-stat-box span { display: block; font-size: 0.4rem; color: var(--gd); margin-bottom: 0.5rem; }
-.ov-stat-box strong { font-size: 1.2rem; color: var(--gold); }
-
-.btn {
-  padding: 0.8rem 1.5rem; font-family: var(--font-sans); font-size: 0.5rem; letter-spacing: 0.2em;
-  text-transform: uppercase; cursor: pointer; border: none; transition: all 0.3s; display: inline-block; text-decoration: none;
-}
-.btn-gold { background: var(--gold); color: var(--coal); }
-.btn-gold:hover { background: #fff; box-shadow: 0 0 20px rgba(255,215,0,0.6); transform: scale(1.05); }
-
-/* CONTROLS (Desktop & Mobile) */
-.controls-bar {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 0.5rem 2rem; background: rgba(5,3,8,0.9); border-top: 1px solid var(--gd); z-index: 50;
-}
-.ctrl-hint { font-size: 0.35rem; color: var(--gd); }
-.mobile-ctrl { display: none; gap: 10px; }
-.mob-btn {
-  background: rgba(255,215,0,0.1); border: 1px solid var(--gd); color: var(--gold);
-  padding: 0.8rem; font-size: 0.8rem; flex: 1; text-align: center; user-select: none;
-}
-.mob-btn:active { background: rgba(255,215,0,0.3); }
-
-@media (max-width: 768px) {
-  .ctrl-hint { display: none; }
-  .mobile-ctrl { display: flex; flex: 1; }
-  header { padding: 0.8rem 1rem; }
-  .logo { font-size: 0.5rem; }
+.battle-arena {
+  position: relative;
+  height: 400px;
+  background: #222;
+  background-image: 
+    linear-gradient(#111 2px, transparent 2px), 
+    linear-gradient(90deg, #111 2px, transparent 2px); 
+  background-size: 40px 40px;
+  border: 6px solid #FFF;
+  margin-bottom: 1rem;
+  overflow: hidden;
 }
 
-/* FLOATING GAUGE */
-.depth-gauge {
-  position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
-  width:auto!important; max-width:92%!important; height:42px!important; background:rgba(12,10,7,.88)!important;
-  border:1px solid rgba(255,215,0,.4)!important; border-radius:22px!important; padding:0 18px!important;
-  z-index:9999!important; backdrop-filter:blur(4px)!important; display:flex!important; align-items:center!important;
-  justify-content:center!important; gap:1.2rem!important; box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+/* SPRITES */
+.sprite {
+  position: absolute;
+  font-size: 5rem;
+  transition: transform 0.1s;
+  filter: drop-shadow(4px 4px 0 #000);
 }
-.dg-stat { font-size: 0.4rem; color: var(--gd); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
-.dg-val { color: var(--gold); font-size: 0.6rem; }
-.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
-.dg-link:hover { color: var(--gold); }
+.sprite.enemy { top: 40px; right: 60px; }
+.sprite.player { bottom: 40px; left: 60px; transform: scaleX(-1); }
 
-/* CUSTOM CURSOR */
-body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
+/* ANIMATIONS */
+@keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-10px); } 50% { transform: translateX(10px); } 75% { transform: translateX(-10px); } 100% { transform: translateX(0); } }
+@keyframes blink { 0%, 50%, 100% { opacity: 1; } 25%, 75% { opacity: 0; } }
+@keyframes tackle { 0% { transform: translate(0,0) scaleX(-1); } 50% { transform: translate(40px, -40px) scaleX(-1); } 100% { transform: translate(0,0) scaleX(-1); } }
+@keyframes capture { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(0.1) translateY(100px); opacity: 0; } }
+
+.anim-shake { animation: shake 0.4s ease-in-out; }
+.anim-blink { animation: blink 0.6s step-end; }
+.anim-tackle { animation: tackle 0.3s ease-in-out; }
+.anim-capture { animation: capture 1s forwards; }
+
+/* HEALTH BARS */
+.hud-box {
+  position: absolute;
+  background: #000;
+  border: 4px solid #FFF;
+  padding: 1rem;
+  width: 250px;
+  box-shadow: 6px 6px 0 #000;
+  z-index: 10;
+}
+.hud-enemy { top: 20px; left: 20px; }
+.hud-player { bottom: 20px; right: 20px; }
+
+.beast-name { font-family: var(--font-pixel); font-size: 0.7rem; color: var(--cream); margin-bottom: 0.5rem; text-transform: uppercase;}
+.beast-level { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gold); float: right; }
+
+.hp-bar-container { width: 100%; height: 16px; background: #333; border: 4px solid #555; position: relative; margin-bottom: 0.5rem;}
+.hp-bar-fill { height: 100%; background: var(--lg); transition: width 0.3s steps(10); }
+.hp-bar-fill.low { background: var(--red); }
+.hp-bar-fill.mid { background: var(--gold); }
+.hp-text { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--cream); text-align: right; }
+
+/* BOTTOM UI (TEXT BOX & MENU) */
+.bottom-ui {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1rem;
+  height: 150px;
+}
+@media(max-width: 600px) { .bottom-ui { grid-template-columns: 1fr; height: auto; } }
+
+.dialog-box {
+  background: #000;
+  border: 6px solid #FFF;
+  padding: 1.5rem;
+  font-size: 1.5rem;
+  color: var(--cream);
+  line-height: 1.5;
+  box-shadow: inset 0 0 0 4px var(--gd), 6px 6px 0 #000;
+  display: flex;
+  align-items: center;
+}
+.dialog-text::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 1rem; color: var(--gold);}
+
+.action-menu {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  background: #000;
+  border: 6px solid #FFF;
+  padding: 1rem;
+  box-shadow: 6px 6px 0 #000;
+}
+.action-btn {
+  background: transparent;
+  border: none;
+  color: var(--cream);
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
+  text-align: left;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: transform 0.1s;
+  text-transform: uppercase;
+}
+.action-btn:hover:not(:disabled) { color: var(--gold); transform: translateX(5px); }
+.action-btn::before { content: '▶ '; opacity: 0; color: var(--gold); }
+.action-btn:hover:not(:disabled)::before { opacity: 1; }
+.action-btn:disabled { color: #444; cursor: not-allowed; }
+
 </style>
 </head>
 <body>
-
 <header>
-  <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="games.html" class="back-btn">← Return to Forge</a>
+  <a href="#" class="logo">NMN BEAST BATTLES</a>
+  <a href="#" class="back">FLEE TO MENU</a>
 </header>
 
-<div class="hud">
-  <div class="hud-stat">SCORE <span class="hud-val" id="h-score">0</span></div>
-  <div class="hud-stat">COMBO <span class="hud-val" id="h-combo">x1</span></div>
-  <div class="hud-stat">LEVEL <span class="hud-val" id="h-level">1</span></div>
-  <div class="hud-stat">LIVES <span class="hud-val danger" id="h-lives">3</span></div>
-</div>
+<div id="gameScreen">
 
-<div class="game-area">
-  <div class="canvas-wrap">
-    <canvas id="cv"></canvas>
-    
-    <div class="overlay" id="ov-start">
-      <h1 class="ov-title">THE COLLECTOR</h1>
-      <p class="ov-sub">Catch falling ore with your lantern. Miss one and lose a life. Chain catches multiply your gold. Beware the bombs.</p>
-      <button class="btn btn-gold" onclick="startGame()">ENTER THE SHAFT</button>
-    </div>
-    
-    <div class="overlay hidden" id="ov-over">
-      <h1 class="ov-title" style="color:#ff4444; text-shadow:0 0 20px rgba(255,68,68,0.5);">MINE COLLAPSED</h1>
-      <div class="ov-stats">
-        <div class="ov-stat-box"><span>FINAL SCORE</span><strong id="final-score">0</strong></div>
-        <div class="ov-stat-box"><span>GOLD EXTRACTED</span><strong id="final-gold">0</strong></div>
+  <div class="battle-arena">
+    <div class="hud-box hud-enemy">
+      <div class="beast-name" id="enemyName">Shadow Hound <span class="beast-level">Lv 5</span></div>
+      <div class="hp-bar-container">
+        <div class="hp-bar-fill" id="enemyHPBar" style="width: 100%;"></div>
       </div>
-      <button class="btn btn-gold" onclick="startGame()">DESCEND AGAIN</button>
+    </div>
+    <div class="sprite enemy" id="enemySprite">🐺</div>
+
+    <div class="hud-box hud-player">
+      <div class="beast-name" id="playerName">Nela's Cub <span class="beast-level">Lv 6</span></div>
+      <div class="hp-bar-container">
+        <div class="hp-bar-fill" id="playerHPBar" style="width: 100%;"></div>
+      </div>
+      <div class="hp-text"><span id="playerHPText">35</span> / 35</div>
+    </div>
+    <div class="sprite player" id="playerSprite">🦁</div>
+  </div>
+
+  <div class="bottom-ui">
+    <div class="dialog-box">
+      <span class="dialog-text" id="dialogText">Wild SHADOW HOUND appeared!</span>
+    </div>
+
+    <div class="action-menu" id="actionMenu">
+      <button class="action-btn" onclick="playerAttack()" id="btnAttack">FIGHT</button>
+      <button class="action-btn" onclick="attemptCatch()" id="btnCatch">CAPTURE</button>
+      <button class="action-btn" onclick="playerHeal()" id="btnHeal">ITEM</button>
+      <button class="action-btn" onclick="fleeBattle()" id="btnFlee">RUN</button>
     </div>
   </div>
-</div>
 
-<div class="controls-bar">
-  <span class="ctrl-hint">CONTROLS: [A] / [D] or [LEFT] / [RIGHT] ARROWS TO MOVE. DRAG TO MOVE ON MOBILE.</span>
-  <div class="mobile-ctrl">
-    <div class="mob-btn" id="mob-left">◀</div>
-    <div class="mob-btn" id="mob-right">▶</div>
-  </div>
-</div>
-
-<div class="depth-gauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold</div>
-  <span class="dg-sep">⬡</span>
-  <a href="lorevault.html" class="dg-link">📜 Vault</a>
-  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
 </div>
 
 <script>
-window.NMN_CONTEXT = "mine";
-const NMN_Audio = {
-  ctx: null, running: false, masterGain: null,
-  init() {
-    if (this.ctx) return;
-    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
-    this.masterGain.connect(this.ctx.destination);
+// ── BATTLE STATE ENGINE ─────────────────────────────────────────────
+
+const STATE = {
+  isPlayerTurn: true,
+  isAnimating: false,
+  player: {
+    name: "Nela's Cub", maxHp: 35, currentHp: 35, sprite: "🦁"
   },
-  playHum() {
-    const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
-    osc.type = 'sine'; osc.frequency.setValueAtTime(55, this.ctx.currentTime);
-    gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
-    osc.connect(gain); gain.connect(this.masterGain); osc.start();
-  },
-  startAll() {
-    if (this.running) return;
-    this.init(); this.running = true; this.playHum();
+  enemy: {
+    name: "Shadow Hound", maxHp: 25, currentHp: 25, sprite: "🐺", catchRate: 0.4
   }
 };
-document.addEventListener('click', () => { if (!NMN_Audio.running) NMN_Audio.startAll(); }, { once: true });
-</script>
 
-<script>
-// ════════════════════════════════════
-// THE COLLECTOR — V2 (Momentum & Juice)
-// ════════════════════════════════════
-const cv = document.getElementById('cv');
-const ctx = cv.getContext('2d');
-let W, H;
+// UI Elements
+const elDialog = document.getElementById('dialogText');
+const elPlayerHPBar = document.getElementById('playerHPBar');
+const elPlayerHPText = document.getElementById('playerHPText');
+const elEnemyHPBar = document.getElementById('enemyHPBar');
+const elPlayerSprite = document.getElementById('playerSprite');
+const elEnemySprite = document.getElementById('enemySprite');
+const buttons = document.querySelectorAll('.action-btn');
 
-function resize() {
-  const wrap = cv.parentElement;
-  W = cv.width = wrap.clientWidth;
-  H = cv.height = wrap.clientHeight;
-}
-window.addEventListener('resize', resize);
-resize();
-
-// ── SYNTH SFX ENGINE ──
-const SFX = {
-  play(freq, type, dur, vol = 0.1) {
-    if (!NMN_Audio.ctx) return;
-    const osc = NMN_Audio.ctx.createOscillator();
-    const gain = NMN_Audio.ctx.createGain();
-    osc.type = type; osc.frequency.setValueAtTime(freq, NMN_Audio.ctx.currentTime);
-    gain.gain.setValueAtTime(0, NMN_Audio.ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(vol, NMN_Audio.ctx.currentTime + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.001, NMN_Audio.ctx.currentTime + dur);
-    osc.connect(gain); gain.connect(NMN_Audio.masterGain);
-    osc.start(); osc.stop(NMN_Audio.ctx.currentTime + dur);
-  },
-  catch() { this.play(800 + Math.random()*200, 'sine', 0.2); },
-  bomb() { this.play(100, 'square', 0.5, 0.3); },
-  star() { this.play(1200, 'triangle', 0.6, 0.15); setTimeout(()=>this.play(1600, 'triangle', 0.6, 0.15), 100); },
-  miss() { this.play(200, 'sawtooth', 0.4, 0.1); }
-};
-
-// ── GAME STATE ──
-const METALS = [
-  { type:'copper', color:'#B87333', pts:10, w:14, h:14 },
-  { type:'silver', color:'#C0C0C0', pts:25, w:12, h:12 },
-  { type:'gold',   color:'#FFD700', pts:50, w:16, h:16 },
-  { type:'obsidian',color:'#886688', pts:100, w:10, h:10 },
-  { type:'bomb',   color:'#FF3333', pts:-1, w:16, h:16, isBomb:true },
-  { type:'star',   color:'#00FF88', pts:200, w:14, h:14, isStar:true },
-];
-
-let G = null, loopId = null, spawnerId = null;
-let keys = {};
-
-function initState() {
-  return {
-    score:0, level:1, lives:3, sessionGold:0,
-    speedBase: 2.5, spawnRate: 1000,
-    combo:1, comboTimer:0,
-    gems:[], particles:[], texts:[], screenShake: 0,
-    player: { x: W/2, y: H-30, w: 40, h: 30, vx: 0, maxVx: 12, friction: 0.82, accel: 2.5 },
-    running: false
-  };
-}
-
-function startGame() {
-  if (loopId) cancelAnimationFrame(loopId);
-  if (spawnerId) clearInterval(spawnerId);
+function typeText(text, callback) {
+  STATE.isAnimating = true;
+  toggleMenu(false);
+  elDialog.textContent = "";
+  let i = 0;
   
-  G = initState();
-  G.running = true;
-  
-  document.getElementById('ov-start').classList.add('hidden');
-  document.getElementById('ov-over').classList.add('hidden');
-  
-  spawnerId = setInterval(spawnGem, G.spawnRate);
-  updateHUD();
-  loop();
-}
-
-function spawnGem() {
-  if(!G.running) return;
-  const roll = Math.random();
-  let type;
-  if(roll < 0.10 + (G.level * 0.01)) type = METALS[4]; // bomb chance increases
-  else if(roll < 0.15) type = METALS[5]; // star
-  else type = METALS[Math.floor(Math.random()*4)]; // normal ore
-  
-  G.gems.push({
-    x: type.w + Math.random()*(W - type.w*2),
-    y: -type.h,
-    vy: G.speedBase + Math.random() * 1.5,
-    ...type
-  });
-}
-
-// ── INPUTS ──
-window.addEventListener('keydown', e => keys[e.key]=true);
-window.addEventListener('keyup', e => delete keys[e.key]);
-
-let touchX = null;
-cv.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, {passive:false});
-cv.addEventListener('touchmove', e => {
-  e.preventDefault();
-  if(!G || !G.running) return;
-  const rect = cv.getBoundingClientRect();
-  const scaleX = cv.width / rect.width;
-  G.player.x = (e.touches[0].clientX - rect.left) * scaleX;
-}, {passive:false});
-
-const mobL = document.getElementById('mob-left'); const mobR = document.getElementById('mob-right');
-mobL.addEventListener('touchstart', e => { e.preventDefault(); keys['ArrowLeft']=true; }, {passive:false});
-mobL.addEventListener('touchend', e => { delete keys['ArrowLeft']; });
-mobR.addEventListener('touchstart', e => { e.preventDefault(); keys['ArrowRight']=true; }, {passive:false});
-mobR.addEventListener('touchend', e => { delete keys['ArrowRight']; });
-
-// ── JUICE & FX ──
-function spawnParticles(x, y, color, count, burst = 5) {
-  for(let i=0; i<count; i++) {
-    G.particles.push({
-      x, y, vx: (Math.random()-0.5)*burst, vy: (Math.random()-1)*burst,
-      color, life: 1, decay: 0.02 + Math.random()*0.03, size: Math.random()*4+2
-    });
-  }
-}
-
-function spawnText(x, y, text, color) {
-  G.texts.push({ x, y, text, color, life: 1, vy: -1.5 });
-}
-
-// ── UPDATE LOOP ──
-function update() {
-  if(!G.running) return;
-  const p = G.player;
-
-  // Physics Movement
-  if(keys['ArrowLeft'] || keys['a']) p.vx -= p.accel;
-  if(keys['ArrowRight'] || keys['d']) p.vx += p.accel;
-  
-  p.vx *= p.friction;
-  if(p.vx > p.maxVx) p.vx = p.maxVx;
-  if(p.vx < -p.maxVx) p.vx = -p.maxVx;
-  
-  p.x += p.vx;
-  if(p.x < p.w/2) { p.x = p.w/2; p.vx = 0; }
-  if(p.x > W - p.w/2) { p.x = W - p.w/2; p.vx = 0; }
-
-  // Combo Logic
-  if(G.comboTimer > 0) {
-    G.comboTimer -= 0.016; // rough 60fps decay
-    if(G.comboTimer <= 0) G.combo = 1;
-  }
-
-  // Update Gems
-  for (let i = G.gems.length - 1; i >= 0; i--) {
-    let g = G.gems[i];
-    g.y += g.vy;
-
-    // Collision (Player Lantern Area)
-    if (g.y + g.h > p.y - p.h && g.y < p.y + 5 && Math.abs(g.x - p.x) < p.w/2 + g.w/2) {
-      if (g.isBomb) {
-        G.lives--; G.combo = 1; G.comboTimer = 0; G.screenShake = 15;
-        SFX.bomb(); spawnParticles(g.x, g.y, g.color, 20, 8);
-        spawnText(p.x, p.y - 30, "MINE HIT!", "#ff4444");
-        if(G.lives <= 0) endGame();
-      } else {
-        const pts = g.pts * G.combo;
-        G.score += pts; G.sessionGold += Math.ceil(pts/20);
-        G.combo = Math.min(G.combo + 1, 9); G.comboTimer = 3; // 3 seconds to keep combo
-        
-        if (g.isStar) { SFX.star(); spawnText(p.x, p.y-20, "LORE FOUND!", "#00FF88"); }
-        else { SFX.catch(); spawnText(g.x, g.y, `+${pts}`, g.color); }
-        
-        spawnParticles(g.x, g.y, g.color, 8, 3);
-        
-        // Level Up
-        if(G.score >= G.level * 1000) {
-          G.level++; G.speedBase += 0.4;
-          clearInterval(spawnerId);
-          G.spawnRate = Math.max(300, G.spawnRate - 80);
-          spawnerId = setInterval(spawnGem, G.spawnRate);
-          spawnText(W/2, H/2, "LEVEL UP", "#FFD700");
-        }
-      }
-      G.gems.splice(i, 1);
-      updateHUD();
-      continue;
+  const timer = setInterval(() => {
+    elDialog.textContent += text.charAt(i);
+    i++;
+    if (i >= text.length) {
+      clearInterval(timer);
+      setTimeout(() => {
+        STATE.isAnimating = false;
+        if(callback) callback();
+      }, 800);
     }
-
-    // Missed
-    if (g.y > H) {
-      if (!g.isBomb) {
-        G.lives--; G.combo = 1; G.comboTimer = 0; G.screenShake = 5;
-        SFX.miss(); spawnText(g.x, H - 20, "MISSED!", "#ff4444");
-        if(G.lives <= 0) endGame();
-      }
-      G.gems.splice(i, 1);
-      updateHUD();
-    }
-  }
-
-  // Update FX
-  G.particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += 0.15; p.life -= p.decay; });
-  G.particles = G.particles.filter(p => p.life > 0);
-  
-  G.texts.forEach(t => { t.y += t.vy; t.life -= 0.02; });
-  G.texts = G.texts.filter(t => t.life > 0);
-  
-  if(G.screenShake > 0) G.screenShake *= 0.85;
-  if(G.screenShake < 0.5) G.screenShake = 0;
+  }, 30); // Speed of text
 }
 
-// ── DRAWING ──
-function drawPlayer(x, y, w, h) {
-  // Body (Miner Cart/Basket)
-  ctx.fillStyle = '#2a1b0a'; ctx.fillRect(x - w/2, y - h, w, h);
-  ctx.fillStyle = '#8B6914'; ctx.fillRect(x - w/2, y - h, w, 4); // Rim
-  
-  // Lantern (Swings based on velocity)
-  const swing = G.player.vx * 1.5;
-  ctx.fillStyle = '#FFD700'; ctx.fillRect(x - 4 + swing, y - h - 14, 8, 10);
-  ctx.fillStyle = '#fff'; ctx.fillRect(x - 2 + swing, y - h - 12, 4, 6);
-  
-  // Glow
-  const gl = ctx.createRadialGradient(x+swing, y-h-9, 0, x+swing, y-h-9, 40);
-  gl.addColorStop(0, 'rgba(255,215,0,0.3)'); gl.addColorStop(1, 'transparent');
-  ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(x+swing, y-h-9, 40, 0, Math.PI*2); ctx.fill();
-}
-
-function draw() {
-  ctx.fillStyle = '#050306'; ctx.fillRect(0, 0, W, H);
-  
-  ctx.save();
-  if(G.screenShake > 0) {
-    ctx.translate((Math.random()-0.5)*G.screenShake, (Math.random()-0.5)*G.screenShake);
-  }
-
-  // Background grid/shaft
-  ctx.strokeStyle = 'rgba(255,215,0,0.05)'; ctx.lineWidth = 2;
-  for(let i=0; i<W; i+=60) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,H); ctx.stroke(); }
-
-  // Draw Gems
-  G.gems.forEach(g => {
-    ctx.fillStyle = g.color;
-    ctx.fillRect(g.x - g.w/2, g.y, g.w, g.h);
-    if(g.isBomb) {
-      ctx.fillStyle = '#fff'; ctx.fillRect(g.x - g.w/2 + 2, g.y + 2, 4, 4);
-      // Spark
-      ctx.fillStyle = (Date.now()%200<100) ? '#FFD700' : '#FF3333';
-      ctx.fillRect(g.x, g.y - 6, 4, 4);
-    } else {
-      ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fillRect(g.x - g.w/2 + 2, g.y + 2, g.w/2, g.h/2);
-      ctx.shadowBlur = 10; ctx.shadowColor = g.color; ctx.fill(); ctx.shadowBlur = 0;
-    }
-  });
-
-  // Draw Player
-  drawPlayer(G.player.x, G.player.y, G.player.w, G.player.h);
-
-  // FX
-  G.particles.forEach(p => {
-    ctx.globalAlpha = Math.max(0, p.life);
-    ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, p.size, p.size);
-  });
-  ctx.globalAlpha = 1;
-
-  G.texts.forEach(t => {
-    ctx.globalAlpha = Math.max(0, t.life);
-    ctx.fillStyle = t.color; ctx.font = '12px "Press Start 2P"'; ctx.textAlign = 'center';
-    ctx.fillText(t.text, t.x, t.y);
-  });
-  ctx.globalAlpha = 1;
-  ctx.textAlign = 'left';
-  
-  // Combo Bar
-  if(G.comboTimer > 0 && G.combo > 1) {
-    ctx.fillStyle = '#222'; ctx.fillRect(W/2 - 50, 10, 100, 6);
-    ctx.fillStyle = '#FFD700'; ctx.fillRect(W/2 - 50, 10, 100 * (G.comboTimer/3), 6);
-  }
-
-  ctx.restore();
-}
-
-function loop() {
-  if(G.running) { update(); draw(); }
-  loopId = requestAnimationFrame(loop);
+function toggleMenu(show) {
+  buttons.forEach(btn => btn.disabled = !show);
 }
 
 function updateHUD() {
-  document.getElementById('h-score').textContent = G.score;
-  document.getElementById('h-level').textContent = G.level;
-  document.getElementById('h-lives').textContent = G.lives;
-  document.getElementById('h-combo').textContent = 'x' + G.combo;
-  
-  // Update Gold Globally
-  try { document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold') || '0'; } catch(e){}
+  // Player
+  let pPercent = (STATE.player.currentHp / STATE.player.maxHp) * 100;
+  elPlayerHPBar.style.width = pPercent + '%';
+  elPlayerHPText.textContent = STATE.player.currentHp;
+  elPlayerHPBar.className = 'hp-bar-fill ' + (pPercent < 25 ? 'low' : pPercent < 50 ? 'mid' : '');
+
+  // Enemy
+  let ePercent = (STATE.enemy.currentHp / STATE.enemy.maxHp) * 100;
+  elEnemyHPBar.style.width = ePercent + '%';
+  elEnemyHPBar.className = 'hp-bar-fill ' + (ePercent < 25 ? 'low' : ePercent < 50 ? 'mid' : '');
 }
 
-function endGame() {
-  G.running = false;
-  clearInterval(spawnerId);
-  
-  // Save Gold
-  try {
-    let currentGold = parseInt(localStorage.getItem('nmn_total_gold') || '0');
-    localStorage.setItem('nmn_total_gold', currentGold + G.sessionGold);
-    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold');
-  } catch(e) {}
+// ── ACTIONS ─────────────────────────────────────────────────────────
 
-  document.getElementById('final-score').textContent = G.score;
-  document.getElementById('final-gold').textContent = G.sessionGold;
-  document.getElementById('ov-over').classList.remove('hidden');
+function playerAttack() {
+  if(!STATE.isPlayerTurn || STATE.isAnimating) return;
+  
+  typeText(`${STATE.player.name} used SCRATCH!`, () => {
+    elPlayerSprite.classList.add('anim-tackle');
+    setTimeout(() => elPlayerSprite.classList.remove('anim-tackle'), 300);
+
+    setTimeout(() => {
+      elEnemySprite.classList.add('anim-blink');
+      let dmg = Math.floor(Math.random() * 5) + 4; // 4 to 8 damage
+      STATE.enemy.currentHp = Math.max(0, STATE.enemy.currentHp - dmg);
+      updateHUD();
+      
+      setTimeout(() => {
+        elEnemySprite.classList.remove('anim-blink');
+        checkWinCondition();
+      }, 600);
+    }, 150);
+  });
 }
 
-// Initial draw before start
-ctx.fillStyle = '#050306'; ctx.fillRect(0,0,cv.width,cv.height);
+function attemptCatch() {
+  if(!STATE.isPlayerTurn || STATE.isAnimating) return;
+  
+  typeText(`You threw an AMBER SPHERE!`, () => {
+    // Basic catch formula: lower HP = higher catch chance
+    let hpFactor = 1 - (STATE.enemy.currentHp / STATE.enemy.maxHp);
+    let catchChance = STATE.enemy.catchRate + (hpFactor * 0.5);
+    
+    // Simulate ball throwing animation
+    elEnemySprite.classList.add('anim-blink');
+    
+    setTimeout(() => {
+      if(Math.random() < catchChance) {
+        // Caught
+        elEnemySprite.classList.remove('anim-blink');
+        elEnemySprite.classList.add('anim-capture');
+        typeText(`Gotcha! ${STATE.enemy.name} was caught!`, () => {
+          setTimeout(() => location.reload(), 2000); // Reset game for demo
+        });
+      } else {
+        // Broke free
+        elEnemySprite.classList.remove('anim-blink');
+        typeText(`Oh no! The beast broke free!`, () => {
+          enemyTurn();
+        });
+      }
+    }, 1000);
+  });
+}
+
+function playerHeal() {
+  if(!STATE.isPlayerTurn || STATE.isAnimating) return;
+  if(STATE.player.currentHp === STATE.player.maxHp) {
+    typeText(`HP is already full!`, () => toggleMenu(true));
+    return;
+  }
+  
+  typeText(`You used a RATION. HP restored!`, () => {
+    STATE.player.currentHp = Math.min(STATE.player.maxHp, STATE.player.currentHp + 15);
+    updateHUD();
+    enemyTurn();
+  });
+}
+
+function fleeBattle() {
+  if(!STATE.isPlayerTurn || STATE.isAnimating) return;
+  typeText(`Got away safely!`, () => {
+    setTimeout(() => location.reload(), 1000); // Reset for demo
+  });
+}
+
+function enemyTurn() {
+  STATE.isPlayerTurn = false;
+  
+  typeText(`${STATE.enemy.name} uses BITE!`, () => {
+    elEnemySprite.classList.add('anim-shake');
+    setTimeout(() => elEnemySprite.classList.remove('anim-shake'), 400);
+    
+    setTimeout(() => {
+      elPlayerSprite.classList.add('anim-blink');
+      let dmg = Math.floor(Math.random() * 4) + 2; // 2 to 5 damage
+      STATE.player.currentHp = Math.max(0, STATE.player.currentHp - dmg);
+      updateHUD();
+      
+      setTimeout(() => {
+        elPlayerSprite.classList.remove('anim-blink');
+        if(STATE.player.currentHp <= 0) {
+          typeText(`${STATE.player.name} fainted! You blacked out.`, () => {
+             setTimeout(() => location.reload(), 2000);
+          });
+        } else {
+          STATE.isPlayerTurn = true;
+          typeText(`What will ${STATE.player.name} do?`, () => toggleMenu(true));
+        }
+      }, 600);
+    }, 200);
+  });
+}
+
+function checkWinCondition() {
+  if(STATE.enemy.currentHp <= 0) {
+    elEnemySprite.style.opacity = 0;
+    typeText(`${STATE.enemy.name} fainted! You won!`, () => {
+      setTimeout(() => location.reload(), 2000); // Reset for demo
+    });
+  } else {
+    enemyTurn();
+  }
+}
+
+// Init
+setTimeout(() => {
+  typeText(`What will ${STATE.player.name} do?`, () => toggleMenu(true));
+}, 1000);
 
 </script>
-
-<div style="text-align:center;padding:1rem;font-family:'Press Start 2P',monospace;font-size:.3rem;color:#4a3c28">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
-</div>
 </body>
 </html>
