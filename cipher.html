@@ -3,84 +3,179 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-<title>??? — NMN</title>
+<title>CIPHER — NMN Retro</title>
+
+<link rel="icon" href="logo.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="logo.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="logo.jpg">
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
+
 <style>
-body{padding-top:56px;overflow:hidden;background:#000}
-.game-wrap{max-width:700px;margin:0 auto;padding:.75rem 1rem}
-.hud{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;padding:.4rem .75rem;background:rgba(0,0,0,.7);border:1px solid rgba(255,215,0,.08);margin-bottom:6px}
-.hud-stat{font-family:var(--font-pixel);font-size:.42rem;color:var(--gold)}
-.hud-stat span{color:var(--cream)}
-.canvas-wrap{position:relative;border:2px solid rgba(255,215,0,.15);background:#000}
-canvas{display:block;width:100%;image-rendering:pixelated}
-.controls{display:flex;gap:5px;padding:.4rem .75rem;background:rgba(0,0,0,.6);border:1px solid rgba(255,215,0,.06);border-top:none;flex-wrap:wrap}
-.ctrl-btn{font-family:var(--font-pixel);font-size:.38rem;background:rgba(255,215,0,.06);color:var(--muted);border:1px solid rgba(255,215,0,.15);padding:4px 9px;letter-spacing:.05em;transition:all .2s}
-.ctrl-btn:hover{color:var(--gold);border-color:rgba(255,215,0,.4)}
-.overlay{position:absolute;inset:0;background:rgba(0,0,0,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9rem;z-index:10}
-.overlay.hidden{display:none}
-.ov-title{font-family:var(--font-display);font-size:clamp(1.2rem,4vw,2rem);color:var(--gold);text-shadow:0 0 30px rgba(255,215,0,.5);text-align:center;line-height:1.2}
-.ov-sub{font-family:var(--font-pixel);font-size:.38rem;color:var(--muted);text-align:center;line-height:2.2;max-width:320px}
-.ov-btn{font-family:var(--font-pixel);font-size:.45rem;background:var(--gold);color:var(--coal);border:none;padding:.65rem 1.75rem;letter-spacing:.1em;transition:all .2s}
-.ov-btn:hover{background:#fff;box-shadow:0 0 25px rgba(255,215,0,.7)}
-.ov-stat{font-family:var(--font-pixel);font-size:.48rem;color:var(--cream);text-align:center}
-.ov-stat strong{color:var(--gold)}
-.byline{font-family:var(--font-pixel);font-size:.3rem;color:rgba(139,105,20,.4);text-align:center;letter-spacing:.15em;margin-top:.25rem}
+:root {
+  --gold: #FFD700;
+  --gb: #e8b84b;
+  --gd: #AA7700;
+  --bg-color: #000000;
+  --panel-bg: #111111;
+  --cream: #f0e6cc;
+  --muted: #aaaaaa;
+  --lg: #55FF55; 
+  --red: #FF5555;
+  --blue: #5555FF;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-text: 'VT323', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; overflow: hidden;}
+
+body {
+  font-family: var(--font-text);
+  color: var(--cream);
+  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
+  font-size: 1.2rem;
+}
+
+/* 16-BIT UI BORDER HELPER */
+.retro-box {
+  background: var(--panel-bg);
+  border: 4px solid #FFF;
+  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
+}
+
+/* HEADER */
+header {
+  padding: 1rem 2rem; border-bottom: 4px solid var(--lg);
+  display: flex; justify-content: space-between; align-items: center;
+  background: #000; z-index: 1000; flex-shrink: 0;
+}
+.logo { font-family: var(--font-pixel); color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
+.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.back:hover { color: var(--gold); }
+
+.game-wrap { max-width: 800px; margin: 1rem auto; padding: 0 1rem; width: 100%; display: flex; flex-direction: column; flex: 1; min-height: 0;}
+
+/* ARCADE HUD */
+.hud {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1rem; background: #000; border: 4px solid #444;
+  margin-bottom: 1rem; flex-wrap: wrap; gap: 10px; box-shadow: 4px 4px 0 #000;
+}
+.hud-stat { font-family: var(--font-pixel); font-size: 0.55rem; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.hud-val { color: var(--gold); font-size: 0.9rem; text-shadow: 2px 2px 0 #553300; }
+
+/* CANVAS WRAP */
+.canvas-wrap {
+  position: relative; width: 100%; background: #000; border: 6px solid #FFF;
+  box-shadow: inset 0 0 0 4px #000, inset 0 0 0 8px var(--gd), 10px 10px 0 #000;
+  flex: 1; display: flex; overflow: hidden;
+}
+canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; touch-action: none; }
+
+/* OVERLAYS */
+.overlay {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; background: rgba(0,0,0,0.9); z-index: 100; padding: 2rem;
+}
+.overlay.hidden { display: none !important; }
+.ov-title { font-family: var(--font-pixel); font-size: 1.2rem; color: var(--gold); text-shadow: 4px 4px 0 #553300; text-align: center; margin-bottom: 1.5rem; line-height: 1.4;}
+.ov-sub { font-size: 1.2rem; color: var(--cream); text-align: center; line-height: 1.5; max-width: 500px; margin-bottom: 2rem; }
+.ov-stats { display: flex; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; justify-content: center;}
+.ov-stat-box { text-align: center; background: #000; border: 4px solid #444; padding: 1rem; box-shadow: 4px 4px 0 #000;}
+.ov-stat-box span { font-family: var(--font-pixel); display: block; font-size: 0.5rem; color: var(--muted); margin-bottom: 0.8rem; }
+.ov-stat-box strong { font-family: var(--font-pixel); font-size: 1rem; color: var(--gold); text-shadow: 2px 2px 0 #553300; }
+.byline { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gd); margin-top: 1.5rem; text-transform: uppercase;}
+
+.btn {
+  padding: 1.2rem 2rem; font-family: var(--font-pixel); font-size: 0.7rem;
+  text-transform: uppercase; cursor: pointer; border: 4px solid #FFF; transition: transform 0.1s; display: inline-block; text-decoration: none;
+}
+.btn-gold { background: var(--gd); color: var(--cream); box-shadow: 4px 4px 0 #000; }
+.btn-gold:hover { background: var(--gold); color: #000; transform: translateY(-4px); border-color: var(--cream); }
+
+/* CONTROLS */
+.controls-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1rem; background: #000; border: 4px solid #444; margin-top: 1rem; flex-wrap: wrap; gap: 10px; box-shadow: 4px 4px 0 #000;
+}
+.ctrl-btn { background: #111; border: 4px solid var(--muted); color: var(--cream); font-family: var(--font-pixel); font-size: 0.6rem; padding: 0.8rem; cursor: pointer; transition: transform 0.1s;}
+.ctrl-btn:hover { border-color: var(--gold); transform: translateY(-2px); background: #222;}
+.ctrl-hint { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gd); text-transform: uppercase;}
+
 /* MOBILE D-PAD */
-.dpad{display:none;flex-direction:column;align-items:center;gap:4px;padding:.5rem;user-select:none}
-.dpad-row{display:flex;gap:4px}
-.dpad-btn{font-family:var(--font-pixel);font-size:.55rem;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);color:var(--gold);width:44px;height:44px;display:flex;align-items:center;justify-content:center;transition:all .1s}
-.dpad-btn:active{background:rgba(255,215,0,.25)}
-@media(max-width:600px){.dpad{display:flex}}
+.mobile-dpad { display: none; flex-direction: column; align-items: center; gap: 4px; padding: 0.5rem; user-select: none; margin-top: 0.5rem;}
+.dpad-row { display: flex; gap: 4px; }
+.dpad-btn { background: #111; border: 4px solid var(--muted); color: var(--cream); font-family: var(--font-pixel); display: flex; align-items: center; justify-content: center; font-size: 1rem; width: 50px; height: 50px; user-select: none; transition: transform 0.1s; }
+.dpad-btn:active { background: #222; border-color: var(--gold); transform: scale(0.95); }
+
+@media(max-width: 700px) {
+  .ctrl-hint { display: none; }
+  .mobile-dpad { display: flex; }
+  .controls-bar { justify-content: center; }
+  .hud { padding: 0.5rem; }
+}
+
+/* CUSTOM CURSOR */
+body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
 </style>
-
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
-
 
 </head>
 <body>
+
 <script src="nmn-nav.js"></script>
 <script src="nmn-scene.js"></script>
 
+<header>
+  <a href="oracle.html" class="logo">PROJECT: CIPHER</a>
+  <a href="oracle.html" class="back">← RETURN TO ORACLE</a>
+</header>
+
 <div class="game-wrap">
   <div class="hud">
-    <span class="hud-stat">DEPTH <span id="h-depth">0</span>m</span>
-    <span class="hud-stat">GOLD <span id="h-gold">0</span></span>
-    <span class="hud-stat">OXYGEN <span id="h-oxy">100</span>%</span>
-    <span class="hud-stat">LEGEND <span id="h-legend">0</span></span>
+    <div class="hud-stat">DEPTH <span class="hud-val" id="h-depth">0m</span></div>
+    <div class="hud-stat">GOLD <span class="hud-val" id="h-gold">0</span></div>
+    <div class="hud-stat">OXYGEN <span class="hud-val" id="h-oxy" style="color:var(--lg);">100%</span></div>
+    <div class="hud-stat">LEGEND <span class="hud-val" id="h-legend" style="color:var(--purple);">0</span></div>
   </div>
 
   <div class="canvas-wrap">
     <canvas id="cv"></canvas>
+    
     <div class="overlay" id="ov-start">
-      <p class="ov-title">You weren't<br>supposed to<br>find this.</p>
+      <h1 class="ov-title">YOU WEREN'T<br>SUPPOSED TO<br>FIND THIS.</h1>
       <p class="ov-sub">The mine goes deeper than the maps show. Something is down there. It has been waiting since before Lord Oro lit the first lantern.</p>
-      <button class="ov-btn" onclick="startGame()">⛏ DESCEND ANYWAY</button>
+      <button class="btn btn-gold" onclick="startGame()">DESCEND ANYWAY</button>
       <p class="byline">— THE FLINT ARCHITECT</p>
     </div>
+    
     <div class="overlay hidden" id="ov-over">
-      <p class="ov-title">The Mine<br>Remembered<br>You.</p>
-      <div class="ov-stat">DEPTH REACHED <strong id="fs-depth">0</strong>m</div>
-      <div class="ov-stat">GOLD CARRIED <strong id="fs-gold">0</strong> 💎</div>
-      <div class="ov-stat">LEGEND FRAGMENTS <strong id="fs-legend">0</strong></div>
-      <button class="ov-btn" onclick="startGame()">⛏ DESCEND AGAIN</button>
-      <a href="oracle.html" style="font-family:var(--font-pixel);font-size:.36rem;color:var(--muted);text-decoration:none">← RETURN TO THE ORACLE</a>
+      <h1 class="ov-title" style="color:var(--red); text-shadow:4px 4px 0 #550000;">THE MINE<br>REMEMBERED<br>YOU.</h1>
+      <div class="ov-stats">
+        <div class="ov-stat-box"><span>DEPTH REACHED</span><strong id="fs-depth">0m</strong></div>
+        <div class="ov-stat-box"><span>GOLD CARRIED</span><strong id="fs-gold">0</strong></div>
+        <div class="ov-stat-box"><span>LEGEND ORE</span><strong id="fs-legend">0</strong></div>
+      </div>
+      <button class="btn btn-gold" onclick="startGame()">DESCEND AGAIN</button>
     </div>
   </div>
 
-  <div class="controls">
-    <button class="ctrl-btn" onclick="startGame()">▶ START</button>
-    <button class="ctrl-btn" onclick="NMNScene.toggle()">⏸ PAUSE</button>
-    <button class="ctrl-btn" onclick="NMNWallet.convertGems()">⚗ CONVERT</button>
-    <span style="font-family:var(--font-pixel);font-size:.3rem;color:rgba(139,105,20,.5);margin-left:auto;align-self:center">← ↑ → ↓ / WASD TO MOVE</span>
+  <div class="controls-bar">
+    <div style="display:flex; gap:10px;">
+      <button class="ctrl-btn" onclick="startGame()">▶ START</button>
+      <button class="ctrl-btn" onclick="if(window.NMNScene) NMNScene.toggle()">⏸ PAUSE</button>
+      <button class="ctrl-btn" onclick="if(window.NMNWallet) NMNWallet.convertGems()">⚗ CONVERT</button>
+    </div>
+    <span class="ctrl-hint">WASD / ARROWS TO MOVE & MINE</span>
   </div>
 
-  <div class="dpad">
-    <div class="dpad-row"><div class="dpad-btn" id="dp-up">▲</div></div>
+  <div class="mobile-dpad">
+    <div class="dpad-row"><div class="dpad-btn" id="dp-up">W</div></div>
     <div class="dpad-row">
-      <div class="dpad-btn" id="dp-left">◀</div>
-      <div class="dpad-btn" id="dp-down">▼</div>
-      <div class="dpad-btn" id="dp-right">▶</div>
+      <div class="dpad-btn" id="dp-left">A</div>
+      <div class="dpad-btn" id="dp-down">S</div>
+      <div class="dpad-btn" id="dp-right">D</div>
     </div>
   </div>
 </div>
@@ -90,8 +185,6 @@ canvas{display:block;width:100%;image-rendering:pixelated}
    PROJECT: CIPHER
    By: The Flint Architect
    Hidden in the Oracle's Chamber
-   Triggered by: mirror.html triple-click
-   
    Genre: [REDACTED]
    ═══════════════════════════════════════════════════ */
 
@@ -99,16 +192,17 @@ const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
 
 function resize(){
-  const W = Math.min(cv.parentElement.clientWidth, 700);
-  cv.width = W; cv.height = Math.floor(W * .65);
-  cv.style.width = W+'px'; cv.style.height = cv.height+'px';
+  const wrap = cv.parentElement;
+  cv.width = wrap.clientWidth; 
+  cv.height = wrap.clientHeight;
 }
-resize(); window.addEventListener('resize', resize);
+window.addEventListener('resize', resize);
+resize();
 
 // ── WORLD CONSTANTS ──
 const TILE = 20;
 const WORLD_W = 50; // tiles wide
-const WORLD_H = 60; // tiles deep — the mine GOES DOWN
+const WORLD_H = 60; // tiles deep
 
 // ── TILE TYPES ──
 const T = {
@@ -152,7 +246,7 @@ const LORE_FRAGMENTS = [
   '"Depth 18: The ore started whispering back."',
   '"She left the lantern. I left the gold. Neither of us went back."',
   '"The deepest vein is not gold. It is silence."',
-  '"Nayla descended once. The walls parted for her."',
+  '"Nela descended once. The walls parted for her."',
   '"This is not treasure. This is what the mine chose to keep."',
   '"Felik\'s second soul came from here."',
 ];
@@ -231,19 +325,21 @@ function initState(){
 
 function startGame(){
   if(_locked)return; _locked=true;
-  NMNScene.destroy();
+  if(window.NMNScene) NMNScene.destroy();
   G=initState();
   G.running=true;
   document.getElementById('ov-start').classList.add('hidden');
   document.getElementById('ov-over').classList.add('hidden');
-  NMNScene.raf(loop);
+  if(window.NMNScene) NMNScene.raf(loop);
+  else requestAnimationFrame(loop); // Fallback if scene.js is missing
+  resize();
   _locked=false;
 }
 
 // ── INPUT ──
 const keys={};
-NMNScene.on(document,'keydown',e=>{keys[e.key]=true;});
-NMNScene.on(document,'keyup',  e=>{delete keys[e.key];});
+window.addEventListener('keydown', e=>{keys[e.key]=true;});
+window.addEventListener('keyup',   e=>{delete keys[e.key];});
 
 // D-pad
 [['dp-up','ArrowUp'],['dp-down','ArrowDown'],['dp-left','ArrowLeft'],['dp-right','ArrowRight']].forEach(([id,k])=>{
@@ -251,10 +347,12 @@ NMNScene.on(document,'keyup',  e=>{delete keys[e.key];});
   if(!el)return;
   el.addEventListener('touchstart',e=>{e.preventDefault();keys[k]=true;},{passive:false});
   el.addEventListener('touchend',e=>{delete keys[k];});
+  el.addEventListener('mousedown',e=>{keys[k]=true;});
+  el.addEventListener('mouseup',e=>{delete keys[k];});
 });
 
 // Mine on click/tap
-NMNScene.on(cv,'mousedown',e=>{
+cv.addEventListener('mousedown', e=>{
   if(!G||!G.running)return;
   const r=cv.getBoundingClientRect();
   const mx=(e.clientX-r.left)*(cv.width/r.width)+G.cam.x;
@@ -270,20 +368,21 @@ NMNScene.on(cv,'mousedown',e=>{
     }
   }
 });
+cv.addEventListener('mouseup', e=>{ if(G) G.player.mining=false; });
 
 // ── PHYSICS & UPDATE ──
 function update(){
-  if(!G||!G.running||NMNScene.isPaused())return;
+  if(!G||!G.running||(window.NMNScene && NMNScene.isPaused()))return;
   const p=G.player,W=WORLD_W,H=WORLD_H;
 
   // Horizontal movement
   const spd=2.2;
-  if(keys['ArrowLeft']||keys['a']){p.vx=-spd;p.facing=-1;}
-  else if(keys['ArrowRight']||keys['d']){p.vx=spd;p.facing=1;}
+  if(keys['ArrowLeft']||keys['a']||keys['A']){p.vx=-spd;p.facing=-1;}
+  else if(keys['ArrowRight']||keys['d']||keys['D']){p.vx=spd;p.facing=1;}
   else p.vx*=.7;
 
   // Jump
-  if((keys['ArrowUp']||keys['w']||keys[' '])&&p.onGround){p.vy=-6;}
+  if((keys['ArrowUp']||keys['w']||keys['W']||keys[' '])&&p.onGround){p.vy=-6;}
 
   // Gravity
   p.vy+=.3; p.vy=Math.min(p.vy,8);
@@ -326,23 +425,20 @@ function update(){
       if(ORE_VALUE[tileType]){
         const val=ORE_VALUE[tileType];
         G.gold+=val; G.sessionGold+=val;
-        NMNWallet.addXP(val);
-        NMNWallet.addGem();
+        if(window.NMNWallet) { NMNWallet.addXP(val); NMNWallet.addGem(); }
         spawnOreParticles(mt.c*TILE+TILE/2,mt.r*TILE+TILE/2,ORE_GLOW[tileType]);
-        if(tileType===T.LEGEND_ORE){G.legend++;nmnToast('⬡ LEGEND FRAGMENT FOUND');}
+        if(tileType===T.LEGEND_ORE){G.legend++;}
       }
       if(tileType===T.LORE_WALL){
         const idx=G.loreFound.size%LORE_FRAGMENTS.length;
         G.loreFound.add(idx);
         G.loreMsg=LORE_FRAGMENTS[idx]; G.loreMsgTimer=180;
-        nmnToast('📜 LORE UNCOVERED');
       }
       if(tileType===T.LORD_ORO){
         G.lordOroFound=true;
         G.gold+=1000; G.sessionGold+=1000;
         G.loreMsg='"You made it. I knew you would."'; G.loreMsgTimer=300;
-        NMNWallet.addGold(500);
-        nmnToast('👁 LORD ORO FOUND — +1000 GOLD');
+        if(window.NMNWallet) NMNWallet.addGold(500);
       }
       if(tileType===T.WATER){
         G.oxygen=Math.max(0,G.oxygen-20);
@@ -358,7 +454,7 @@ function update(){
     }
   }
   if(!keys['ArrowLeft']&&!keys['ArrowRight']&&!keys['ArrowUp']&&!keys['ArrowDown']&&!keys['a']&&!keys['d']&&!keys['w']){
-    p.mining=false;
+    // Keep trying to mine if mousedown, otherwise stop
   }
 
   // Depth & oxygen
@@ -372,9 +468,10 @@ function update(){
   G.cam.y=Math.max(0,Math.min(WORLD_H*TILE-VH, p.y-VH/3));
 
   // Update HUD
-  document.getElementById('h-depth').textContent=G.depth+'m';
+  document.getElementById('h-depth').textContent=G.depth;
   document.getElementById('h-gold').textContent=G.gold;
   document.getElementById('h-oxy').textContent=Math.floor(G.oxygen)+'%';
+  document.getElementById('h-oxy').style.color=G.oxygen>50?'var(--lg)':G.oxygen>25?'var(--gold)':'var(--red)';
   document.getElementById('h-legend').textContent=G.legend;
 
   // Particles
@@ -404,32 +501,35 @@ function draw(){
       const tile=G.world[r][c];
       if(tile===T.AIR)continue;
       const sx=c*TILE-G.cam.x, sy=r*TILE-G.cam.y;
-      // Base color
+      
       ctx.fillStyle=TILE_COLOR[tile]||'#111';
       ctx.fillRect(sx,sy,TILE,TILE);
-      // Texture
+      
       ctx.fillStyle='rgba(255,255,255,0.04)';
       ctx.fillRect(sx,sy,TILE/2,TILE/2);
       ctx.fillStyle='rgba(0,0,0,0.3)';
       ctx.fillRect(sx+TILE/2,sy+TILE/2,TILE/2,TILE/2);
+      
       // Ore glow + gem pixel
       if(ORE_GLOW[tile]){
         const gl=ctx.createRadialGradient(sx+TILE/2,sy+TILE/2,0,sx+TILE/2,sy+TILE/2,TILE);
         gl.addColorStop(0,ORE_GLOW[tile]); gl.addColorStop(1,'transparent');
         ctx.fillStyle=gl; ctx.fillRect(sx,sy,TILE,TILE);
-        // Ore crystal pixel
+        
         ctx.fillStyle=ORE_GLOW[tile].replace(/,[\d.]+\)$/,',1)').replace('rgba','rgb').split(',').slice(0,3).join(',')+')'||'#FFD700';
         ctx.fillRect(sx+TILE/2-3,sy+TILE/2-3,6,6);
         ctx.fillStyle='rgba(255,255,255,.5)';
         ctx.fillRect(sx+TILE/2-2,sy+TILE/2-2,2,2);
       }
+      
       // Lore wall glyph
       if(tile===T.LORE_WALL){
         ctx.fillStyle='rgba(255,80,80,.5)';
-        ctx.font=`${TILE-4}px serif`; ctx.textAlign='center';
-        ctx.fillText('𓂀',sx+TILE/2,sy+TILE-2);
+        ctx.font=`${TILE-4}px "Press Start 2P"`; ctx.textAlign='center';
+        ctx.fillText('L',sx+TILE/2,sy+TILE-4);
         ctx.textAlign='left';
       }
+      
       // Lord Oro marker
       if(tile===T.LORD_ORO){
         const b=.5+.5*Math.sin(Date.now()*.003);
@@ -438,22 +538,23 @@ function draw(){
         ctx.fillStyle=gl2; ctx.fillRect(sx-TILE,sy-TILE,TILE*3,TILE*3);
         ctx.fillStyle='rgba(255,215,0,0.9)';
         ctx.font='10px "Press Start 2P"'; ctx.textAlign='center';
-        ctx.fillText('👁',sx+TILE/2,sy+TILE-2);
+        ctx.fillText('O',sx+TILE/2,sy+TILE-4);
         ctx.textAlign='left';
       }
+      
       // Water shimmer
       if(tile===T.WATER){
         const ws=ctx.createLinearGradient(sx,sy,sx,sy+TILE);
         ws.addColorStop(0,'rgba(30,80,180,.3)'); ws.addColorStop(1,'rgba(10,30,100,.6)');
         ctx.fillStyle=ws; ctx.fillRect(sx,sy,TILE,TILE);
       }
+      
       // Mine progress overlay
       if(G.player.mineTarget&&G.player.mineTarget.r===r&&G.player.mineTarget.c===c){
         const hardness={[T.STONE]:60,[T.DIRT]:20,[T.COPPER_ORE]:40,[T.SILVER_ORE]:55,[T.GOLD_ORE]:70,[T.LEGEND_ORE]:100,[T.DARKNESS]:80,[T.WATER]:30,[T.LORE_WALL]:120,[T.LORD_ORO]:200}[tile]||60;
         const pct=G.player.mineProgress/hardness;
         ctx.fillStyle=`rgba(255,215,0,${pct*.4})`;
         ctx.fillRect(sx,sy,TILE,TILE);
-        // Progress bar
         ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(sx,sy+TILE-4,TILE,4);
         ctx.fillStyle='#FFD700';ctx.fillRect(sx,sy+TILE-4,TILE*pct,4);
       }
@@ -466,22 +567,20 @@ function draw(){
   const flip=G.player.facing<0;
   ctx.save();
   if(flip){ctx.translate(px+16,0);ctx.scale(-1,1);ctx.translate(-px,0);}
-  // Body
-  ctx.fillStyle='#8B6914';ctx.fillRect(px,py+8,16,12);
-  // Head
-  ctx.fillStyle='#FFD700';ctx.fillRect(px+2,py,12,10);
-  // Eyes
-  ctx.fillStyle='#000';ctx.fillRect(px+4,py+3,3,3);ctx.fillRect(px+9,py+3,3,3);
-  // Gold eye glint
+  
+  ctx.fillStyle='#8B6914';ctx.fillRect(px,py+8,16,12); // Body
+  ctx.fillStyle='#FFD700';ctx.fillRect(px+2,py,12,10); // Head
+  ctx.fillStyle='#000';ctx.fillRect(px+4,py+3,3,3);ctx.fillRect(px+9,py+3,3,3); // Eyes
+  
   const eb=.5+.5*Math.sin(Date.now()*.004);
   ctx.fillStyle=`rgba(255,215,0,${eb})`;ctx.fillRect(px+5,py+4,1,1);ctx.fillRect(px+10,py+4,1,1);
-  // Legs
+  
   const legPhase=Math.sin(Date.now()*.008)>0;
   ctx.fillStyle='#5a3a0a';
   ctx.fillRect(px+(legPhase?1:5),py+20,5,8);
   ctx.fillRect(px+(legPhase?10:6),py+20,5,6);
-  // Lantern
-  ctx.fillStyle='#8B6914';ctx.fillRect(px+14,py+4,5,14);
+  
+  ctx.fillStyle='#8B6914';ctx.fillRect(px+14,py+4,5,14); // Lantern
   ctx.fillStyle='rgba(255,215,0,0.9)';ctx.fillRect(px+15,py+6,3,8);
   ctx.restore();
 
@@ -494,7 +593,7 @@ function draw(){
   light.addColorStop(1,'transparent');
   ctx.fillStyle=light;ctx.fillRect(0,0,VW,VH);
 
-  // Darkness vignette — deeper = darker
+  // Darkness vignette
   const depth=G.player.y/(WORLD_H*TILE);
   const vig=ctx.createRadialGradient(G.player.x-G.cam.x,G.player.y-G.cam.y,30,G.player.x-G.cam.x,G.player.y-G.cam.y,VW*.6);
   vig.addColorStop(0,'transparent');
@@ -509,10 +608,10 @@ function draw(){
   });
 
   // MINI MAP
-  const MW=80,MH=50,MX=VW-MW-6,MY=6;
+  const MW=60,MH=70,MX=VW-MW-10,MY=10;
   ctx.fillStyle='rgba(0,0,0,.7)';ctx.fillRect(MX,MY,MW,MH);
-  ctx.strokeStyle='rgba(255,215,0,.2)';ctx.lineWidth=1;ctx.strokeRect(MX,MY,MW,MH);
-  // Ore dots on minimap
+  ctx.strokeStyle='rgba(255,215,0,.3)';ctx.lineWidth=2;ctx.strokeRect(MX,MY,MW,MH);
+  
   for(let r=0;r<WORLD_H;r+=2)for(let c=0;c<WORLD_W;c+=2){
     const tile=G.world[r][c];
     if(ORE_GLOW[tile]){
@@ -520,37 +619,31 @@ function draw(){
       ctx.fillRect(MX+c*(MW/WORLD_W),MY+r*(MH/WORLD_H),2,2);
     }
   }
-  // Player dot
+  
   const mpx=MX+G.player.x/TILE*(MW/WORLD_W);
   const mpy=MY+G.player.y/TILE*(MH/WORLD_H);
-  ctx.fillStyle='#FFD700';ctx.fillRect(mpx-2,mpy-2,5,5);
+  ctx.fillStyle='#FFD700';ctx.fillRect(mpx-2,mpy-2,4,4);
 
-  // Oxygen bar
-  const oxyColor=G.oxygen>50?'#22cc44':G.oxygen>25?'#FFD700':'#FF3333';
-  ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(6,VH-18,100,8);
-  ctx.fillStyle=oxyColor;ctx.fillRect(6,VH-18,G.oxygen,8);
-  ctx.fillStyle='rgba(255,255,255,.15)';ctx.fillRect(6,VH-18,100,1);
-  ctx.fillStyle=oxyColor;ctx.font='5px "Press Start 2P"';ctx.fillText('O2',110,VH-12);
-
-  // LORE MESSAGE
+  // LORE MESSAGE (JRPG Style Box)
   if(G.loreMsgTimer>0&&G.loreMsg){
     const alpha=Math.min(1,G.loreMsgTimer/20);
     ctx.save();
     ctx.globalAlpha=alpha;
-    ctx.fillStyle='rgba(0,0,0,.85)';
-    ctx.fillRect(VW/2-160,VH*.3-18,320,44);
-    ctx.strokeStyle='rgba(255,215,0,.4)';ctx.lineWidth=1;
-    ctx.strokeRect(VW/2-160,VH*.3-18,320,44);
+    ctx.fillStyle='rgba(0,0,0,.9)';
+    ctx.fillRect(VW/2-140,VH*.2,280,60);
+    ctx.strokeStyle='rgba(255,215,0,.8)';ctx.lineWidth=4;
+    ctx.strokeRect(VW/2-140,VH*.2,280,60);
+    
     ctx.fillStyle='#FFD700';
-    ctx.font='5px "Press Start 2P"';ctx.textAlign='center';
-    // Word wrap
+    ctx.font='8px "Press Start 2P"'; ctx.textAlign='center';
+    
     const words=G.loreMsg.split(' ');let line='',lines=[];
     words.forEach(w=>{
-      if(ctx.measureText(line+w).width<270){line+=w+' ';}
+      if(ctx.measureText(line+w).width<240){line+=w+' ';}
       else{lines.push(line.trim());line=w+' ';}
     });
     lines.push(line.trim());
-    lines.forEach((l,i)=>ctx.fillText(l,VW/2,VH*.3+i*14));
+    lines.forEach((l,i)=>ctx.fillText(l,VW/2,VH*.2+20+i*16));
     ctx.textAlign='left';
     ctx.restore();
   }
@@ -560,35 +653,29 @@ function loop(){
   if(!G)return;
   update();
   draw();
-  NMNScene.raf(loop);
+  if(window.NMNScene) NMNScene.raf(loop);
+  else requestAnimationFrame(loop);
 }
 
 function endGame(){
   if(!G)return;
   G.running=false;
-  NMNWallet.addGold(G.sessionGold);
+  if(window.NMNWallet) NMNWallet.addGold(G.sessionGold);
   document.getElementById('fs-depth').textContent=G.depth+'m';
   document.getElementById('fs-gold').textContent=G.sessionGold;
   document.getElementById('fs-legend').textContent=G.legend;
   document.getElementById('ov-over').classList.remove('hidden');
-  NMNScene.destroy();
+  if(window.NMNScene) NMNScene.destroy();
 }
 
-// Initial black screen
 ctx.fillStyle='#000';ctx.fillRect(0,0,cv.width,cv.height);
 </script>
 
-<!-- Monetag Service Worker Registration -->
 <script>
 if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
+    navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
 }
 </script>
 
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
-</div>
 </body>
 </html>
