@@ -9,7 +9,7 @@
 <style>
 :root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-sans);background:var(--coal);color:var(--cream);min-height:100vh;background-image:linear-gradient(45deg,#0c0a07 25%,#110e0a 25%,#110e0a 50%,#0c0a07 50%,#0c0a07 75%,#110e0a 75%,#110e0a 100%);background-size:4px 4px}
+body{font-family:var(--font-sans);background:var(--coal);color:var(--cream);min-height:100vh;background-image:linear-gradient(45deg,#0c0a07 25%,#110e0a 25%,#110e0a 50%,#0c0a07 50%,#0c0a07 75%,#110e0a 75%,#110e0a 100%);background-size:4px 4px;padding-bottom:65px !important;}
 header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(12,10,7,.95);position:sticky;top:0;z-index:10}
 .logo{font-family:var(--font-serif);font-style:italic;color:var(--gold);font-size:.95rem;text-decoration:none}
 .back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
@@ -20,6 +20,7 @@ main{max-width:800px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
 .lg-title{font-family:var(--font-serif);font-size:clamp(1.8rem,4vw,3rem);color:var(--cream);margin-bottom:.4rem}
 .lg-title em{color:var(--gold);font-style:italic}
 .lg-sub{font-size:.72rem;color:var(--muted);line-height:2;max-width:520px;margin:0 auto}
+
 /* SIGN FORM */
 .sign-section{border:1px solid rgba(255,215,0,.15);background:rgba(255,215,0,.03);padding:1.5rem;margin-bottom:2rem}
 .sign-title{font-family:var(--font-serif);font-size:1.1rem;color:var(--gold);margin-bottom:1rem;font-style:italic}
@@ -32,6 +33,7 @@ main{max-width:800px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
 .sign-btn{padding:.7rem 1.25rem;background:var(--gold);color:var(--coal);border:none;font-family:var(--font-sans);font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .3s;white-space:nowrap}
 .sign-btn:hover{background:var(--gb)}
 .sign-note{font-size:.5rem;color:var(--faint);margin-top:.5rem;line-height:1.7}
+
 /* LEDGER TABLE */
 .ledger-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem}
 .ledger-title-row{font-family:var(--font-serif);font-style:italic;font-size:1.1rem;color:var(--gold)}
@@ -47,23 +49,10 @@ main{max-width:800px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
 .miner-date{font-size:.5rem;color:var(--faint);white-space:nowrap}
 .entry-new{animation:entryGlow .5s ease;background:rgba(255,215,0,.06)}
 @keyframes entryGlow{0%{background:rgba(255,215,0,.2)}100%{background:rgba(255,215,0,.06)}}
+
 @media(max-width:600px){.sign-row{grid-template-columns:1fr;}.ledger-table td:nth-child(4){display:none}}
-</style>
 
-<style id="depth-gauge-style">
-.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:36px;background:rgba(12,10,7,.97);border-top:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:center;gap:2rem;z-index:999;padding:0 1rem;flex-wrap:wrap}
-.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28}
-.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
-.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s}
-.dg-link:hover{color:#FFD700}
-.dg-sep{color:#2a1808;font-size:.6rem}
-</style>
-
-<style id="nmn-cursor">
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
-</style>
-<style id="floating-gauge">
+/* DEPTH GAUGE */
 .depth-gauge{
   position:fixed!important;bottom:12px!important;left:50%!important;
   transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
@@ -75,16 +64,18 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
   gap:1.2rem!important;flex-wrap:nowrap!important;
   box-shadow:0 0 20px rgba(255,215,0,.08)!important;
 }
-.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
-body{padding-bottom:65px!important}
+.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28;pointer-events:auto!important;}
+.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
+.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s;pointer-events:auto!important;}
+.dg-link:hover{color:#FFD700}
+.dg-sep{color:#2a1808;font-size:.6rem;pointer-events:auto!important;}
 </style>
 
-<!-- Monetag In-Page Push — Zone 10763810 -->
-
-
+<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
 
 </head>
 <body>
+<script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
 <header>
   <a href="index.html" class="logo">NMN — Lord Oro</a>
@@ -194,6 +185,7 @@ function signLedger() {
   // Check if already signed
   if (entries.find(e => e.name.toLowerCase() === name.toLowerCase())) {
     document.getElementById('signerName').value = '';
+    if (typeof nmnToast === 'function') nmnToast('YOUR MARK IS ALREADY IN THE LEDGER');
     return;
   }
   const contribution = CONTRIBUTION_MAP[symbol] || 'Descended into the mine. Left a mark.';
@@ -206,6 +198,7 @@ function signLedger() {
   const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
   vault.push({ text: `${name} signed the Forgotten Ledger with the ${symbol} mark.`, source: 'The Forgotten Ledger', date: new Date().toLocaleDateString() });
   localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
+  
   // Flash new row
   setTimeout(() => {
     const rows = document.querySelectorAll('#ledgerBody tr');
@@ -230,10 +223,10 @@ renderLedger();
 <script>
 (function(){
   try{
+    var w = typeof NMNWallet !== 'undefined' ? NMNWallet.get() : {gold:0};
     var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
     var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
-    var gold=parseInt(localStorage.getItem('nmn_total_gold')||'0');
-    var el=document.getElementById('dgGold');if(el)el.textContent=gold;
+    var el=document.getElementById('dgGold');if(el)el.textContent=w.gold;
     var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
     var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
   }catch(e){}
@@ -440,27 +433,15 @@ document.addEventListener('click', () => {
 
 </script>
 
-<button id="nmn-sound-btn" onclick="
-  const on = NMN_Audio.toggle();
-  this.textContent = on ? '🔊 Sound On' : '🔇 Sound Off';
-  this.style.color = on ? 'var(--gold,#c9962a)' : '#4a3c28';
-" style="position:fixed;bottom:42px;right:.75rem;z-index:998;background:rgba(12,10,7,.9);border:1px solid rgba(255,215,0,.2);color:#4a3c28;font-family:Josefin Sans,sans-serif;font-size:.42rem;letter-spacing:.1em;padding:.35rem .6rem;cursor:pointer;transition:all .3s">🔇 Sound Off</button>
-<script id="nmn-glow">
-(function(){
-  var r=document.createElement('div');
-  r.id='pickaxe-glow';
-  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
-  document.body.appendChild(r);
-  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
-  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
-  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
-})();
-</script>
-
-<!-- Monetag Service Worker Registration -->
 <script>
-if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(function(registration) {
+      console.log('NMN SW registered with scope:', registration.scope);
+    })
+    .catch(function(err){
+      console.log('NMN SW error:', err);
+    });
 }
 </script>
 
