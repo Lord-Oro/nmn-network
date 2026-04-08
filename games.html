@@ -32,8 +32,8 @@ body{padding-top:56px;background:var(--coal)}
 .w-val{font-family:var(--font-pixel);font-size:.52rem;color:var(--gold);text-shadow:0 0 8px rgba(255,215,0,.4);display:block}
 .w-lbl{font-family:var(--font-pixel);font-size:.28rem;color:var(--muted);letter-spacing:.1em}
 .gem-row{display:flex;gap:4px}
-.gem-pip{width:14px;height:14px;border:1px solid rgba(255,215,0,.25);background:var(--shaft);font-size:7px;display:flex;align-items:center;justify-content:center;transition:all .2s;color:transparent;}
-.gem-pip.lit{border-color:var(--gold);background:#1a1500;box-shadow:0 0 5px var(--gold);color:var(--gold);}
+.gem-pip{width:14px;height:14px;border:1px solid rgba(255,215,0,.25);background:var(--stone2);font-size:7px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.gem-pip.lit{border-color:var(--gold);background:#1a1500;box-shadow:0 0 5px var(--gold)}
 .convert-btn{font-family:var(--font-pixel);font-size:.38rem;background:transparent;border:1px solid rgba(255,215,0,.25);color:var(--gold);padding:.4rem 1rem;letter-spacing:.08em;transition:all .2s;cursor:pointer;}
 .convert-btn:hover{background:rgba(255,215,0,.06);border-color:var(--gold)}
 
@@ -65,7 +65,7 @@ body{padding-top:56px;background:var(--coal)}
 
 /* NUGGET GAME CARD — rounded, gold-stuck */
 .nugget{
-  background:var(--rock);
+  background:var(--stone);
   border:1px solid rgba(255,215,0,.12);
   border-radius:12px;
   overflow:hidden;
@@ -124,6 +124,7 @@ body{padding-top:56px;background:var(--coal)}
 @media(max-width:900px){.hall-sidebar{border-left:none;border-top:1px solid rgba(255,215,0,.06)}}
 
 /* ── RETRO TV ── */
+.tv-module{}
 .tv-module-label{font-family:var(--font-pixel);font-size:.38rem;color:var(--gd);letter-spacing:.25em;margin-bottom:.75rem;display:block}
 .retro-tv{
   background:#1a1208;
@@ -176,6 +177,7 @@ body{padding-top:56px;background:var(--coal)}
 #real-video{display:none}
 
 /* ── PATREON TIERS ── */
+.tiers-module{}
 .tiers-module-label{font-family:var(--font-pixel);font-size:.38rem;color:var(--gd);letter-spacing:.25em;margin-bottom:.75rem;display:block}
 .tier-mini{
   padding:10px 12px;margin-bottom:8px;border:1px solid;
@@ -189,6 +191,7 @@ body{padding-top:56px;background:var(--coal)}
 .tier-name-mini{font-family:var(--font-pixel);font-size:.38rem;margin-bottom:3px;display:block}
 
 /* ── GEMSHOP QUICK ── */
+.shop-module{}
 .shop-module-label{font-family:var(--font-pixel);font-size:.38rem;color:var(--gd);letter-spacing:.25em;margin-bottom:.75rem;display:block}
 .shop-mini-item{
   display:flex;align-items:center;justify-content:space-between;
@@ -198,11 +201,14 @@ body{padding-top:56px;background:var(--coal)}
 .shop-mini-item:hover{background:rgba(255,215,0,.03)}
 .shop-mini-name{font-family:var(--font-pixel);font-size:.3rem;color:var(--muted)}
 .shop-mini-cost{font-family:var(--font-pixel);font-size:.32rem;color:var(--gold)}
-.shop-mini-btn{font-family:var(--font-pixel);font-size:.28rem;background:var(--gd);color:var(--coal);border:none;padding:4px 9px;transition:all .2s;cursor:pointer;}
+.shop-mini-btn{font-family:var(--font-pixel);font-size:.28rem;background:var(--gd);color:var(--obsidian,#070605);border:none;padding:2px 7px;transition:all .2s; cursor: pointer;}
 .shop-mini-btn:hover{background:var(--gold)}
 
 /* ── FOOTER ── */
 .hall-footer{max-width:1200px;margin:0 auto}
+
+/* CUSTOM CURSOR */
+body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
 </style>
 
 <script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
@@ -225,14 +231,14 @@ body{padding-top:56px;background:var(--coal)}
   <div class="w-item"><span class="w-val">LVL <span id="lvl-disp">1</span></span><span class="w-lbl">RANK</span></div>
   <div class="w-item"><span class="w-val" id="xp-disp">0</span><span class="w-lbl">XP</span></div>
   <div class="w-item">
-    <div class="gem-row" title="3 Gems = 100 Gold">
+    <div class="gem-row">
       <div class="gem-pip" id="gp0">◆</div><div class="gem-pip" id="gp1">◆</div>
       <div class="gem-pip" id="gp2">◆</div><div class="gem-pip" id="gp3">◆</div>
       <div class="gem-pip" id="gp4">◆</div>
     </div>
     <span class="w-lbl" style="display:block;margin-top:3px">GEMS</span>
   </div>
-  <button class="convert-btn" onclick="if(window.NMNWallet) { NMNWallet.convertGems(); syncWallet(); }">⚗ CONVERT GEMS</button>
+  <button class="convert-btn" onclick="if(window.NMNWallet) NMNWallet.convertGems()">⚗ CONVERT GEMS</button>
 </div>
 
 <div class="hall-layout">
@@ -259,7 +265,7 @@ body{padding-top:56px;background:var(--coal)}
           <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
         </div>
       </a>
-      
+
       <a href="oreracer.html" class="nugget">
         <canvas class="nugget-canvas" id="nc-oreracer" width="200" height="90"></canvas>
         <div class="nugget-body">
@@ -274,7 +280,7 @@ body{padding-top:56px;background:var(--coal)}
         <div class="nugget-body">
           <span class="nugget-name">THE DESCENT</span>
           <p class="nugget-desc">Pilot your miner down the shaft. Dodge the walls. Survive.</p>
-          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
+          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span><span class="ntag ntag-new">REBUILT</span></div>
         </div>
       </a>
 
@@ -283,7 +289,7 @@ body{padding-top:56px;background:var(--coal)}
         <div class="nugget-body">
           <span class="nugget-name">THE DIGGER</span>
           <p class="nugget-desc">Drill through pixel rock. Find rare ore. Avoid cave-ins.</p>
-          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
+          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span><span class="ntag ntag-new">REBUILT</span></div>
         </div>
       </a>
 
@@ -292,7 +298,7 @@ body{padding-top:56px;background:var(--coal)}
         <div class="nugget-body">
           <span class="nugget-name">MINE SIEGE</span>
           <p class="nugget-desc">Pixel artillery. Angle your shot. Destroy the enemy miner.</p>
-          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
+          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span><span class="ntag ntag-new">REBUILT</span></div>
         </div>
       </a>
 
@@ -327,7 +333,7 @@ body{padding-top:56px;background:var(--coal)}
           <div class="nugget-tags"><span class="ntag ntag-pzl">PUZZLE</span><span class="ntag ntag-new">REBUILT</span></div>
         </div>
       </a>
-      
+
       <a href="tablet.html" class="nugget">
         <canvas class="nugget-canvas" id="nc-tablet" width="200" height="90"></canvas>
         <div class="nugget-body">
@@ -351,7 +357,7 @@ body{padding-top:56px;background:var(--coal)}
         <div class="nugget-body">
           <span class="nugget-name">GEM SLOTS</span>
           <p class="nugget-desc">Spin the ore reels. Lord Oro's Eye = 500x. Bet smart.</p>
-          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
+          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span><span class="ntag ntag-new">REBUILT</span></div>
         </div>
       </a>
 
@@ -372,7 +378,7 @@ body{padding-top:56px;background:var(--coal)}
           <div class="nugget-tags"><span class="ntag ntag-idl">LIFE SIM</span></div>
         </div>
       </a>
-      
+
       <a href="shorts.html" class="nugget">
         <canvas class="nugget-canvas" id="nc-shorts" width="200" height="90"></canvas>
         <div class="nugget-body">
@@ -385,6 +391,18 @@ body{padding-top:56px;background:var(--coal)}
     </div>
 
     <div class="shaft-label" style="margin-top:2.5rem">👁 CLASSIFIED — THE BOARD'S TUNNELS</div>
+    
+    <div style="grid-column: 1 / -1; background: rgba(255,215,0,0.05); border: 1px dashed rgba(255,215,0,0.3); padding: 1.5rem; text-align: center; border-radius: 8px; margin-bottom: 20px;">
+      <h3 style="font-family: var(--font-pixel); font-size: .45rem; color: var(--gold); margin-bottom: 1rem; letter-spacing: .2em;">[ SECURITY CLEARANCE REQUIRED ]</h3>
+      <p style="font-size: .65rem; color: var(--muted); line-height: 1.8; font-family: var(--font-sans); letter-spacing: .05em;">
+        To access Classified Tunnels:<br>
+        1. Ascend to <a href="oracle.html" style="color:var(--gold); text-decoration:underline;">The Oracle's Chamber</a>.<br>
+        2. Search the lore and tarot readings for hidden <strong>Ciphers</strong>.<br>
+        3. Drop the correct ciphers into the <strong>Echoing Well</strong>.<br>
+        <span style="color: var(--gd); font-size: .55rem; display: block; margin-top: .5rem;">The Board is watching. Tread carefully.</span>
+      </p>
+    </div>
+
     <div class="gold-spiral">
       <div class="nugget classified">
         <canvas class="nugget-canvas" id="nc-cipher" width="200" height="90"></canvas>
@@ -401,9 +419,6 @@ body{padding-top:56px;background:var(--coal)}
           <p class="nugget-desc" style="color:rgba(106,58,138,.4)">The Ledger has pages no one was supposed to find.</p>
           <div class="nugget-tags"><span class="ntag ntag-cls">CLASSIFIED</span></div>
         </div>
-      </div>
-      <div style="grid-column:3;display:flex;align-items:center;justify-content:center;padding:1rem">
-        <p style="font-family:var(--font-pixel);font-size:.3rem;color:rgba(139,105,20,.25);text-align:center;line-height:2.2;letter-spacing:.1em">⬡ FIND THE<br>TRIGGER IN<br>THE ORACLE ⬡</p>
       </div>
     </div>
 
@@ -445,7 +460,6 @@ body{padding-top:56px;background:var(--coal)}
         </div>
         <div class="tv-legs"><div class="tv-leg"></div><div class="tv-leg"></div></div>
       </div>
-      <a href="shorts.html" style="display:block;margin-top:12px;font-family:var(--font-pixel);font-size:.32rem;color:var(--gold);text-align:center;text-decoration:none;letter-spacing:.1em;border:1px solid rgba(255,215,0,0.3);padding:8px;transition:all .2s;">▶ ENTER PROJECTION ROOM</a>
     </div>
 
     <div class="tiers-module">
@@ -469,7 +483,7 @@ body{padding-top:56px;background:var(--coal)}
 
     <div class="shop-module">
       <span class="shop-module-label">💎 GEMSHOP</span>
-      <div class="shop-mini-item"><span class="shop-mini-name">📖 SHORT STORY</span><span class="shop-mini-cost">50💎</span><button class="shop-mini-btn" onclick="NMNWallet.get().gold>=50?window.location.href='gemshop.html':nmnToast('NOT ENOUGH GOLD')">BUY</button></div>
+      <div class="shop-mini-item"><span class="shop-mini-name">📖 SHORT STORY</span><span class="shop-mini-cost">50💎</span><button class="shop-mini-btn" onclick="if(typeof NMNWallet!=='undefined'){ NMNWallet.get().gold>=50?window.location.href='gemshop.html':alert('NOT ENOUGH GOLD')}">BUY</button></div>
       <div class="shop-mini-item"><span class="shop-mini-name">📜 LORE FRAGMENT</span><span class="shop-mini-cost">120💎</span><button class="shop-mini-btn" onclick="window.location.href='gemshop.html'">BUY</button></div>
       <div class="shop-mini-item"><span class="shop-mini-name">⭐ STAR MAP</span><span class="shop-mini-cost">500💎</span><button class="shop-mini-btn" onclick="window.location.href='gemshop.html'">BUY</button></div>
       <a href="gemshop.html" style="display:block;margin-top:8px;font-family:var(--font-pixel);font-size:.3rem;color:var(--gd);text-align:center;text-decoration:none;letter-spacing:.1em">ALL ITEMS IN THE GEMSHOP →</a>
@@ -625,17 +639,17 @@ mkPrev('nc-shorts',(c,W,H)=>{c.fillStyle='#070605';c.fillRect(0,0,W,H);const t=T
 
 // ════════════ WALLET SYNC ════════════
 function syncWallet(){
-  if(typeof NMNWallet === 'undefined') return;
-  const w = NMNWallet.get();
-  document.getElementById('gold-disp').textContent = w.gold || 0;
-  document.getElementById('lvl-disp').textContent = w.level || 1;
-  document.getElementById('xp-disp').textContent = w.xp || 0;
-  
-  const gemCount = w.gems || 0;
-  for(let i=0; i<5; i++){
-    const p = document.getElementById('gp'+i);
-    if(p) p.classList.toggle('lit', i < gemCount);
-  }
+  if(typeof NMNWallet === 'undefined') return;
+  const w = NMNWallet.get();
+  document.getElementById('gold-disp').textContent = w.gold || 0;
+  document.getElementById('lvl-disp').textContent = w.level || 1;
+  document.getElementById('xp-disp').textContent = w.xp || 0;
+  
+  const gemCount = w.gems || 0;
+  for(let i=0; i<5; i++){
+    const p = document.getElementById('gp'+i);
+    if(p) p.classList.toggle('lit', i < gemCount);
+  }
 }
 
 // Listen for global wallet updates so we don't need setInterval
