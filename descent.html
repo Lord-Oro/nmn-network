@@ -14,6 +14,7 @@
 </script>
 <link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
 
 <style>
 /* ── CORE NMN VARIABLES & AESTHETIC ── */
@@ -34,6 +35,7 @@ body {
     linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
     linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
   background-size: 32px 32px;
+  padding-bottom: 65px !important;
 }
 
 /* OVERRIDE ALL OLD FONTS */
@@ -129,19 +131,25 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
   justify-content:center!important; gap:1.2rem!important; box-shadow:0 0 20px rgba(255,215,0,.08)!important;
 }
 .dg-stat { font-size: 0.4rem; color: var(--gd); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
-.dg-val { color: var(--gold); font-size: 0.6rem; }
-.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+.dg-val { color: var(--gold); font-size: 0.6rem; font-family: var(--font-serif); }
+.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; pointer-events: auto!important;}
 .dg-link:hover { color: var(--gold); }
 
 /* CUSTOM CURSOR */
 body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
 </style>
+
+<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
+
 </head>
 <body>
 
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
+
 <header>
   <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="games.html" class="back-btn">← Return to Forge</a>
+  <a href="games.html" class="back-btn">← Return to Hall</a>
 </header>
 
 <div class="hud">
@@ -179,9 +187,9 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
   </div>
 </div>
 
-<div class="depth-gauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold</div>
-  <span class="dg-sep">⬡</span>
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
+  <span class="dg-sep" style="color:var(--faint);">⬡</span>
   <a href="lorevault.html" class="dg-link">📜 Vault</a>
   <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
 </div>
@@ -263,7 +271,6 @@ let depth = 0;
 let goldExtracted = 0;
 let baseSpeed = 5;
 let currentSpeed = 5;
-let difficultyMultiplier = 1;
 let gapSize = 200; // How wide the opening is
 
 let gameRunning = false;
@@ -295,8 +302,8 @@ function spawnWall() {
   // Center of the gap wanders left or right
   let gapCenter = W/2 + (Math.random() - 0.5) * (W - gapSize - 40);
   
-  // Decrease gap size as depth increases
-  let currentGap = Math.max(80, gapSize - (depth * 0.1));
+  // Decrease gap size as depth increases, but cap it so it remains fair
+  let currentGap = Math.max(90, gapSize - (depth * 0.08));
   
   let leftWidth = gapCenter - currentGap/2;
   let rightX = gapCenter + currentGap/2;
@@ -304,14 +311,24 @@ function spawnWall() {
 
   const yPos = H + 50;
 
-  walls.push({ x: 0, y: yPos, w: leftWidth, h: 30 });
-  walls.push({ x: rightX, y: yPos, w: rightWidth, h: 30 });
+  walls.push({ x: 0, y: yPos, w: leftWidth, h: 30, isCenter: false });
+  walls.push({ x: rightX, y: yPos, w: rightWidth, h: 30, isCenter: false });
+
+  // ── NEW: SPAWN CENTER OBSTACLE ──
+  // Only spawn if the gap is wide enough to allow passing on the sides
+  if (currentGap > 130 && Math.random() < 0.35) {
+      let obsWidth = 30 + Math.random() * 30; // 30 to 60px wide
+      let obsX = gapCenter - obsWidth/2;
+      walls.push({ x: obsX, y: yPos, w: obsWidth, h: 30, isCenter: true });
+  }
 
   // Spawn Gold occasionally in the gap
-  if (Math.random() < 0.3) {
+  if (Math.random() < 0.4) {
+    // If a center obstacle exists, bias gold to one of the sides to reward dodging
+    let goldX = gapCenter + (Math.random() - 0.5) * currentGap * 0.7;
     golds.push({
-      x: gapCenter + (Math.random() - 0.5) * currentGap * 0.5,
-      y: yPos,
+      x: goldX,
+      y: yPos - 20, // slightly above the wall
       w: 14, h: 14
     });
   }
@@ -332,8 +349,8 @@ function startGame() {
   
   // Initial walls
   for(let i=0; i<5; i++) {
-    walls.push({ x: 0, y: H/2 + i*200, w: W*0.2, h: 30 });
-    walls.push({ x: W*0.8, y: H/2 + i*200, w: W*0.2, h: 30 });
+    walls.push({ x: 0, y: H/2 + i*200, w: W*0.2, h: 30, isCenter: false });
+    walls.push({ x: W*0.8, y: H/2 + i*200, w: W*0.2, h: 30, isCenter: false });
   }
 
   gameRunning = true;
@@ -450,7 +467,7 @@ function draw() {
     ctx.beginPath(); ctx.moveTo(i * (W/10), lineY); ctx.lineTo(i * (W/10), lineY + 50); ctx.stroke();
   }
 
-  // Draw Walls (Obsidian)
+  // Draw Walls & Obstacles (Obsidian)
   ctx.fillStyle = '#111';
   ctx.strokeStyle = '#332233';
   ctx.lineWidth = 2;
@@ -458,12 +475,15 @@ function draw() {
     ctx.fillRect(w.x, w.y, w.w, w.h);
     ctx.strokeRect(w.x, w.y, w.w, w.h);
     
-    // Jagged edge effect
+    // Jagged edge effect depending on wall type
     ctx.fillStyle = '#221122';
     if (w.x === 0) { // Left wall
       ctx.fillRect(w.w - 5, w.y, 5, w.h);
-    } else { // Right wall
+    } else if (w.x + w.w >= W - 1) { // Right wall
       ctx.fillRect(w.x, w.y, 5, w.h);
+    } else { // Center Obstacle (both edges jagged)
+      ctx.fillRect(w.x, w.y, 5, w.h);
+      ctx.fillRect(w.x + w.w - 5, w.y, 5, w.h);
     }
     ctx.fillStyle = '#111';
   });
@@ -535,12 +555,13 @@ function updateHUD() {
 function endGame() {
   gameRunning = false;
   
-  // Save Gold
-  try {
-    let currentGold = parseInt(localStorage.getItem('nmn_total_gold') || '0');
-    localStorage.setItem('nmn_total_gold', currentGold + goldExtracted);
-    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold');
-  } catch(e) {}
+  // Save Gold to V2 Wallet securely
+  if (typeof NMNWallet !== 'undefined') {
+      NMNWallet.addGold(goldExtracted);
+      // Give some XP based on depth survived
+      NMNWallet.addXP(Math.floor(depth / 10));
+      syncGauge();
+  }
 
   setTimeout(() => {
     document.getElementById('final-depth').textContent = Math.floor(depth) + 'm';
@@ -550,15 +571,23 @@ function endGame() {
   }, 500);
 }
 
+function syncGauge() {
+    try {
+        if(typeof NMNWallet !== 'undefined') {
+            document.getElementById('dgGold').textContent = NMNWallet.get().gold;
+        }
+    } catch(e) {}
+}
+
 // Initial draw
 ctx.fillStyle = '#050306'; ctx.fillRect(0,0,cv.width,cv.height);
-
+syncGauge();
 </script>
 
 <script>
-try {
-    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold') || '0';
-} catch(e) {}
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
+}
 </script>
 
 <div style="text-align:center;padding:1rem;font-family:'Press Start 2P',monospace;font-size:.3rem;color:#4a3c28; margin-top: auto;">
