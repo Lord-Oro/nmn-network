@@ -14,6 +14,7 @@
 </script>
 <link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
 
 <style>
 /* ── CORE NMN VARIABLES & AESTHETIC ── */
@@ -34,6 +35,7 @@ body {
     linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
     linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
   background-size: 32px 32px;
+  padding-bottom: 65px !important;
 }
 
 /* OVERRIDE ALL OLD FONTS */
@@ -149,9 +151,31 @@ canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
 .btn-group { display: flex; gap: 1rem; }
 .btn-outline { background: transparent; border: 2px solid var(--gold); color: var(--gold); padding: 0.8rem 1.5rem; font-size: 0.5rem; cursor: pointer; text-decoration: none; }
 .btn-outline:hover { background: rgba(255,215,0,0.1); }
+
+/* FLOATING GAUGE */
+.depth-gauge {
+  position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:92%!important; height:42px!important; background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important; border-radius:22px!important; padding:0 18px!important;
+  z-index:9999!important; backdrop-filter:blur(4px)!important; display:flex!important; align-items:center!important;
+  justify-content:center!important; gap:1.2rem!important; box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat { font-size: 0.4rem; color: var(--gd); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
+.dg-val { color: var(--gold); font-size: 0.6rem; font-family: var(--font-serif); }
+.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; pointer-events: auto!important;}
+.dg-link:hover { color: var(--gold); }
+
+/* CUSTOM CURSOR */
+body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
 </style>
+
+<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
+
 </head>
 <body>
+
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
 
 <header>
   <a href="index.html" class="logo">NMN — Lord Oro</a>
@@ -241,6 +265,66 @@ canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
   </div>
 </div>
 
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
+  <span class="dg-sep" style="color:var(--faint);">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
+</div>
+
+<script>
+window.NMN_CONTEXT = "mine";
+const NMN_Audio = {
+  ctx: null, running: false, masterGain: null, windSrc: null,
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  },
+  playWind() {
+    const bufferSize = 2 * this.ctx.sampleRate;
+    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+    this.windSrc = this.ctx.createBufferSource();
+    this.windSrc.buffer = noiseBuffer;
+    this.windSrc.loop = true;
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 300; // Deep wind
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.015, this.ctx.currentTime);
+    this.windSrc.connect(filter);
+    filter.connect(g);
+    g.connect(this.masterGain);
+    this.windSrc.start();
+  },
+  startAll() {
+    if (this.running) return;
+    this.init(); this.running = true; this.playWind();
+  }
+};
+document.addEventListener('click', () => { if (!NMN_Audio.running) NMN_Audio.startAll(); }, { once: true });
+
+const SFX = {
+  play(freq, type, dur, vol = 0.1) {
+    if (!NMN_Audio.ctx) return;
+    const osc = NMN_Audio.ctx.createOscillator(); const gain = NMN_Audio.ctx.createGain();
+    osc.type = type; osc.frequency.setValueAtTime(freq, NMN_Audio.ctx.currentTime);
+    gain.gain.setValueAtTime(0, NMN_Audio.ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(vol, NMN_Audio.ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, NMN_Audio.ctx.currentTime + dur);
+    osc.connect(gain); gain.connect(NMN_Audio.masterGain);
+    osc.start(); osc.stop(NMN_Audio.ctx.currentTime + dur);
+  },
+  shoot() { this.play(200, 'square', 0.2, 0.05); },
+  hit() { this.play(80, 'sawtooth', 0.5, 0.4); setTimeout(()=>this.play(60, 'square', 0.8, 0.3), 100); },
+  wallHit() { this.play(120, 'triangle', 0.3, 0.2); }
+};
+</script>
+
 <script>
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
@@ -261,7 +345,6 @@ const AMMOS = [
   { name: 'Dynamite', icon: '💣', color: '#ffaa00', damage: 45, r: 10, count: 2, explode: true }
 ];
 
-// MATCHUPS (Simple Rock Paper Scissors)
 const MATCHUPS = {
   'Metal': { strong: ['Shadow'], weak: ['Flame'] },
   'Crystal': { strong: ['Void'], weak: ['Metal'] },
@@ -276,6 +359,9 @@ let wind = { x: 0, str: 'CALM' }, turn = 'player', round = 1;
 let selectedMine = -1, selectedAmmo = 0, ammoStock = [];
 let mouseX = 0, mouseY = 0;
 let screenShake = 0;
+
+// ── NEW: CENTER WALL ──
+let centerWall = { x: 0, y: 0, w: 40, h: 0 };
 
 function resize() {
   W = canvas.width = window.innerWidth;
@@ -315,10 +401,21 @@ function startBattle() {
   p2 = { x: Math.max(W*0.85 - 60, W - 200), y: H - 80, w: 60, h: 60, hp: 100, maxHp: 100, mine: aiMine, burn: 0 };
 
   projectiles = []; particles = []; floatTexts = [];
-  randomizeWind(); turn = 'player'; round = 1; gameRunning = true; screenShake = 0;
+  randomizeWind(); 
+  generateWall();
+  
+  turn = 'player'; round = 1; gameRunning = true; screenShake = 0;
 
   updateHUD(); updateAmmoBar();
   requestAnimationFrame(loop);
+}
+
+function generateWall() {
+  // Spawns a procedural wall in the middle to block direct shots
+  centerWall.w = 30 + Math.random() * 30;
+  centerWall.x = (W / 2) - (centerWall.w / 2);
+  centerWall.h = (H * 0.3) + Math.random() * (H * 0.4); // 30% to 70% of screen height
+  centerWall.y = H - centerWall.h;
 }
 
 function randomizeWind() {
@@ -358,33 +455,49 @@ canvas.addEventListener('click', () => {
     vy: Math.sin(angle) * dist,
     ammo, shooter: p1, target: p2
   });
+  
+  SFX.shoot();
 
   if (ammoStock[selectedAmmo].remaining !== Infinity) ammoStock[selectedAmmo].remaining--;
   updateAmmoBar();
   document.getElementById('turnIndicator').style.display = 'none'; // Hide until next turn
+  turn = 'flight'; // State change to wait for impact
 });
 
 // ENEMY AI
 function aiShoot() {
+  if(!gameRunning || p2.hp <= 0) return;
   const ammo = { ...AMMOS[Math.floor(Math.random() * 2)] }; // AI uses basic/fire
   const startX = p2.x + p2.w/2;
   const startY = p2.y;
   const targetX = p1.x + p1.w/2;
   
-  // Physics calculation to hit player (with intentional error)
+  // Advanced Physics calculation to hit player over the wall
   const dist = targetX - startX;
-  const error = (Math.random() - 0.5) * 100; // AI miss factor
-  const neededVx = (dist + error) / 60; // Assume 60 frames hangtime
-  const neededVy = -15; // Fixed arc height
+  const error = (Math.random() - 0.5) * 80; // AI miss factor
+  
+  // AI calculates height needed to clear the center wall
+  const wallClearanceHeight = startY - centerWall.y + 20;
+  // Calculate required VY to reach that height (v^2 = 2*g*h)
+  const neededVy = -Math.sqrt(2 * 0.3 * Math.max(wallClearanceHeight, 100)); 
+  
+  // Time in air: t = -2 * vy / g
+  const timeInAir = (-2 * neededVy) / 0.3;
+  
+  // Calculate required VX to travel distance in that time
+  const neededVx = (dist + error) / timeInAir;
   
   // Adjust for wind
-  const adjustedVx = neededVx - (wind.x * 30); 
+  const adjustedVx = neededVx - (wind.x * (timeInAir * 0.5)); 
 
   projectiles.push({
     x: startX, y: startY,
     vx: adjustedVx, vy: neededVy,
     ammo, shooter: p2, target: p1
   });
+  
+  SFX.shoot();
+  turn = 'flight';
 }
 
 function spawnExplosion(x, y, color, heavy) {
@@ -415,6 +528,7 @@ function applyDamage(target, ammo, shooter) {
   target.hp = Math.max(0, target.hp - dmg);
   if (ammo.burn) target.burn += ammo.burn;
 
+  SFX.hit();
   spawnExplosion(target.x + target.w/2, target.y + target.h/2, MINES[shooter.mine].color, ammo.explode);
   
   let msg = `-${dmg}`;
@@ -431,9 +545,21 @@ function checkGameOver() {
   if (p1.hp <= 0 || p2.hp <= 0) {
     gameRunning = false;
     const won = p2.hp <= 0;
+    
+    // Deposit Gold if Won
+    if (won && typeof NMNWallet !== 'undefined') {
+        const goldEarned = 150 + (round * 10);
+        NMNWallet.addGold(goldEarned);
+        NMNWallet.addXP(250);
+        document.getElementById('goSub').innerHTML = `Enemy mine destroyed.<br><br><span style="color:var(--gold)">+${goldEarned} GOLD EARNED</span>`;
+        syncGauge();
+    } else {
+        document.getElementById('goSub').textContent = 'Your structure collapsed.';
+    }
+
     document.getElementById('goTitle').textContent = won ? 'EXTRACTION COMPLETE' : 'SYSTEM FAILURE';
-    document.getElementById('goSub').textContent = won ? 'Enemy mine destroyed. Gold secured.' : 'Your structure collapsed.';
-    document.getElementById('gameOverOv').style.display = 'flex';
+    document.getElementById('goTitle').style.color = won ? 'var(--gold)' : '#ff4444';
+    setTimeout(() => document.getElementById('gameOverOv').style.display = 'flex', 1500);
   }
 }
 
@@ -450,9 +576,16 @@ function endTurn() {
     }
   });
 
-  if (round % 2 === 0) randomizeWind();
+  if (round % 2 === 0) { randomizeWind(); generateWall(); }
   
-  turn = turn === 'player' ? 'enemy' : 'player';
+  turn = turn === 'flight' && p1.hp > 0 && p2.hp > 0 ? (projectiles[0]?.shooter === p1 ? 'enemy' : 'player') : 'player'; // Safety fallback
+  
+  // State machine handling
+  if(projectiles.length === 0) {
+      if(round % 2 !== 0) turn = 'enemy';
+      else turn = 'player';
+  }
+
   round++;
   document.getElementById('roundVal').textContent = Math.ceil(round / 2);
   
@@ -460,7 +593,6 @@ function endTurn() {
     document.getElementById('turnIndicator').style.display = 'block';
     document.getElementById('turnIndicator').textContent = 'ENEMY TARGETING...';
     setTimeout(aiShoot, 1500);
-    setTimeout(endTurn, 4000);
   } else {
     document.getElementById('turnIndicator').style.display = 'block';
     document.getElementById('turnIndicator').textContent = 'YOUR TURN';
@@ -517,6 +649,12 @@ function draw() {
 
   if (!p1 || !p2) { ctx.restore(); return; }
 
+  // ── DRAW CENTER WALL (THE SPIRE) ──
+  ctx.fillStyle = '#110a11';
+  ctx.fillRect(centerWall.x, centerWall.y, centerWall.w, centerWall.h);
+  ctx.strokeStyle = 'rgba(255,215,0,0.2)';
+  ctx.strokeRect(centerWall.x, centerWall.y, centerWall.w, centerWall.h);
+
   // Draw Mines
   drawMine(p1, p1.x, p1.y, false);
   drawMine(p2, p2.x, p2.y, true);
@@ -534,35 +672,55 @@ function draw() {
     
     ctx.strokeStyle = 'rgba(255,215,0,0.4)'; ctx.setLineDash([5, 5]);
     ctx.beginPath(); ctx.moveTo(simX, simY);
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 30; i++) {
       simVx += wind.x; simVy += 0.3; // gravity
       simX += simVx; simY += simVy;
       if (simY > H) break;
+      // Stop line if it hits the center wall
+      if (simX > centerWall.x && simX < centerWall.x + centerWall.w && simY > centerWall.y) break;
       ctx.lineTo(simX, simY);
     }
     ctx.stroke(); ctx.setLineDash([]);
   }
 
   // Update & Draw Projectiles
+  let projectileDied = false;
   projectiles.forEach(p => {
     p.vx += wind.x; p.vy += 0.3; // Gravity
     p.x += p.vx; p.y += p.vy;
 
-    // Collisions
+    // Collisions with Mines
     const t = p.shooter === p1 ? p2 : p1;
     if (p.x > t.x && p.x < t.x + t.w && p.y > t.y && p.y < t.y + t.h) {
-      applyDamage(t, p.ammo, p.shooter); p.dead = true;
+      applyDamage(t, p.ammo, p.shooter); p.dead = true; projectileDied = true;
     }
+    
+    // Collisions with Center Wall
+    if (p.x > centerWall.x && p.x < centerWall.x + centerWall.w && p.y > centerWall.y) {
+      spawnExplosion(p.x, p.y, p.ammo.color, false); 
+      SFX.wallHit();
+      p.dead = true; projectileDied = true;
+    }
+
+    // Floor Collision
     if (p.y > H - 20) {
-      spawnExplosion(p.x, H - 20, p.ammo.color, p.ammo.explode); p.dead = true;
+      spawnExplosion(p.x, H - 20, p.ammo.color, p.ammo.explode); 
+      SFX.wallHit();
+      p.dead = true; projectileDied = true;
     }
 
     // Render projectile
-    ctx.fillStyle = p.ammo.color;
-    ctx.beginPath(); ctx.arc(p.x, p.y, p.ammo.r, 0, Math.PI*2); ctx.fill();
-    ctx.shadowBlur = 10; ctx.shadowColor = p.ammo.color; ctx.fill(); ctx.shadowBlur = 0;
+    if(!p.dead) {
+        ctx.fillStyle = p.ammo.color;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.ammo.r, 0, Math.PI*2); ctx.fill();
+        ctx.shadowBlur = 10; ctx.shadowColor = p.ammo.color; ctx.fill(); ctx.shadowBlur = 0;
+    }
   });
+  
   projectiles = projectiles.filter(p => !p.dead);
+  if (projectileDied && projectiles.length === 0) {
+      setTimeout(endTurn, 800); // Wait a second after explosion before swapping turns
+  }
 
   // Particles & Text
   particles.forEach(p => {
@@ -595,6 +753,21 @@ function resetGame() {
   document.getElementById('turnIndicator').style.display = 'none';
   document.getElementById('ammoBar').style.display = 'none';
   gameRunning = false;
+}
+
+function syncGauge() {
+    try {
+        if(typeof NMNWallet !== 'undefined') {
+            document.getElementById('dgGold').textContent = NMNWallet.get().gold;
+        }
+    } catch(e) {}
+}
+syncGauge();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
 }
 </script>
 
