@@ -14,6 +14,7 @@
 </script>
 <link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
 
 <style>
 /* ── CORE NMN VARIABLES & AESTHETIC ── */
@@ -34,6 +35,7 @@ body {
     linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
     linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
   background-size: 32px 32px;
+  padding-bottom: 65px !important;
 }
 
 /* OVERRIDE ALL OLD FONTS */
@@ -69,7 +71,7 @@ header {
   border-bottom: 1px solid rgba(255,215,0,0.15); flex-shrink: 0; z-index: 50; gap: 10px;
 }
 .hud-title { font-size: 1.2rem; color: var(--gold); text-shadow: 0 0 20px rgba(255,215,0,0.4); }
-.hud-val { color: var(--neon-green); font-size: 1.8rem; text-shadow: 0 0 15px rgba(0,255,136,0.3); margin: 10px 0; }
+.hud-val { color: var(--neon-green); font-size: 1.8rem; text-shadow: 0 0 15px rgba(0,255,136,0.3); margin: 10px 0; transition: color 0.1s; }
 .hud-gps { font-size: 0.5rem; color: var(--gd); letter-spacing: 0.1em; }
 
 /* MAIN LAYOUT */
@@ -119,19 +121,25 @@ canvas { display: block; width: 100%; height: 100%; cursor: crosshair; touch-act
   justify-content:center!important; gap:1.2rem!important; box-shadow:0 0 20px rgba(255,215,0,.08)!important;
 }
 .dg-stat { font-size: 0.4rem; color: var(--gd); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
-.dg-val { color: var(--gold); font-size: 0.6rem; }
-.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+.dg-val { color: var(--gold); font-size: 0.6rem; font-family: var(--font-serif);}
+.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; pointer-events: auto!important;}
 .dg-link:hover { color: var(--gold); }
 
 /* CUSTOM CURSOR */
 body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
 </style>
+
+<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
+
 </head>
 <body>
 
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
+
 <header>
   <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="games.html" class="back-btn">← Return to Forge</a>
+  <a href="games.html" class="back-btn">← Return to Hall</a>
 </header>
 
 <div class="hud">
@@ -149,9 +157,9 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     </div>
 </div>
 
-<div class="depth-gauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold</div>
-  <span class="dg-sep">⬡</span>
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
+  <span class="dg-sep" style="color:var(--faint);">⬡</span>
   <a href="lorevault.html" class="dg-link">📜 Vault</a>
   <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
 </div>
@@ -216,38 +224,60 @@ const SFX = {
 </script>
 
 <script>
-// ── DATA & STATE ──
+// ── DATA & HARD SCALING STATE ──
 let gold = 0;
 let clickPower = 1;
 let gps = 0; // Gold Per Second
-let lastSave = Date.now();
 
-// Load from Global Economy
-try {
-  let savedGold = localStorage.getItem('nmn_total_gold');
-  if (savedGold) gold = parseFloat(savedGold);
-} catch(e) {}
+// Load from Global V2 Economy
+if (typeof NMNWallet !== 'undefined') {
+    gold = NMNWallet.get().gold;
+}
 
+// THE GRIND: Exponential costs + Diminishing returns
 const UPGRADES = [
-  { id: 'pickaxe', name: 'Forged Pickaxe', desc: '+1 Gold per Click', cost: 15, costMult: 1.5, cps: 0, cpc: 1, count: 0 },
-  { id: 'miner', name: 'Hired Miner', desc: '+1 Gold per Second', cost: 50, costMult: 1.15, cps: 1, cpc: 0, count: 0 },
-  { id: 'drill', name: 'Steam Drill', desc: '+5 Gold per Second', cost: 250, costMult: 1.15, cps: 5, cpc: 0, count: 0 },
-  { id: 'explosives', name: 'Obsidian Charges', desc: '+20 Gold per Second', cost: 1200, costMult: 1.15, cps: 20, cpc: 0, count: 0 },
-  { id: 'laser', name: 'Sector 4 Laser', desc: '+100 Gold per Second', cost: 7500, costMult: 1.15, cps: 100, cpc: 0, count: 0 }
+  { id: 'pickaxe', name: 'Forged Pickaxe', desc: '+1 Gold per Click', baseCost: 50, costMult: 1.4, cps: 0, cpc: 1, count: 0 },
+  { id: 'miner', name: 'Hired Miner', desc: '+1 Gold per Second', baseCost: 150, costMult: 1.5, cps: 1, cpc: 0, count: 0 },
+  { id: 'drill', name: 'Steam Drill', desc: '+5 Gold per Second', baseCost: 800, costMult: 1.55, cps: 5, cpc: 0, count: 0 },
+  { id: 'explosives', name: 'Obsidian Charges', desc: '+25 Gold per Second', baseCost: 4500, costMult: 1.6, cps: 25, cpc: 0, count: 0 },
+  { id: 'laser', name: 'Sector 4 Laser', desc: '+100 Gold per Second', baseCost: 25000, costMult: 1.65, cps: 100, cpc: 0, count: 0 }
 ];
+
+// Init Costs
+UPGRADES.forEach(u => u.currentCost = u.baseCost);
 
 // Load Upgrades
 try {
-  let savedUpg = localStorage.getItem('nmn_motherlode_upgrades');
+  let savedUpg = localStorage.getItem('nmn_motherlode_v2_upgrades');
   if (savedUpg) {
     let parsed = JSON.parse(savedUpg);
     UPGRADES.forEach(u => {
       if (parsed[u.id]) {
         u.count = parsed[u.id];
-        u.cost = Math.floor(u.cost * Math.pow(u.costMult, u.count));
+        u.currentCost = Math.floor(u.baseCost * Math.pow(u.costMult, u.count));
       }
     });
   }
+} catch(e) {}
+
+// Calculate Offline Yield
+try {
+    let lastTimeSaved = localStorage.getItem('nmn_motherlode_last_time');
+    if(lastTimeSaved) {
+        let timeDiffSecs = (Date.now() - parseInt(lastTimeSaved)) / 1000;
+        // Cap offline progression at 4 hours (14400 seconds) to prevent economy breaking
+        if(timeDiffSecs > 14400) timeDiffSecs = 14400; 
+        
+        let offlineYield = 0;
+        UPGRADES.forEach(u => { offlineYield += u.cps * u.count; });
+        offlineYield = Math.floor(offlineYield * timeDiffSecs);
+        
+        if(offlineYield > 0 && typeof NMNWallet !== 'undefined') {
+            NMNWallet.addGold(offlineYield);
+            gold = NMNWallet.get().gold;
+            setTimeout(() => { alert(`The miners kept working. You earned ${offlineYield}G while you were away.`); }, 1000);
+        }
+    }
 } catch(e) {}
 
 function calculateStats() {
@@ -268,13 +298,13 @@ function renderUpgrades() {
   upgContainer.innerHTML = '';
   UPGRADES.forEach((u, i) => {
     const btn = document.createElement('div');
-    btn.className = `upgrade-card ${gold < u.cost ? 'disabled' : ''}`;
+    btn.className = `upgrade-card ${gold < u.currentCost ? 'disabled' : ''}`;
     btn.onclick = () => buyUpgrade(i);
     btn.innerHTML = `
       <div class="upg-info">
         <div class="upg-name">${u.name}</div>
         <div class="upg-desc">${u.desc}</div>
-        <div class="upg-cost">COST: ${Math.floor(u.cost)}G</div>
+        <div class="upg-cost">COST: ${Math.floor(u.currentCost).toLocaleString()}G</div>
       </div>
       <div class="upg-count">${u.count}</div>
     `;
@@ -283,15 +313,24 @@ function renderUpgrades() {
 }
 
 function updateHUD() {
-  document.getElementById('display-gold').textContent = Math.floor(gold).toLocaleString();
-  document.getElementById('dgGold').textContent = Math.floor(gold).toLocaleString();
+  const displayGold = document.getElementById('display-gold');
+  displayGold.textContent = Math.floor(gold).toLocaleString();
+  
+  if (typeof NMNWallet !== 'undefined') {
+      document.getElementById('dgGold').textContent = NMNWallet.get().gold.toLocaleString();
+  }
+  
   document.getElementById('display-gps').textContent = `${gps.toFixed(1)} GOLD PER SECOND`;
+  
+  // Flash effect on hit
+  displayGold.style.color = '#fff';
+  setTimeout(() => displayGold.style.color = 'var(--neon-green)', 100);
   
   // Update button states efficiently
   const cards = document.querySelectorAll('.upgrade-card');
   UPGRADES.forEach((u, i) => {
     if (cards[i]) {
-      if (gold >= u.cost) cards[i].classList.remove('disabled');
+      if (gold >= u.currentCost) cards[i].classList.remove('disabled');
       else cards[i].classList.add('disabled');
     }
   });
@@ -299,11 +338,18 @@ function updateHUD() {
 
 function buyUpgrade(idx) {
   const u = UPGRADES[idx];
-  if (gold >= u.cost) {
+  if (gold >= u.currentCost) {
     SFX.buy();
-    gold -= u.cost;
+    
+    if(typeof NMNWallet !== 'undefined') {
+        NMNWallet.spendGold(Math.floor(u.currentCost));
+        gold = NMNWallet.get().gold;
+    } else {
+        gold -= u.currentCost;
+    }
+    
     u.count++;
-    u.cost = Math.floor(u.cost * u.costMult);
+    u.currentCost = Math.floor(u.baseCost * Math.pow(u.costMult, u.count)); // Exponential growth
     calculateStats();
     renderUpgrades();
     updateHUD();
@@ -344,8 +390,14 @@ function spawnFloatText(x, y, text) {
 }
 
 function handleHit(e) {
-  // Add Gold
-  gold += clickPower;
+  // Add Gold using V2 Wallet
+  if (typeof NMNWallet !== 'undefined') {
+      NMNWallet.addGold(clickPower);
+      gold = NMNWallet.get().gold;
+  } else {
+      gold += clickPower;
+  }
+  
   SFX.hit();
   rockScale = 0.9; // Squish effect
   
@@ -423,43 +475,61 @@ function draw() {
 
 // ── GAME LOOP & SAVING ──
 let lastTime = performance.now();
+let passiveGoldAccumulator = 0; // Stores fractions of gold per frame
+
 function gameLoop(time) {
   const dt = (time - lastTime) / 1000;
   lastTime = time;
   
   if (gps > 0) {
-    gold += gps * dt;
+    passiveGoldAccumulator += gps * dt;
+    
+    // Add gold when an integer is reached to save on heavy wallet API calls
+    if (passiveGoldAccumulator >= 1) {
+        const goldToAdd = Math.floor(passiveGoldAccumulator);
+        if (typeof NMNWallet !== 'undefined') {
+            NMNWallet.addGold(goldToAdd);
+            gold = NMNWallet.get().gold;
+        } else {
+            gold += goldToAdd;
+        }
+        passiveGoldAccumulator -= goldToAdd;
+        updateHUD();
+    }
+
     // Auto-mining visuals
-    if (Math.random() < gps * 0.005) {
-      createBurst(W/2 + (Math.random()-0.5)*100, H/2 + (Math.random()-0.5)*100, '#8B6914', 3);
+    if (Math.random() < Math.min(gps * 0.05, 0.3)) {
+      createBurst(W/2 + (Math.random()-0.5)*100, H/2 + (Math.random()-0.5)*100, '#8B6914', 2);
     }
   }
 
   draw();
-  
-  // Fast HUD update
-  document.getElementById('display-gold').textContent = Math.floor(gold).toLocaleString();
-  
   requestAnimationFrame(gameLoop);
 }
 
 function saveGame() {
   try {
-    localStorage.setItem('nmn_total_gold', Math.floor(gold));
     const upgSave = {};
     UPGRADES.forEach(u => { upgSave[u.id] = u.count; });
-    localStorage.setItem('nmn_motherlode_upgrades', JSON.stringify(upgSave));
+    localStorage.setItem('nmn_motherlode_v2_upgrades', JSON.stringify(upgSave));
+    localStorage.setItem('nmn_motherlode_last_time', Date.now());
   } catch(e) {}
 }
 
 // Auto-save every 5 seconds
-setInterval(() => { saveGame(); updateHUD(); }, 5000);
+setInterval(() => { saveGame(); }, 5000);
 
 // Init
 renderUpgrades();
 updateHUD();
 requestAnimationFrame(gameLoop);
 
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
+}
 </script>
 
 <div style="text-align:center;padding:1rem;font-family:'Press Start 2P',monospace;font-size:.3rem;color:#4a3c28; margin-top: auto;">
