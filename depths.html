@@ -14,6 +14,7 @@
 </script>
 <link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
 
 <style>
 /* ── CORE NMN VARIABLES & AESTHETIC ── */
@@ -34,6 +35,7 @@ body {
     linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
     linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
   background-size: 32px 32px;
+  padding-bottom: 65px !important;
 }
 
 /* OVERRIDE ALL OLD FONTS */
@@ -118,13 +120,26 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 /* OVERLAYS */
 .overlay {
   position: absolute; inset: 0; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; background: rgba(5,3,8,0.95); z-index: 100;
+  align-items: center; justify-content: center; background: rgba(5,3,8,0.95); z-index: 100; padding: 2rem;
 }
 .overlay.hidden { display: none !important; }
 .ov-title { font-size: 1.5rem; color: var(--gold); text-shadow: 0 0 20px rgba(255,215,0,.5); text-align: center; line-height: 1.5; margin-bottom: 1rem; }
 .ov-sub { font-size: .45rem; color: var(--cream); text-align: center; line-height: 2; max-width: 400px; margin-bottom: 2rem; }
-.btn-gold { padding: 0.8rem 1.5rem; font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; background: var(--gold); color: var(--coal); border: none; cursor: pointer; transition: 0.3s; }
+.btn-gold { padding: 0.8rem 1.5rem; font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; background: var(--gold); color: var(--coal); border: none; cursor: pointer; transition: 0.3s; margin: 0.5rem;}
 .btn-gold:hover { background: #fff; box-shadow: 0 0 20px rgba(255,215,0,.6); transform: scale(1.05); }
+
+/* CLASS SELECT GRID */
+.class-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; max-width: 900px; margin-bottom: 2rem;}
+.class-card {
+  padding: 1rem; text-align: center; border: 2px solid var(--gd);
+  background: #000; cursor: pointer; transition: all 0.2s;
+  width: 140px; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+}
+.class-card:hover { border-color: var(--gold); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.8), inset 0 0 15px rgba(255,215,0,0.2); }
+.class-card.selected { border-color: var(--neon-green); background: rgba(0,255,136,0.05); box-shadow: 0 0 20px rgba(0,255,136,0.3); }
+.class-icon { font-size: 2rem; }
+.class-name { font-size: 0.45rem; color: var(--cream); }
+.class-stats { font-size: 0.35rem; color: var(--muted); line-height: 1.5; }
 
 /* FLOATING GAUGE */
 .depth-gauge {
@@ -135,9 +150,12 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
   justify-content:center!important; gap:1.2rem!important; box-shadow:0 0 20px rgba(255,215,0,.08)!important;
 }
 .dg-stat { font-size: 0.4rem; color: var(--gd); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
-.dg-val { color: var(--gold); font-size: 0.6rem; }
-.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+.dg-val { color: var(--gold); font-size: 0.6rem; font-family: var(--font-serif); }
+.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; pointer-events: auto!important;}
 .dg-link:hover { color: var(--gold); }
+
+/* CUSTOM CURSOR */
+body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
 
 @media (max-width: 768px) {
   .card { width: 85px; height: 130px; padding: 4px; }
@@ -146,10 +164,17 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
   .card-desc { font-size: 0.3rem; }
   .card-cost { width: 20px; height: 20px; font-size: 0.4rem; }
   .hud-side { width: 45%; }
+  .class-card { width: 120px; }
 }
 </style>
+
+<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
+
 </head>
 <body>
+
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
 
 <header>
   <a href="index.html" class="logo">NMN — Lord Oro</a>
@@ -158,7 +183,7 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 
 <div class="hud">
   <div class="hud-side">
-    <div class="player-name">MINER</div>
+    <div class="player-name" id="player-class-name">MINER</div>
     <div class="hp-bar-bg"><div class="hp-bar-fill player-hp-fill" id="p1hp-fill"></div></div>
     <div class="stat-row">
       <span>HP: <span id="p1hp-text">50/50</span></span>
@@ -183,17 +208,49 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
     
     <div class="overlay" id="ov-start">
       <h1 class="ov-title">DEPTHS OF THE MINE</h1>
-      <p class="ov-sub">Draw your cards. Manage your energy. Face what lives below. Survive to extract the gold.</p>
-      <button class="btn-gold" onclick="startGame()">ENTER THE DEPTHS</button>
+      <p class="ov-sub">Choose your path before descending into the dark.</p>
+      
+      <div class="class-grid" id="classGrid">
+        <div class="class-card" onclick="selectClass(0)">
+          <span class="class-icon">⚔️</span>
+          <div class="class-name">WARRIOR</div>
+          <div class="class-stats">60 HP | 3 EN<br>+ Extra Strikes</div>
+        </div>
+        <div class="class-card" onclick="selectClass(1)">
+          <span class="class-icon">🔮</span>
+          <div class="class-name">MAGE</div>
+          <div class="class-stats">40 HP | 4 EN<br>+ High Energy</div>
+        </div>
+        <div class="class-card" onclick="selectClass(2)">
+          <span class="class-icon">🏹</span>
+          <div class="class-name">RANGER</div>
+          <div class="class-stats">45 HP | 3 EN<br>+ Quick Shots</div>
+        </div>
+        <div class="class-card" onclick="selectClass(3)">
+          <span class="class-icon">✨</span>
+          <div class="class-name">SAINT</div>
+          <div class="class-stats">55 HP | 3 EN<br>+ Extra Heals</div>
+        </div>
+        <div class="class-card" onclick="selectClass(4)">
+          <span class="class-icon">🪓</span>
+          <div class="class-name">VIKING</div>
+          <div class="class-stats">50 HP | 3 EN<br>+ Heavy Attacks</div>
+        </div>
+      </div>
+      
+      <button class="btn-gold" id="startBtn" onclick="startGame()" disabled>AWAITING SELECTION</button>
     </div>
     
     <div class="overlay hidden" id="ov-over">
       <h1 class="ov-title" style="color:#ff4444; text-shadow:0 0 20px rgba(255,68,68,0.5);">YOU DIED IN THE DARK</h1>
-      <div class="ov-stats">
-        <div class="ov-stat-box"><span>DEPTH REACHED</span><strong id="final-depth">1</strong></div>
-        <div class="ov-stat-box"><span>GOLD SECURED</span><strong id="final-gold">0</strong></div>
+      <div class="ov-stats" style="margin-bottom: 0;">
+        <div class="ov-stat-box" style="margin: 0 10px;"><span>DEPTH REACHED</span><strong id="final-depth">1</strong></div>
+        <div class="ov-stat-box" style="margin: 0 10px;"><span>GOLD SECURED</span><strong id="final-gold">0</strong></div>
       </div>
-      <button class="btn-gold" onclick="startGame()">TRY AGAIN</button>
+      <div style="display:flex; gap:10px; margin-top: 1.5rem;">
+        <button class="btn-gold" onclick="resetToClassSelect()">NEW DESCENT</button>
+        <a href="games.html" class="btn-gold" style="background:transparent; border: 1px solid var(--gold); color: var(--gold);">EXIT</a>
+      </div>
     </div>
   </div>
 
@@ -208,9 +265,9 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 
 </div>
 
-<div class="depth-gauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold</div>
-  <span class="dg-sep">⬡</span>
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
+  <span class="dg-sep" style="color:var(--faint);">⬡</span>
   <a href="lorevault.html" class="dg-link">📜 Vault</a>
   <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
 </div>
@@ -277,7 +334,16 @@ const CARD_DB = [
   { id: 'heavy', title: 'HEAVY PICK', icon: '⛏️', cost: 2, type: 'attack', val: 15, desc: 'Deal 15 Damage.' },
   { id: 'block', title: 'DEFEND', icon: '🛡️', cost: 1, type: 'skill', val: 7, desc: 'Gain 7 Block.' },
   { id: 'brace', title: 'BRACE', icon: '🧱', cost: 2, type: 'skill', val: 14, desc: 'Gain 14 Block.' },
-  { id: 'flask', title: 'FLASK', icon: '🧪', cost: 2, type: 'heal', val: 10, desc: 'Heal 10 HP.' }
+  { id: 'flask', title: 'FLASK', icon: '🧪', cost: 2, type: 'heal', val: 10, desc: 'Heal 10 HP.' },
+  { id: 'quick', title: 'QUICK SHOT', icon: '🏹', cost: 0, type: 'attack', val: 4, desc: 'Deal 4 Damage.' }
+];
+
+const CLASSES = [
+  { name: 'WARRIOR', maxHp: 60, maxEnergy: 3, deck: ['strike','strike','strike','strike','block','block','block','heavy'] },
+  { name: 'MAGE', maxHp: 40, maxEnergy: 4, deck: ['strike','strike','block','block','block','heavy','flask'] },
+  { name: 'RANGER', maxHp: 45, maxEnergy: 3, deck: ['strike','strike','block','block','quick','quick','quick','flask'] },
+  { name: 'SAINT', maxHp: 55, maxEnergy: 3, deck: ['strike','strike','block','block','brace','flask','flask'] },
+  { name: 'VIKING', maxHp: 50, maxEnergy: 3, deck: ['strike','strike','strike','block','block','heavy','heavy'] }
 ];
 
 const ENEMIES = [
@@ -287,7 +353,8 @@ const ENEMIES = [
   { name: 'THE WANDERER', maxHp: 100, color: '#00FF88', gold: 100, ai: [{t:'attack', v:15}, {t:'defend', v:15}, {t:'attack', v:20}] }
 ];
 
-let player = { hp: 50, maxHp: 50, block: 0, energy: 3, maxEnergy: 3 };
+let selectedClassIdx = -1;
+let player = { hp: 50, maxHp: 50, block: 0, energy: 3, maxEnergy: 3, name: 'MINER' };
 let enemy = null;
 let enemyIntent = null;
 let turnCount = 0;
@@ -306,28 +373,50 @@ let floatTexts = [];
 let animId = null;
 
 // ── LOGIC ──
+function selectClass(idx) {
+  selectedClassIdx = idx;
+  document.querySelectorAll('.class-card').forEach((c, i) => c.classList.toggle('selected', i === idx));
+  const btn = document.getElementById('startBtn');
+  btn.disabled = false;
+  btn.textContent = `DESCEND AS ${CLASSES[idx].name}`;
+}
+
+function resetToClassSelect() {
+  document.getElementById('ov-over').classList.add('hidden');
+  document.getElementById('ov-start').classList.remove('hidden');
+  document.getElementById('startBtn').disabled = true;
+  document.getElementById('startBtn').textContent = 'AWAITING SELECTION';
+  document.querySelectorAll('.class-card').forEach(c => c.classList.remove('selected'));
+  selectedClassIdx = -1;
+}
+
 function startGame() {
+  if (selectedClassIdx < 0) return;
   if (animId) cancelAnimationFrame(animId);
-  player = { hp: 50, maxHp: 50, block: 0, energy: 3, maxEnergy: 3 };
+  
+  const pClass = CLASSES[selectedClassIdx];
+  player = { hp: pClass.maxHp, maxHp: pClass.maxHp, block: 0, energy: pClass.maxEnergy, maxEnergy: pClass.maxEnergy, name: pClass.name };
+  
   depth = 1; goldEarned = 0;
-  deck = buildStartingDeck();
+  deck = buildStartingDeck(pClass.deck);
   discard = [];
   
   gameRunning = true;
   document.getElementById('ov-start').classList.add('hidden');
   document.getElementById('ov-over').classList.add('hidden');
+  document.getElementById('player-class-name').textContent = pClass.name;
   
   spawnEnemy();
   startPlayerTurn();
   loop();
 }
 
-function buildStartingDeck() {
+function buildStartingDeck(cardIds) {
   let d = [];
-  for(let i=0; i<4; i++) d.push({...CARD_DB[0]}); // 4 strikes
-  for(let i=0; i<4; i++) d.push({...CARD_DB[2]}); // 4 blocks
-  d.push({...CARD_DB[1]}); // 1 heavy
-  d.push({...CARD_DB[4]}); // 1 heal
+  cardIds.forEach(id => {
+      const template = CARD_DB.find(c => c.id === id);
+      if(template) d.push({...template});
+  });
   return d.sort(() => Math.random() - 0.5);
 }
 
@@ -442,12 +531,12 @@ function winBattle() {
   goldEarned += enemy.gold;
   depth++;
   
-  // Add Gold
-  try {
-    let currentGold = parseInt(localStorage.getItem('nmn_total_gold') || '0');
-    localStorage.setItem('nmn_total_gold', currentGold + enemy.gold);
-    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold');
-  } catch(e) {}
+  // Save Gold to V2 Wallet
+  if(typeof NMNWallet !== 'undefined') {
+      NMNWallet.addGold(enemy.gold);
+      NMNWallet.addXP(25);
+      syncGauge();
+  }
 
   spawnFloatText(W/2, H/2, `VICTORY! +${enemy.gold}G`, '#FFD700');
   
@@ -550,7 +639,7 @@ function draw() {
   
   // Floor
   ctx.fillStyle = '#111'; ctx.fillRect(0, H-40, W, 40);
-  ctx.strokeStyle = varGd = '#8B6914'; ctx.lineWidth = 2;
+  ctx.strokeStyle = '#8B6914'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(0, H-40); ctx.lineTo(W, H-40); ctx.stroke();
 
   // Draw Player (Left)
@@ -613,22 +702,24 @@ function loop() {
   animId = requestAnimationFrame(loop);
 }
 
+function syncGauge() {
+    try {
+        if(typeof NMNWallet !== 'undefined') {
+            document.getElementById('dgGold').textContent = NMNWallet.get().gold;
+        }
+    } catch(e) {}
+}
+
 // Init Graphics
 ctx.fillStyle = '#050306'; ctx.fillRect(0,0,cv.width,cv.height);
-
+syncGauge();
 </script>
 
 <script>
-try {
-    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold') || '0';
-} catch(e) {}
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
+}
 </script>
-
-<div style="text-align:center;padding:1rem;font-family:'Press Start 2P',monospace;font-size:.3rem;color:#4a3c28; margin-top: auto;">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
-</div>
 
 </body>
 </html>
