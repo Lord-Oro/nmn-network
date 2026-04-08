@@ -20,16 +20,19 @@ body{padding-top:56px;max-width:860px;margin:0 auto}
 .back-link:hover{background:rgba(255,215,0,.06);border-color:var(--gold)}
 </style>
 
-<!-- Monetag In-Page Push — Zone 10763810 -->
+<style id="nmn-cursor">
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
+</style>
 
-
+<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
 
 </head>
 <body>
 <script src="nmn-nav.js"></script>
 <div class="legal-wrap">
   <p class="legal-title">Terms of Service</p>
-  <p class="legal-sub">⛏ EXCAVATION TERMS — LAST UPDATED MARCH 2026 ⛏</p>
+  <p class="legal-sub">⛏ EXCAVATION TERMS — LAST UPDATED APRIL 2026 ⛏</p>
 
   <div class="legal-section">
     <h2>ACCEPTANCE OF TERMS</h2>
@@ -84,13 +87,30 @@ body{padding-top:56px;max-width:860px;margin:0 auto}
   <a href="index.html" class="back-link">⛏ RETURN TO THE MINE</a>
 </div>
 
-<!-- Monetag Service Worker Registration -->
+<script id="nmn-glow">
+(function(){
+  var r=document.createElement('div');
+  r.id='pickaxe-glow';
+  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
+  document.body.appendChild(r);
+  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
+  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
+  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
+})();
+</script>
+
 <script>
-if('serviceWorker' in navigator){
-    .catch(function(err){console.log('NMN SW error:',err);});
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(function(registration) {
+      console.log('NMN SW registered with scope:', registration.scope);
+    })
+    .catch(function(err){
+      console.log('NMN SW error:', err);
+    });
 }
 </script>
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
+<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28;margin-bottom: 2rem;">
   <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
   <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
   <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
