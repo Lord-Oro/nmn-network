@@ -40,7 +40,7 @@ body {
   background-color: var(--coal);
   color: var(--cream);
   overflow-x: hidden;
-  padding-top: 70px; /* Offset for fixed nav */
+  padding-top: 70px; 
   padding-bottom: 80px; 
   background-image: 
     radial-gradient(2px 2px at 40px 60px, #FFD700 50%, transparent 100%),
@@ -103,29 +103,39 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 .section-tag::after{content:'';height:1px;width:60px;background:linear-gradient(to right,var(--gd),transparent)}
 @media(max-width:768px){section{padding:4rem 1.5rem}}
 
-/* ── HERO ── */
-.hero {
-  position:relative; 
-  display:flex; flex-direction: column; align-items:center; justify-content:center; 
-  padding: 4rem 2rem; overflow:hidden; text-align:center;
-  background-image: url('oros_game_eyes.jpg');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center 20%; 
-  min-height: 80vh; 
-}
-.hero::before {
-  content: ''; position: absolute; inset: 0;
-  background: rgba(0,0,0,0.65); /* Dark overlay so text pops */
-  z-index: 1;
-}
-.hero-content { position: relative; z-index: 10; width: 100%; max-width: 800px; }
 
-.hero-eyebrow{ font-size:.5rem;letter-spacing:.3em;text-transform:uppercase; color:var(--gold);margin-bottom:1.5rem; display:flex;align-items:center;justify-content:center;gap:.75rem; text-shadow: 0 0 10px #000; }
-.hero-eyebrow::before{content:'⬡';font-size:.75rem}
+/* ── HALL HERO (IMPORTED FROM GAMES.HTML) ── */
+.hall-hero {
+  text-align: center; padding: 5rem 2rem 3rem;
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid rgba(255,215,0,.06);
+  background-image: url('oros_game_eyes.jpg');
+  background-size: cover; background-position: center 20%;
+  min-height: 80vh; display: flex; flex-direction: column; justify-content: flex-end;
+}
+.hall-hero::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.65); z-index: 1; }
+.hall-hero-content { position: relative; z-index: 10; width: 100%; max-width: 800px; margin: 0 auto; }
+
+/* Eyes blink */
+.hall-eyes{display:flex;gap:44px;justify-content:center;margin-bottom:1.5rem}
+.hall-eye{width:20px;height:14px;background:radial-gradient(ellipse at 40% 40%,#FFD700,#FF8C00);border-radius:50%;box-shadow:0 0 18px rgba(255,215,0,.8);animation:eyeBlink 5s infinite;position:relative}
+.hall-eye::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6px;height:6px;background:#000;border-radius:50%}
+@keyframes eyeBlink{0%,85%,100%{transform:scaleY(1)}90%{transform:scaleY(.05)}}
+
+/* Wallet bar */
+.wallet-bar{ display:flex;align-items:center;justify-content:center;gap:1.5rem; padding:.65rem 2rem;background:rgba(0,0,0,.45); border-bottom:1px solid rgba(255,215,0,.07);flex-wrap:wrap; position: relative; z-index: 10; }
+.w-item{text-align:center}
+.w-val{font-family:var(--font-pixel);font-size:.52rem;color:var(--gold);text-shadow:0 0 8px rgba(255,215,0,.4);display:block}
+.w-lbl{font-family:var(--font-pixel);font-size:.28rem;color:var(--muted);letter-spacing:.1em}
+.gem-row{display:flex;gap:4px}
+.gem-pip{width:14px;height:14px;border:1px solid rgba(255,215,0,.25);background:#1a1500;font-size:7px;display:flex;align-items:center;justify-content:center;transition:all .2s;color:transparent;}
+.gem-pip.lit{border-color:var(--gold);background:#1a1500;box-shadow:0 0 5px var(--gold);color:var(--gold);}
+.convert-btn{font-family:var(--font-pixel);font-size:.38rem;background:transparent;border:1px solid rgba(255,215,0,.25);color:var(--gold);padding:.4rem 1rem;letter-spacing:.08em;transition:all .2s;cursor:pointer;}
+.convert-btn:hover{background:rgba(255,215,0,.06);border-color:var(--gold)}
+
+/* Original Landing Page Hero Content Blocks */
 .hero-title{ font-family:var(--font-display); font-size:clamp(2.5rem,7vw,6.5rem); line-height:.95;font-weight:700; color:var(--cream); margin-bottom:1.5rem; text-shadow:0 0 60px rgba(255,215,0,.3); letter-spacing:2px; }
 .hero-title em{ font-style:italic; color:var(--gold); display:block; text-shadow:0 0 40px rgba(255,215,0,.4),0 0 80px rgba(255,215,0,.15); }
-
 .hero-tagline-box { border: 1px solid var(--gold); background: rgba(0,0,0,0.8); padding: 0.75rem; margin: 0 auto 0.5rem; max-width: 650px; box-shadow: 0 0 15px rgba(255,215,0,0.2); }
 .hero-tagline { font-size:.5rem; letter-spacing:.05em; line-height:2.2; color:var(--gold); }
 .hero-whisper-box { border: 1px solid var(--gd); background: rgba(0,0,0,0.7); padding: 0.5rem; margin: 0 auto 2rem; max-width: 500px; }
@@ -157,7 +167,7 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 .pillar h3{font-size:1rem;color:var(--cream);margin-bottom:.3rem}
 .pillar p{font-size:.65rem;color:var(--faint);line-height:1.8}
 
-/* ─── DUAL VESSEL COLLECTION SYSTEM (WORKS) ─── */
+/* ─── DUAL VESSEL COLLECTION SYSTEM ─── */
 .collection-gateway { display: flex; gap: 2rem; justify-content: center; align-items: stretch; margin-bottom: 3rem; flex-wrap: wrap; }
 .vessel-anchor-wrap { flex: 1; min-width: 280px; max-width: 100%; width: 100%; cursor: pointer; position: relative; border: 2px solid var(--gd); overflow: hidden; transition: border-color .3s, box-shadow .3s, transform .3s; background: #0a0806; aspect-ratio: 16 / 9; }
 .vessel-anchor-wrap:hover { border-color: var(--gold); box-shadow: 0 0 28px rgba(255,215,0,.35), inset 0 0 18px rgba(0,0,0,.5); transform: scale(1.02); }
@@ -188,7 +198,7 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 .store-link.available { border-color: var(--gold); color: var(--gold); background: rgba(255, 215, 0, 0.05); }
 .store-link.available:hover { background: rgba(255, 215, 0, 0.15); }
 
-/* ─── NEW MAP GRID & BACKGROUND SECTORS ─── */
+/* ─── MAP GRID & BACKGROUND SECTORS ─── */
 .map-grid { display: grid; grid-template-columns: 1fr; gap: 40px; max-width: 1100px; margin: 0 auto; }
 @media (min-width: 900px) { .map-grid { grid-template-columns: 1fr 1fr; } }
 
@@ -202,7 +212,7 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
   background-position: center;
   display: flex; flex-direction: column;
   transition: border-color 0.3s, transform 0.3s;
-  min-height: 400px; /* Ensure space for the content */
+  min-height: 400px; 
   overflow: hidden;
 }
 .map-sector:hover { border-color: rgba(255, 215, 0, 0.5); transform: translateY(-4px); }
@@ -288,6 +298,18 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
 }
 
+/* DEPTH GAUGE */
+.depth-gauge {
+  position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:92%!important; height:42px!important; background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important; border-radius:22px!important; padding:0 18px!important;
+  z-index:9999!important; backdrop-filter:blur(4px)!important; display:flex!important; align-items:center!important;
+  justify-content:center!important; gap:1.2rem!important; box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat { font-family: var(--font-pixel); font-size: 0.4rem; color: var(--gd); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
+.dg-val { color: var(--gold); font-size: 0.6rem; font-family: var(--font-serif); }
+.dg-link { font-family: var(--font-pixel); font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; pointer-events: auto!important;}
+.dg-link:hover { color: var(--gold); }
 </style>
 
 <script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
@@ -316,32 +338,46 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
   <div class="descent-text" id="descent-target-text">DESCENDING...</div>
 </div>
 
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-content">
+<div class="hall-hero">
+  <div class="hall-hero-content fade-in">
+    <div class="hall-eyes"><div class="hall-eye"></div><div class="hall-eye"></div></div>
+    <h1 class="hero-title" style="margin-bottom: 1.5rem;">The goldmine<em>is within.</em></h1>
     
-    <div class="hero-eyebrow">Nonsense Media Network — Est. 2026</div>
-    <h1 class="hero-title">The goldmine<em>is within.</em></h1>
-    
-    <div class="hero-tagline-box fade-in">
+    <div class="hero-tagline-box">
       <p class="hero-tagline">Descend deeper into madness, find gold in the goldmine, beware of the stained obsidian...</p>
     </div>
     
-    <div class="hero-whisper-box fade-in">
+    <div class="hero-whisper-box">
       <p class="hero-whisper">...and don't put anything in your pocket on the way out.</p>
     </div>
     
-    <div class="hero-quote-box fade-in">
+    <div class="hero-quote-box">
       <p>"My sword is my pen, the world is my playground." <br><span style="font-size: 0.35rem; color: var(--gd); display:block; margin-top: 5px;">— Lord Oro</span></p>
     </div>
 
-    <div class="hero-actions fade-in">
+    <div class="hero-actions">
       <a href="#works" class="btn btn-primary">Enter the Mine</a>
       <a href="https://gofund.me/e643a8283" target="_blank" class="btn btn-green">Support on GoFundMe</a>
       <a href="https://patreon.com/Lordminadeoro" target="_blank" class="btn btn-patreon">Join on Patreon</a>
     </div>
   </div>
-</section>
+</div>
+
+<div class="wallet-bar">
+  <div class="w-item"><span class="w-val" id="gold-disp">0</span><span class="w-lbl">GOLD</span></div>
+  <div class="w-item"><span class="w-val">LVL <span id="lvl-disp">1</span></span><span class="w-lbl">RANK</span></div>
+  <div class="w-item"><span class="w-val" id="xp-disp">0</span><span class="w-lbl">XP</span></div>
+  <div class="w-item">
+    <div class="gem-row">
+      <div class="gem-pip" id="gp0">◆</div><div class="gem-pip" id="gp1">◆</div>
+      <div class="gem-pip" id="gp2">◆</div><div class="gem-pip" id="gp3">◆</div>
+      <div class="gem-pip" id="gp4">◆</div>
+    </div>
+    <span class="w-lbl" style="display:block;margin-top:3px">GEMS</span>
+  </div>
+  <button class="convert-btn" onclick="if(typeof NMNWallet!=='undefined'){ NMNWallet.convertGems(); }">⚗ CONVERT GEMS</button>
+</div>
+
 
 <div class="divider"></div>
 
@@ -638,6 +674,41 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
   <img src="lord_oro_emblem.jpg" alt="NMN Emblem">
 </a>
 
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
+  <span class="dg-sep" style="color:var(--faint);">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
+</div>
+
+<script>
+// V2 Wallet Integration (Auto-Sync top and bottom gauges)
+function syncGauges() {
+    if(typeof NMNWallet !== 'undefined') {
+        const w = NMNWallet.get();
+        const gold = w.gold || 0;
+        const dG = document.getElementById('dgGold');
+        if(dG) dG.textContent = gold;
+        
+        // Top Wallet Bar Sync
+        const hG = document.getElementById('gold-disp');
+        if(hG) hG.textContent = gold;
+        const lD = document.getElementById('lvl-disp');
+        if(lD) lD.textContent = w.level || 1;
+        const xD = document.getElementById('xp-disp');
+        if(xD) xD.textContent = w.xp || 0;
+        
+        const gemCount = w.gems || 0;
+        for(let i=0; i<5; i++){
+          const p = document.getElementById('gp'+i);
+          if(p) p.classList.toggle('lit', i < gemCount);
+        }
+    }
+}
+window.addEventListener('nmn_wallet_update', syncGauges);
+syncGauges(); // Init
+</script>
+
 <script>
 // ── GLOWING CURSOR ──
 (function(){
@@ -668,7 +739,7 @@ function shuffleText(el){
 // ── FADE IN & OBSERVER ──
 window.addEventListener('DOMContentLoaded', () => {
   // Ensure the top block is always visible immediately
-  document.querySelectorAll('.hero-content, .hero-bg, .hero-tagline-box, .hero-whisper-box, .hero-quote-box, .hero-actions').forEach(el => {
+  document.querySelectorAll('.hall-hero-content, .hero-tagline-box, .hero-whisper-box, .hero-quote-box, .hero-actions').forEach(el => {
       el.classList.add('visible');
   });
 
@@ -725,8 +796,7 @@ const NMNAudioEngine = {
         osc1.stop(this.ctx.currentTime + duration);
         osc2.stop(this.ctx.currentTime + duration);
     },
-    // Heavy, resonant synth chord for the descent
-    playDescent() { this.playTone(82.41, 123.47, 2.0); } // E2 + B2 (Power Chord)
+    playDescent() { this.playTone(82.41, 123.47, 2.0); } 
 };
 
 // ── THE DESCENT PROTOCOL ──
