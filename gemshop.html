@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ivy's Gemstone Shop — NMN Retro</title>
 
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P5WL9XNDY8');
+</script>
+
 <link rel="icon" href="logo.jpg" type="image/jpeg">
 <link rel="shortcut icon" href="logo.jpg" type="image/jpeg">
 <link rel="apple-touch-icon" href="logo.jpg">
@@ -143,10 +151,13 @@ header {
 .bh-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
 .bh-link:hover { color: #000; background: var(--gd); }
 
+/* Monetag In-Page Push — Zone 10763810 */
 </style>
+<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
 
 </head>
 <body>
+<script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
 
 <header>
@@ -163,8 +174,8 @@ header {
 <div class="hud-container">
   <div class="hud">
     <div class="hud-cell"><div class="hud-val" id="scoreVal">0</div><div class="hud-lab">SCORE</div></div>
-    <div class="hud-cell"><div class="hud-val" id="goldVal">0</div><div class="hud-lab">GOLD</div></div>
-    <div class="hud-cell"><div class="hud-val" id="movesVal" style="color:var(--lg);">20</div><div class="hud-lab">MOVES</div></div>
+    <div class="hud-cell"><div class="hud-val" id="goldVal">0</div><div class="hud-lab">SESSION GOLD</div></div>
+    <div class="hud-cell"><div class="hud-val" id="movesVal" style="color:var(--lg);">15</div><div class="hud-lab">MOVES</div></div>
     <div class="hud-cell">
       <div class="hud-val" id="levelVal" style="color:var(--cream);">1</div><div class="hud-lab">LEVEL</div>
       <div class="level-bar"><div class="level-fill" id="levelFill" style="width:0%"></div></div>
@@ -183,10 +194,10 @@ header {
 </div>
 
 <div class="powerup-tray">
-  <button class="pu-btn pu-hammer" id="puHammer" onclick="activatePower('hammer')">⚒ HAMMER <span id="hammerCount">(3)</span></button>
-  <button class="pu-btn pu-lightning" id="puLightning" onclick="activatePower('lightning')">⚡ LIGHTNING <span id="lightningCount">(2)</span></button>
-  <button class="pu-btn pu-bomb" id="puBomb" onclick="activatePower('bomb')">💥 BOMB <span id="bombCount">(2)</span></button>
-  <button class="pu-btn pu-magnet" id="puMagnet" onclick="activatePower('magnet')">🧲 MAGNET <span id="magnetCount">(1)</span></button>
+  <button class="pu-btn pu-hammer" id="puHammer" onclick="activatePower('hammer')">⚒ HAMMER <span id="hammerCount">(1)</span></button>
+  <button class="pu-btn pu-lightning" id="puLightning" onclick="activatePower('lightning')">⚡ LIGHTNING <span id="lightningCount">(0)</span></button>
+  <button class="pu-btn pu-bomb" id="puBomb" onclick="activatePower('bomb')">💥 BOMB <span id="bombCount">(1)</span></button>
+  <button class="pu-btn pu-magnet" id="puMagnet" onclick="activatePower('magnet')">🧲 MAGNET <span id="magnetCount">(0)</span></button>
 </div>
 
 <div class="msg-bar" id="msgBar">MATCH 3 OR MORE TO EARN GOLD. SWAP ADJACENT GEMS.</div>
@@ -267,9 +278,9 @@ const BIRTHSTONES = {
 const GEM_POINTS = { 'gold':200, 'amethyst':80, 'ruby':100, 'sapphire':70, 'emerald':90, 'diamond':300, 'amber':60 };
 const BOARD_SIZE = 8;
 
-let board=[], selected=null, score=0, gold=0, moves=20, level=1, combo=1;
+let board=[], selected=null, score=0, gold=0, moves=15, level=1, combo=1;
 let levelTarget=500, activePower=null, processing=false;
-let powers={hammer:3,lightning:2,bomb:2,magnet:1};
+let powers={hammer:1,lightning:0,bomb:1,magnet:0};
 
 function rand(arr){return arr[Math.floor(Math.random()*arr.length)]}
 
@@ -366,7 +377,7 @@ function processMatches(matched){
   if(matched.length===0){
     if(score>=levelTarget){ showLevelComplete(); return; }
     if(moves<=0){gameOver();return;}
-    combo=1;updateHUD(); processing=false; return;
+    combo=1; updateHUD(); processing=false; return;
   }
   
   const matchSize=matched.length;
@@ -485,23 +496,34 @@ function updateHUD(){
     document.getElementById(p+'Count').textContent=`(${powers[p]})`;
     document.getElementById('pu'+p.charAt(0).toUpperCase()+p.slice(1)).disabled=powers[p]<=0;
   });
-  
-  try{localStorage.setItem('nmn_total_gold',(parseInt(localStorage.getItem('nmn_total_gold')||0)+gold).toString())}catch(e){}
-  try{document.getElementById('dgGold').textContent=localStorage.getItem('nmn_total_gold')||0}catch(e){}
 }
 
 function setMsg(m){document.getElementById('msgBar').textContent=m}
 
 function showLevelComplete(){
   processing=false;
-  document.getElementById('levelStats').innerHTML=`SCORE: ${score.toLocaleString()}<br>GOLD: ${gold}<br>MOVES LEFT: ${moves}<br>COMBO PEAK: ×${combo-1}`;
+  
+  // Add earned gold to V2 Wallet securely
+  if(typeof NMNWallet !== 'undefined' && gold > 0) {
+      NMNWallet.addGold(gold);
+      document.getElementById('dgGold').textContent = NMNWallet.get().gold;
+  }
+  
+  document.getElementById('levelStats').innerHTML=`SCORE: ${score.toLocaleString()}<br>SESSION GOLD EARNED: ${gold}<br>MOVES LEFT: ${moves}<br>COMBO PEAK: ×${combo-1}`;
   document.getElementById('levelOv').classList.add('show');
+  
   try{const v=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]');v.push({text:`Cleared Level ${level} in Ivy's Gemstone Shop with ${score} points.`,source:"Ivy's Gemstone Shop",date:new Date().toLocaleDateString()});localStorage.setItem('nmn_lore_vault',JSON.stringify(v))}catch(e){}
 }
 
 function nextLevel(){
   document.getElementById('levelOv').classList.remove('show');
-  level++; levelTarget=Math.floor(levelTarget*1.6); moves=18+Math.floor(level/2); combo=1;
+  level++; 
+  // Harder scaling
+  levelTarget=Math.floor(levelTarget*1.8); 
+  moves=15+Math.floor(level/2); 
+  combo=1;
+  gold=0; // Reset session gold so we don't double dip the deposit
+  
   if(level%2===0)powers.hammer++; if(level%3===0)powers.bomb++;
   makeBoard(); renderBoard(); updateHUD();
   setMsg(`LEVEL ${level}. TARGET: ${levelTarget.toLocaleString()} PTS.`);
@@ -509,14 +531,21 @@ function nextLevel(){
 
 function gameOver(){
   processing=false;
+  
+  // Deposit whatever gold was accumulated before failing
+  if(typeof NMNWallet !== 'undefined' && gold > 0) {
+      NMNWallet.addGold(gold);
+      document.getElementById('dgGold').textContent = NMNWallet.get().gold;
+  }
+  
   document.getElementById('gameStats').innerHTML=`LEVEL: ${level}<br>FINAL SCORE: ${score.toLocaleString()}<br>GOLD EARNED: ${gold}`;
   document.getElementById('gameOv').classList.add('show');
 }
 
 function restartGame(){
   document.getElementById('gameOv').classList.remove('show');
-  score=0;gold=0;moves=20;level=1;combo=1;levelTarget=500;activePower=null;
-  powers={hammer:3,lightning:2,bomb:2,magnet:1};
+  score=0;gold=0;moves=15;level=1;combo=1;levelTarget=500;activePower=null;
+  powers={hammer:1,lightning:0,bomb:1,magnet:0};
   makeBoard();renderBoard();updateHUD();setMsg('MATCH 3 OR MORE GEMS.');
 }
 
@@ -548,7 +577,15 @@ function checkSpecialMove(matchSize, gemObj) {
   }
 }
 
-try{document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length}catch(e){}
+// Init Bottom HUD
+(function(){
+  try{
+    if(typeof NMNWallet !== 'undefined') {
+        document.getElementById('dgGold').textContent = NMNWallet.get().gold;
+    }
+    document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+  }catch(e){}
+})();
 
 // ── AUDIO SYSTEM ──
 const NMN_Audio = {
