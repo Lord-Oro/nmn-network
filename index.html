@@ -37,9 +37,8 @@ body {
   background-color: var(--coal);
   color: var(--cream);
   overflow-x: hidden;
-  padding-top: 80px; /* Increased for larger nav */
+  padding-top: 80px; 
   padding-bottom: 40px;
-  /* 16-BIT OBSIDIAN MINE WALL WITH GOLD ORE FLECKS */
   background-image: 
     radial-gradient(2px 2px at 40px 60px, #FFD700 50%, transparent 100%),
     radial-gradient(2px 2px at 120px 180px, #e8b84b 50%, transparent 100%),
@@ -50,10 +49,7 @@ body {
   line-height: 1.8;
 }
 
-/* OVERRIDE ALL OLD FONTS — FORCE 16-BIT EVERYWHERE */
-h1, h2, h3, h4, p, a, div, span {
-  font-family: var(--font-pixel) !important;
-}
+h1, h2, h3, h4, p, a, div, span { font-family: var(--font-pixel) !important; }
 a { text-decoration: none; color: inherit; }
 
 /* ─── GLASS MONITOR / CRT SCANLINES ─── */
@@ -70,7 +66,6 @@ body::after{
   z-index:10000;
   opacity:0.18;
 }
-/* Vignette — edges darken like a CRT bezel */
 body::before{
   content:"";
   position:fixed;
@@ -81,7 +76,7 @@ body::before{
   z-index:9999;
 }
 
-/* NAV - Made Larger */
+/* NAV */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:10000;
   padding:1.2rem 2.5rem;
@@ -90,21 +85,9 @@ nav{
   border-bottom:1px solid rgba(255,215,0,.12);
   backdrop-filter:blur(8px);
 }
-.nav-logo{
-  font-size:0.75rem;
-  color:var(--gold);
-  flex-shrink:0;
-  letter-spacing:2px;
-  text-shadow:0 0 15px rgba(255,215,0,0.4);
-}
+.nav-logo{ font-size:0.75rem; color:var(--gold); flex-shrink:0; letter-spacing:2px; text-shadow:0 0 15px rgba(255,215,0,0.4); }
 .nav-links { display: flex; gap: 1.5rem; align-items: center; }
-.nav-link { 
-  color:var(--muted); 
-  font-size:0.6rem; 
-  letter-spacing:.15em; 
-  text-transform:uppercase; 
-  transition:color .3s; 
-}
+.nav-link { color:var(--muted); font-size:0.6rem; letter-spacing:.15em; text-transform:uppercase; transition:color .3s; }
 .nav-link:hover { color:var(--gold); text-shadow:0 0 10px rgba(255,215,0,0.4); }
 
 @media(max-width:768px){ 
@@ -118,95 +101,66 @@ nav{
 .particle{position:absolute;width:2px;height:2px;background:var(--gold);border-radius:50%;opacity:0;animation:driftUp linear infinite}
 @keyframes driftUp{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:.4}90%{opacity:.1}100%{transform:translateY(-5vh) rotate(360deg);opacity:0}}
 
-/* SECTION DIVIDER */
 .divider{height:20px;background:#1a1208;border-top:2px solid rgba(255,215,0,.1);border-bottom:2px solid rgba(255,215,0,.04)}
-
-/* SECTION BASE */
 section{position:relative;z-index:1;padding:5rem 3rem}
 section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1px;background:linear-gradient(to right,transparent,rgba(255,215,0,.1),transparent)}
 .section-tag{font-size:.55rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gd);margin-bottom:3rem;display:flex;align-items:center;gap:1rem}
 .section-tag::after{content:'';height:1px;width:60px;background:linear-gradient(to right,var(--gd),transparent)}
 @media(max-width:768px){section{padding:4rem 1.5rem}}
 
-/* ── HERO — Golden Eyes + Giant Title ── */
+/* ── HERO ── */
 .hero{
-  position:relative;
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:6rem 3rem 4rem;
-  overflow:hidden;
-  text-align:center;
+  position:relative; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:6rem 3rem 4rem; overflow:hidden; text-align:center;
 }
 .hero-bg{
   position:absolute;inset:0;
-  background:
-    radial-gradient(ellipse 70% 60% at 50% 30%,rgba(255,200,50,.06),transparent 60%),
-    radial-gradient(ellipse 60% 80% at 50% 120%,rgba(255,215,0,.06),transparent 60%),
-    linear-gradient(to bottom,var(--coal),var(--shaft) 40%,var(--rock));
+  background: radial-gradient(ellipse 70% 60% at 50% 30%,rgba(255,200,50,.06),transparent 60%), radial-gradient(ellipse 60% 80% at 50% 120%,rgba(255,215,0,.06),transparent 60%), linear-gradient(to bottom,var(--coal),var(--shaft) 40%,var(--rock));
 }
 
-/* Golden eyes */
-.hero-eyes{
-  display:flex;gap:64px;justify-content:center;
-  margin-bottom:44px;
-  position:relative;z-index:2;
-}
-/* TRADEMARK GEOMETRIC EYES — PURE GOLD, NO RED */
+/* ── THE EYES OF LORD ORO (Slanted / Angry) ── */
+.hero-eyes{ display:flex;gap:40px;justify-content:center; margin-bottom:44px; position:relative;z-index:2; }
 .hero-eye{
   position:relative;
-  width:52px;height:30px;
+  width:60px;height:35px;
   image-rendering:pixelated;
   background:
-    linear-gradient(#000,#000) 18px 10px/16px 10px no-repeat,
-    linear-gradient(#FFD700,#C59200) 6px 4px/40px 22px no-repeat,
-    linear-gradient(#e8b84b,#8B6914) 0 0/52px 30px no-repeat;
-  clip-path:polygon(0 8px,8px 0,44px 0,52px 8px,52px 22px,44px 30px,8px 30px,0 22px);
+    linear-gradient(#000,#000) 20px 12px/20px 12px no-repeat,
+    linear-gradient(#FFD700,#C59200) 8px 6px/44px 23px no-repeat,
+    linear-gradient(#e8b84b,#8B6914) 0 0/60px 35px no-repeat;
+  /* The aggressive slant: the top points are pulled down to create a furrowed brow */
+  clip-path:polygon(10% 30%, 100% 0%, 100% 100%, 0% 100%);
   box-shadow:0 0 20px 4px rgba(232,184,75,.8),0 0 40px 8px rgba(197,146,0,.4);
   animation:pureGoldPulse 3.5s ease-in-out infinite;
 }
-.hero-eye::after{
-  content:'';position:absolute;top:-10px;left:0;
-  width:100%;height:4px;
-  background:var(--gd);
-  transform:rotate(-8deg);
-  opacity:.5;
+/* Right eye needs to mirror the slant */
+.hero-eye:last-child {
+  clip-path:polygon(0% 0%, 90% 30%, 100% 100%, 0% 100%);
 }
-.hero-eye:last-child::after{transform:rotate(8deg);}
-.hero-eyebrow{
-  font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;
-  color:var(--gold);margin-bottom:1.5rem;
-  display:flex;align-items:center;justify-content:center;gap:.75rem;
+@keyframes pureGoldPulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.3); box-shadow:0 0 30px 8px rgba(232,184,75,1), 0 0 50px 12px rgba(197,146,0,.6); }
 }
+
+.hero-eyebrow{ font-size:.5rem;letter-spacing:.3em;text-transform:uppercase; color:var(--gold);margin-bottom:1.5rem; display:flex;align-items:center;justify-content:center;gap:.75rem; }
 .hero-eyebrow::before{content:'⬡';font-size:.75rem}
 
-/* THE BIG TITLE */
-.hero-title{
-  font-family:var(--font-display);
-  font-size:clamp(2.8rem,8vw,7.5rem);
-  line-height:.95;font-weight:700;
-  color:var(--cream);
-  margin-bottom:1.5rem;
-  text-shadow:0 0 60px rgba(255,215,0,.15);
-  letter-spacing:2px;
-}
-.hero-title em{
-  font-style:italic;
-  color:var(--gold);
-  display:block;
-  text-shadow:0 0 40px rgba(255,215,0,.4),0 0 80px rgba(255,215,0,.15);
-}
+.hero-title{ font-family:var(--font-display); font-size:clamp(2.8rem,8vw,7.5rem); line-height:.95;font-weight:700; color:var(--cream); margin-bottom:1.5rem; text-shadow:0 0 60px rgba(255,215,0,.15); letter-spacing:2px; }
+.hero-title em{ font-style:italic; color:var(--gold); display:block; text-shadow:0 0 40px rgba(255,215,0,.4),0 0 80px rgba(255,215,0,.15); }
 
-.hero-tagline{
-  font-size:.5rem;
-  letter-spacing:.05em;line-height:2.2;
-  color:var(--muted);max-width:520px;
-  margin:0 auto 2.5rem;
-  padding:.75rem 1.25rem;
-  border:1px solid rgba(255,215,0,.1);
-  background:rgba(255,215,0,.02);
+/* NEW HERO TEXT BLOCKS */
+.hero-tagline{ font-size:.5rem; letter-spacing:.05em;line-height:2.2; color:var(--muted);max-width:600px; margin:0 auto 0.5rem; }
+.hero-whisper { font-size: 0.35rem; color: #554433; letter-spacing: 0.1em; margin-bottom: 2rem; font-style: italic; }
+
+.hero-quote-box {
+  border: 1px solid var(--gd);
+  background: rgba(255,215,0,0.05);
+  padding: 1rem 1.5rem;
+  max-width: 500px;
+  margin: 0 auto 2.5rem;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
 }
+.hero-quote-box p { font-size: 0.45rem; color: var(--gold); line-height: 2; text-shadow: 0 0 8px rgba(255,215,0,0.3); }
+
 .hero-actions{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center}
 
 /* BUTTONS */
@@ -284,6 +238,10 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 .bubble-shorts{--ore-clr:rgba(255,60,60,.8)}
 .bubble-flow{--ore-clr:rgba(0,200,255,.8)}
 
+/* FADE IN */
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease, transform 0.6s ease}
+.fade-in.visible{opacity:1;transform:none}
+
 /* ─── EMBLEM SEAL ─── */
 .nmn-seal{ position:fixed; bottom:1.25rem; right:1.25rem; width:56px; height:56px; border-radius:50%; overflow:hidden; border:2px solid rgba(255,215,0,.35); box-shadow:0 0 18px rgba(255,215,0,.25),0 0 4px rgba(0,0,0,.9); z-index:9998; opacity:.7; transition:opacity .25s,box-shadow .25s,transform .25s; cursor:pointer; }
 .nmn-seal:hover{ opacity:1; box-shadow:0 0 28px rgba(255,215,0,.6),0 0 8px rgba(0,0,0,.9); transform:scale(1.08); }
@@ -329,10 +287,6 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
     mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
 }
-
-/* FADE IN - THIS WAS THE MISSING PIECE */
-.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease, transform 0.6s ease}
-.fade-in.visible{opacity:1;transform:none}
 </style>
 </head>
 <body>
@@ -364,7 +318,13 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     </div>
     <div class="hero-eyebrow">Nonsense Media Network — Est. 2026</div>
     <h1 class="hero-title">The goldmine<em>is within.</em></h1>
-    <p class="hero-tagline">"My sword is my pen. My kingdom is the human interior world.<br>I never starve again — substance in my words."</p>
+    <p class="hero-tagline">Descend deeper into madness, find gold in the goldmine, beware of the stained obsidian...</p>
+    <p class="hero-whisper">...and don't put anything in your pocket on the way out.</p>
+    
+    <div class="hero-quote-box">
+      <p>"My sword is my pen, the world is my playground." <br><span style="font-size: 0.35rem; color: var(--gd); display:block; margin-top: 5px;">— Lord Oro</span></p>
+    </div>
+
     <div class="hero-actions">
       <a href="#works" class="btn btn-primary">Enter the Mine</a>
       <a href="https://gofund.me/e643a8283" target="_blank" class="btn btn-green">Support on GoFundMe</a>
@@ -666,7 +626,7 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 <section id="contact" style="background:var(--rock); padding:5rem 3rem;">
   <div class="section-tag">Contact</div>
   <div class="fade-in">
-    <h2 class="about-headline">A new tunnel is always<br><em>being dug.</em></h2>
+    <h2 class="contact-headline">A new tunnel is always<br><em>being dug.</em></h2>
     <p style="font-size:.75rem;color:var(--muted);line-height:2;max-width:480px;margin-bottom:2.5rem;">Collaborations, media inquiries, and transmedia opportunities. The network is always expanding.</p>
     <div style="display:flex;flex-direction:column;max-width:520px;border:1px solid rgba(255,215,0,.1);">
       <a href="mailto:doradoyoro@gmail.com" style="display:flex;align-items:center;padding:1.1rem 1.4rem;border-bottom:1px solid rgba(255,215,0,.08);transition:background .3s;gap:1.25rem;"><span style="font-size:.5rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gd);width:60px;flex-shrink:0;">Email</span><span style="font-size:.78rem;color:var(--muted);">doradoyoro@gmail.com</span></a>
@@ -683,7 +643,7 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     <a href="#" onclick="interceptDescent(event, 'THE FORGE', 'brawler/index.html')" class="hub-tab active">
         <span class="hub-icon">⚔️</span> FORGE
     </a>
-    <a href="https://www.youtube.com/@Lord-Oro/videos" target="_blank" class="hub-tab">
+    <a href="https://www.youtube.com/@LordOroNMN" target="_blank" class="hub-tab">
         <span class="hub-icon">📺</span> LIVE
     </a>
     <a href="#works" class="hub-tab">
