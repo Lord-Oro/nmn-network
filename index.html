@@ -153,6 +153,7 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
   margin-bottom:44px;
   position:relative;z-index:2;
 }
+/* TRADEMARK GEOMETRIC EYES — PURE GOLD, NO RED */
 .hero-eye{
   position:relative;
   width:52px;height:30px;
@@ -263,7 +264,7 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 .store-link.available { border-color: var(--gold); color: var(--gold); background: rgba(255, 215, 0, 0.05); }
 .store-link.available:hover { background: rgba(255, 215, 0, 0.15); }
 
-/* MINE BUBBLES (Lions & Elephants Prep) */
+/* MINE BUBBLES */
 .mine-bubbles { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1.25rem; max-width: 1100px; margin: 0 auto; padding: 0 1rem 2rem; }
 .mine-bubble { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 1.5rem 0.75rem; text-decoration: none; background: rgba(10,9,6,0.92); border: 1px solid rgba(255,215,0,0.13); transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s; image-rendering: pixelated; min-height: 160px; text-align: center; overflow: hidden; }
 .mine-bubble img { width: 50px; height: 50px; image-rendering: pixelated; margin-bottom: 12px; filter: drop-shadow(0 0 5px var(--ore-clr)); }
@@ -282,10 +283,6 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 .bubble-tora{--ore-clr:rgba(200,140,255,.8)}
 .bubble-shorts{--ore-clr:rgba(255,60,60,.8)}
 .bubble-flow{--ore-clr:rgba(0,200,255,.8)}
-
-/* FADE IN */
-.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease, transform 0.6s ease}
-.fade-in.visible{opacity:1;transform:none}
 
 /* ─── EMBLEM SEAL ─── */
 .nmn-seal{ position:fixed; bottom:1.25rem; right:1.25rem; width:56px; height:56px; border-radius:50%; overflow:hidden; border:2px solid rgba(255,215,0,.35); box-shadow:0 0 18px rgba(255,215,0,.25),0 0 4px rgba(0,0,0,.9); z-index:9998; opacity:.7; transition:opacity .25s,box-shadow .25s,transform .25s; cursor:pointer; }
@@ -333,6 +330,9 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
 }
 
+/* FADE IN - THIS WAS THE MISSING PIECE */
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease, transform 0.6s ease}
+.fade-in.visible{opacity:1;transform:none}
 </style>
 </head>
 <body>
@@ -573,101 +573,100 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 <section id="sections">
   <div class="section-tag">Explore the Mine</div>
   <div class="fade-in">
-    <div class="tunnels-intro" style="margin-bottom: 3rem;">
+    <div style="margin-bottom: 3rem;">
       <h2 class="about-headline">The mine has many <em>rooms.</em></h2>
       <p style="font-size:.72rem; color:var(--muted); line-height:1.8;">Games, tarot, lore, music, books, history, ritual. You don't have to play to belong here. You just have to descend.</p>
     </div>
 
-    <div class="mine-bubbles">
+  <div class="mine-bubbles">
 
-      <a href="#" onclick="interceptDescent(event, 'RECREATION HALL', 'games.html')" class="mine-bubble bubble-games">
-        <div style="width:50px; height:50px; border:1px dashed var(--gold); margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🦁</div>
-        <div class="bubble-info-block">
-            <span class="bubble-name">Micro Games Collection</span>
-            <span class="bubble-count">⛏ 12 GAMES LIVE</span>
-        </div>
-      </a>
-
-      <a href="#" onclick="interceptDescent(event, 'THE ORACLE', 'oracle.html')" class="mine-bubble bubble-oracle">
-        <div style="width:50px; height:50px; border:1px dashed #9932CC; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🐘</div>
-        <div class="bubble-info-block">
-            <span class="bubble-name">Oracle's Chamber</span>
-            <span class="bubble-count">⛏ 6 EXPERIENCES</span>
-        </div>
-      </a>
-
-      <a href="#" onclick="interceptDescent(event, 'THE ARCHIVES', 'archives.html')" class="mine-bubble bubble-archives">
-        <div style="width:50px; height:50px; border:1px dashed #00BFFF; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🦁</div>
-        <div class="bubble-info-block">
-            <span class="bubble-name">The Archives</span>
-            <span class="bubble-count">⛏ 6 TITLES</span>
-        </div>
-      </a>
-
-      <a href="#" onclick="interceptDescent(event, 'SOUND SHAFT', 'soundshaft.html')" class="mine-bubble bubble-sound">
-        <div style="width:50px; height:50px; border:1px dashed #32CD32; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🐘</div>
-        <div class="bubble-info-block">
-            <span class="bubble-name">Sound Shaft</span>
-            <span class="bubble-count">⛏ 5 TRACKS</span>
-        </div>
-      </a>
-
-      <a href="#" onclick="interceptDescent(event, 'DEEP MINE', 'lantern.html')" class="mine-bubble bubble-mine">
-        <div style="width:50px; height:50px; border:1px dashed #FFD700; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🦁</div>
-        <div class="bubble-info-block">
-            <span class="bubble-name">The Deep Mine</span>
-            <span class="bubble-count">⛏ 8 ROOMS</span>
-        </div>
-      </a>
-
-      <a href="#" onclick="interceptDescent(event, 'THE GOLDMINE', 'newsletter.html')" class="mine-bubble bubble-join">
-        <div style="width:50px; height:50px; border:1px dashed #32CD32; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🐘</div>
-        <div class="bubble-info-block">
-            <span class="bubble-name">The Goldmine</span>
-            <span class="bubble-count">⛏ NEWSLETTER</span>
-        </div>
-      </a>
-
-      <a href="#" onclick="interceptDescent(event, 'IVY\'S TUNNEL', 'ivytunnel.html')" class="mine-bubble bubble-ivy">
-        <div style="width:50px; height:50px; border:1px dashed #32CD32; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🦁</div>
-        <div class="bubble-info-block">
-            <span class="bubble-name">Ivy's Tunnel</span>
-            <span class="bubble-count">⛏ 3 LIVE NOW</span>
-        </div>
-      </a>
-
-      <a href="#" onclick="interceptDescent(event, 'TORA\'S DOMAIN', 'toradomain.html')" class="mine-bubble bubble-tora">
-        <div style="width:50px; height:50px; border:1px dashed #9932CC; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🐘</div>
-        <div class="bubble-info-block">
-            <span class="bubble-name">Tora's Domain</span>
-            <span class="bubble-count">⛏ VÖLVA'S QUARTER</span>
-        </div>
-      </a>
-
-      <a href="#" onclick="interceptDescent(event, 'PROJECTION ROOM', 'shorts.html')" class="mine-bubble bubble-shorts">
-        <div style="width:50px; height:50px; border:1px dashed #FF4444; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🦁</div>
-        <div class="bubble-info-block">
-            <span class="bubble-name">Projection Room</span>
-            <span class="bubble-count">⛏ 5 SHORTS</span>
-        </div>
-      </a>
-
-      <a href="#" onclick="interceptDescent(event, 'ORE FLOW', 'flowpipes.html')" class="mine-bubble bubble-flow">
-        <div style="width:50px; height:50px; border:1px dashed #00BFFF; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🐘</div>
-        <div class="bubble-info-block">
-            <span class="bubble-name">Ore Flow</span>
-            <span class="bubble-count">⛏ 5 LEVELS</span>
-        </div>
-      </a>
-
+  <a href="#" onclick="interceptDescent(event, 'RECREATION HALL', 'games.html')" class="mine-bubble bubble-games">
+    <div style="width:50px; height:50px; border:1px dashed var(--gold); margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🦁</div>
+    <div class="bubble-info-block">
+        <span class="bubble-name">Micro Games Collection</span>
+        <span class="bubble-count">⛏ 12 GAMES LIVE</span>
     </div>
-  </div>
+  </a>
+
+  <a href="#" onclick="interceptDescent(event, 'THE ORACLE', 'oracle.html')" class="mine-bubble bubble-oracle">
+    <div style="width:50px; height:50px; border:1px dashed #9932CC; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🐘</div>
+    <div class="bubble-info-block">
+        <span class="bubble-name">Oracle's Chamber</span>
+        <span class="bubble-count">⛏ 6 EXPERIENCES</span>
+    </div>
+  </a>
+
+  <a href="#" onclick="interceptDescent(event, 'THE ARCHIVES', 'archives.html')" class="mine-bubble bubble-archives">
+    <div style="width:50px; height:50px; border:1px dashed #00BFFF; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🦁</div>
+    <div class="bubble-info-block">
+        <span class="bubble-name">The Archives</span>
+        <span class="bubble-count">⛏ 6 TITLES</span>
+    </div>
+  </a>
+
+  <a href="#" onclick="interceptDescent(event, 'SOUND SHAFT', 'soundshaft.html')" class="mine-bubble bubble-sound">
+    <div style="width:50px; height:50px; border:1px dashed #32CD32; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🐘</div>
+    <div class="bubble-info-block">
+        <span class="bubble-name">Sound Shaft</span>
+        <span class="bubble-count">⛏ 5 TRACKS</span>
+    </div>
+  </a>
+
+  <a href="#" onclick="interceptDescent(event, 'DEEP MINE', 'lantern.html')" class="mine-bubble bubble-mine">
+    <div style="width:50px; height:50px; border:1px dashed #FFD700; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🦁</div>
+    <div class="bubble-info-block">
+        <span class="bubble-name">The Deep Mine</span>
+        <span class="bubble-count">⛏ 8 ROOMS</span>
+    </div>
+  </a>
+
+  <a href="#" onclick="interceptDescent(event, 'THE GOLDMINE', 'newsletter.html')" class="mine-bubble bubble-join">
+    <div style="width:50px; height:50px; border:1px dashed #32CD32; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🐘</div>
+    <div class="bubble-info-block">
+        <span class="bubble-name">The Goldmine</span>
+        <span class="bubble-count">⛏ NEWSLETTER</span>
+    </div>
+  </a>
+
+  <a href="#" onclick="interceptDescent(event, 'IVY\'S TUNNEL', 'ivytunnel.html')" class="mine-bubble bubble-ivy">
+    <div style="width:50px; height:50px; border:1px dashed #32CD32; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🦁</div>
+    <div class="bubble-info-block">
+        <span class="bubble-name">Ivy's Tunnel</span>
+        <span class="bubble-count">⛏ 3 LIVE NOW</span>
+    </div>
+  </a>
+
+  <a href="#" onclick="interceptDescent(event, 'TORA\'S DOMAIN', 'toradomain.html')" class="mine-bubble bubble-tora">
+    <div style="width:50px; height:50px; border:1px dashed #9932CC; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🐘</div>
+    <div class="bubble-info-block">
+        <span class="bubble-name">Tora's Domain</span>
+        <span class="bubble-count">⛏ VÖLVA'S QUARTER</span>
+    </div>
+  </a>
+
+  <a href="#" onclick="interceptDescent(event, 'PROJECTION ROOM', 'shorts.html')" class="mine-bubble bubble-shorts">
+    <div style="width:50px; height:50px; border:1px dashed #FF4444; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🦁</div>
+    <div class="bubble-info-block">
+        <span class="bubble-name">Projection Room</span>
+        <span class="bubble-count">⛏ 5 SHORTS</span>
+    </div>
+  </a>
+
+  <a href="#" onclick="interceptDescent(event, 'ORE FLOW', 'flowpipes.html')" class="mine-bubble bubble-flow">
+    <div style="width:50px; height:50px; border:1px dashed #00BFFF; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size: 24px;">🐘</div>
+    <div class="bubble-info-block">
+        <span class="bubble-name">Ore Flow</span>
+        <span class="bubble-count">⛏ 5 LEVELS</span>
+    </div>
+  </a>
+
+</div>
 </section>
 
 <section id="contact" style="background:var(--rock); padding:5rem 3rem;">
   <div class="section-tag">Contact</div>
   <div class="fade-in">
-    <h2 class="contact-headline">A new tunnel is always<br><em>being dug.</em></h2>
+    <h2 class="about-headline">A new tunnel is always<br><em>being dug.</em></h2>
     <p style="font-size:.75rem;color:var(--muted);line-height:2;max-width:480px;margin-bottom:2.5rem;">Collaborations, media inquiries, and transmedia opportunities. The network is always expanding.</p>
     <div style="display:flex;flex-direction:column;max-width:520px;border:1px solid rgba(255,215,0,.1);">
       <a href="mailto:doradoyoro@gmail.com" style="display:flex;align-items:center;padding:1.1rem 1.4rem;border-bottom:1px solid rgba(255,215,0,.08);transition:background .3s;gap:1.25rem;"><span style="font-size:.5rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gd);width:60px;flex-shrink:0;">Email</span><span style="font-size:.78rem;color:var(--muted);">doradoyoro@gmail.com</span></a>
@@ -684,7 +683,7 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     <a href="#" onclick="interceptDescent(event, 'THE FORGE', 'brawler/index.html')" class="hub-tab active">
         <span class="hub-icon">⚔️</span> FORGE
     </a>
-    <a href="https://www.youtube.com/@LordOroNMN" target="_blank" class="hub-tab">
+    <a href="https://www.youtube.com/@Lord-Oro/videos" target="_blank" class="hub-tab">
         <span class="hub-icon">📺</span> LIVE
     </a>
     <a href="#works" class="hub-tab">
@@ -728,6 +727,11 @@ function shuffleText(el){
 
 // ── FADE IN & OBSERVER ──
 window.addEventListener('DOMContentLoaded', () => {
+  // Ensure the top block is always visible immediately
+  document.querySelectorAll('.hero-content, .hero-bg').forEach(el => {
+      el.classList.add('visible');
+  });
+
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if(e.isIntersecting){
@@ -767,11 +771,11 @@ const NMNAudioEngine = {
         const osc2 = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         
-        osc1.type = 'sine'; osc1.frequency.value = freq1;
+        osc1.type = 'square'; osc1.frequency.value = freq1;
         osc2.type = 'triangle'; osc2.frequency.value = freq2;
         
         gain.gain.setValueAtTime(0, this.ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.1, this.ctx.currentTime + 0.2);
+        gain.gain.linearRampToValueAtTime(0.15, this.ctx.currentTime + 0.1);
         gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
         
         osc1.connect(gain); osc2.connect(gain);
@@ -781,7 +785,8 @@ const NMNAudioEngine = {
         osc1.stop(this.ctx.currentTime + duration);
         osc2.stop(this.ctx.currentTime + duration);
     },
-    playDescent() { this.playTone(110, 164.81, 1.5); } // A2 + E3 Chord
+    // Heavy, resonant synth chord for the descent
+    playDescent() { this.playTone(82.41, 123.47, 2.0); } // E2 + B2 (Power Chord)
 };
 
 // ── THE DESCENT PROTOCOL ──
@@ -796,7 +801,7 @@ function interceptDescent(event, locationName, targetUrl) {
 
     setTimeout(() => {
         if(targetUrl) window.location.href = targetUrl;
-    }, 1500);
+    }, 1600);
 }
 </script>
 
