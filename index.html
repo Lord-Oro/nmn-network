@@ -66,6 +66,7 @@ body::after{
   z-index:10000;
   opacity:0.18;
 }
+/* Vignette — edges darken like a CRT bezel */
 body::before{
   content:"";
   position:fixed;
@@ -112,54 +113,61 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 .hero{
   position:relative; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:6rem 3rem 4rem; overflow:hidden; text-align:center;
 }
+/* Replaced the old gradient with the JPG background */
 .hero-bg{
   position:absolute;inset:0;
-  background: radial-gradient(ellipse 70% 60% at 50% 30%,rgba(255,200,50,.06),transparent 60%), radial-gradient(ellipse 60% 80% at 50% 120%,rgba(255,215,0,.06),transparent 60%), linear-gradient(to bottom,var(--coal),var(--shaft) 40%,var(--rock));
+  background-image: url('oros_game_eyes.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.6; /* Dimmed slightly so text remains readable */
+  z-index: -2;
 }
 
-/* ── THE EYES OF LORD ORO (Slanted / Angry) ── */
-.hero-eyes{ display:flex;gap:40px;justify-content:center; margin-bottom:44px; position:relative;z-index:2; }
-.hero-eye{
-  position:relative;
-  width:60px;height:35px;
-  image-rendering:pixelated;
-  background:
-    linear-gradient(#000,#000) 20px 12px/20px 12px no-repeat,
-    linear-gradient(#FFD700,#C59200) 8px 6px/44px 23px no-repeat,
-    linear-gradient(#e8b84b,#8B6914) 0 0/60px 35px no-repeat;
-  /* The aggressive slant: the top points are pulled down to create a furrowed brow */
-  clip-path:polygon(10% 30%, 100% 0%, 100% 100%, 0% 100%);
-  box-shadow:0 0 20px 4px rgba(232,184,75,.8),0 0 40px 8px rgba(197,146,0,.4);
-  animation:pureGoldPulse 3.5s ease-in-out infinite;
-}
-/* Right eye needs to mirror the slant */
-.hero-eye:last-child {
-  clip-path:polygon(0% 0%, 90% 30%, 100% 100%, 0% 100%);
-}
-@keyframes pureGoldPulse {
-  0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.3); box-shadow:0 0 30px 8px rgba(232,184,75,1), 0 0 50px 12px rgba(197,146,0,.6); }
+/* Ensure text stays above the image */
+.hero-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 800px;
 }
 
-.hero-eyebrow{ font-size:.5rem;letter-spacing:.3em;text-transform:uppercase; color:var(--gold);margin-bottom:1.5rem; display:flex;align-items:center;justify-content:center;gap:.75rem; }
+.hero-eyebrow{ font-size:.5rem;letter-spacing:.3em;text-transform:uppercase; color:var(--gold);margin-bottom:1.5rem; display:flex;align-items:center;justify-content:center;gap:.75rem; text-shadow: 0 0 10px #000; }
 .hero-eyebrow::before{content:'⬡';font-size:.75rem}
 
 .hero-title{ font-family:var(--font-display); font-size:clamp(2.8rem,8vw,7.5rem); line-height:.95;font-weight:700; color:var(--cream); margin-bottom:1.5rem; text-shadow:0 0 60px rgba(255,215,0,.15); letter-spacing:2px; }
 .hero-title em{ font-style:italic; color:var(--gold); display:block; text-shadow:0 0 40px rgba(255,215,0,.4),0 0 80px rgba(255,215,0,.15); }
 
-/* NEW HERO TEXT BLOCKS */
-.hero-tagline{ font-size:.5rem; letter-spacing:.05em;line-height:2.2; color:var(--muted);max-width:600px; margin:0 auto 0.5rem; }
-.hero-whisper { font-size: 0.35rem; color: #554433; letter-spacing: 0.1em; margin-bottom: 2rem; font-style: italic; }
-
-.hero-quote-box {
-  border: 1px solid var(--gd);
-  background: rgba(255,215,0,0.05);
-  padding: 1rem 1.5rem;
-  max-width: 500px;
-  margin: 0 auto 2.5rem;
-  box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+/* NEW HERO TEXT BLOCKS - Individual Golden Borders */
+.hero-tagline-box {
+  border: 1px solid var(--gold);
+  background: rgba(0,0,0,0.6);
+  padding: 0.75rem;
+  margin: 0 auto 0.5rem;
+  max-width: 650px;
+  box-shadow: 0 0 15px rgba(255,215,0,0.2);
 }
-.hero-quote-box p { font-size: 0.45rem; color: var(--gold); line-height: 2; text-shadow: 0 0 8px rgba(255,215,0,0.3); }
+.hero-tagline { font-size:.5rem; letter-spacing:.05em; line-height:2.2; color:var(--gold); }
+
+.hero-whisper-box {
+  border: 1px solid var(--gd);
+  background: rgba(0,0,0,0.5);
+  padding: 0.5rem;
+  margin: 0 auto 2rem;
+  max-width: 500px;
+}
+.hero-whisper { font-size: 0.35rem; color: var(--muted); letter-spacing: 0.1em; font-style: italic; }
+
+/* The final quote box - Golden border, Obsidian interior */
+.hero-quote-box {
+  border: 2px solid var(--gold);
+  background: var(--coal); /* Obsidian interior */
+  padding: 1rem 1.5rem;
+  max-width: 600px;
+  margin: 0 auto 2.5rem;
+  box-shadow: inset 0 0 20px rgba(0,0,0,1), 0 0 20px rgba(255,215,0,0.3);
+}
+.hero-quote-box p { font-size: 0.45rem; color: var(--cream); line-height: 2; text-shadow: 0 0 5px rgba(255,255,255,0.2); }
 
 .hero-actions{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center}
 
@@ -287,6 +295,9 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
     mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
 }
+
+/* FADE IN VISIBILITY */
+.fade-in.visible{opacity:1;transform:none}
 </style>
 </head>
 <body>
@@ -312,14 +323,17 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="hero-content">
-    <div class="hero-eyes">
-      <div class="hero-eye"></div>
-      <div class="hero-eye"></div>
-    </div>
+    
     <div class="hero-eyebrow">Nonsense Media Network — Est. 2026</div>
     <h1 class="hero-title">The goldmine<em>is within.</em></h1>
-    <p class="hero-tagline">Descend deeper into madness, find gold in the goldmine, beware of the stained obsidian...</p>
-    <p class="hero-whisper">...and don't put anything in your pocket on the way out.</p>
+    
+    <div class="hero-tagline-box">
+      <p class="hero-tagline">Descend deeper into madness, find gold in the goldmine, beware of the stained obsidian...</p>
+    </div>
+    
+    <div class="hero-whisper-box">
+      <p class="hero-whisper">...and don't put anything in your pocket on the way out.</p>
+    </div>
     
     <div class="hero-quote-box">
       <p>"My sword is my pen, the world is my playground." <br><span style="font-size: 0.35rem; color: var(--gd); display:block; margin-top: 5px;">— Lord Oro</span></p>
@@ -626,7 +640,7 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 <section id="contact" style="background:var(--rock); padding:5rem 3rem;">
   <div class="section-tag">Contact</div>
   <div class="fade-in">
-    <h2 class="contact-headline">A new tunnel is always<br><em>being dug.</em></h2>
+    <h2 class="about-headline">A new tunnel is always<br><em>being dug.</em></h2>
     <p style="font-size:.75rem;color:var(--muted);line-height:2;max-width:480px;margin-bottom:2.5rem;">Collaborations, media inquiries, and transmedia opportunities. The network is always expanding.</p>
     <div style="display:flex;flex-direction:column;max-width:520px;border:1px solid rgba(255,215,0,.1);">
       <a href="mailto:doradoyoro@gmail.com" style="display:flex;align-items:center;padding:1.1rem 1.4rem;border-bottom:1px solid rgba(255,215,0,.08);transition:background .3s;gap:1.25rem;"><span style="font-size:.5rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gd);width:60px;flex-shrink:0;">Email</span><span style="font-size:.78rem;color:var(--muted);">doradoyoro@gmail.com</span></a>
