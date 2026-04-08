@@ -103,7 +103,6 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 .section-tag::after{content:'';height:1px;width:60px;background:linear-gradient(to right,var(--gd),transparent)}
 @media(max-width:768px){section{padding:4rem 1.5rem}}
 
-
 /* ── HALL HERO (IMPORTED FROM GAMES.HTML) ── */
 .hall-hero {
   text-align: center; padding: 5rem 2rem 3rem;
@@ -180,7 +179,6 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 .vessel-anchor-wrap.active .vessel-chevron { transform: rotate(90deg); }
 
 .filter-panel { display: none; animation: slideDown .3s ease; }
-.filter-panel.visible { display: block; }
 @keyframes slideDown { from { opacity: 0; transform: translateY(-12px) } to { opacity: 1; transform: translateY(0) } }
 
 #vessel-obsidian { border-color: rgba(138,43,226,.4); }
@@ -756,21 +754,41 @@ window.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
 });
 
-// ── DUAL VESSEL FILTER ──
-function filterVessel(vessel) {
+// ── DUAL VESSEL FILTER (FIXED) ──
+window.filterVessel = function(vessel) {
   const goldWrap = document.getElementById('vessel-gold');
   const obsidianWrap = document.getElementById('vessel-obsidian');
   const goldPanel = document.getElementById('panel-gold');
   const obsidianPanel = document.getElementById('panel-obsidian');
 
+  if (!goldWrap || !obsidianWrap || !goldPanel || !obsidianPanel) return;
+
   if (vessel === 'gold') {
-    goldWrap.classList.add('active'); obsidianWrap.classList.remove('active');
-    goldPanel.classList.add('visible'); obsidianPanel.classList.remove('visible');
+    goldWrap.classList.add('active'); 
+    obsidianWrap.classList.remove('active');
+    
+    // Force the display style directly to override CSS conflicts
+    goldPanel.style.display = 'block'; 
+    obsidianPanel.style.display = 'none';
   } else {
-    obsidianWrap.classList.add('active'); goldWrap.classList.remove('active');
-    obsidianPanel.classList.add('visible'); goldPanel.classList.remove('visible');
+    obsidianWrap.classList.add('active'); 
+    goldWrap.classList.remove('active');
+    
+    // Force the display style directly to override CSS conflicts
+    obsidianPanel.style.display = 'block'; 
+    goldPanel.style.display = 'none';
   }
-}
+};
+
+// Enforce the default visibility on page load
+window.addEventListener('DOMContentLoaded', () => {
+    const obPanel = document.getElementById('panel-obsidian');
+    const gPanel = document.getElementById('panel-gold');
+    if (obPanel && gPanel) {
+        obPanel.style.display = 'none';
+        gPanel.style.display = 'block';
+    }
+});
 
 // ── PROCEDURAL AUDIO ENGINE ──
 const NMNAudioEngine = {
