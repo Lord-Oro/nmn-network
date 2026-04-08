@@ -6,10 +6,18 @@
 <title>Poison Ivy's Tunnel — NMN</title>
 <link rel="stylesheet" href="nmn-theme.css">
 
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P5WL9XNDY8');
+</script>
+
 <style>
 :root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28;--green:#4a8a3a;--lg:#6aaa4a;--dg:#2a5a1a}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-sans);background:#070a05;color:var(--cream);min-height:100vh;overflow-x:hidden;padding-bottom:50px}
+body{font-family:var(--font-sans);background:#070a05;color:var(--cream);min-height:100vh;overflow-x:hidden;padding-bottom:65px !important;}
 
 /* TUNNEL ENTRANCE */
 .tunnel-entrance{position:relative;text-align:center;padding:3rem 2rem 2rem;overflow:hidden;background:linear-gradient(to bottom,#050804,#0a0f07)}
@@ -56,19 +64,6 @@ main{max-width:900px;margin:0 auto;padding:2rem 1.5rem}
 .ivy-signed small{font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);display:block;margin-top:.5rem}
 
 /* DEPTH GAUGE */
-.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:34px;background:rgba(7,10,5,.97);border-top:1px solid rgba(106,170,74,.2);display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:999;padding:0 1rem}
-.dg-stat{display:flex;align-items:center;gap:.3rem;font-size:.4rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
-.dg-val{font-family:var(--font-serif);font-size:.8rem;color:var(--lg)}
-.dg-sep{color:var(--faint)}
-.dg-link{font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-decoration:none}
-.dg-link:hover{color:var(--lg)}
-</style>
-
-<style id="nmn-cursor">
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
-</style>
-<style id="floating-gauge">
 .depth-gauge{
   position:fixed!important;bottom:12px!important;left:50%!important;
   transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
@@ -80,20 +75,28 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
   gap:1.2rem!important;flex-wrap:nowrap!important;
   box-shadow:0 0 20px rgba(255,215,0,.08)!important;
 }
-.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
-body{padding-bottom:65px!important}
+.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28;pointer-events:auto!important;}
+.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
+.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s;pointer-events:auto!important;}
+.dg-link:hover{color:#FFD700}
+.dg-sep{color:#2a1808;font-size:.6rem;pointer-events:auto!important;}
 </style>
 
-<!-- Monetag In-Page Push — Zone 10763810 -->
+<style id="nmn-cursor">
+body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
+</style>
 
-
+<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
 
 </head>
 <body>
+<script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
+
 <header>
   <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="index.html" class="back">← Return to the Mine</a>
+  <a href="games.html" class="back">← Return to Hall</a>
 </header>
 
 <div class="tunnel-entrance">
@@ -127,12 +130,12 @@ body{padding-bottom:65px!important}
       <span class="card-status status-live">Live Now</span>
     </a>
 
-    <a href="apothecary.html" class="ivy-card">
+    <a href="apothecary.html" class="ivy-card coming">
       <span class="card-icon">🌿</span>
       <div class="card-type">Gem Healing & Mood Matching</div>
       <div class="card-name">Ivy's <em>Apothecary</em></div>
       <div class="card-desc">Tell the mine how you're feeling. One word is enough. The mine finds the gemstone that matches what you're carrying — its healing property, how to use it, what Lord Oro would say, and what Ivy has on the shelf for exactly this.</div>
-      <span class="card-status status-live">Live Now</span>
+      <span class="card-status status-soon">Opening Soon</span>
     </a>
 
     <a href="grimoire.html" class="ivy-card">
@@ -159,20 +162,32 @@ body{padding-bottom:65px!important}
   </div>
 </main>
 
-<div class="depth-gauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span>&nbsp;Gold</div>
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
   <span class="dg-sep">⬡</span>
-  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span>&nbsp;Lore</div>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> Lore Fragments</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span> Creatures</div>
   <span class="dg-sep">⬡</span>
   <a href="lorevault.html" class="dg-link">📜 Vault</a>
-  <a href="index.html" class="dg-link">⛏ The Mine</a>
+  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
+  <a href="ledger.html" class="dg-link">📖 Ledger</a>
 </div>
+
 <script>
-try{
-  document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
-  document.getElementById('dgGold').textContent=localStorage.getItem('nmn_total_gold')||'0';
-}catch(e){}
+(function(){
+  try{
+    // Integrated with V2 NMNWallet
+    var w = typeof NMNWallet !== 'undefined' ? NMNWallet.get() : {gold:0};
+    var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+    var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
+    var el=document.getElementById('dgGold');if(el)el.textContent=w.gold;
+    var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
+    var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
+  }catch(e){}
+})();
 </script>
+
 <script id="nmn-glow">
 (function(){
   var r=document.createElement('div');
@@ -185,10 +200,15 @@ try{
 })();
 </script>
 
-<!-- Monetag Service Worker Registration -->
 <script>
-if('serviceWorker' in navigator){
-    .catch(function(err){ console.log('NMN SW error:', err); });
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(function(registration) {
+      console.log('NMN SW registered with scope:', registration.scope);
+    })
+    .catch(function(err){
+      console.log('NMN SW error:', err);
+    });
 }
 </script>
 
