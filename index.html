@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nonsense Media Network — Lord Oro</title>
+
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -13,18 +16,14 @@
 <link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nonsense Media Network — Lord Oro</title>
 
 <link rel="stylesheet" href="nmn-theme.css">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet">
 
-<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
-
 <style>
 :root {
   --gold: #FFD700; --gb: #e8b84b; --gd: #8B6914;
-  --coal: #050308; /* Pitch Black Obsidian */
+  --coal: #050308; 
   --shaft: #08060A; --rock: #0A080C;
   --cream: #E8E0D0; --neon-green: #00FF88;
   --font-pixel: 'Press Start 2P', cursive;
@@ -43,7 +42,7 @@ body {
   color: var(--cream);
   overflow-x: hidden;
   padding-top: 80px; 
-  padding-bottom: 80px; /* Space for mobile nav */
+  padding-bottom: 80px; 
   background-image: 
     radial-gradient(2px 2px at 40px 60px, #FFD700 50%, transparent 100%),
     radial-gradient(2px 2px at 120px 180px, #e8b84b 50%, transparent 100%),
@@ -65,28 +64,32 @@ body::after{
     linear-gradient(90deg,rgba(232,184,75,0.015),rgba(197,146,0,0.008),rgba(255,215,0,0.015));
   background-size:100% 3px,3px 100%; pointer-events:none; z-index:10000; opacity:0.18;
 }
-/* Vignette */
 body::before{
   content:""; position:fixed; top:0;left:0; width:100vw;height:100vh;
   background:radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.55) 100%);
   pointer-events:none; z-index:9999;
 }
 
-/* NAV */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:10000;
-  padding:1.2rem 2.5rem; display:flex;justify-content:space-between;align-items:center;
-  background:rgba(7,6,5,.97); border-bottom:1px solid rgba(255,215,0,.12); backdrop-filter:blur(8px);
+/* NAV - STRETCHED & LEGIBLE */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10000;
+  background: rgba(7,6,5,.97);
+  border-bottom: 1px solid rgba(255,215,0,.12);
+  backdrop-filter: blur(8px);
 }
-.nav-logo{ font-size:0.75rem; color:var(--gold); flex-shrink:0; letter-spacing:2px; text-shadow:0 0 15px rgba(255,215,0,0.4); }
-.nav-links { display: flex; gap: 1.5rem; align-items: center; }
-.nav-link { color:var(--muted); font-size:0.6rem; letter-spacing:.15em; text-transform:uppercase; transition:color .3s; }
-.nav-link:hover { color:var(--gold); text-shadow:0 0 10px rgba(255,215,0,0.4); }
+.nav-container {
+  display: flex; justify-content: space-between; align-items: center;
+  max-width: 1200px; margin: 0 auto; padding: 1.2rem 2.5rem; width: 100%;
+}
+.nav-logo { font-size: 0.85rem; color: var(--gold); flex-shrink: 0; letter-spacing: 2px; text-shadow: 0 0 15px rgba(255,215,0,0.4); }
+.nav-links { display: flex; gap: 2.5rem; align-items: center; justify-content: flex-end; flex-grow: 1; }
+.nav-link { color: var(--cream); font-size: 0.7rem; letter-spacing: .15em; text-transform: uppercase; transition: color .3s; padding: 0.5rem; }
+.nav-link:hover { color: var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.4); }
 
 @media(max-width:768px){ 
-  nav { padding: 1rem 1.5rem; }
+  .nav-container { padding: 1rem 1.5rem; justify-content: center; }
   .nav-links { display:none; } 
-  .nav-logo { font-size: 0.65rem; } 
+  .nav-logo { font-size: 0.75rem; } 
 }
 
 /* PARTICLES */
@@ -102,7 +105,7 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 @media(max-width:768px){section{padding:4rem 1.5rem}}
 
 /* ── HERO ── */
-.hero{
+.hero {
   position:relative; 
   display:flex; align-items:center; justify-content:center; 
   padding:6rem 3rem 4rem; overflow:hidden; text-align:center;
@@ -116,47 +119,22 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 @media (min-width: 768px) {
   .hero { background-size: contain; background-position: center top; height: 100vh; justify-content: center; padding-bottom: 4rem;}
 }
-.hero-bg{
-  position:absolute;inset:0;
-  background: rgba(0,0,0,0.4); /* Dimmer overlay */
-  z-index: 1;
-}
-
-/* Ensure text stays above the image */
-.hero-content {
-  position: relative;
-  z-index: 10;
-  width: 100%;
-  max-width: 800px;
-}
+.hero-bg{ position:absolute;inset:0; background: rgba(0,0,0,0.4); z-index: 1; }
+.hero-content { position: relative; z-index: 10; width: 100%; max-width: 800px; }
 
 .hero-eyebrow{ font-size:.5rem;letter-spacing:.3em;text-transform:uppercase; color:var(--gold);margin-bottom:1.5rem; display:flex;align-items:center;justify-content:center;gap:.75rem; text-shadow: 0 0 10px #000; }
 .hero-eyebrow::before{content:'⬡';font-size:.75rem}
 .hero-title{ font-family:var(--font-display); font-size:clamp(2.8rem,8vw,7.5rem); line-height:.95;font-weight:700; color:var(--cream); margin-bottom:1.5rem; text-shadow:0 0 60px rgba(255,215,0,.15); letter-spacing:2px; }
 .hero-title em{ font-style:italic; color:var(--gold); display:block; text-shadow:0 0 40px rgba(255,215,0,.4),0 0 80px rgba(255,215,0,.15); }
 
-/* NEW HERO TEXT BLOCKS - Individual Golden Borders */
-.hero-tagline-box {
-  border: 1px solid var(--gold); background: rgba(0,0,0,0.8);
-  padding: 0.75rem; margin: 0 auto 0.5rem; max-width: 650px;
-  box-shadow: 0 0 15px rgba(255,215,0,0.2);
-}
+.hero-tagline-box { border: 1px solid var(--gold); background: rgba(0,0,0,0.8); padding: 0.75rem; margin: 0 auto 0.5rem; max-width: 650px; box-shadow: 0 0 15px rgba(255,215,0,0.2); }
 .hero-tagline { font-size:.5rem; letter-spacing:.05em; line-height:2.2; color:var(--gold); }
-.hero-whisper-box {
-  border: 1px solid var(--gd); background: rgba(0,0,0,0.7);
-  padding: 0.5rem; margin: 0 auto 2rem; max-width: 500px;
-}
+.hero-whisper-box { border: 1px solid var(--gd); background: rgba(0,0,0,0.7); padding: 0.5rem; margin: 0 auto 2rem; max-width: 500px; }
 .hero-whisper { font-size: 0.35rem; color: var(--muted); letter-spacing: 0.1em; font-style: italic; }
-.hero-quote-box {
-  border: 2px solid var(--gold); background: var(--coal);
-  padding: 1rem 1.5rem; max-width: 600px; margin: 0 auto 2.5rem;
-  box-shadow: inset 0 0 20px rgba(0,0,0,1), 0 0 20px rgba(255,215,0,0.3);
-}
+.hero-quote-box { border: 2px solid var(--gold); background: var(--coal); padding: 1rem 1.5rem; max-width: 600px; margin: 0 auto 2.5rem; box-shadow: inset 0 0 20px rgba(0,0,0,1), 0 0 20px rgba(255,215,0,0.3); }
 .hero-quote-box p { font-size: 0.45rem; color: var(--cream); line-height: 2; text-shadow: 0 0 5px rgba(255,255,255,0.2); }
 
 .hero-actions{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center}
-
-/* BUTTONS */
 .btn{padding:.85rem 2rem;font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;text-decoration:none;display:inline-block;transition:all .3s;cursor:pointer;border:none}
 .btn-primary{background:var(--gold);color:var(--coal);box-shadow:0 0 20px rgba(255,215,0,.4)}
 .btn-primary:hover{background:#fff;box-shadow:0 0 35px rgba(255,215,0,.8);transform:translateY(-2px)}
@@ -211,7 +189,7 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 .store-link.available { border-color: var(--gold); color: var(--gold); background: rgba(255, 215, 0, 0.05); }
 .store-link.available:hover { background: rgba(255, 215, 0, 0.15); }
 
-/* ─── MAP GRID & SECTORS ─── */
+/* ─── MAP GRID & SECTORS (NEW GUARDIANS) ─── */
 .map-grid { display: grid; grid-template-columns: 1fr; gap: 40px; max-width: 1100px; margin: 0 auto; }
 @media (min-width: 900px) { .map-grid { grid-template-columns: 1fr 1fr; } }
 
@@ -224,7 +202,7 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 }
 .map-sector:hover { border-color: rgba(255, 215, 0, 0.4); transform: translateY(-3px); }
 
-.sector-gate { width: 100%; height: 100px; display: block; image-rendering: pixelated; border-bottom: 1px solid rgba(255,215,0,0.1); object-fit: cover;}
+.sector-gate { width: 100%; height: 150px; display: block; image-rendering: pixelated; border-bottom: 1px solid rgba(255,215,0,0.1); object-fit: cover; object-position: center;}
 
 .sector-body { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
 .sector-label { font-family: var(--font-pixel); font-size: 0.35rem; color: var(--gd); letter-spacing: 0.15em; margin-bottom: 0.5rem; text-transform: uppercase; }
@@ -294,17 +272,36 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
     mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
 }
+
+/* DEPTH GAUGE */
+.depth-gauge {
+  position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:92%!important; height:42px!important; background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important; border-radius:22px!important; padding:0 18px!important;
+  z-index:9999!important; backdrop-filter:blur(4px)!important; display:flex!important; align-items:center!important;
+  justify-content:center!important; gap:1.2rem!important; box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat { font-family: var(--font-pixel); font-size: 0.4rem; color: var(--gd); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
+.dg-val { color: var(--gold); font-size: 0.6rem; font-family: var(--font-serif); }
+.dg-link { font-family: var(--font-pixel); font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; pointer-events: auto!important;}
+.dg-link:hover { color: var(--gold); }
 </style>
+
+<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
 </head>
 <body>
 
+<script src="nmn-wallet.js"></script>
+
 <nav>
-  <a href="index.html" class="nav-logo">⛏ NMN</a>
-  <div class="nav-links">
-    <a href="games.html" class="nav-link">GAMES</a>
-    <a href="oracle.html" class="nav-link">ORACLE</a>
-    <a href="gemshop.html" class="nav-link">GEMSHOP</a>
-    <a href="https://patreon.com/lordoro" target="_blank" class="nav-link">PATREON</a>
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">⛏ NMN</a>
+    <div class="nav-links">
+      <a href="games.html" class="nav-link">GAMES</a>
+      <a href="oracle.html" class="nav-link">ORACLE</a>
+      <a href="gemshop.html" class="nav-link">GEMSHOP</a>
+      <a href="https://patreon.com/lordoro" target="_blank" class="nav-link">PATREON</a>
+    </div>
   </div>
 </nav>
 
@@ -551,7 +548,7 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
   <div class="map-grid">
 
     <div class="map-sector">
-      <img src="image_0.png" alt="Static Lion Guardian" class="sector-gate">
+      <img src="image_0.jpg" alt="Static Lion Guardian" class="sector-gate">
       <div class="sector-body">
         <span class="sector-label">SECTOR 1 / PROVEN ORE</span>
         <h2 class="sector-title">THE FORGE & ARCADE</h2>
@@ -565,7 +562,7 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     </div>
 
     <div class="map-sector">
-      <img src="image_1.png" alt="Glitch Elephant Guardian" class="sector-gate">
+      <img src="image_1.jpg" alt="Glitch Elephant Guardian" class="sector-gate">
       <div class="sector-body">
         <span class="sector-label">SECTOR 2 / STRATEGY</span>
         <h2 class="sector-title">THE ARCHIVES & VAULT</h2>
@@ -579,7 +576,7 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     </div>
 
     <div class="map-sector">
-      <img src="image_2.png" alt="Elite Static Lion Guardian" class="sector-gate">
+      <img src="image_2.jpg" alt="Elite Static Lion Guardian" class="sector-gate">
       <div class="sector-body">
         <span class="sector-label">SECTOR 3 / LORE SECRETS</span>
         <h2 class="sector-title">THE DEEP VEIN</h2>
@@ -593,7 +590,7 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     </div>
 
     <div class="map-sector classified">
-      <img src="image_3.png" alt="Elite Glitch Elephant Guardian" class="sector-gate">
+      <img src="image_3.jpg" alt="Elite Glitch Elephant Guardian" class="sector-gate">
       <div class="sector-body">
         <span class="sector-label">?? CLASSIFIED ??</span>
         <h2 class="sector-title">[ SECURITY CLEARANCE REQUIRED ]</h2>
@@ -637,6 +634,26 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 <a href="#" onclick="window.scrollTo(0,0)" class="nmn-seal" title="Nonsense Media Network — Lord Oro">
   <img src="lord_oro_emblem.jpg" alt="NMN Emblem">
 </a>
+
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
+  <span class="dg-sep" style="color:var(--faint);">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 Vault</a>
+  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
+</div>
+
+<script>
+// V2 Wallet Integration (Auto-Sync)
+function syncGauges() {
+    if(typeof NMNWallet !== 'undefined') {
+        const gold = NMNWallet.get().gold;
+        const dG = document.getElementById('dgGold');
+        if(dG) dG.textContent = gold;
+    }
+}
+window.addEventListener('nmn_wallet_update', syncGauges);
+syncGauges(); // Init
+</script>
 
 <script>
 // ── GLOWING CURSOR ──
