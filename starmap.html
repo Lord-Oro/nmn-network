@@ -3,431 +3,224 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Star Map — Sector 4</title>
+<title>The Star Map — NMN Celestial Archive</title>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-P5WL9XNDY8');
-</script>
-<link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
 
 <style>
-/* ── CORE NMN VARIABLES & AESTHETIC ── */
 :root {
   --gold: #FFD700; --gb: #e8b84b; --gd: #8B6914;
-  --coal: #050308; --shaft: #08060A; --rock: #0A080C;
-  --cream: #E8E0D0; --neon-green: #00FF88;
-  --font-pixel: 'Press Start 2P', cursive;
+  --coal: #050302; --shaft: #0a0806; --cream: #f0e6cc;
+  --muted: #8a7654; --faint: #4a3c28;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-text: 'VT323', monospace;
+  --font-ancient: 'Cormorant Garamond', serif;
 }
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; background: var(--coal); }
 
 body {
-  font-family: var(--font-pixel);
-  background-color: var(--coal);
+  font-family: var(--font-ancient);
+  background: var(--coal);
   color: var(--cream);
-  overflow-x: hidden;
-  padding-top: 56px;
-  padding-bottom: 80px;
-  background-image: 
-    radial-gradient(2px 2px at 40px 60px, #FFD700 50%, transparent 100%),
-    radial-gradient(2px 2px at 120px 180px, #e8b84b 50%, transparent 100%),
-    linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
-    linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
-  background-size: 200px 200px, 200px 200px, 32px 32px, 32px 32px;
-  line-height: 1.8;
+  min-height: 100vh;
+  padding-bottom: 85px !important;
+  background-image: radial-gradient(circle at 50% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 60%);
 }
 
-/* OVERRIDE ALL OLD FONTS */
-h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
-
-/* CRT SCANLINES & VIGNETTE */
-body::after {
-  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
-  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.08) 50%),
-              linear-gradient(90deg,rgba(232,184,75,0.015),rgba(197,146,0,0.008),rgba(255,215,0,0.015));
-  background-size:100% 3px,3px 100%; pointer-events:none; z-index:10000; opacity:0.18;
-}
-body::before {
-  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
-  background:radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.55) 100%);
-  pointer-events:none; z-index:9999;
-}
-
-/* HEADER & HERO */
 header {
-  padding: 1.5rem 2rem; border-bottom: 1px solid rgba(255,215,0,.1);
+  padding: 1rem 2rem; border-bottom: 1px solid rgba(255,215,0,.15);
   display: flex; justify-content: space-between; align-items: center;
-  background: rgba(5,3,14,.95); position: sticky; top: 0; z-index: 1000;
+  background: rgba(5,3,2,.95); position: sticky; top: 0; z-index: 100;
+  backdrop-filter: blur(5px);
 }
-.logo { color: var(--gold); font-size: .65rem; text-decoration: none; text-shadow: 0 0 10px rgba(255,215,0,.4); }
-.back-btn { font-size: .45rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
-.back-btn:hover { color: var(--gold); }
+.logo { font-family: var(--font-pixel); color: var(--gold); font-size: .6rem; text-decoration: none; }
+.back { font-family: var(--font-pixel); font-size: .45rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
 
-.map-hero { text-align: center; padding: 4rem 2rem 2rem; position: relative; z-index: 2; }
-.map-title { font-size: clamp(1.2rem, 4vw, 2.5rem); color: var(--cream); margin-bottom: 1rem; text-shadow: 0 0 20px rgba(255,215,0,.2); }
-.map-title em { color: var(--gold); font-style: normal; }
-.map-sub { font-size: .45rem; color: var(--gd); line-height: 2.2; max-width: 600px; margin: 0 auto; }
+main { max-width: 1000px; margin: 0 auto; padding: 4rem 1.5rem 6rem; }
 
-/* TABS */
-.map-tabs {
-  display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; position: relative; z-index: 2; flex-wrap: wrap;
-}
+.map-hero { text-align: center; margin-bottom: 4rem; }
+.map-title { font-family: var(--font-ancient); font-size: clamp(3rem, 7vw, 4.5rem); color: var(--cream); font-weight: 600; margin-bottom: 1rem; }
+.map-title em { color: var(--gold); font-style: italic; }
+.map-sub { font-size: 1.4rem; color: var(--muted); max-width: 600px; margin: 0 auto; font-style: italic; }
+
+/* THE CONSOLE */
+.map-tabs { display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem; flex-wrap: wrap; }
 .map-tab {
-  background: rgba(10,8,12,0.9); border: 1px solid rgba(255,215,0,0.15); color: var(--gd);
-  padding: 0.75rem 1.5rem; font-size: 0.45rem; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s;
+  background: #000; border: 1px solid #222; color: var(--muted);
+  padding: 0.8rem 1.5rem; font-family: var(--font-pixel); font-size: 0.45rem; cursor: pointer; transition: 0.3s;
 }
-.map-tab.active { background: rgba(255,215,0,0.1); border-color: var(--gold); color: var(--gold); box-shadow: 0 0 15px rgba(255,215,0,0.2); }
-.map-tab:hover { border-color: var(--gold); color: var(--gold); }
+.map-tab.active { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 15px rgba(255,215,0,0.1); }
 
-/* PANELS */
-.panel { display: none; max-width: 900px; margin: 0 auto; padding: 0 2rem 2rem; position: relative; z-index: 2; }
-.panel.active { display: block; animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.star-canvas { border: 2px solid #222; background: #000; position: relative; box-shadow: 0 20px 50px #000; }
+#starSVG { width: 100%; display: block; cursor: crosshair; }
 
-/* SVG MAP */
-.star-canvas { position: relative; width: 100%; border: 2px solid var(--gd); background: #000; box-shadow: 0 0 30px rgba(255,215,0,0.1); }
-#starSVG { width: 100%; cursor: crosshair; }
+/* FOUNDER PANEL */
+.founder-cta {
+    margin-top: 5rem; padding: 3rem; border: 1px solid var(--gd);
+    background: linear-gradient(180deg, #0a0806 0%, #050403 100%);
+    text-align: center; position: relative;
+}
+.founder-cta::before { content: '✦'; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--coal); padding: 0 15px; color: var(--gold); }
+.cta-title { font-family: var(--font-ancient); font-size: 2.2rem; color: var(--gold); margin-bottom: 1rem; font-weight: 600; }
+.cta-text { font-size: 1.3rem; color: var(--muted); margin-bottom: 2rem; font-style: italic; line-height: 1.6; }
+.cta-grid { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.cta-btn {
+    padding: 1rem 2rem; font-family: var(--font-pixel); font-size: 0.5rem;
+    text-decoration: none; border: 1px solid var(--gold); color: var(--gold); transition: 0.3s;
+}
+.cta-btn:hover { background: var(--gold); color: #000; }
+
+/* TRIBES (Stone Tablets) */
+.tribe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+.stone-tablet {
+  background: #0a0806; border: 1px solid #1a1a1a; padding: 2rem;
+  box-shadow: inset 0 0 20px #000; transition: 0.3s; cursor: pointer;
+}
+.stone-tablet:hover { border-color: var(--gd); transform: translateY(-5px); }
+.tribe-icon { font-size: 2rem; display: block; margin-bottom: 1rem; filter: sepia(1); }
+.tribe-name { font-family: var(--font-ancient); font-size: 1.8rem; color: var(--gold); margin-bottom: 0.5rem; font-weight: 600; }
+.tribe-oro { font-size: 1.1rem; color: var(--muted); border-top: 1px dashed #333; margin-top: 1rem; padding-top: 1rem; font-style: italic; }
 
 /* TOOLTIP */
 .star-tooltip {
-  position: fixed; background: rgba(5,3,14,.97); border: 2px solid var(--gold);
-  padding: 1rem 1.25rem; max-width: 300px; z-index: 10000; pointer-events: none; display: none;
-  box-shadow: 0 4px 20px rgba(0,0,0,.9);
+  position: fixed; background: rgba(5,4,3,0.98); border: 1px solid var(--gold);
+  padding: 1.5rem; max-width: 280px; z-index: 10000; pointer-events: none; display: none;
+  box-shadow: 0 10px 30px #000; font-family: var(--font-ancient);
 }
-.tt-name { font-size: 0.6rem; color: var(--gold); margin-bottom: 0.5rem; }
-.tt-tag { font-size: 0.4rem; color: var(--gd); margin-bottom: 0.5rem; }
-.tt-text { font-size: 0.45rem; color: var(--cream); line-height: 1.8; }
-.tt-donor { font-size: 0.4rem; color: var(--neon-green); margin-top: 0.5rem; }
 
-/* TRIBES GRID */
-.tribe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
-.tribe-card {
-  border: 1px solid rgba(255,215,0,.15); padding: 1.5rem; background: rgba(10,8,12,0.9);
-  transition: all 0.3s; cursor: pointer; text-align: center;
-}
-.tribe-card:hover, .tribe-card.active-card { border-color: var(--gold); box-shadow: 0 0 15px rgba(255,215,0,0.2); transform: translateY(-3px); }
-.tribe-icon { font-size: 1.5rem; display: block; margin-bottom: 0.5rem; }
-.tribe-name { font-size: 0.55rem; color: var(--cream); margin-bottom: 0.5rem; }
-.tribe-culture { font-size: 0.4rem; color: var(--gd); }
-.tribe-detail {
-  margin-top: 1.5rem; border: 1px solid var(--gold); padding: 1.5rem;
-  background: rgba(255,215,0,.05); display: none;
-}
-.tribe-detail.active { display: block; }
-.tribe-detail-title { font-size: 0.6rem; color: var(--gold); margin-bottom: 1rem; }
-.tribe-detail-text { font-size: 0.45rem; color: var(--cream); line-height: 2; margin-bottom: 1rem; }
-.tribe-oro { font-size: 0.4rem; color: var(--gd); border-top: 1px solid rgba(255,215,0,.2); padding-top: 1rem; line-height: 1.8; }
-
-/* DONORS */
-.donor-section { text-align: center; padding: 2rem; border: 1px solid var(--gd); background: rgba(10,8,12,0.9); }
-.donor-title { font-size: 1rem; color: var(--gold); margin-bottom: 1rem; }
-.donor-sub { font-size: 0.45rem; color: var(--cream); line-height: 2; margin-bottom: 2rem; }
-.donor-links { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-.btn-gold {
-  background: var(--gold); color: var(--coal); padding: 0.8rem 1.5rem;
-  font-size: 0.5rem; text-decoration: none; border: none; transition: all 0.3s; cursor: pointer;
-}
-.btn-gold:hover { background: #fff; box-shadow: 0 0 20px rgba(255,215,0,0.6); }
-
-/* FLOATING GAUGE */
+/* HUD GAUGE */
 .depth-gauge {
   position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
-  width:auto!important; max-width:92%!important; height:42px!important; background:rgba(12,10,7,.88)!important;
-  border:1px solid rgba(255,215,0,.4)!important; border-radius:22px!important; padding:0 18px!important;
-  z-index:9999!important; backdrop-filter:blur(4px)!important; display:flex!important; align-items:center!important;
-  justify-content:center!important; gap:1.2rem!important; box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+  width:auto!important; max-width:95%!important; height:46px!important; background:rgba(5,4,3,.95)!important;
+  border:1px solid rgba(255,215,0,.3)!important; border-radius:2px!important; padding:0 20px!important;
+  z-index:9999!important; display:flex!important; align-items:center!important; justify-content:center!important;
+  gap:1.5rem!important; flex-wrap:nowrap!important; box-shadow: 0 5px 20px rgba(0,0,0,0.9)!important;
 }
-.dg-stat { font-size: 0.4rem; color: var(--gd); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
-.dg-val { color: var(--gold); font-size: 0.6rem; }
-.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
-.dg-link:hover { color: var(--gold); }
-</style>
-
-<style id="nmn-cursor">
-body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
 </style>
 </head>
 <body>
 
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
+
 <header>
-  <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="oracle.html" class="back-btn">← Return to Oracle</a>
+  <a href="index.html" class="logo">CELESTIAL ARCHIVE</a>
+  <a href="oracle.html" class="back">← RETURN TO ORACLE</a>
 </header>
 
-<div class="map-hero">
-  <h1 class="map-title">The <em>Star Map</em></h1>
-  <p class="map-sub">Lord Oro named the sky long before astronomers did. The constellations here belong to his universe — and to the Founders who helped build it.</p>
-</div>
-
-<div class="map-tabs">
-  <button class="map-tab active" onclick="showPanel('map')">THE SKY</button>
-  <button class="map-tab" onclick="showPanel('tribes')">TRIBES</button>
-  <button class="map-tab" onclick="showPanel('donors')">SECTOR 4</button>
-</div>
-
-<div class="panel active" id="mapPanel">
-  <div class="star-canvas">
-    <svg id="starSVG" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
-      <rect width="900" height="600" fill="#05030e"/>
-      <ellipse cx="200" cy="150" rx="180" ry="80" fill="#1a0a2a" opacity=".4"/>
-      <ellipse cx="680" cy="400" rx="200" ry="100" fill="#0a1a2a" opacity=".35"/>
-      <ellipse cx="450" cy="300" rx="150" ry="120" fill="#1a1208" opacity=".25"/>
-      
-      <g fill="white" opacity=".3">
-        <circle cx="45" cy="23" r="0.8"/><circle cx="120" cy="67" r="0.6"/><circle cx="234" cy="12" r="0.8"/><circle cx="312" cy="89" r="0.6"/><circle cx="456" cy="34" r="0.8"/><circle cx="567" cy="78" r="0.6"/><circle cx="678" cy="23" r="0.8"/><circle cx="789" cy="56" r="0.6"/><circle cx="834" cy="12" r="0.8"/><circle cx="23" cy="156" r="0.6"/><circle cx="89" cy="234" r="0.8"/><circle cx="167" cy="189" r="0.6"/><circle cx="278" cy="267" r="0.8"/><circle cx="389" cy="145" r="0.6"/><circle cx="512" cy="289" r="0.8"/><circle cx="623" cy="167" r="0.6"/><circle cx="734" cy="245" r="0.8"/><circle cx="845" cy="189" r="0.6"/><circle cx="56" cy="378" r="0.8"/><circle cx="134" cy="423" r="0.6"/><circle cx="245" cy="356" r="0.8"/><circle cx="356" cy="489" r="0.6"/><circle cx="467" cy="412" r="0.8"/><circle cx="578" cy="356" r="0.6"/><circle cx="689" cy="523" r="0.8"/><circle cx="800" cy="467" r="0.6"/><circle cx="867" cy="389" r="0.8"/>
-      </g>
-
-      <g id="const-nayla">
-        <line x1="120" y1="120" x2="155" y2="95" stroke="#c9962a" stroke-width="1" opacity=".5"/>
-        <line x1="155" y1="95" x2="190" y2="110" stroke="#c9962a" stroke-width="1" opacity=".5"/>
-        <line x1="190" y1="110" x2="175" y2="145" stroke="#c9962a" stroke-width="1" opacity=".5"/>
-        <line x1="175" y1="145" x2="140" y2="155" stroke="#c9962a" stroke-width="1" opacity=".5"/>
-        <line x1="140" y1="155" x2="120" y2="120" stroke="#c9962a" stroke-width="1" opacity=".5"/>
-        <circle class="named-star" cx="120" cy="120" r="4" fill="#e8b84b" data-name="The Paw Stone" data-const="Nayla's Paw" data-lore="Where she first set foot in the world that wasn't hers. And made it hers anyway."/>
-        <circle class="named-star" cx="155" cy="95" r="5" fill="#e8b84b" data-name="The Lioness Eye" data-const="Nayla's Paw" data-lore="Nayla's brightest star. It is always watching. Lord Oro says it watches him too."/>
-        <circle class="named-star" cx="190" cy="110" r="3" fill="#e8b84b" data-name="The Claw" data-const="Nayla's Paw" data-lore="She extended it once. The world never forgot."/>
-        <circle class="named-star" cx="175" cy="145" r="3.5" fill="#e8b84b" data-name="The Pad" data-const="Nayla's Paw" data-lore="Soft. Until it isn't."/>
-        <circle class="named-star" cx="140" cy="155" r="3" fill="#e8b84b" data-name="The Print" data-const="Nayla's Paw" data-lore="She was here. That's enough."/>
-        <text x="155" y="80" text-anchor="middle" font-family="'Press Start 2P', cursive" font-size="8" fill="#c9962a" opacity=".8">NAYLA'S PAW</text>
-      </g>
-
-      <g id="const-felik">
-        <line x1="380" y1="80" x2="420" y2="130" stroke="#9a6aaa" stroke-width="1" opacity=".5"/>
-        <line x1="420" y1="130" x2="460" y2="80" stroke="#9a6aaa" stroke-width="1" opacity=".5"/>
-        <line x1="420" y1="130" x2="420" y2="190" stroke="#9a6aaa" stroke-width="1" opacity=".5"/>
-        <line x1="380" y1="190" x2="460" y2="190" stroke="#9a6aaa" stroke-width="1" opacity=".5"/>
-        <circle class="named-star" cx="380" cy="80" r="4" fill="#c9c0e8" data-name="The First Soul" data-const="Felik's Crossroads" data-lore="The soul Felik was born with. It chose him before he chose it."/>
-        <circle class="named-star" cx="460" cy="80" r="4" fill="#c9c0e8" data-name="The Second Soul" data-const="Felik's Crossroads" data-lore="The soul that found him. The one who asked to stay. He said yes."/>
-        <circle class="named-star" cx="420" cy="130" r="6" fill="#c9c0e8" data-name="The Agreement" data-const="Felik's Crossroads" data-lore="The moment two became one without either disappearing. Lord Oro calls this the rarest star in his sky."/>
-        <circle class="named-star" cx="420" cy="190" r="4" fill="#c9c0e8" data-name="The Path Forward" data-const="Felik's Crossroads" data-lore="Where Felik walks now. Both of them. Together."/>
-        <circle class="named-star" cx="380" cy="190" r="3" fill="#c9c0e8" data-name="Left Fork" data-const="Felik's Crossroads" data-lore="The road not taken. Still visible from the crossroads."/>
-        <circle class="named-star" cx="460" cy="190" r="3" fill="#c9c0e8" data-name="Right Fork" data-const="Felik's Crossroads" data-lore="Also the road not taken. The crossroads keeps both."/>
-        <text x="420" y="65" text-anchor="middle" font-family="'Press Start 2P', cursive" font-size="8" fill="#9a6aaa" opacity=".8">CROSSROADS</text>
-      </g>
-
-      <g id="const-juni">
-        <circle cx="680" cy="130" r="55" fill="none" stroke="#4a8aaa" stroke-width="1" opacity=".5" stroke-dasharray="4 3"/>
-        <circle class="named-star" cx="680" cy="75" r="5" fill="#88ccff" data-name="The First Life" data-const="Juni's Eternal Loop" data-lore="She doesn't remember this one. It was before she learned what immortality costs."/>
-        <circle class="named-star" cx="730" cy="110" r="3.5" fill="#88ccff" data-name="The Second Life" data-const="Juni's Eternal Loop" data-lore="She remembers this one. She wishes she didn't."/>
-        <circle class="named-star" cx="735" cy="155" r="3" fill="#88ccff" data-name="The Third Life" data-const="Juni's Eternal Loop" data-lore="The one where she stopped counting."/>
-        <circle class="named-star" cx="680" cy="185" r="4.5" fill="#88ccff" data-name="The Current Life" data-const="Juni's Eternal Loop" data-lore="She is here now. How long she stays depends on what the story needs."/>
-        <circle class="named-star" cx="628" cy="155" r="3" fill="#88ccff" data-name="The Forgotten Life" data-const="Juni's Eternal Loop" data-lore="There is no record of this one. Even Juni has no memory. Lord Oro suspects it was the best one."/>
-        <circle class="named-star" cx="625" cy="110" r="3.5" fill="#88ccff" data-name="The Return" data-const="Juni's Eternal Loop" data-lore="Every loop brings her back to the beginning. Every time slightly different. That's the only mercy."/>
-        <text x="680" y="210" text-anchor="middle" font-family="'Press Start 2P', cursive" font-size="8" fill="#4a8aaa" opacity=".8">JUNI'S LOOP</text>
-      </g>
-
-      <g id="const-goldmine">
-        <line x1="200" y1="380" x2="240" y2="340" stroke="#c9962a" stroke-width="1" opacity=".6"/>
-        <line x1="240" y1="340" x2="290" y2="360" stroke="#c9962a" stroke-width="1" opacity=".6"/>
-        <line x1="290" y1="360" x2="310" y2="410" stroke="#c9962a" stroke-width="1" opacity=".6"/>
-        <line x1="310" y1="410" x2="270" y2="450" stroke="#c9962a" stroke-width="1" opacity=".6"/>
-        <line x1="270" y1="450" x2="220" y2="440" stroke="#c9962a" stroke-width="1" opacity=".6"/>
-        <line x1="220" y1="440" x2="200" y2="380" stroke="#c9962a" stroke-width="1" opacity=".6"/>
-        <line x1="240" y1="340" x2="245" y2="300" stroke="#c9962a" stroke-width="1" opacity=".6" stroke-dasharray="3 2"/>
-        <circle class="named-star" cx="240" cy="340" r="6" fill="#e8b84b" data-name="The Pickaxe Head" data-const="The Goldmine" data-lore="The first strike. Lord Oro says you only need one good one to change everything."/>
-        <circle class="named-star" cx="290" cy="360" r="4" fill="#e8b84b" data-name="The Vein" data-const="The Goldmine" data-lore="Where the gold runs. You have to know where to look."/>
-        <circle class="named-star" cx="310" cy="410" r="4.5" fill="#e8b84b" data-name="The Mother Lode" data-const="The Goldmine" data-lore="The richest deposit. Everything was pointing here the whole time."/>
-        <circle class="named-star" cx="270" cy="450" r="3" fill="#e8b84b" data-name="The Shaft" data-const="The Goldmine" data-lore="How deep are you willing to go? That's the only real question."/>
-        <circle class="named-star" cx="220" cy="440" r="3.5" fill="#e8b84b" data-name="The Lantern" data-const="The Goldmine" data-lore="It burns on its own now. You can go further."/>
-        <circle class="named-star" cx="200" cy="380" r="4" fill="#e8b84b" data-name="The Entrance" data-const="The Goldmine" data-lore="Where you started. Notice you can't see it from where you are now."/>
-        <circle class="named-star" cx="245" cy="300" r="2.5" fill="#e8b84b" data-name="The Handle" data-const="The Goldmine" data-lore="Still in your hand. It always is."/>
-        <text x="255" y="285" text-anchor="middle" font-family="'Press Start 2P', cursive" font-size="8" fill="#c9962a" opacity=".8">THE GOLDMINE</text>
-      </g>
-
-      <g id="donor-stars">
-        <text x="820" y="520" text-anchor="end" font-family="'Press Start 2P', cursive" font-size="8" fill="#c9962a" opacity=".6">SECTOR 4</text>
-        <circle class="donor-star" cx="760" cy="490" r="4" fill="#FFD700" data-name="Ivy May" data-donor="true" data-lore="Named for Ivy May — the one who saw the games and loved them first. She gets a star."/>
-        <circle class="donor-star" cx="800" cy="510" r="3" fill="#FFD700" opacity=".6" data-name="[Your Name Here]" data-donor="true" data-lore="Support the goldmine. Your name lives in the sky permanently."/>
-        <circle class="donor-star" cx="840" cy="485" r="3" fill="#FFD700" opacity=".6" data-name="[Your Name Here]" data-donor="true" data-lore="Support the goldmine. Your name lives in the sky permanently."/>
-      </g>
-      <text x="760" y="475" text-anchor="middle" font-family="'Press Start 2P', cursive" font-size="6" fill="#e8b84b" opacity=".8">IVY MAY ✦</text>
-    </svg>
+<main>
+  <div class="map-hero">
+    <div class="hall-eyebrow" style="font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gd); letter-spacing: 3px; margin-bottom: 1.5rem;">NONSENSE MEDIA NETWORK</div>
+    <h1 class="map-title">The <em>Star Map</em></h1>
+    <p class="map-sub">Lord Oro named the sky long before the surface world did. Every constellation marks a soul that chose to stay in the mine.</p>
   </div>
-</div>
 
-<div class="panel" id="tribesPanel">
-  <div class="section-tag" style="justify-content: center; margin-bottom: 2rem;">Cosmic Lore</div>
-  <p style="font-size: 0.45rem; color: var(--muted); text-align: center; line-height: 2; max-width: 600px; margin: 0 auto 2rem;">Long before Lord Oro named his sky, civilizations across the world built their worlds around the stars. These are their stories.</p>
-  <div class="tribe-grid" id="tribeGrid"></div>
-  <div class="tribe-detail" id="tribeDetail">
-    <div class="tribe-detail-title" id="tribeDetailTitle"></div>
-    <div class="tribe-detail-text" id="tribeDetailText"></div>
-    <div class="tribe-oro" id="tribeDetailOro"></div>
+  <div class="map-tabs">
+    <button class="map-tab active" onclick="showPanel('map', this)">THE SKY</button>
+    <button class="map-tab" onclick="showPanel('tribes', this)">COSMIC LORE</button>
   </div>
-</div>
 
-<div class="panel" id="donorsPanel">
-  <div class="donor-section">
-    <div class="donor-title">Sector 4: Star Wall</div>
-    <p class="donor-sub">Every person who supports the Nonsense Media Network on the $10 Tier gets a star named after them in Lord Oro's fictional sky. It stays there permanently. You become part of the architecture.</p>
-    <div class="donor-links">
-      <a href="https://gofund.me/e643a8283" class="btn-gold" target="_blank">Fund on GoFundMe</a>
-      <a href="https://patreon.com/lordoro" class="btn-gold" style="background: transparent; color: var(--gold); border: 1px solid var(--gold);" target="_blank">Join Patreon</a>
+  <div class="panel active" id="mapPanel">
+    <div class="star-canvas">
+      <svg id="starSVG" viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+        <rect width="900" height="500" fill="#000"/>
+        
+        <g id="const-nayla">
+          <line x1="150" y1="100" x2="200" y2="80" stroke="rgba(255,215,0,0.2)" stroke-width="1"/>
+          <line x1="200" y1="80" x2="240" y2="120" stroke="rgba(255,215,0,0.2)" stroke-width="1"/>
+          <circle class="named-star" cx="150" cy="100" r="4" fill="#FFD700" data-name="The Print" data-lore="Nayla's first step into the threshold. It remains permanent."/>
+          <circle class="named-star" cx="200" cy="80" r="6" fill="#FFF" data-name="The Alpha" data-lore="The guiding light of the Lioness. It never sets."/>
+          <circle class="named-star" cx="240" cy="120" r="4" fill="#FFD700" data-name="The Claw" data-lore="Strength without violence. The primary lesson of the mine."/>
+          <text x="195" y="145" fill="var(--gd)" font-family="var(--font-pixel)" font-size="8">NAYLA'S PAW</text>
+        </g>
+
+        <g id="founder-sector">
+          <text x="800" y="450" fill="var(--gd)" font-family="var(--font-pixel)" font-size="8" text-anchor="end">SECTOR 4: THE FOUNDERS</text>
+          <circle class="donor-star" cx="750" cy="400" r="4" fill="#FFD700" data-name="Ivy May" data-lore="Named for the first miner who saw the potential of the forge."/>
+          <circle class="donor-star" cx="820" cy="380" r="3" fill="#666" data-name="UNCLAIMED" data-lore="Support the extraction on Patreon to claim your star."/>
+          <circle class="donor-star" cx="780" cy="350" r="3" fill="#666" data-name="UNCLAIMED" data-lore="Claim your place in the sky."/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="founder-cta">
+        <h2 class="cta-title">NAME A STAR IN THE SKY</h2>
+        <p class="cta-text">Sector 4 is the permanent record of those who funded the mine. At the <strong>Empire Guardian</strong> tier, your name is etched into the architecture of Lord Oro's fictional universe forever.</p>
+        <div class="cta-grid">
+            <a href="https://patreon.com" target="_blank" class="cta-btn">JOIN PATREON</a>
+            <a href="https://gofund.me/e643a8283" target="_blank" class="cta-btn" style="background: var(--gold); color: #000;">GIVE TO THE EXPANSION</a>
+        </div>
     </div>
   </div>
-</div>
+
+  <div class="panel" id="tribesPanel" style="display:none">
+    <div class="tribe-grid">
+        <div class="stone-tablet">
+            <span class="tribe-icon">🌿</span>
+            <div class="tribe-name">The Māori</div>
+            <p style="font-size:1.2rem; line-height:1.6; color:var(--muted);">The Milky Way is <em>Te Ika-a-Māui</em>—The Fish of Māui. Stars are ancestors leading the way.</p>
+            <div class="tribe-oro">"Lord Oro says the stars are ancestors too. He just doesn't name them that because ancestors implies they are gone. His aren't."</div>
+        </div>
+        <div class="stone-tablet">
+            <span class="tribe-icon">🦅</span>
+            <div class="tribe-name">The Lakota</div>
+            <p style="font-size:1.2rem; line-height:1.6; color:var(--muted);">The Milky Way is the Ghost Road. Souls travel this road to the other side.</p>
+            <div class="tribe-oro">"In the mine, the dark between the gold is the Spirit Road. Lord Oro walks it sometimes. He always comes back carrying something new."</div>
+        </div>
+    </div>
+  </div>
+</main>
 
 <div class="star-tooltip" id="starTooltip">
-  <div class="tt-name" id="ttName"></div>
-  <div class="tt-tag" id="ttTag"></div>
-  <div class="tt-text" id="ttText"></div>
-  <div class="tt-donor" id="ttDonor" style="display:none"></div>
+  <div id="ttName" style="color:var(--gold); font-size:1.4rem; font-weight:600; margin-bottom:0.5rem;"></div>
+  <div id="ttText" style="color:var(--muted); font-size:1.1rem; line-height:1.4; font-style:italic;"></div>
+</div>
+
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> LORE</div>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <a href="lorevault.html" style="font-family:var(--font-pixel); font-size:0.4rem; color:var(--gd); text-decoration:none;">📜 VAULT</a>
 </div>
 
 <script>
-// TRIBES DATA
-const TRIBES=[
-  {icon:'🌿',name:'Māori',culture:'Aotearoa New Zealand',story:'The Māori called the Milky Way Te Ika-a-Māui — the Fish of Māui. Stars were ancestors, gods, and navigators. Matariki (the Pleiades) marked the Māori New Year.',oro:'"Lord Oro says the stars are ancestors too. He just doesn\'t name them that because the word ancestor implies they\'re gone. His aren\'t."'},
-  {icon:'🦅',name:'Lakota',culture:'Great Plains, North America',story:'The Lakota saw the Milky Way as Wanagi Tacanku — the Spirit Road or Ghost Road. The souls of the dead traveled this road to Wanagi Yata.',oro:'"In the mine, the dark between the gold is the Spirit Road. Lord Oro walks it sometimes. He always comes back carrying something new."'},
-  {icon:'🌙',name:'Yoruba',culture:'West Africa / Nigeria',story:'The Yoruba tradition holds Obatala, the sky deity, created the earth from chaos while the stars watched. Specific stars were associated with orishas.',oro:'"The mine has its own orishas. Tora knows their names. She just doesn\'t say them unless asked directly."'},
-  {icon:'⚱️',name:'Ancient Egyptian',culture:'Nile Valley, North Africa',story:'The Egyptians believed the stars were the souls of the dead — particularly the pharaohs who became Osiris upon death.',oro:'"Every pyramid is a mine pointing up instead of down. Lord Oro notes this without irony. The gold goes both ways."'},
-];
-
-function renderTribes(){
-  document.getElementById('tribeGrid').innerHTML=TRIBES.map((t,i)=>`
-    <div class="tribe-card" onclick="showTribe(${i})">
-      <span class="tribe-icon">${t.icon}</span>
-      <div class="tribe-name">${t.name}</div>
-      <div class="tribe-culture">${t.culture}</div>
-    </div>`).join('');
+function showPanel(id, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+    document.getElementById(id + 'Panel').style.display = 'block';
+    document.querySelectorAll('.map-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
 }
 
-function showTribe(i){
-  const t=TRIBES[i];
-  document.querySelectorAll('.tribe-card').forEach((c,j)=>c.classList.toggle('active-card',j===i));
-  const d=document.getElementById('tribeDetail');
-  document.getElementById('tribeDetailTitle').textContent=t.name+' — '+t.culture;
-  document.getElementById('tribeDetailText').textContent=t.story;
-  document.getElementById('tribeDetailOro').textContent=t.oro;
-  d.classList.add('active');
-  d.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-
-// PANELS
-function showPanel(name){
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.map-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById(name+'Panel').classList.add('active');
-  event.target.classList.add('active');
-}
-
-// STAR TOOLTIPS
-document.querySelectorAll('.named-star,.donor-star').forEach(star=>{
-  star.style.cursor='pointer';
-  star.addEventListener('mouseenter',e=>{
-    const tt=document.getElementById('starTooltip');
-    document.getElementById('ttName').textContent=star.dataset.name;
-    document.getElementById('ttTag').textContent=star.dataset.donor?'✦ SECTOR 4 FOUNDER':star.dataset.const;
-    document.getElementById('ttText').textContent=star.dataset.lore;
-    const donorEl=document.getElementById('ttDonor');
-    if(star.dataset.donor){donorEl.textContent='A star named for someone who helped build the mine.';donorEl.style.display='block'}
-    else donorEl.style.display='none';
-    tt.style.display='block';
-    star.style.filter='drop-shadow(0 0 10px #FFD700)';
-  });
-  star.addEventListener('mousemove',e=>{
-    const tt=document.getElementById('starTooltip');
-    tt.style.left=(e.clientX+15)+'px';
-    tt.style.top=(e.clientY-15)+'px';
-    if(e.clientX>window.innerWidth-320)tt.style.left=(e.clientX-320)+'px';
-  });
-  star.addEventListener('mouseleave',()=>{
-    document.getElementById('starTooltip').style.display='none';
-    star.style.filter='';
-  });
+// Interactive Stars
+const tooltip = document.getElementById('starTooltip');
+document.querySelectorAll('.named-star, .donor-star').forEach(star => {
+    star.addEventListener('mouseenter', (e) => {
+        tooltip.style.display = 'block';
+        document.getElementById('ttName').textContent = star.dataset.name;
+        document.getElementById('ttText').textContent = star.dataset.lore;
+        star.setAttribute('r', parseInt(star.getAttribute('r')) + 2);
+    });
+    star.addEventListener('mousemove', (e) => {
+        tooltip.style.left = (e.clientX + 15) + 'px';
+        tooltip.style.top = (e.clientY + 15) + 'px';
+    });
+    star.addEventListener('mouseleave', () => {
+        tooltip.style.display = 'none';
+        star.setAttribute('r', parseInt(star.getAttribute('r')) - 2);
+    });
 });
 
-renderTribes();
-</script>
-
-<script>
-window.NMN_CONTEXT = "oracle"; // Sets the mood for the audio engine
-
-const NMN_Audio = {
-  ctx: null, running: false, masterGain: null,
-  init() {
-    if (this.ctx) return;
-    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
-    this.masterGain.connect(this.ctx.destination);
-  },
-  playOraclePad() {
-    const AMAJ = [220, 277.18, 329.63];
-    const tick = () => {
-      if (!this.running) return;
-      AMAJ.forEach((freq, i) => {
-        const osc = this.ctx.createOscillator(); const filter = this.ctx.createBiquadFilter(); const g = this.ctx.createGain();
-        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-        filter.type = 'lowpass'; filter.frequency.value = 800;
-        g.gain.setValueAtTime(0, this.ctx.currentTime);
-        g.gain.linearRampToValueAtTime(0.03, this.ctx.currentTime + 2);
-        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 9);
-        osc.connect(filter); filter.connect(g); g.connect(this.masterGain);
-        osc.start(this.ctx.currentTime + i * 0.08); osc.stop(this.ctx.currentTime + 9.5);
-      });
-      setTimeout(tick, 9000);
-    };
-    setTimeout(tick, 2000);
-  },
-  playHum() {
-    const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
-    osc.type = 'sine'; osc.frequency.setValueAtTime(55, this.ctx.currentTime);
-    gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
-    const lfo = this.ctx.createOscillator(); const lfoGain = this.ctx.createGain();
-    lfo.type = 'sine'; lfo.frequency.value = 0.08; lfoGain.gain.value = 0.01;
-    lfo.connect(lfoGain); lfoGain.connect(gain.gain); lfo.start();
-    osc.connect(gain); gain.connect(this.masterGain); osc.start();
-  },
-  startAll() {
-    if (this.running) return;
-    this.init(); this.running = true;
-    this.playHum(); this.playOraclePad(); // Ethereal pad + hum for Star Map
-  },
-  stop() {
-    if (!this.running) return;
-    this.running = false;
-    if (this.masterGain) this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 1);
-  },
-  toggle() {
-    if (this.running) { this.stop(); return false; }
-    else { this.startAll(); return true; }
-  }
-};
-
-document.addEventListener('click', () => {
-  if (!NMN_Audio.running) NMN_Audio.startAll();
-}, { once: true });
-
-// Cursor Glow Script
-(function(){
-  var r=document.createElement('div'); r.id='pickaxe-glow';
-  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
-  document.body.appendChild(r);
-  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
-  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
-  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
-})();
-</script>
-
-<button id="nmn-sound-btn" onclick="const on = NMN_Audio.toggle(); this.textContent = on ? '🔊 Sound On' : '🔇 Sound Off'; this.style.color = on ? 'var(--gold)' : 'var(--gd)';" style="position:fixed;bottom:65px;right:.75rem;z-index:998;background:rgba(12,10,7,.9);border:1px solid rgba(255,215,0,.2);color:var(--gd);font-family:var(--font-pixel);font-size:.35rem;padding:.35rem .6rem;cursor:pointer;">🔇 Sound Off</button>
-
-<div class="depth-gauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold</div>
-  <span class="dg-sep">⬡</span>
-  <a href="lorevault.html" class="dg-link">📜 Vault</a>
-  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
-</div>
-
-<script>
-try {
-    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold') || '0';
-} catch(e) {}
+function syncHUD() {
+    if(window.NMNWallet) {
+        document.getElementById('dgGold').textContent = NMNWallet.get().gold.toLocaleString();
+        document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]').length;
+    }
+}
+window.onload = syncHUD;
 </script>
 
 </body>
