@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
 <title>CIPHER — NMN Retro</title>
 
-<link rel="icon" href="logo.jpg" type="image/jpeg">
-<link rel="shortcut icon" href="logo.jpg" type="image/jpeg">
-<link rel="apple-touch-icon" href="logo.jpg">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
 
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
@@ -90,7 +90,7 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 
 .btn {
   padding: 1.2rem 2rem; font-family: var(--font-pixel); font-size: 0.7rem;
-  text-transform: uppercase; cursor: pointer; border: 4px solid #FFF; transition: transform 0.1s; display: inline-block; text-decoration: none;
+  text-transform: uppercase; cursor: pointer; border: 4px solid #FFF; transition: transform 0.1s; display: inline-block; text-decoration: none; text-align: center;
 }
 .btn-gold { background: var(--gd); color: var(--cream); box-shadow: 4px 4px 0 #000; }
 .btn-gold:hover { background: var(--gold); color: #000; transform: translateY(-4px); border-color: var(--cream); }
@@ -116,9 +116,6 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
   .controls-bar { justify-content: center; }
   .hud { padding: 0.5rem; }
 }
-
-/* CUSTOM CURSOR */
-body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
 </style>
 
 </head>
@@ -157,7 +154,10 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
         <div class="ov-stat-box"><span>GOLD CARRIED</span><strong id="fs-gold">0</strong></div>
         <div class="ov-stat-box"><span>LEGEND ORE</span><strong id="fs-legend">0</strong></div>
       </div>
-      <button class="btn btn-gold" onclick="startGame()">DESCEND AGAIN</button>
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn btn-gold" onclick="startGame()">DESCEND AGAIN</button>
+        <a href="minewars.html" class="btn btn-gold" style="background:#111; color:var(--lg); border-color:var(--lg);">READ ARCHIVES</a>
+      </div>
     </div>
   </div>
 
@@ -414,13 +414,14 @@ function update(){
   if(p.y<0)p.y=0;
   if(p.y>=H*TILE){endGame();return;}
 
-  // MINING
+  // MINING & VAULT LOGIC
   if(p.mining&&p.mineTarget){
     const mt=p.mineTarget;
     const hardness={[T.STONE]:60,[T.DIRT]:20,[T.COPPER_ORE]:40,[T.SILVER_ORE]:55,[T.GOLD_ORE]:70,[T.LEGEND_ORE]:100,[T.DARKNESS]:80,[T.WATER]:30,[T.LORE_WALL]:120,[T.LORD_ORO]:200}[G.world[mt.r][mt.c]]||60;
     p.mineProgress+=2;
     if(p.mineProgress>=hardness){
       const tileType=G.world[mt.r][mt.c];
+      
       // Collect ore
       if(ORE_VALUE[tileType]){
         const val=ORE_VALUE[tileType];
@@ -429,37 +430,59 @@ function update(){
         spawnOreParticles(mt.c*TILE+TILE/2,mt.r*TILE+TILE/2,ORE_GLOW[tileType]);
         if(tileType===T.LEGEND_ORE){G.legend++;}
       }
+      
+      // Lore Wall Integration
       if(tileType===T.LORE_WALL){
         const idx=G.loreFound.size%LORE_FRAGMENTS.length;
         G.loreFound.add(idx);
         G.loreMsg=LORE_FRAGMENTS[idx]; G.loreMsgTimer=180;
+        
+        try {
+          const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
+          vault.push({ text: G.loreMsg, source: 'Project: Cipher - Wall Runes', date: new Date().toLocaleDateString() });
+          localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
+        } catch(e) {}
       }
+      
+      // Lord Oro Integration
       if(tileType===T.LORD_ORO){
         G.lordOroFound=true;
         G.gold+=1000; G.sessionGold+=1000;
         G.loreMsg='"You made it. I knew you would."'; G.loreMsgTimer=300;
         if(window.NMNWallet) NMNWallet.addGold(500);
+        
+        try {
+          const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
+          vault.push({ text: 'I found Lord Oro at the bottom of Project: Cipher.', source: 'Project: Cipher - Deep Core', date: new Date().toLocaleDateString() });
+          localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
+        } catch(e) {}
       }
+      
       if(tileType===T.WATER){
         G.oxygen=Math.max(0,G.oxygen-20);
-        if(G.oxygen<=0){endGame();return;}
       }
       if(tileType===T.DARKNESS){
         G.loreMsg='"Some things in the mine don\'t want to be found."';
         G.loreMsgTimer=120;
       }
+      
       // Clear tile
       if(tileType!==T.LORD_ORO||G.lordOroFound) G.world[mt.r][mt.c]=T.AIR;
       p.mining=false; p.mineTarget=null; p.mineProgress=0;
     }
   }
-  if(!keys['ArrowLeft']&&!keys['ArrowRight']&&!keys['ArrowUp']&&!keys['ArrowDown']&&!keys['a']&&!keys['d']&&!keys['w']){
-    // Keep trying to mine if mousedown, otherwise stop
-  }
 
-  // Depth & oxygen
+  // Depth & Oxygen Tension Protocol
   G.depth=Math.max(G.depth,Math.floor(p.y/TILE));
-  G.oxygen=Math.min(100,G.oxygen+.02);
+  
+  if (G.depth > 10) {
+      G.oxygen -= 0.05 + (G.depth * 0.001); // Drains faster the deeper you go
+  } else {
+      G.oxygen = Math.min(100, G.oxygen + 0.1); // Regenerate slowly near the surface
+  }
+  
+  if(G.oxygen <= 0) { endGame(); return; }
+
   if(G.loreMsgTimer>0)G.loreMsgTimer--;
 
   // Camera follow
@@ -584,10 +607,11 @@ function draw(){
   ctx.fillStyle='rgba(255,215,0,0.9)';ctx.fillRect(px+15,py+6,3,8);
   ctx.restore();
 
-  // Lantern light cone
+  // Lantern light cone (Flickers and shrinks as Oxygen drops)
   const lightX=G.player.x-G.cam.x+(G.player.facing>0?14:-14);
   const lightY=G.player.y-G.cam.y-8;
-  const light=ctx.createRadialGradient(lightX,lightY,0,lightX,lightY,Math.min(VW,200)*(.4+.1*Math.sin(Date.now()*.002)));
+  const oxyFactor = Math.max(0.3, G.oxygen / 100);
+  const light=ctx.createRadialGradient(lightX,lightY,0,lightX,lightY,Math.min(VW,200)*(.4+.1*Math.sin(Date.now()*.002)) * oxyFactor);
   light.addColorStop(0,'rgba(255,200,50,0.12)');
   light.addColorStop(.5,'rgba(255,180,30,0.05)');
   light.addColorStop(1,'transparent');
@@ -669,12 +693,6 @@ function endGame(){
 }
 
 ctx.fillStyle='#000';ctx.fillRect(0,0,cv.width,cv.height);
-</script>
-
-<script>
-if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
-}
 </script>
 
 </body>
