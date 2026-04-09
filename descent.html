@@ -5,14 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>The Descent — Sector 1</title>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-P5WL9XNDY8');
-</script>
-<link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
+
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
 
@@ -134,13 +130,7 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 .dg-val { color: var(--gold); font-size: 0.6rem; font-family: var(--font-serif); }
 .dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; pointer-events: auto!important;}
 .dg-link:hover { color: var(--gold); }
-
-/* CUSTOM CURSOR */
-body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
 </style>
-
-<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
-
 </head>
 <body>
 
@@ -251,6 +241,10 @@ const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
 let W, H;
 
+// LOAD PARALLAX BACKGROUNDS
+const bgMine = new Image(); bgMine.src = 'goldmine_stable.jpg';
+const bgGlitch = new Image(); bgGlitch.src = 'obsidian_glitched.jpg';
+
 function resize() {
   const wrap = cv.parentElement;
   W = cv.width = wrap.clientWidth;
@@ -315,7 +309,6 @@ function spawnWall() {
   walls.push({ x: rightX, y: yPos, w: rightWidth, h: 30, isCenter: false });
 
   // ── NEW: SPAWN CENTER OBSTACLE ──
-  // Only spawn if the gap is wide enough to allow passing on the sides
   if (currentGap > 130 && Math.random() < 0.35) {
       let obsWidth = 30 + Math.random() * 30; // 30 to 60px wide
       let obsX = gapCenter - obsWidth/2;
@@ -324,13 +317,8 @@ function spawnWall() {
 
   // Spawn Gold occasionally in the gap
   if (Math.random() < 0.4) {
-    // If a center obstacle exists, bias gold to one of the sides to reward dodging
     let goldX = gapCenter + (Math.random() - 0.5) * currentGap * 0.7;
-    golds.push({
-      x: goldX,
-      y: yPos - 20, // slightly above the wall
-      w: 14, h: 14
-    });
+    golds.push({ x: goldX, y: yPos - 20, w: 14, h: 14 });
   }
 }
 
@@ -447,7 +435,6 @@ function update() {
   if(screenShake > 0) screenShake *= 0.85;
   if(screenShake < 0.5) screenShake = 0;
 
-  // Update HUD every few frames
   if (Math.floor(depth * 100) % 10 === 0) updateHUD();
 }
 
@@ -455,16 +442,33 @@ function update() {
 function draw() {
   ctx.fillStyle = '#050306'; ctx.fillRect(0, 0, W, H);
   
+  // PARALLAX BACKGROUND RENDERING
+  let bgScroll = (depth * 10) % H; 
+  let glitchFactor = Math.min(1, depth / 2000); // Fades to glitch obsidian at depth 2000
+  
+  ctx.save();
+  // Draw Stable Goldmine
+  ctx.globalAlpha = (1 - glitchFactor) * 0.5;
+  if(bgMine.complete && bgMine.naturalWidth) {
+     ctx.drawImage(bgMine, 0, -bgScroll, W, H);
+     ctx.drawImage(bgMine, 0, H - bgScroll, W, H);
+  }
+
+  // Draw Glitched Obsidian
+  ctx.globalAlpha = glitchFactor * 0.5;
+  if(bgGlitch.complete && bgGlitch.naturalWidth) {
+     ctx.drawImage(bgGlitch, 0, -bgScroll, W, H);
+     ctx.drawImage(bgGlitch, 0, H - bgScroll, W, H);
+  }
+  ctx.restore();
+
+  // Apply dark tint so gameplay elements pop
+  ctx.fillStyle = 'rgba(5, 3, 6, 0.4)';
+  ctx.fillRect(0, 0, W, H);
+  
   ctx.save();
   if(screenShake > 0) {
     ctx.translate((Math.random()-0.5)*screenShake, (Math.random()-0.5)*screenShake);
-  }
-
-  // Speed lines (parallax effect)
-  ctx.strokeStyle = 'rgba(255,215,0,0.1)'; ctx.lineWidth = 1;
-  for(let i=0; i<10; i++) {
-    let lineY = (Date.now() * 0.5 * (i+1)/5) % H; // Move DOWN to simulate falling
-    ctx.beginPath(); ctx.moveTo(i * (W/10), lineY); ctx.lineTo(i * (W/10), lineY + 50); ctx.stroke();
   }
 
   // Draw Walls & Obstacles (Obsidian)
@@ -582,12 +586,6 @@ function syncGauge() {
 // Initial draw
 ctx.fillStyle = '#050306'; ctx.fillRect(0,0,cv.width,cv.height);
 syncGauge();
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
-}
 </script>
 
 <div style="text-align:center;padding:1rem;font-family:'Press Start 2P',monospace;font-size:.3rem;color:#4a3c28; margin-top: auto;">
