@@ -5,14 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Depths of the Mine — Sector 1</title>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-P5WL9XNDY8');
-</script>
-<link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
+
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
 
@@ -85,13 +81,21 @@ header {
 .game-area { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; padding: 1rem; z-index: 2; }
 .canvas-wrap {
   position: relative; width: 100%; max-width: 800px; height: 250px;
-  background: transparent; border-bottom: 2px solid var(--gd); margin-bottom: 10px;
+  background: transparent; border-bottom: 2px solid var(--gd); margin-bottom: 10px; border: 4px solid var(--gd); box-shadow: inset 0 0 20px #000;
 }
 canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
 
+/* MAP HINTS */
+.map-hint {
+  font-family: var(--font-pixel); font-size: 0.4rem; color: var(--muted); text-align: center; margin-bottom: 10px;
+  display: none;
+}
+.map-hint.active { display: block; }
+.map-hint span { padding: 0 5px; }
+
 /* CARD UI */
 .deck-area {
-  width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 10px;
+  width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 10px; display: none;
 }
 .energy-bar {
   text-align: center; font-size: 0.6rem; color: var(--neon-green); text-shadow: 0 0 10px rgba(0,255,136,0.4);
@@ -128,7 +132,7 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 .btn-gold { padding: 0.8rem 1.5rem; font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; background: var(--gold); color: var(--coal); border: none; cursor: pointer; transition: 0.3s; margin: 0.5rem;}
 .btn-gold:hover { background: #fff; box-shadow: 0 0 20px rgba(255,215,0,.6); transform: scale(1.05); }
 
-/* CLASS SELECT GRID */
+/* CLASS SELECT GRID (ELEPHANTS) */
 .class-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; max-width: 900px; margin-bottom: 2rem;}
 .class-card {
   padding: 1rem; text-align: center; border: 2px solid var(--gd);
@@ -137,7 +141,8 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 }
 .class-card:hover { border-color: var(--gold); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.8), inset 0 0 15px rgba(255,215,0,0.2); }
 .class-card.selected { border-color: var(--neon-green); background: rgba(0,255,136,0.05); box-shadow: 0 0 20px rgba(0,255,136,0.3); }
-.class-icon { font-size: 2rem; }
+.class-img { width: 60px; height: 60px; object-fit: cover; border: 2px solid var(--gd); border-radius: 4px; filter: grayscale(50%) sepia(20%); }
+.class-card.selected .class-img { filter: none; border-color: var(--gold); }
 .class-name { font-size: 0.45rem; color: var(--cream); }
 .class-stats { font-size: 0.35rem; color: var(--muted); line-height: 1.5; }
 
@@ -154,9 +159,6 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 .dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; pointer-events: auto!important;}
 .dg-link:hover { color: var(--gold); }
 
-/* CUSTOM CURSOR */
-body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
-
 @media (max-width: 768px) {
   .card { width: 85px; height: 130px; padding: 4px; }
   .card-icon { font-size: 1.2rem; margin-bottom: 5px; }
@@ -167,9 +169,6 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
   .class-card { width: 120px; }
 }
 </style>
-
-<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
-
 </head>
 <body>
 
@@ -177,8 +176,8 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 <script src="nmn-nav.js"></script>
 
 <header>
-  <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="games.html" class="back-btn">← Return to Forge</a>
+  <a href="index.html" class="logo">NMN — LORD ORO</a>
+  <a href="index.html" class="back-btn">← RETURN TO MINE</a>
 </header>
 
 <div class="hud">
@@ -192,11 +191,11 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
   </div>
   <div class="round-info">DEPTH <br><span id="depthVal" style="font-size:1rem;">1</span></div>
   <div class="hud-side right">
-    <div class="player-name" id="enemy-name">CAVE BAT</div>
-    <div class="hp-bar-bg"><div class="hp-bar-fill" id="p2hp-fill"></div></div>
+    <div class="player-name" id="enemy-name">---</div>
+    <div class="hp-bar-bg"><div class="hp-bar-fill" id="p2hp-fill" style="width:0%"></div></div>
     <div class="stat-row" style="justify-content: flex-end;">
       <span class="block-val" id="p2block" style="margin-right: 10px;">🛡️ 0</span>
-      <span>HP: <span id="p2hp-text">20/20</span></span>
+      <span>HP: <span id="p2hp-text">0/0</span></span>
     </div>
   </div>
 </div>
@@ -208,33 +207,38 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     
     <div class="overlay" id="ov-start">
       <h1 class="ov-title">DEPTHS OF THE MINE</h1>
-      <p class="ov-sub">Choose your path before descending into the dark.</p>
+      <p class="ov-sub">Choose your Elephant Protocol before descending into the grid.</p>
       
       <div class="class-grid" id="classGrid">
         <div class="class-card" onclick="selectClass(0)">
-          <span class="class-icon">⚔️</span>
-          <div class="class-name">WARRIOR</div>
+          <img src="Pyro elephant beta.jpg" class="class-img">
+          <div class="class-name">PYRO</div>
           <div class="class-stats">60 HP | 3 EN<br>+ Extra Strikes</div>
         </div>
         <div class="class-card" onclick="selectClass(1)">
-          <span class="class-icon">🔮</span>
-          <div class="class-name">MAGE</div>
+          <img src="Juni elephant beta.jpg" class="class-img">
+          <div class="class-name">JUNI</div>
           <div class="class-stats">40 HP | 4 EN<br>+ High Energy</div>
         </div>
         <div class="class-card" onclick="selectClass(2)">
-          <span class="class-icon">🏹</span>
-          <div class="class-name">RANGER</div>
+          <img src="Orid elephant beta.jpg" class="class-img">
+          <div class="class-name">ORID</div>
           <div class="class-stats">45 HP | 3 EN<br>+ Quick Shots</div>
         </div>
         <div class="class-card" onclick="selectClass(3)">
-          <span class="class-icon">✨</span>
-          <div class="class-name">SAINT</div>
+          <img src="Helios elephant beta.jpg" class="class-img">
+          <div class="class-name">HELIOS</div>
           <div class="class-stats">55 HP | 3 EN<br>+ Extra Heals</div>
         </div>
         <div class="class-card" onclick="selectClass(4)">
-          <span class="class-icon">🪓</span>
-          <div class="class-name">VIKING</div>
+          <img src="Olydia elephant beta.jpg" class="class-img">
+          <div class="class-name">OLYDIA</div>
           <div class="class-stats">50 HP | 3 EN<br>+ Heavy Attacks</div>
+        </div>
+        <div class="class-card" onclick="selectClass(5)">
+          <img src="Wanderer elephant beta.jpg" class="class-img">
+          <div class="class-name">WANDERER</div>
+          <div class="class-stats">70 HP | 2 EN<br>+ Deep Health</div>
         </div>
       </div>
       
@@ -249,12 +253,20 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
       </div>
       <div style="display:flex; gap:10px; margin-top: 1.5rem;">
         <button class="btn-gold" onclick="resetToClassSelect()">NEW DESCENT</button>
-        <a href="games.html" class="btn-gold" style="background:transparent; border: 1px solid var(--gold); color: var(--gold);">EXIT</a>
+        <a href="index.html" class="btn-gold" style="background:transparent; border: 1px solid var(--gold); color: var(--gold);">EXIT</a>
       </div>
     </div>
   </div>
 
-  <div class="deck-area">
+  <div class="map-hint" id="mapHint">
+    <span style="color:#00FF88">YOU</span> | 
+    <span style="color:#FF4444">ENEMY</span> | 
+    <span style="color:#FFD700">GOLD</span> | 
+    <span style="color:#AA55FF">STAIRS</span>
+    <br><br>USE W,A,S,D TO NAVIGATE THE GRID
+  </div>
+
+  <div class="deck-area" id="deckArea">
     <div class="energy-bar">ENERGY: <span id="energy-val">3/3</span></div>
     <div class="hand-container" id="hand-container">
       </div>
@@ -266,13 +278,26 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 </div>
 
 <div class="depth-gauge" id="depthGauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
   <span class="dg-sep" style="color:var(--faint);">⬡</span>
-  <a href="lorevault.html" class="dg-link">📜 Vault</a>
-  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
+  <a href="lorevault.html" class="dg-link">📜 VAULT</a>
+  <a href="lantern.html" class="dg-link">🕯️ LANTERN</a>
 </div>
 
 <script>
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+let W, H;
+
+function resize() {
+  const wrap = cv.parentElement;
+  W = cv.width = wrap.clientWidth;
+  H = cv.height = wrap.clientHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ── AUDIO ──
 window.NMN_CONTEXT = "mine";
 const NMN_Audio = {
   ctx: null, running: false, masterGain: null,
@@ -283,15 +308,9 @@ const NMN_Audio = {
     this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
     this.masterGain.connect(this.ctx.destination);
   },
-  playHum() {
-    const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
-    osc.type = 'sine'; osc.frequency.setValueAtTime(45, this.ctx.currentTime); 
-    gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
-    osc.connect(gain); gain.connect(this.masterGain); osc.start();
-  },
   startAll() {
     if (this.running) return;
-    this.init(); this.running = true; this.playHum();
+    this.init(); this.running = true;
   }
 };
 document.addEventListener('click', () => { if (!NMN_Audio.running) NMN_Audio.startAll(); }, { once: true });
@@ -311,24 +330,12 @@ const SFX = {
   block() { this.play(80, 'square', 0.1, 0.2); },
   heal() { this.play(800, 'sine', 0.3, 0.1); setTimeout(()=>this.play(1200, 'triangle', 0.4, 0.1), 100); },
   monster() { this.play(60, 'sawtooth', 0.6, 0.3); },
-  win() { this.play(400, 'square', 0.2); setTimeout(()=>this.play(600, 'square', 0.4), 150); }
+  win() { this.play(400, 'square', 0.2); setTimeout(()=>this.play(600, 'square', 0.4), 150); },
+  step() { this.play(200, 'sine', 0.05, 0.05); },
+  gold() { this.play(1200, 'sine', 0.1, 0.1); }
 };
-</script>
 
-<script>
-const cv = document.getElementById('cv');
-const ctx = cv.getContext('2d');
-let W, H;
-
-function resize() {
-  const wrap = cv.parentElement;
-  W = cv.width = wrap.clientWidth;
-  H = cv.height = wrap.clientHeight;
-}
-window.addEventListener('resize', resize);
-resize();
-
-// ── GAME DATA ──
+// ── DATA ──
 const CARD_DB = [
   { id: 'strike', title: 'STRIKE', icon: '⚔️', cost: 1, type: 'attack', val: 8, desc: 'Deal 8 Damage.' },
   { id: 'heavy', title: 'HEAVY PICK', icon: '⛏️', cost: 2, type: 'attack', val: 15, desc: 'Deal 15 Damage.' },
@@ -339,11 +346,12 @@ const CARD_DB = [
 ];
 
 const CLASSES = [
-  { name: 'WARRIOR', maxHp: 60, maxEnergy: 3, deck: ['strike','strike','strike','strike','block','block','block','heavy'] },
-  { name: 'MAGE', maxHp: 40, maxEnergy: 4, deck: ['strike','strike','block','block','block','heavy','flask'] },
-  { name: 'RANGER', maxHp: 45, maxEnergy: 3, deck: ['strike','strike','block','block','quick','quick','quick','flask'] },
-  { name: 'SAINT', maxHp: 55, maxEnergy: 3, deck: ['strike','strike','block','block','brace','flask','flask'] },
-  { name: 'VIKING', maxHp: 50, maxEnergy: 3, deck: ['strike','strike','strike','block','block','heavy','heavy'] }
+  { name: 'PYRO', maxHp: 60, maxEnergy: 3, img: 'Pyro elephant beta.jpg', deck: ['strike','strike','strike','strike','block','block','block','heavy'] },
+  { name: 'JUNI', maxHp: 40, maxEnergy: 4, img: 'Juni elephant beta.jpg', deck: ['strike','strike','block','block','block','heavy','flask'] },
+  { name: 'ORID', maxHp: 45, maxEnergy: 3, img: 'Orid elephant beta.jpg', deck: ['strike','strike','block','block','quick','quick','quick','flask'] },
+  { name: 'HELIOS', maxHp: 55, maxEnergy: 3, img: 'Helios elephant beta.jpg', deck: ['strike','strike','block','block','brace','flask','flask'] },
+  { name: 'OLYDIA', maxHp: 50, maxEnergy: 3, img: 'Olydia elephant beta.jpg', deck: ['strike','strike','strike','block','block','heavy','heavy'] },
+  { name: 'WANDERER', maxHp: 70, maxEnergy: 2, img: 'Wanderer elephant beta.jpg', deck: ['strike','strike','heavy','heavy','block','block','flask'] }
 ];
 
 const ENEMIES = [
@@ -353,40 +361,48 @@ const ENEMIES = [
   { name: 'THE WANDERER', maxHp: 100, color: '#00FF88', gold: 100, ai: [{t:'attack', v:15}, {t:'defend', v:15}, {t:'attack', v:20}] }
 ];
 
+let gameState = 'none'; // 'map' or 'battle'
 let selectedClassIdx = -1;
+let playerImgObj = new Image();
 let player = { hp: 50, maxHp: 50, block: 0, energy: 3, maxEnergy: 3, name: 'MINER' };
 let enemy = null;
 let enemyIntent = null;
-let turnCount = 0;
 let depth = 1;
 let goldEarned = 0;
 
-let deck = [];
-let hand = [];
-let discard = [];
+// Grid Map Vars
+const MAP_COLS = 32; const MAP_ROWS = 10;
+let gridMap = [];
+let playerMap = {x: 0, y: 0};
+let exitMap = {x: 0, y: 0};
+let mapEnemies = [];
+let mapTreasures = [];
 
-let gameRunning = false;
+let deck = [], hand = [], discard = [];
 let playerTurn = true;
 let screenShake = 0;
-let particles = [];
-let floatTexts = [];
+let particles = [], floatTexts = [];
 let animId = null;
 
-// ── LOGIC ──
+// ── INIT & FLOW ──
 function selectClass(idx) {
   selectedClassIdx = idx;
   document.querySelectorAll('.class-card').forEach((c, i) => c.classList.toggle('selected', i === idx));
   const btn = document.getElementById('startBtn');
   btn.disabled = false;
   btn.textContent = `DESCEND AS ${CLASSES[idx].name}`;
+  playerImgObj.src = CLASSES[idx].img;
 }
 
 function resetToClassSelect() {
+  gameState = 'none';
   document.getElementById('ov-over').classList.add('hidden');
   document.getElementById('ov-start').classList.remove('hidden');
   document.getElementById('startBtn').disabled = true;
   document.getElementById('startBtn').textContent = 'AWAITING SELECTION';
   document.querySelectorAll('.class-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('mapHint').classList.remove('active');
+  document.getElementById('deckArea').style.display = 'none';
   selectedClassIdx = -1;
 }
 
@@ -401,13 +417,12 @@ function startGame() {
   deck = buildStartingDeck(pClass.deck);
   discard = [];
   
-  gameRunning = true;
   document.getElementById('ov-start').classList.add('hidden');
   document.getElementById('ov-over').classList.add('hidden');
   document.getElementById('player-class-name').textContent = pClass.name;
   
-  spawnEnemy();
-  startPlayerTurn();
+  generateMap();
+  switchToMap();
   loop();
 }
 
@@ -420,10 +435,142 @@ function buildStartingDeck(cardIds) {
   return d.sort(() => Math.random() - 0.5);
 }
 
-function spawnEnemy() {
+// ── MAP LOGIC ──
+function generateMap() {
+  gridMap = Array(MAP_ROWS).fill(0).map(() => Array(MAP_COLS).fill(0));
+  
+  // 1. Dig Path
+  for(let x=2; x<30; x++) { gridMap[5][x] = 1; gridMap[4][x] = 1; }
+  
+  // 2. Dig Rooms
+  for(let r=0; r<4; r++) {
+    let rx = Math.floor(Math.random() * 24) + 2;
+    let ry = Math.floor(Math.random() * 6) + 1;
+    for(let i=0; i<4; i++) {
+        for(let j=0; j<4; j++) {
+            if(ry+i < MAP_ROWS && rx+j < MAP_COLS) gridMap[ry+i][rx+j] = 1;
+        }
+    }
+  }
+  
+  // 3. Set Spawns
+  playerMap = {x: 3, y: 5};
+  exitMap = {x: 29, y: 5};
+  gridMap[exitMap.y][exitMap.x] = 2;
+
+  // 4. Place Entities
+  mapEnemies = [];
+  mapTreasures = [];
+  for(let i=0; i<2 + depth; i++) {
+    let ex = Math.floor(Math.random()*26)+4;
+    let ey = Math.floor(Math.random()*8)+1;
+    if(gridMap[ey][ex] === 1) mapEnemies.push({x: ex, y: ey});
+  }
+  for(let i=0; i<3; i++) {
+    let tx = Math.floor(Math.random()*28)+2;
+    let ty = Math.floor(Math.random()*8)+1;
+    if(gridMap[ty][tx] === 1) mapTreasures.push({x: tx, y: ty, val: 10 + depth*2});
+  }
+}
+
+function switchToMap() {
+  gameState = 'map';
+  document.getElementById('deckArea').style.display = 'none';
+  document.getElementById('mapHint').classList.add('active');
+  document.getElementById('enemy-name').textContent = '---';
+  document.getElementById('p2hp-text').textContent = '0/0';
+  document.getElementById('p2hp-fill').style.width = '0%';
+  document.getElementById('p2block').textContent = '🛡️ 0';
+  updateHUD();
+}
+
+window.addEventListener('keydown', (e) => {
+  if (gameState !== 'map') return;
+  const keyMap = { 'ArrowUp': {x:0, y:-1}, 'w': {x:0, y:-1}, 'W': {x:0, y:-1},
+                   'ArrowDown': {x:0, y:1}, 's': {x:0, y:1}, 'S': {x:0, y:1},
+                   'ArrowLeft': {x:-1, y:0}, 'a': {x:-1, y:0}, 'A': {x:-1, y:0},
+                   'ArrowRight': {x:1, y:0}, 'd': {x:1, y:0}, 'D': {x:1, y:0} };
+  
+  if (keyMap[e.key]) {
+      e.preventDefault();
+      attemptMove(keyMap[e.key].x, keyMap[e.key].y);
+  }
+});
+
+function attemptMove(dx, dy) {
+  let nx = playerMap.x + dx;
+  let ny = playerMap.y + dy;
+  
+  if (nx < 0 || nx >= MAP_COLS || ny < 0 || ny >= MAP_ROWS) return;
+  if (gridMap[ny][nx] === 0) return; // Wall
+
+  SFX.step();
+
+  // 1. Check Enemy Collision
+  let hitEnemyIdx = mapEnemies.findIndex(e => e.x === nx && e.y === ny);
+  if (hitEnemyIdx !== -1) {
+      mapEnemies.splice(hitEnemyIdx, 1);
+      startBattle();
+      return;
+  }
+
+  // 2. Move Player
+  playerMap.x = nx;
+  playerMap.y = ny;
+
+  // 3. Check Treasure
+  let hitTIdx = mapTreasures.findIndex(t => t.x === nx && t.y === ny);
+  if (hitTIdx !== -1) {
+      SFX.gold();
+      let t = mapTreasures[hitTIdx];
+      goldEarned += t.val;
+      if(typeof NMNWallet !== 'undefined') NMNWallet.addGold(t.val);
+      mapTreasures.splice(hitTIdx, 1);
+      spawnFloatText(W/2, H/2, `+${t.val}G`, '#FFD700');
+      updateHUD();
+  }
+
+  // 4. Check Exit
+  if (nx === exitMap.x && ny === exitMap.y) {
+      depth++;
+      generateMap();
+      updateHUD();
+      return;
+  }
+
+  // 5. Move Enemies (AI Step)
+  mapEnemies.forEach(e => {
+      if (Math.random() < 0.6) {
+          let edx = Math.sign(playerMap.x - e.x);
+          let edy = Math.sign(playerMap.y - e.y);
+          if (Math.random() < 0.5) edx = 0; else edy = 0;
+          let enx = e.x + edx; let eny = e.y + edy;
+          
+          if (gridMap[eny] && gridMap[eny][enx] !== 0 && !mapEnemies.some(o => o.x===enx && o.y===eny)) {
+              e.x = enx; e.y = eny;
+          }
+      }
+      if (e.x === playerMap.x && e.y === playerMap.y) {
+          let idx = mapEnemies.indexOf(e);
+          mapEnemies.splice(idx, 1);
+          startBattle();
+      }
+  });
+}
+
+// ── BATTLE LOGIC ──
+function startBattle() {
+  gameState = 'battle';
+  document.getElementById('mapHint').classList.remove('active');
+  document.getElementById('deckArea').style.display = 'flex';
+  
   const eTemplate = ENEMIES[Math.min(depth - 1, ENEMIES.length - 1)];
   enemy = { ...eTemplate, hp: eTemplate.maxHp, block: 0, turn: 0 };
+  
+  document.getElementById('enemy-name').textContent = enemy.name;
+  
   setEnemyIntent();
+  startPlayerTurn();
 }
 
 function setEnemyIntent() {
@@ -445,13 +592,11 @@ function drawCards(amount) {
 
 function startPlayerTurn() {
   playerTurn = true;
-  player.block = 0; // reset block
+  player.block = 0; 
   player.energy = player.maxEnergy;
   
-  // Discard remaining hand
   discard.push(...hand);
   hand = [];
-  
   drawCards(4);
   updateHUD();
   document.getElementById('endTurnBtn').disabled = false;
@@ -475,13 +620,12 @@ function renderHand() {
 }
 
 function playCard(idx) {
-  if(!playerTurn) return;
+  if(!playerTurn || gameState !== 'battle') return;
   const card = hand[idx];
   if(player.energy < card.cost) return;
 
   player.energy -= card.cost;
   
-  // Apply effect
   if (card.type === 'attack') {
     SFX.strike();
     damageTarget(enemy, card.val);
@@ -503,21 +647,14 @@ function playCard(idx) {
   renderHand();
   updateHUD();
 
-  if(enemy.hp <= 0) {
-    setTimeout(winBattle, 500);
-  }
+  if(enemy.hp <= 0) setTimeout(winBattle, 500);
 }
 
 function damageTarget(target, amount) {
   let dmg = amount;
   if(target.block > 0) {
-    if(target.block >= dmg) {
-      target.block -= dmg;
-      dmg = 0;
-    } else {
-      dmg -= target.block;
-      target.block = 0;
-    }
+    if(target.block >= dmg) { target.block -= dmg; dmg = 0; } 
+    else { dmg -= target.block; target.block = 0; }
   }
   target.hp -= dmg;
   screenShake = 10;
@@ -529,9 +666,7 @@ function winBattle() {
   playerTurn = false;
   SFX.win();
   goldEarned += enemy.gold;
-  depth++;
   
-  // Save Gold to V2 Wallet
   if(typeof NMNWallet !== 'undefined') {
       NMNWallet.addGold(enemy.gold);
       NMNWallet.addXP(25);
@@ -539,11 +674,7 @@ function winBattle() {
   }
 
   spawnFloatText(W/2, H/2, `VICTORY! +${enemy.gold}G`, '#FFD700');
-  
-  setTimeout(() => {
-    spawnEnemy();
-    startPlayerTurn();
-  }, 1500);
+  setTimeout(switchToMap, 1500);
 }
 
 function endTurn() {
@@ -551,9 +682,8 @@ function endTurn() {
   playerTurn = false;
   document.getElementById('endTurnBtn').disabled = true;
   
-  // Process Enemy Intent
   setTimeout(() => {
-    enemy.block = 0; // reset enemy block
+    enemy.block = 0;
     if(enemyIntent.t === 'attack') {
       SFX.monster();
       damageTarget(player, enemyIntent.v);
@@ -582,9 +712,10 @@ function endTurn() {
 }
 
 function gameOver() {
-  gameRunning = false;
+  gameState = 'none';
   document.getElementById('final-depth').textContent = depth;
   document.getElementById('final-gold').textContent = goldEarned;
+  document.getElementById('deckArea').style.display = 'none';
   document.getElementById('ov-over').classList.remove('hidden');
 }
 
@@ -596,15 +727,14 @@ function updateHUD() {
   document.getElementById('p1hp-fill').style.width = `${Math.max(0, (player.hp/player.maxHp)*100)}%`;
   document.getElementById('p1block').textContent = `🛡️ ${player.block}`;
   
-  if(enemy) {
-    document.getElementById('enemy-name').textContent = enemy.name;
+  if(gameState === 'battle' && enemy) {
     document.getElementById('p2hp-text').textContent = `${Math.max(0, enemy.hp)}/${enemy.maxHp}`;
     document.getElementById('p2hp-fill').style.width = `${Math.max(0, (enemy.hp/enemy.maxHp)*100)}%`;
     document.getElementById('p2block').textContent = `🛡️ ${enemy.block}`;
   }
 }
 
-// ── VISUALS ──
+// ── VISUALS & DRAW ──
 function spawnParticles(x, y, color, count) {
   for(let i=0; i<count; i++) {
     particles.push({
@@ -619,7 +749,6 @@ function spawnFloatText(x, y, text, color) {
 }
 
 function spawnSlash(x, y) {
-  // Add a quick white line visual
   particles.push({ type: 'slash', x, y, life: 1, decay: 0.1 });
 }
 
@@ -633,44 +762,66 @@ function draw() {
     if(screenShake < 0.5) screenShake = 0;
   }
 
-  // Background Cave lines
-  ctx.strokeStyle = 'rgba(255,215,0,0.05)'; ctx.lineWidth = 2;
-  for(let i=0; i<W; i+=40) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i-40, H); ctx.stroke(); }
-  
-  // Floor
-  ctx.fillStyle = '#111'; ctx.fillRect(0, H-40, W, 40);
-  ctx.strokeStyle = '#8B6914'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(0, H-40); ctx.lineTo(W, H-40); ctx.stroke();
+  if (gameState === 'map') {
+      // Draw Grid Map
+      const tW = W / MAP_COLS;
+      const tH = H / MAP_ROWS;
+      
+      for(let y=0; y<MAP_ROWS; y++) {
+          for(let x=0; x<MAP_COLS; x++) {
+              let px = x * tW; let py = y * tH;
+              if (gridMap[y][x] === 0) { ctx.fillStyle = '#110e09'; ctx.fillRect(px, py, tW, tH); }
+              else if (gridMap[y][x] === 1) { ctx.fillStyle = '#221a10'; ctx.fillRect(px, py, tW, tH); }
+              else if (gridMap[y][x] === 2) { ctx.fillStyle = '#AA55FF'; ctx.fillRect(px, py, tW, tH); }
+          }
+      }
+      
+      mapTreasures.forEach(t => { ctx.fillStyle = '#FFD700'; ctx.fillRect(t.x*tW+tW*0.2, t.y*tH+tH*0.2, tW*0.6, tH*0.6); });
+      mapEnemies.forEach(e => { ctx.fillStyle = '#FF4444'; ctx.fillRect(e.x*tW+tW*0.1, e.y*tH+tH*0.1, tW*0.8, tH*0.8); });
+      
+      ctx.fillStyle = '#00FF88'; 
+      ctx.fillRect(playerMap.x*tW+tW*0.1, playerMap.y*tH+tH*0.1, tW*0.8, tH*0.8);
+      
+  } else if (gameState === 'battle') {
+      // Draw Battle Arena
+      ctx.strokeStyle = 'rgba(255,215,0,0.05)'; ctx.lineWidth = 2;
+      for(let i=0; i<W; i+=40) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i-40, H); ctx.stroke(); }
+      
+      ctx.fillStyle = '#111'; ctx.fillRect(0, H-40, W, 40);
+      ctx.strokeStyle = '#8B6914'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(0, H-40); ctx.lineTo(W, H-40); ctx.stroke();
 
-  // Draw Player (Left)
-  const px = W*0.25, py = H-40;
-  ctx.fillStyle = '#c9962a'; ctx.fillRect(px-20, py-60, 40, 60);
-  ctx.fillStyle = '#00FF88'; ctx.fillRect(px-10, py-45, 8, 8); // Lantern eye
-  
-  // Draw Enemy (Right)
-  if(enemy && enemy.hp > 0) {
-    const ex = W*0.75, ey = H-40;
-    ctx.fillStyle = enemy.color; ctx.fillRect(ex-30, ey-80, 60, 80);
-    ctx.fillStyle = '#ff4444'; ctx.fillRect(ex-15, ey-60, 10, 10); ctx.fillRect(ex+5, ey-60, 10, 10); // Red eyes
-    
-    // Draw Intent above Enemy
-    if (enemyIntent && !playerTurn) {
-      // Intentionally blink or hide when attacking
-    } else if (enemyIntent) {
-      ctx.fillStyle = '#000'; ctx.fillRect(ex-25, ey-120, 50, 30);
-      ctx.strokeStyle = '#FFD700'; ctx.strokeRect(ex-25, ey-120, 50, 30);
-      ctx.fillStyle = '#FFD700'; ctx.font = '14px sans-serif'; ctx.textAlign = 'center';
+      // Draw Player Elephant Image
+      const px = W*0.25, py = H-40;
+      if (playerImgObj.complete) {
+          ctx.drawImage(playerImgObj, px-30, py-70, 60, 70);
+      } else {
+          ctx.fillStyle = '#c9962a'; ctx.fillRect(px-20, py-60, 40, 60);
+      }
       
-      let intentTxt = '';
-      if(enemyIntent.t === 'attack') intentTxt = `⚔️ ${enemyIntent.v}`;
-      if(enemyIntent.t === 'defend') intentTxt = `🛡️ ${enemyIntent.v}`;
-      if(enemyIntent.t === 'heal') intentTxt = `🧪 ${enemyIntent.v}`;
-      
-      ctx.fillText(intentTxt, ex, ey-100);
-    }
+      // Draw Enemy
+      if(enemy && enemy.hp > 0) {
+        const ex = W*0.75, ey = H-40;
+        ctx.fillStyle = enemy.color; ctx.fillRect(ex-30, ey-80, 60, 80);
+        ctx.fillStyle = '#ff4444'; ctx.fillRect(ex-15, ey-60, 10, 10); ctx.fillRect(ex+5, ey-60, 10, 10);
+        
+        if (enemyIntent && !playerTurn) {
+          // Attacking, hide intent
+        } else if (enemyIntent) {
+          ctx.fillStyle = '#000'; ctx.fillRect(ex-25, ey-120, 50, 30);
+          ctx.strokeStyle = '#FFD700'; ctx.strokeRect(ex-25, ey-120, 50, 30);
+          ctx.fillStyle = '#FFD700'; ctx.font = '14px sans-serif'; ctx.textAlign = 'center';
+          
+          let intentTxt = '';
+          if(enemyIntent.t === 'attack') intentTxt = `⚔️ ${enemyIntent.v}`;
+          if(enemyIntent.t === 'defend') intentTxt = `🛡️ ${enemyIntent.v}`;
+          if(enemyIntent.t === 'heal') intentTxt = `🧪 ${enemyIntent.v}`;
+          ctx.fillText(intentTxt, ex, ey-100);
+        }
+      }
   }
 
-  // Draw FX
+  // Draw Global FX
   particles.forEach(p => {
     if(p.type === 'slash') {
       ctx.globalAlpha = p.life;
@@ -698,7 +849,7 @@ function draw() {
 }
 
 function loop() {
-  if(gameRunning) draw();
+  if(gameState !== 'none') draw();
   animId = requestAnimationFrame(loop);
 }
 
@@ -713,12 +864,6 @@ function syncGauge() {
 // Init Graphics
 ctx.fillStyle = '#050306'; ctx.fillRect(0,0,cv.width,cv.height);
 syncGauge();
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
-}
 </script>
 
 </body>
