@@ -1,105 +1,110 @@
 /* ════════════════════════════════════════════
    nmn-scene.js — Shared Scene Manager
-   Fixes level stalls / memory leaks in all games
-   Include AFTER nmn-wallet.js and nmn-nav.js
+   Architect's Edition: Fixes memory leaks & 
+   syncs game transitions with the Empire's core.
    ════════════════════════════════════════════ */
 
 window.NMNScene = (function(){
 
-  let _afId = null;
-  let _intervals = [];
-  let _listeners = [];
-  let _current = null;
-  let _paused = false;
+    let _afId = null;
+    let _intervals = [];
+    let _listeners = [];
+    let _current = null;
+    let _paused = false;
 
-  // ── DESTROY current scene completely ──
-  function destroy() {
-    // Cancel animation frame
-    if(_afId){ cancelAnimationFrame(_afId); _afId = null; }
-    
-    // Clear all intervals
-    _intervals.forEach(id => clearInterval(id));
-    _intervals = [];
-    
-    // Remove all event listeners safely
-    _listeners.forEach(({ el, type, fn }) => {
-      if(el) el.removeEventListener(type, fn);
-    });
-    _listeners = [];
-    
-    // Clear all canvases on page & reset pending draw paths
-    document.querySelectorAll('canvas').forEach(cv => {
-      try { 
-        const ctx = cv.getContext('2d');
-        if (ctx) {
-            ctx.clearRect(0, 0, cv.width, cv.height); 
-            ctx.beginPath(); // Prevents ghost-rendering from previous scene
-        }
-      } catch(e){}
-    });
-    
-    _current = null;
-    _paused = false;
-  }
-
-  // ── TRANSITION to new scene ──
-  function go(name, initFn) {
-    destroy();
-    requestAnimationFrame(() => {
-      _current = name;
-      if(typeof initFn === 'function') initFn();
-    });
-  }
-
-  // ── MANAGED RAF ──
-  function raf(fn) {
-    _afId = requestAnimationFrame(fn);
-    return _afId;
-  }
-
-  // ── MANAGED INTERVAL ──
-  function interval(fn, ms) {
-    const id = setInterval(fn, ms);
-    _intervals.push(id);
-    return id;
-  }
-
-  // ── MANAGED EVENT LISTENER ──
-  function on(el, type, fn) {
-    if(!el) return;
-    el.addEventListener(type, fn);
-    _listeners.push({ el, type, fn });
-  }
-
-  // ── PAUSE / RESUME ──
-  function pause() { _paused = true; }
-  function resume() { _paused = false; }
-  function isPaused() { return _paused; }
-  function toggle() { _paused = !_paused; return _paused; }
-
-  // ── INFINITE DIFFICULTY SCALING ──
-  // Returns a multiplier that scales 15% per cycle, no ceiling
-  function diffScale(level, cycle) {
-    return Math.pow(1.15, (cycle - 1) * 5 + (level - 1));
-  }
-
-  // ── LEVEL UP HELPER ──
-  // Call on every score increase. Returns {level, cycle, leveled} 
-  function checkLevel(score, level, cycle, threshold) {
-    const t = threshold || (level * 250 * cycle);
-    if(score >= t) {
-      level++;
-      if(level > 6) { level = 1; cycle++; }
-      return { level, cycle, leveled: true };
+    // ── DESTROY: The "Total Wipe" protocol ──
+    // Ensures no ghosts of previous games slow down the current one.
+    function destroy() {
+        if(_afId){ cancelAnimationFrame(_afId); _afId = null; }
+        
+        _intervals.forEach(id => clearInterval(id));
+        _intervals = [];
+        
+        _listeners.forEach(({ el, type, fn }) => {
+            if(el) el.removeEventListener(type, fn);
+        });
+        _listeners = [];
+        
+        document.querySelectorAll('canvas').forEach(cv => {
+            try { 
+                const ctx = cv.getContext('2d');
+                if (ctx) {
+                    ctx.clearRect(0, 0, cv.width, cv.height); 
+                    ctx.beginPath(); 
+                }
+            } catch(e){}
+        });
+        
+        _current = null;
+        _paused = false;
+        console.log("NMN_SYSTEM: Scene purged. Memory cleared.");
     }
-    return { level, cycle, leveled: false };
-  }
 
-  return { destroy, go, raf, interval, on, pause, resume, isPaused, toggle, diffScale, checkLevel };
+    // ── GO: Transition logic ──
+    function go(name, initFn) {
+        destroy();
+        // Give the browser 1 frame to breathe before starting new game logic
+        requestAnimationFrame(() => {
+            _current = name;
+            if(typeof initFn === 'function') initFn();
+        });
+    }
+
+    // ── MANAGED RAF: Safe animation handling ──
+    function raf(fn) {
+        if (_paused) return;
+        _afId = requestAnimationFrame(fn);
+        return _afId;
+    }
+
+    // ── MANAGED INTERVAL: Safe timer handling ──
+    function interval(fn, ms) {
+        const id = setInterval(() => {
+            if (!_paused) fn();
+        }, ms);
+        _intervals.push(id);
+        return id;
+    }
+
+    // ── MANAGED EVENT LISTENER ──
+    function on(el, type, fn) {
+        if(!el) return;
+        el.addEventListener(type, fn);
+        _listeners.push({ el, type, fn });
+    }
+
+    // ── STATE CONTROLS ──
+    function pause() { 
+        _paused = true; 
+        if(window.nmnToast) nmnToast("SYSTEM PAUSED");
+    }
+    function resume() { _paused = false; }
+    function toggle() { _paused = !_paused; return _paused; }
+
+    // ── THE EXTRACTION SCALE ──
+    // Powers the "Infinite Depth" feel. Multiplier grows exponentially.
+    function diffScale(level, cycle) {
+        return Math.pow(1.20, (cycle - 1) * 5 + (level - 1));
+    }
+
+    // ── LEVEL UP PROTOCOL ──
+    function checkLevel(score, level, cycle, threshold) {
+        const baseThreshold = threshold || (level * 300 * cycle);
+        if(score >= baseThreshold) {
+            level++;
+            if(level > 10) { level = 1; cycle++; }
+            
+            // Visual feedback for progression
+            if(window.nmnToast) nmnToast(`EXTRACTION LEVEL UP: ${level}`, 1500);
+            
+            // Award bonus XP via global wallet
+            if(window.NMNWallet) NMNWallet.addXP(25);
+
+            return { level, cycle, leveled: true };
+        }
+        return { level, cycle, leveled: false };
+    }
+
+    return { destroy, go, raf, interval, on, pause, resume, isPaused: () => _paused, toggle, diffScale, checkLevel };
 
 })();
-
-/* NOTE: The legacy NMNWallet block has been permanently REMOVED from this file.
-  It was causing a namespace collision and relying on volatile sessionStorage.
-  The global economy is now securely managed by `nmn-wallet.js` (localStorage V2).
-*/
