@@ -3,29 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>The Motherlode — Sector 1</title>
+<title>The Motherlode — NMN Retro</title>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-P5WL9XNDY8');
-</script>
-<link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
+
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
 
 <style>
-/* ── CORE NMN VARIABLES & AESTHETIC ── */
 :root {
   --gold: #FFD700; --gb: #e8b84b; --gd: #8B6914;
   --coal: #050308; --shaft: #08060A; --rock: #0A080C;
   --cream: #E8E0D0; --neon-green: #00FF88;
+  --purple: #AA55FF;
   --font-pixel: 'Press Start 2P', cursive;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { height: 100%; overflow-x: hidden; background: var(--coal); }
+html, body { height: 100%; overflow: hidden; background: var(--coal); }
 
 body {
   font-family: var(--font-pixel);
@@ -38,23 +34,6 @@ body {
   padding-bottom: 65px !important;
 }
 
-/* OVERRIDE ALL OLD FONTS */
-h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
-
-/* CRT SCANLINES & VIGNETTE */
-body::after {
-  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
-  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.08) 50%),
-              linear-gradient(90deg,rgba(232,184,75,0.015),rgba(197,146,0,0.008),rgba(255,215,0,0.015));
-  background-size:100% 3px,3px 100%; pointer-events:none; z-index:10000; opacity:0.18;
-}
-body::before {
-  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
-  background:radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.65) 100%);
-  pointer-events:none; z-index:9999;
-}
-
-/* HEADER */
 header {
   padding: 1rem 2rem; border-bottom: 2px solid var(--gd);
   display: flex; justify-content: space-between; align-items: center;
@@ -64,73 +43,68 @@ header {
 .back-btn { font-size: .45rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
 .back-btn:hover { color: var(--gold); }
 
-/* GAME HUD */
 .hud {
   display: flex; justify-content: center; align-items: center; flex-direction: column;
-  padding: 1.5rem; background: rgba(5,3,8,0.9);
-  border-bottom: 1px solid rgba(255,215,0,0.15); flex-shrink: 0; z-index: 50; gap: 10px;
+  padding: 1.2rem; background: rgba(5,3,8,0.9);
+  border-bottom: 1px solid rgba(255,215,0,0.15); flex-shrink: 0; z-index: 50; gap: 5px;
 }
-.hud-title { font-size: 1.2rem; color: var(--gold); text-shadow: 0 0 20px rgba(255,215,0,0.4); }
-.hud-val { color: var(--neon-green); font-size: 1.8rem; text-shadow: 0 0 15px rgba(0,255,136,0.3); margin: 10px 0; transition: color 0.1s; }
-.hud-gps { font-size: 0.5rem; color: var(--gd); letter-spacing: 0.1em; }
+.hud-title { font-size: 0.8rem; color: var(--gold); }
+.hud-val { color: var(--neon-green); font-size: 1.6rem; text-shadow: 0 0 15px rgba(0,255,136,0.3); margin: 5px 0; }
+.hud-gps { font-size: 0.4rem; color: var(--gd); letter-spacing: 0.1em; }
 
-/* MAIN LAYOUT */
 .game-area { 
   flex: 1; display: grid; grid-template-columns: 1fr 1fr; 
-  gap: 20px; padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%; position: relative; z-index: 2;
+  gap: 20px; padding: 1.5rem; max-width: 1200px; margin: 0 auto; width: 100%; position: relative; z-index: 2;
 }
 @media (max-width: 800px) {
-  .game-area { grid-template-columns: 1fr; grid-template-rows: auto 1fr; padding: 1rem; }
+  .game-area { grid-template-columns: 1fr; grid-template-rows: auto 1fr; padding: 0.5rem; }
 }
 
-/* CLICKER CANVAS */
 .clicker-section {
   display: flex; justify-content: center; align-items: center;
   background: #050306; border: 2px solid var(--gd); border-radius: 8px;
-  box-shadow: inset 0 0 50px rgba(0,0,0,1), 0 0 30px rgba(255,215,0,0.05);
-  position: relative; overflow: hidden; min-height: 400px;
+  box-shadow: inset 0 0 50px rgba(0,0,0,1);
+  position: relative; overflow: hidden; min-height: 350px;
 }
 canvas { display: block; width: 100%; height: 100%; cursor: crosshair; touch-action: none; }
 
-/* UPGRADES PANEL */
 .upgrades-section {
-  display: flex; flex-direction: column; gap: 15px; overflow-y: auto; padding-right: 10px;
+  display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 10px;
 }
 .upgrade-card {
-  background: rgba(10,8,12,0.9); border: 2px solid var(--gd); padding: 1rem;
+  background: rgba(10,8,12,0.9); border: 1px solid var(--gd); padding: 0.8rem;
   display: flex; justify-content: space-between; align-items: center;
-  cursor: pointer; transition: all 0.2s; user-select: none;
+  cursor: pointer; transition: all 0.2s;
 }
-.upgrade-card:hover { border-color: var(--gold); background: rgba(255,215,0,0.05); transform: translateX(5px); }
-.upgrade-card.disabled { opacity: 0.5; cursor: not-allowed; border-color: #333; }
-.upgrade-card.disabled:hover { transform: none; background: rgba(10,8,12,0.9); }
+.upgrade-card:hover { border-color: var(--gold); transform: translateX(5px); }
+.upgrade-card.disabled { opacity: 0.3; cursor: not-allowed; }
 
+.upg-name { font-size: 0.5rem; color: var(--cream); margin-bottom: 5px;}
+.upg-cost { font-size: 0.45rem; color: var(--gold); }
+.upg-count { font-size: 0.8rem; color: var(--gd); }
 
-.upg-info { display: flex; flex-direction: column; gap: 8px; }
-.upg-name { font-size: 0.6rem; color: var(--cream); }
-.upg-desc { font-size: 0.4rem; color: var(--muted); }
-.upg-cost { font-size: 0.5rem; color: var(--gold); }
-.upg-count { font-size: 1rem; color: var(--gd); text-shadow: 0 0 10px rgba(139,105,20,0.5); }
+/* PROTOCOL OVERLAY */
+.overlay {
+  position: absolute; inset: 0; background: rgba(5,3,10,0.98);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 2000; padding: 2rem; text-align: center;
+}
+.hidden { display: none !important; }
+.ov-title { font-size: 1.2rem; color: var(--gold); margin-bottom: 1.5rem; }
+.protocol-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 2rem; }
+.protocol-card { border: 2px solid var(--gd); padding: 15px; background: #000; cursor: pointer; }
+.protocol-card:hover { border-color: var(--gold); background: #111; }
+.protocol-card.selected { border-color: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); }
 
-/* FLOATING GAUGE */
+/* DEPTH GAUGE */
 .depth-gauge {
   position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
   width:auto!important; max-width:92%!important; height:42px!important; background:rgba(12,10,7,.88)!important;
-  border:1px solid rgba(255,215,0,.4)!important; border-radius:22px!important; padding:0 18px!important;
-  z-index:9999!important; backdrop-filter:blur(4px)!important; display:flex!important; align-items:center!important;
+  border:1px solid rgba(255,215,0,.4)!important; border-radius:2px!important; padding:0 18px!important;
+  z-index:9999!important; display:flex!important; align-items:center!important;
   justify-content:center!important; gap:1.2rem!important; box-shadow:0 0 20px rgba(255,215,0,.08)!important;
 }
-.dg-stat { font-size: 0.4rem; color: var(--gd); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
-.dg-val { color: var(--gold); font-size: 0.6rem; font-family: var(--font-serif);}
-.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; pointer-events: auto!important;}
-.dg-link:hover { color: var(--gold); }
-
-/* CUSTOM CURSOR */
-body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
 </style>
-
-<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
-
 </head>
 <body>
 
@@ -139,404 +113,180 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 
 <header>
   <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="games.html" class="back-btn">← Return to Hall</a>
+  <a href="games.html" class="back-btn">← RETURN TO HALL</a>
 </header>
 
+<div class="overlay" id="protocol-ov">
+  <h1 class="ov-title">EXTRACTION PROTOCOL</h1>
+  <p style="font-size:0.45rem; color:var(--muted); margin-bottom:20px;">Choose your starting specialization.</p>
+  <div class="protocol-grid">
+    <div class="protocol-card" onclick="startProtocol('Standard')">
+      <div style="font-size:0.55rem; color:var(--gb);">STANDARD</div>
+      <div style="font-size:0.35rem; margin-top:5px;">+2 Gold per Click</div>
+    </div>
+    <div class="protocol-card" onclick="startProtocol('Obsidian')">
+      <div style="font-size:0.55rem; color:#444;">OBSIDIAN</div>
+      <div style="font-size:0.35rem; margin-top:5px;">+1.5x Auto Mining</div>
+    </div>
+  </div>
+</div>
+
 <div class="hud">
-  <div class="hud-title">THE MOTHERLODE</div>
+  <div class="hud-title" id="ore-name">STANDARD STRATA</div>
   <div class="hud-val" id="display-gold">0</div>
-  <div class="hud-gps" id="display-gps">0.0 GOLD PER SECOND</div>
+  <div class="hud-gps" id="display-gps">0.0 GOLD / SEC</div>
 </div>
 
 <div class="game-area">
   <div class="clicker-section" id="canvas-container">
     <canvas id="cv"></canvas>
   </div>
-
-  <div class="upgrades-section" id="upgrades-container">
-    </div>
+  <div class="upgrades-section" id="upgrades-container"></div>
 </div>
 
 <div class="depth-gauge" id="depthGauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
-  <span class="dg-sep" style="color:var(--faint);">⬡</span>
-  <a href="lorevault.html" class="dg-link">📜 Vault</a>
-  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
+  <div class="dg-stat" style="font-size:0.4rem; color:var(--gd); text-transform:uppercase;">
+      <span style="color:var(--gold); font-size:0.6rem; margin-right:5px;" id="dgGold">0</span> Gold
+  </div>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <a href="lorevault.html" style="font-size:0.4rem; color:var(--gd); text-decoration:none; text-transform:uppercase;">📜 Vault</a>
 </div>
 
 <script>
-window.NMN_CONTEXT = "mine";
-const NMN_Audio = {
-  ctx: null, running: false, masterGain: null, machineOsc: null, machineGain: null,
-  init() {
-    if (this.ctx) return;
-    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.setValueAtTime(0.4, this.ctx.currentTime);
-    this.masterGain.connect(this.ctx.destination);
-  },
-  playHum() {
-    const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
-    osc.type = 'sine'; osc.frequency.setValueAtTime(45, this.ctx.currentTime);
-    gain.gain.setValueAtTime(0.03, this.ctx.currentTime);
-    osc.connect(gain); gain.connect(this.masterGain); osc.start();
-  },
-  updateMachineHum(gps) {
-    if (!this.ctx) return;
-    if (gps === 0) return;
-    if (!this.machineOsc) {
-      this.machineOsc = this.ctx.createOscillator();
-      this.machineGain = this.ctx.createGain();
-      this.machineOsc.type = 'sawtooth';
-      this.machineGain.gain.setValueAtTime(0, this.ctx.currentTime);
-      this.machineOsc.connect(this.machineGain);
-      this.machineGain.connect(this.masterGain);
-      this.machineOsc.start();
-    }
-    // Pitch and volume scale with GPS
-    const targetFreq = 40 + Math.min(gps * 2, 200);
-    const targetVol = Math.min(0.01 + (gps * 0.001), 0.05);
-    this.machineOsc.frequency.linearRampToValueAtTime(targetFreq, this.ctx.currentTime + 1);
-    this.machineGain.gain.linearRampToValueAtTime(targetVol, this.ctx.currentTime + 1);
-  },
-  startAll() {
-    if (this.running) return;
-    this.init(); this.running = true; this.playHum();
-  }
-};
-document.addEventListener('click', () => { if (!NMN_Audio.running) NMN_Audio.startAll(); }, { once: true });
-
-const SFX = {
-  play(freq, type, dur, vol = 0.1) {
-    if (!NMN_Audio.ctx) return;
-    const osc = NMN_Audio.ctx.createOscillator(); const gain = NMN_Audio.ctx.createGain();
-    osc.type = type; osc.frequency.setValueAtTime(freq, NMN_Audio.ctx.currentTime);
-    gain.gain.setValueAtTime(0, NMN_Audio.ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(vol, NMN_Audio.ctx.currentTime + 0.01);
-    gain.gain.exponentialRampToValueAtTime(0.001, NMN_Audio.ctx.currentTime + dur);
-    osc.connect(gain); gain.connect(NMN_Audio.masterGain);
-    osc.start(); osc.stop(NMN_Audio.ctx.currentTime + dur);
-  },
-  hit() { this.play(150 + Math.random()*50, 'square', 0.1, 0.05); },
-  buy() { this.play(600, 'triangle', 0.1, 0.1); setTimeout(()=>this.play(800, 'triangle', 0.3, 0.1), 100); },
-  error() { this.play(100, 'sawtooth', 0.2, 0.1); }
-};
-</script>
-
-<script>
-// ── DATA & HARD SCALING STATE ──
 let gold = 0;
 let clickPower = 1;
-let gps = 0; // Gold Per Second
+let gps = 0;
+let currentStrata = 0;
 
-// Load from Global V2 Economy
-if (typeof NMNWallet !== 'undefined') {
-    gold = NMNWallet.get().gold;
-}
-
-// THE GRIND: Exponential costs + Diminishing returns
-const UPGRADES = [
-  { id: 'pickaxe', name: 'Forged Pickaxe', desc: '+1 Gold per Click', baseCost: 50, costMult: 1.4, cps: 0, cpc: 1, count: 0 },
-  { id: 'miner', name: 'Hired Miner', desc: '+1 Gold per Second', baseCost: 150, costMult: 1.5, cps: 1, cpc: 0, count: 0 },
-  { id: 'drill', name: 'Steam Drill', desc: '+5 Gold per Second', baseCost: 800, costMult: 1.55, cps: 5, cpc: 0, count: 0 },
-  { id: 'explosives', name: 'Obsidian Charges', desc: '+25 Gold per Second', baseCost: 4500, costMult: 1.6, cps: 25, cpc: 0, count: 0 },
-  { id: 'laser', name: 'Sector 4 Laser', desc: '+100 Gold per Second', baseCost: 25000, costMult: 1.65, cps: 100, cpc: 0, count: 0 }
+const STRATA = [
+  { name: 'STANDARD STRATA', color: '#1a1105', vein: '#FFD700', thresh: 0 },
+  { name: 'OBSIDIAN CORE', color: '#0a0a0a', vein: '#8B0000', thresh: 5000 },
+  { name: 'GLITCHED VEIN', color: '#0a080c', vein: '#00FF88', thresh: 25000 },
+  { name: 'ESKANAR ARTIFACT', color: '#1a0520', vein: '#AA55FF', thresh: 100000 }
 ];
 
-// Init Costs
-UPGRADES.forEach(u => u.currentCost = u.baseCost);
+const UPGRADES = [
+  { id: 'pick', name: 'Forged Pick', base: 50, mult: 1.3, cps: 0, cpc: 1, count: 0 },
+  { id: 'hired', name: 'Hired Miner', base: 150, mult: 1.4, cps: 1, cpc: 0, count: 0 },
+  { id: 'drill', name: 'Steam Drill', base: 1000, mult: 1.5, cps: 8, cpc: 0, count: 0 },
+  { id: 'laser', name: 'Void Laser', base: 15000, mult: 1.6, cps: 50, cpc: 0, count: 0 }
+];
 
-// Load Upgrades
-try {
-  let savedUpg = localStorage.getItem('nmn_motherlode_v2_upgrades');
-  if (savedUpg) {
-    let parsed = JSON.parse(savedUpg);
-    UPGRADES.forEach(u => {
-      if (parsed[u.id]) {
-        u.count = parsed[u.id];
-        u.currentCost = Math.floor(u.baseCost * Math.pow(u.costMult, u.count));
-      }
-    });
-  }
-} catch(e) {}
-
-// Calculate Offline Yield
-try {
-    let lastTimeSaved = localStorage.getItem('nmn_motherlode_last_time');
-    if(lastTimeSaved) {
-        let timeDiffSecs = (Date.now() - parseInt(lastTimeSaved)) / 1000;
-        // Cap offline progression at 4 hours (14400 seconds) to prevent economy breaking
-        if(timeDiffSecs > 14400) timeDiffSecs = 14400; 
-        
-        let offlineYield = 0;
-        UPGRADES.forEach(u => { offlineYield += u.cps * u.count; });
-        offlineYield = Math.floor(offlineYield * timeDiffSecs);
-        
-        if(offlineYield > 0 && typeof NMNWallet !== 'undefined') {
-            NMNWallet.addGold(offlineYield);
-            gold = NMNWallet.get().gold;
-            setTimeout(() => { alert(`The miners kept working. You earned ${offlineYield}G while you were away.`); }, 1000);
-        }
-    }
-} catch(e) {}
-
-function calculateStats() {
-  clickPower = 1;
-  gps = 0;
-  UPGRADES.forEach(u => {
-    clickPower += u.cpc * u.count;
-    gps += u.cps * u.count;
-  });
-  if (NMN_Audio.running) NMN_Audio.updateMachineHum(gps);
+function startProtocol(type) {
+  if(type === 'Standard') clickPower += 2;
+  if(type === 'Obsidian') gpsMult = 1.5;
+  document.getElementById('protocol-ov').classList.add('hidden');
+  init();
 }
-calculateStats();
 
-// ── UI RENDERING ──
-const upgContainer = document.getElementById('upgrades-container');
+let gpsMult = 1;
 
-function renderUpgrades() {
-  upgContainer.innerHTML = '';
-  UPGRADES.forEach((u, i) => {
-    const btn = document.createElement('div');
-    btn.className = `upgrade-card ${gold < u.currentCost ? 'disabled' : ''}`;
-    btn.onclick = () => buyUpgrade(i);
-    btn.innerHTML = `
-      <div class="upg-info">
+function init() {
+  if (typeof NMNWallet !== 'undefined') gold = NMNWallet.get().gold;
+  UPGRADES.forEach(u => u.cur = u.base);
+  renderUpg();
+  updateHUD();
+  loop();
+}
+
+function buyUpg(i) {
+  const u = UPGRADES[i];
+  if(gold >= u.cur) {
+    if(typeof NMNWallet !== 'undefined') NMNWallet.spendGold(u.cur);
+    u.count++;
+    u.cur = Math.floor(u.base * Math.pow(u.mult, u.count));
+    calcStats();
+    renderUpg();
+    updateHUD();
+  }
+}
+
+function calcStats() {
+  gps = UPGRADES.reduce((acc, u) => acc + (u.cps * u.count), 0) * gpsMult;
+  clickPower = 1 + UPGRADES.reduce((acc, u) => acc + (u.cpc * u.count), 0);
+  if (document.getElementById('protocol-ov').classList.contains('hidden') && clickPower === 1) clickPower = 3; 
+}
+
+function renderUpg() {
+  const container = document.getElementById('upgrades-container');
+  container.innerHTML = UPGRADES.map((u, i) => `
+    <div class="upgrade-card ${gold < u.cur ? 'disabled' : ''}" onclick="buyUpg(${i})">
+      <div>
         <div class="upg-name">${u.name}</div>
-        <div class="upg-desc">${u.desc}</div>
-        <div class="upg-cost">COST: ${Math.floor(u.currentCost).toLocaleString()}G</div>
+        <div class="upg-cost">${u.cur}G</div>
       </div>
       <div class="upg-count">${u.count}</div>
-    `;
-    upgContainer.appendChild(btn);
-  });
+    </div>
+  `).join('');
 }
 
-function updateHUD() {
-  const displayGold = document.getElementById('display-gold');
-  displayGold.textContent = Math.floor(gold).toLocaleString();
-  
-  if (typeof NMNWallet !== 'undefined') {
-      document.getElementById('dgGold').textContent = NMNWallet.get().gold.toLocaleString();
-  }
-  
-  document.getElementById('display-gps').textContent = `${gps.toFixed(1)} GOLD PER SECOND`;
-  
-  // Flash effect on hit
-  displayGold.style.color = '#fff';
-  setTimeout(() => displayGold.style.color = 'var(--neon-green)', 100);
-  
-  // Update button states efficiently
-  const cards = document.querySelectorAll('.upgrade-card');
-  UPGRADES.forEach((u, i) => {
-    if (cards[i]) {
-      if (gold >= u.currentCost) cards[i].classList.remove('disabled');
-      else cards[i].classList.add('disabled');
-    }
-  });
-}
-
-function buyUpgrade(idx) {
-  const u = UPGRADES[idx];
-  if (gold >= u.currentCost) {
-    SFX.buy();
-    
-    if(typeof NMNWallet !== 'undefined') {
-        NMNWallet.spendGold(Math.floor(u.currentCost));
-        gold = NMNWallet.get().gold;
-    } else {
-        gold -= u.currentCost;
-    }
-    
-    u.count++;
-    u.currentCost = Math.floor(u.baseCost * Math.pow(u.costMult, u.count)); // Exponential growth
-    calculateStats();
-    renderUpgrades();
-    updateHUD();
-    saveGame();
-    createBurst(W/2, H/2, '#00FF88', 15); // visual feedback on the rock
-  } else {
-    SFX.error();
-  }
-}
-
-// ── CANVAS VISUALS ──
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
-let W, H;
-let particles = [];
-let floatingTexts = [];
-let rockScale = 1;
+let W, H, rockScale = 1;
 
-function resize() {
-  const wrap = document.getElementById('canvas-container');
-  W = cv.width = wrap.clientWidth;
-  H = cv.height = wrap.clientHeight;
-}
-window.addEventListener('resize', resize);
-resize();
-
-function createBurst(x, y, color, count) {
-  for(let i=0; i<count; i++) {
-    particles.push({
-      x, y, vx: (Math.random()-0.5)*15, vy: (Math.random()-1)*10,
-      life: 1, decay: 0.03 + Math.random()*0.05, color, r: Math.random()*4+2
-    });
-  }
-}
-
-function spawnFloatText(x, y, text) {
-  floatingTexts.push({ x: x + (Math.random()-0.5)*40, y, text, life: 1, vy: -2 });
-}
-
-function handleHit(e) {
-  // Add Gold using V2 Wallet
-  if (typeof NMNWallet !== 'undefined') {
-      NMNWallet.addGold(clickPower);
-      gold = NMNWallet.get().gold;
-  } else {
-      gold += clickPower;
+function updateHUD() {
+  gold = typeof NMNWallet !== 'undefined' ? NMNWallet.get().gold : gold;
+  document.getElementById('display-gold').textContent = Math.floor(gold).toLocaleString();
+  document.getElementById('display-gps').textContent = `${gps.toFixed(1)} GOLD / SEC`;
+  document.getElementById('dgGold').textContent = Math.floor(gold).toLocaleString();
+  
+  // Strata Check
+  const next = STRATA.findIndex((s, i) => i > currentStrata && gold >= s.thresh);
+  if (next !== -1) {
+    currentStrata = next;
+    document.getElementById('ore-name').textContent = STRATA[currentStrata].name;
+    document.getElementById('ore-name').style.color = STRATA[currentStrata].vein;
   }
   
-  SFX.hit();
-  rockScale = 0.9; // Squish effect
-  
-  // Coordinates
-  const rect = cv.getBoundingClientRect();
-  const scaleX = cv.width / rect.width;
-  const scaleY = cv.height / rect.height;
-  let cx = ((e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : W/2)) - rect.left) * scaleX;
-  let cy = ((e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : H/2)) - rect.top) * scaleY;
-  
-  // Safety bounds
-  if (cx < 0 || isNaN(cx)) cx = W/2;
-  if (cy < 0 || isNaN(cy)) cy = H/2;
+  // Re-enable/disable cards
+  document.querySelectorAll('.upgrade-card').forEach((el, i) => {
+    el.classList.toggle('disabled', gold < UPGRADES[i].cur);
+  });
+}
 
-  createBurst(cx, cy, '#FFD700', 6);
-  createBurst(cx, cy, '#8B6914', 4);
-  spawnFloatText(cx, cy - 20, `+${clickPower}`);
-  
+cv.addEventListener('mousedown', (e) => {
+  if(typeof NMNWallet !== 'undefined') NMNWallet.addGold(clickPower);
+  rockScale = 0.9;
   updateHUD();
-}
-
-cv.addEventListener('mousedown', handleHit);
-cv.addEventListener('touchstart', e => { e.preventDefault(); handleHit(e); }, {passive: false});
+});
 
 function draw() {
-  ctx.fillStyle = '#050306'; ctx.fillRect(0, 0, W, H);
+  const rect = cv.parentElement.getBoundingClientRect();
+  W = cv.width = rect.width; H = cv.height = rect.height;
+  ctx.fillStyle = '#050306'; ctx.fillRect(0,0,W,H);
   
-  // Draw Rock
-  if (rockScale < 1) rockScale += 0.01;
-  const rw = 160 * rockScale;
-  const rh = 140 * rockScale;
+  if (rockScale < 1) rockScale += 0.02;
+  const s = STRATA[currentStrata];
   
   ctx.save();
   ctx.translate(W/2, H/2);
+  ctx.scale(rockScale, rockScale);
   
-  // Glow
-  const gl = ctx.createRadialGradient(0, 0, 0, 0, 0, 150);
-  gl.addColorStop(0, 'rgba(255,215,0,0.15)'); gl.addColorStop(1, 'transparent');
-  ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(0,0,150,0,Math.PI*2); ctx.fill();
-
-  // Asteroid/Ore shape
-  ctx.fillStyle = '#1a1105';
+  // Rock Body
+  ctx.fillStyle = s.color;
   ctx.beginPath();
-  ctx.moveTo(-rw/2, -rh/3); ctx.lineTo(-rw/3, -rh/2); ctx.lineTo(rw/3, -rh/2); ctx.lineTo(rw/2, -rh/4);
-  ctx.lineTo(rw/2 + 20, rh/4); ctx.lineTo(rw/3, rh/2); ctx.lineTo(-rw/4, rh/2); ctx.lineTo(-rw/2, rh/3);
+  ctx.moveTo(-80, -40); ctx.lineTo(0, -90); ctx.lineTo(80, -40);
+  ctx.lineTo(90, 40); ctx.lineTo(0, 80); ctx.lineTo(-90, 30);
   ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = s.vein; ctx.lineWidth = 4; ctx.stroke();
   
-  ctx.strokeStyle = '#8B6914'; ctx.lineWidth = 4; ctx.stroke();
-
   // Veins
-  ctx.strokeStyle = '#FFD700'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(-rw/3, -rh/4); ctx.lineTo(10, 10); ctx.lineTo(rw/3, -10); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(-10, 20); ctx.lineTo(-rw/4, rh/3); ctx.stroke();
+  ctx.globalAlpha = 0.5 + Math.sin(Date.now()*0.005)*0.3;
+  ctx.beginPath();
+  ctx.moveTo(-40, -20); ctx.lineTo(10, 10); ctx.lineTo(50, -10);
+  ctx.stroke();
   
   ctx.restore();
-
-  // Draw Particles
-  particles.forEach(p => {
-    p.x += p.vx; p.y += p.vy; p.vy += 0.5; p.life -= p.decay;
-    ctx.globalAlpha = Math.max(0, p.life);
-    ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, p.r, p.r);
-  });
-  particles = particles.filter(p => p.life > 0);
-
-  // Draw Texts
-  floatingTexts.forEach(t => {
-    t.y += t.vy; t.life -= 0.02;
-    ctx.globalAlpha = Math.max(0, t.life);
-    ctx.fillStyle = '#FFD700'; ctx.font = '16px "Press Start 2P"'; ctx.textAlign = 'center';
-    ctx.fillText(t.text, t.x, t.y);
-  });
-  floatingTexts = floatingTexts.filter(t => t.life > 0);
-  ctx.globalAlpha = 1;
 }
 
-// ── GAME LOOP & SAVING ──
-let lastTime = performance.now();
-let passiveGoldAccumulator = 0; // Stores fractions of gold per frame
-
-function gameLoop(time) {
-  const dt = (time - lastTime) / 1000;
-  lastTime = time;
-  
+function loop() {
   if (gps > 0) {
-    passiveGoldAccumulator += gps * dt;
-    
-    // Add gold when an integer is reached to save on heavy wallet API calls
-    if (passiveGoldAccumulator >= 1) {
-        const goldToAdd = Math.floor(passiveGoldAccumulator);
-        if (typeof NMNWallet !== 'undefined') {
-            NMNWallet.addGold(goldToAdd);
-            gold = NMNWallet.get().gold;
-        } else {
-            gold += goldToAdd;
-        }
-        passiveGoldAccumulator -= goldToAdd;
-        updateHUD();
-    }
-
-    // Auto-mining visuals
-    if (Math.random() < Math.min(gps * 0.05, 0.3)) {
-      createBurst(W/2 + (Math.random()-0.5)*100, H/2 + (Math.random()-0.5)*100, '#8B6914', 2);
-    }
+    if(typeof NMNWallet !== 'undefined') NMNWallet.addGold(gps / 60);
+    updateHUD();
   }
-
   draw();
-  requestAnimationFrame(gameLoop);
-}
-
-function saveGame() {
-  try {
-    const upgSave = {};
-    UPGRADES.forEach(u => { upgSave[u.id] = u.count; });
-    localStorage.setItem('nmn_motherlode_v2_upgrades', JSON.stringify(upgSave));
-    localStorage.setItem('nmn_motherlode_last_time', Date.now());
-  } catch(e) {}
-}
-
-// Auto-save every 5 seconds
-setInterval(() => { saveGame(); }, 5000);
-
-// Init
-renderUpgrades();
-updateHUD();
-requestAnimationFrame(gameLoop);
-
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
+  requestAnimationFrame(loop);
 }
 </script>
-
-<div style="text-align:center;padding:1rem;font-family:'Press Start 2P',monospace;font-size:.3rem;color:#4a3c28; margin-top: auto;">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
-</div>
-
 </body>
 </html>
