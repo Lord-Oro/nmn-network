@@ -5,66 +5,66 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>The Labyrinth — Sector 1</title>
 
-<link rel="icon" href="favicon.png" type="image/png">
-<link rel="shortcut icon" href="favicon.png" type="image/png">
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-P5WL9XNDY8');
-</script>
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
 
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
 
 <style>
+/* ── CORE NMN VARIABLES & AESTHETIC ── */
 :root {
-  --gold: #FFD700;
-  --gb: #e8b84b;
-  --gd: #AA7700;
-  --bg-color: #000000;
-  --panel-bg: #111111;
-  --cream: #f0e6cc;
-  --muted: #aaaaaa;
-  --lg: #55FF55; 
-  --font-pixel: 'Press Start 2P', monospace;
-  --font-text: 'VT323', monospace;
+  --gold: #FFD700; --gb: #e8b84b; --gd: #8B6914;
+  --coal: #050308; --shaft: #08060A; --rock: #0A080C;
+  --cream: #E8E0D0; --neon-green: #00FF88;
+  --purple: #AA55FF;
+  --font-pixel: 'Press Start 2P', cursive;
 }
-
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { height: 100%; overflow: hidden; background: var(--bg-color); }
+html, body { height: 100%; overflow: hidden; background: var(--coal); }
 
 body {
-  font-family: var(--font-text);
+  font-family: var(--font-pixel);
   color: var(--cream);
   display: flex; flex-direction: column;
-  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
-  font-size: 1.2rem;
+  background-image: 
+    linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
+  background-size: 32px 32px;
+  padding-bottom: 65px !important;
 }
 
-/* 16-BIT UI BORDER HELPER */
-.retro-box {
-  background: var(--panel-bg);
-  border: 4px solid #FFF;
-  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
+/* OVERRIDE ALL OLD FONTS */
+h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
+
+/* CRT SCANLINES & VIGNETTE */
+body::after {
+  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
+  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.08) 50%),
+              linear-gradient(90deg,rgba(232,184,75,0.015),rgba(197,146,0,0.008),rgba(255,215,0,0.015));
+  background-size:100% 3px,3px 100%; pointer-events:none; z-index:10000; opacity:0.18;
+}
+body::before {
+  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
+  background:radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.65) 100%);
+  pointer-events:none; z-index:9999;
 }
 
 /* HEADER */
 header {
-  padding: 1rem 2rem; border-bottom: 4px solid var(--lg);
+  padding: 1rem 2rem; border-bottom: 2px solid var(--gd);
   display: flex; justify-content: space-between; align-items: center;
-  background: #000; z-index: 1000; flex-shrink: 0;
+  background: rgba(5,3,14,.95); z-index: 1000; flex-shrink: 0;
 }
-.logo { font-family: var(--font-pixel); color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
-.back-btn { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.logo { color: var(--gold); font-size: .65rem; text-decoration: none; text-shadow: 0 0 10px rgba(255,215,0,.4); }
+.back-btn { font-size: .45rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
 .back-btn:hover { color: var(--gold); }
 
 /* ARCADE HUD */
 .hud {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 1rem 2rem; background: #000;
+  padding: 1rem 2rem; background: rgba(5,3,8,0.9);
   border-bottom: 4px solid #333; flex-shrink: 0; z-index: 50; flex-wrap: wrap; gap: 10px;
 }
 .hud-stat { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -82,11 +82,11 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 /* OVERLAYS */
 .overlay {
   position: absolute; inset: 0; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; background: rgba(0,0,0,0.9); z-index: 100;
+  align-items: center; justify-content: center; background: rgba(0,0,0,0.9); z-index: 100; padding: 2rem; text-align: center;
 }
 .overlay.hidden { display: none !important; }
-.ov-title { font-family: var(--font-pixel); font-size: 1.5rem; color: var(--gold); text-shadow: 4px 4px 0 #553300; text-align: center; margin-bottom: 1.5rem; line-height: 1.4;}
-.ov-sub { font-size: 1.5rem; color: var(--cream); text-align: center; line-height: 1.5; max-width: 500px; margin-bottom: 2rem; }
+.ov-title { font-family: var(--font-pixel); font-size: 1.5rem; color: var(--gold); text-shadow: 4px 4px 0 #553300; margin-bottom: 1.5rem; line-height: 1.4;}
+.ov-sub { font-size: 1.2rem; color: var(--cream); line-height: 1.5; max-width: 500px; margin-bottom: 2rem; font-family: var(--font-text); }
 .ov-stats { display: flex; gap: 2rem; margin-bottom: 2rem; }
 .ov-stat-box { text-align: center; }
 .ov-stat-box span { font-family: var(--font-pixel); display: block; font-size: 0.5rem; color: var(--muted); margin-bottom: 0.8rem; }
@@ -126,15 +126,29 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
   .logo { font-size: 0.6rem; }
 }
 
-/* CUSTOM CURSOR */
-body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
+/* FLOATING GAUGE */
+.depth-gauge {
+  position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:92%!important; height:42px!important; background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important; border-radius:22px!important; padding:0 18px!important;
+  z-index:9999!important; display:flex!important; align-items:center!important;
+  justify-content:center!important; gap:1.2rem!important; box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+.dg-stat { font-size: 0.4rem; color: var(--gd); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; font-family: var(--font-pixel); }
+.dg-val { color: var(--gold); font-size: 0.8rem; font-family: var(--font-text); }
+.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; pointer-events: auto!important; font-family: var(--font-pixel); }
+.dg-link:hover { color: var(--gold); }
+.dg-sep { color: var(--faint); font-size: 0.6rem; }
 </style>
 </head>
 <body>
 
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
+
 <header>
   <a href="index.html" class="logo">NMN LABYRINTH</a>
-  <a href="games.html" class="back-btn">← RETURN</a>
+  <a href="games.html" class="back-btn">← RETURN TO FORGE</a>
 </header>
 
 <div class="hud">
@@ -149,17 +163,20 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     
     <div class="overlay" id="ov-start">
       <h1 class="ov-title">THE LABYRINTH</h1>
-      <p class="ov-sub">Deep in the obsidian veins. Keep your lantern close. Find the gold. Find the hatch.</p>
+      <p class="ov-sub">Deep in the obsidian veins. Keep your lantern close. Find the gold. Find the hatch. The deeper you go, the darker it gets.</p>
       <button class="btn btn-gold" onclick="startGame()">ENTER THE DARK</button>
     </div>
     
     <div class="overlay hidden" id="ov-win">
-      <h1 class="ov-title" style="color:var(--lg); text-shadow:4px 4px 0 #005500;">HATCH FOUND</h1>
-      <p class="ov-sub">Descending deeper into the mine...</p>
+      <h1 class="ov-title" id="win-title" style="color:var(--lg); text-shadow:4px 4px 0 #005500;">HATCH FOUND</h1>
+      <p class="ov-sub" id="win-sub">Descending deeper into the mine...</p>
       <div class="ov-stats">
         <div class="ov-stat-box"><span>GOLD EXTRACTED</span><strong id="win-gold">0</strong></div>
       </div>
-      <button class="btn btn-gold" onclick="nextLevel()">DESCEND</button>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+          <button class="btn btn-gold" id="nextBtn" onclick="nextLevel()">DESCEND</button>
+          <button class="btn" style="background:#111; color:var(--muted); border-color:#444;" onclick="escapeMaze()">ESCAPE WITH GOLD</button>
+      </div>
     </div>
   </div>
 </div>
@@ -172,6 +189,15 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     <div class="dpad-btn" id="btn-down">S</div>
     <div class="dpad-btn" id="btn-right">D</div>
   </div>
+</div>
+
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> LORE</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">VAULT</a>
+  <a href="lantern.html" class="dg-link">LANTERN</a>
 </div>
 
 <script>
@@ -212,13 +238,18 @@ const SFX = {
   step() { this.play(80 + Math.random()*20, 'square', 0.05, 0.02); },
   wall() { this.play(60, 'sawtooth', 0.1, 0.05); },
   gold() { this.play(800 + Math.random()*200, 'sine', 0.2, 0.1); },
-  exit() { this.play(400, 'square', 0.2, 0.1); setTimeout(()=>this.play(600, 'square', 0.4, 0.1), 200); }
+  exit() { this.play(400, 'square', 0.2, 0.1); setTimeout(()=>this.play(600, 'square', 0.4, 0.1), 200); },
+  win() { this.play(400, 'triangle', 0.2, 0.1); setTimeout(()=>this.play(600, 'triangle', 0.2, 0.1), 150); setTimeout(()=>this.play(800, 'triangle', 0.6, 0.2), 300); }
 };
 
 // ── ENGINE ──
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
 let W, H;
+
+// PARALLAX BACKGROUNDS
+const bgMine = new Image(); bgMine.src = 'goldmine_stable.jpg';
+const bgGlitch = new Image(); bgGlitch.src = 'obsidian_glitched.jpg';
 
 function resize() {
   const wrap = cv.parentElement;
@@ -235,7 +266,9 @@ let cols = 0, rows = 0;
 let cellSize = 0;
 let player = { c: 1, r: 1, visualC: 1, visualR: 1 };
 let level = 1;
+const MAX_LEVEL = 5; // Final Level
 let goldExtracted = 0;
+let sessionGold = 0;
 let steps = 0;
 let gameRunning = false;
 let loopId = null;
@@ -270,7 +303,7 @@ function generateMaze(w, h) {
     }
   }
   
-  let goldCount = Math.floor(Math.sqrt(level)) * 3;
+  let goldCount = Math.floor(Math.sqrt(level)) * 4;
   emptyCells.sort(() => Math.random() - 0.5);
   for(let i=0; i<Math.min(goldCount, emptyCells.length); i++) {
     maze[emptyCells[i].r][emptyCells[i].c] = TYPES.GOLD;
@@ -288,32 +321,52 @@ function initLevel() {
   
   player = { c: 1, r: 1, visualC: 1, visualR: 1 };
   steps = 0;
+  sessionGold = 0;
   particles = []; texts = [];
   updateHUD();
 }
 
 function startGame() {
   if (loopId) cancelAnimationFrame(loopId);
-  level = 1; goldExtracted = 0;
+  level = 1; goldExtracted = 0; sessionGold = 0;
   gameRunning = true;
   document.getElementById('ov-start').classList.add('hidden');
   document.getElementById('ov-win').classList.add('hidden');
+  document.getElementById('nextBtn').style.display = 'inline-block';
+  
   initLevel();
   loop();
 }
 
 function nextLevel() {
+  if (level >= MAX_LEVEL) { escapeMaze(); return; }
+  
   level++;
   gameRunning = true;
   document.getElementById('ov-win').classList.add('hidden');
   
-  try {
-    let currentGold = parseInt(localStorage.getItem('nmn_total_gold') || '0');
-    localStorage.setItem('nmn_total_gold', currentGold + goldExtracted);
-  } catch(e) {}
+  if (typeof NMNWallet !== 'undefined') {
+      NMNWallet.addGold(sessionGold);
+      syncGauge();
+  }
   
-  goldExtracted = 0; 
+  sessionGold = 0; 
   initLevel();
+}
+
+function escapeMaze() {
+    if (typeof NMNWallet !== 'undefined') {
+        NMNWallet.addGold(sessionGold);
+        NMNWallet.addXP(level * 20);
+        syncGauge();
+    }
+    
+    document.getElementById('ov-win').classList.add('hidden');
+    document.getElementById('ov-start').classList.remove('hidden');
+    document.querySelector('#ov-start .ov-title').textContent = "SURFACE REACHED";
+    document.querySelector('#ov-start .ov-sub').textContent = "You successfully extracted the gold. The labyrinth shifts behind you.";
+    document.querySelector('#ov-start .btn-gold').textContent = "DESCEND AGAIN";
+    gameRunning = false;
 }
 
 function spawnParticles(x, y, color, count) {
@@ -340,12 +393,36 @@ function attemptMove(dc, dr) {
       
       if (maze[nr][nc] === TYPES.GOLD) {
         maze[nr][nc] = TYPES.PATH;
-        goldExtracted += 25; SFX.gold();
+        goldExtracted += 25; sessionGold += 25; SFX.gold();
         spawnParticles(nc*cellSize + cellSize/2, nr*cellSize + cellSize/2, '#FFD700', 15);
         spawnText(nc*cellSize + cellSize/2, nr*cellSize, "+25G", "#FFD700");
       } else if (maze[nr][nc] === TYPES.EXIT) {
-        gameRunning = false; SFX.exit();
-        document.getElementById('win-gold').textContent = goldExtracted;
+        gameRunning = false; 
+        
+        document.getElementById('win-gold').textContent = sessionGold;
+        
+        if (level === MAX_LEVEL) {
+            SFX.win();
+            document.getElementById('win-title').textContent = "SYSTEM ESCAPE";
+            document.getElementById('win-title').style.color = "var(--purple)";
+            document.getElementById('win-sub').innerHTML = "You navigated the deepest glitched sectors. <br><br><span style='color:var(--lg);font-size:0.6rem;'>LORE FRAGMENT SAVED</span>";
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            // Save to Lore Vault
+            try {
+                const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
+                vault.push({ text: `Survived the deepest Obsidian Labyrinth. The glitch holds secrets.`, source: 'The Labyrinth - Sector 1', date: new Date().toLocaleDateString() });
+                localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
+                syncGauge();
+            } catch(e) {}
+        } else {
+            SFX.exit();
+            document.getElementById('win-title').textContent = "HATCH FOUND";
+            document.getElementById('win-title').style.color = "var(--lg)";
+            document.getElementById('win-sub').textContent = "Descending deeper into the mine...";
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+        
         document.getElementById('ov-win').classList.remove('hidden');
       }
     } else {
@@ -404,7 +481,10 @@ function draw() {
   ctx.save();
   ctx.translate(offsetX, offsetY);
 
-  // Draw Elements
+  // Crossfade Backgrounds based on level depth
+  let glitchFactor = (level - 1) / (MAX_LEVEL - 1); 
+  
+  // Render Parallax Grid Wall Backgrounds
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       const cell = maze[r][c];
@@ -412,16 +492,39 @@ function draw() {
       const y = r * cellSize;
       
       if (cell === TYPES.WALL) {
-        ctx.fillStyle = '#111'; ctx.fillRect(x, y, cellSize, cellSize);
-        ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.strokeRect(x, y, cellSize, cellSize);
+          ctx.save();
+          // Clip to the wall tile
+          ctx.beginPath(); ctx.rect(x, y, cellSize, cellSize); ctx.clip();
+          
+          // Draw Stable Mine
+          ctx.globalAlpha = (1 - glitchFactor) * 0.8;
+          if(bgMine.complete && bgMine.naturalWidth) {
+              // Offset source by grid position to make the texture seamless across tiles
+              ctx.drawImage(bgMine, -x, -y, W, H);
+          } else {
+              ctx.fillStyle = '#111'; ctx.fillRect(x, y, cellSize, cellSize);
+          }
+          
+          // Draw Glitch Obsidian
+          ctx.globalAlpha = glitchFactor * 0.8;
+          if(bgGlitch.complete && bgGlitch.naturalWidth) {
+              ctx.drawImage(bgGlitch, -x, -y, W, H);
+          }
+          
+          ctx.restore();
+          
+          // Outline the block for structure
+          ctx.strokeStyle = '#222'; ctx.lineWidth = 1; ctx.strokeRect(x, y, cellSize, cellSize);
+          
       } else if (cell === TYPES.PATH) {
-        ctx.fillStyle = '#221100'; ctx.fillRect(x, y, cellSize, cellSize);
+        ctx.fillStyle = '#0a0806'; ctx.fillRect(x, y, cellSize, cellSize);
       } else if (cell === TYPES.GOLD) {
-        ctx.fillStyle = '#221100'; ctx.fillRect(x, y, cellSize, cellSize);
+        ctx.fillStyle = '#0a0806'; ctx.fillRect(x, y, cellSize, cellSize);
         ctx.fillStyle = '#FFD700'; ctx.fillRect(x + cellSize*.3, y + cellSize*.3, cellSize*.4, cellSize*.4);
       } else if (cell === TYPES.EXIT) {
-        ctx.fillStyle = '#221100'; ctx.fillRect(x, y, cellSize, cellSize);
-        ctx.fillStyle = '#55FF55'; ctx.fillRect(x + cellSize*.2, y + cellSize*.2, cellSize*.6, cellSize*.6);
+        ctx.fillStyle = '#0a0806'; ctx.fillRect(x, y, cellSize, cellSize);
+        ctx.fillStyle = (level === MAX_LEVEL) ? '#AA55FF' : '#55FF55'; // Purple exit on final level
+        ctx.fillRect(x + cellSize*.2, y + cellSize*.2, cellSize*.6, cellSize*.6);
       }
     }
   }
@@ -440,11 +543,14 @@ function draw() {
   
   ctx.restore();
 
-  // THE NEW FLASHLIGHT LOGIC
+  // THE FLASHLIGHT LOGIC (Gets drastically tighter as you descend)
   const absPx = offsetX + px;
   const absPy = offsetY + py;
-  const lightRadius = Math.max(cellSize * 1.5, cellSize * 4 - (level * 3));
-  const pulse = Math.sin(Date.now() * 0.005) * (cellSize * 0.1);
+  
+  // Radius shrinks as level increases
+  const lightRadius = Math.max(cellSize * 1.5, cellSize * 4 - (level * cellSize * 0.5));
+  // Pulse gets more erratic
+  const pulse = Math.sin(Date.now() * (0.005 + (level*0.001))) * (cellSize * 0.1);
 
   // Draw pure darkness layer OVER everything, transitioning from transparent to black
   const radGrad = ctx.createRadialGradient(absPx, absPy, 0, absPx, absPy, lightRadius + pulse);
@@ -462,12 +568,22 @@ function loop() {
 }
 
 function updateHUD() {
-  document.getElementById('h-level').textContent = level;
+  document.getElementById('h-level').textContent = level + '/' + MAX_LEVEL;
   document.getElementById('h-steps').textContent = steps;
   document.getElementById('h-gold').textContent = goldExtracted;
 }
 
+function syncGauge() {
+    try {
+        if(typeof NMNWallet !== 'undefined') {
+            document.getElementById('dgGold').textContent = NMNWallet.get().gold;
+        }
+        document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+    } catch(e) {}
+}
+
 ctx.fillStyle = '#000'; ctx.fillRect(0,0,cv.width,cv.height);
+syncGauge();
 </script>
 
 </body>
