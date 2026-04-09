@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Mirror Room — NMN Retro</title>
+<title>The Mirror Room — NMN</title>
 
-<link rel="icon" href="logo.jpg" type="image/jpeg">
-<link rel="shortcut icon" href="logo.jpg" type="image/jpeg">
-<link rel="apple-touch-icon" href="logo.jpg">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
 
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
 
 <style>
@@ -17,107 +17,108 @@
   --gold: #FFD700;
   --gb: #e8b84b;
   --gd: #AA7700;
-  --bg-color: #000000;
-  --panel-bg: #111111;
+  --bg-color: #050302;
+  --panel-bg: #0a0806;
   --cream: #f0e6cc;
-  --muted: #aaaaaa;
+  --muted: #8a7654;
+  --faint: #4a3c28;
   --lg: #55FF55; 
-  --blue: #5555FF;
   --font-pixel: 'Press Start 2P', monospace;
   --font-text: 'VT323', monospace;
+  --font-ancient: 'Cormorant Garamond', serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; }
+html, body { min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
 body {
-  font-family: var(--font-text);
+  font-family: var(--font-ancient);
   color: var(--cream);
-  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
-  padding-bottom: 60px;
+  background: radial-gradient(circle at center, #0a0806 0%, #050302 100%);
+  padding-bottom: 80px !important;
   font-size: 1.2rem;
 }
 
-/* 16-BIT UI BORDER HELPER */
-.retro-box {
-  background: var(--panel-bg);
-  border: 4px solid #FFF;
-  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
-}
-
-/* HEADER */
 header {
-  padding: 1rem 2rem; border-bottom: 4px solid var(--gd);
+  padding: 1rem 2rem; border-bottom: 1px solid rgba(255,215,0,0.1);
   display: flex; justify-content: space-between; align-items: center;
-  background: #000; z-index: 1000; position: sticky; top: 0;
+  background: rgba(5,3,2,0.95); z-index: 1000; position: sticky; top: 0;
+  backdrop-filter: blur(5px);
 }
-.logo { font-family: var(--font-pixel); color: var(--gold); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
-.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.logo { font-family: var(--font-pixel); color: var(--gold); font-size: 0.7rem; text-decoration: none; letter-spacing: 2px; }
+.back { font-family: var(--font-pixel); font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.3s; }
 .back:hover { color: var(--gold); }
 
-main { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center;}
+main { max-width: 800px; margin: 0 auto; padding: 4rem 1rem; flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center;}
 
 /* HERO */
 .mirror-hero { text-align: center; margin-bottom: 2rem; width: 100%;}
+.mirror-canvas { width: 160px; height: 200px; image-rendering: pixelated; margin: 0 auto 2.5rem auto; display: block; filter: drop-shadow(0 0 20px rgba(255,215,0,0.2)); animation: float 6s ease-in-out infinite; }
+@keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(1deg); } }
 
-/* CANVAS MIRROR */
-.mirror-canvas { width: 128px; height: 160px; image-rendering: pixelated; margin: 0 auto 1.5rem auto; display: block; filter: drop-shadow(4px 4px 0 #000); animation: float 4s ease-in-out infinite; }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.mirror-eyebrow { font-family: var(--font-pixel); font-size: 0.5rem; letter-spacing: 0.3em; color: var(--gd); margin-bottom: 1.5rem; }
+.mirror-title { font-family: var(--font-ancient); font-size: clamp(2.5rem, 6vw, 4rem); color: var(--cream); font-weight: 600; margin-bottom: 1rem; text-shadow: 0 0 20px rgba(255,215,0,0.1);}
+.mirror-title em { color: var(--gold); font-style: italic; }
+.mirror-sub { font-size: 1.4rem; color: var(--muted); line-height: 1.6; max-width: 600px; margin: 0 auto; font-style: italic; }
 
-.mirror-eyebrow { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); margin-bottom: 1rem; text-shadow: 2px 2px 0 #000; }
-.mirror-title { font-family: var(--font-pixel); font-size: 1.6rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 3px 3px 0 #553300;}
-.mirror-title em { color: var(--gold); font-style: normal; }
-.mirror-sub { font-size: 1.3rem; color: var(--muted); line-height: 1.5; max-width: 600px; margin: 0 auto; }
+.ritual-note { font-size: 1.3rem; color: var(--gb); max-width: 500px; margin: 3rem auto; padding: 2.5rem; border: 1px solid rgba(255,215,0,0.15); background: rgba(255,215,0,0.02); position: relative; font-style: italic; line-height: 1.6;}
+.ritual-note::before { content: '⬡'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); color: var(--gd); background: var(--bg-color); padding: 0 10px; font-size: 0.8rem; }
 
-.btn { display: inline-block; padding: 1.2rem 2rem; background: var(--gd); border: 4px solid #FFF; color: var(--cream); font-family: var(--font-pixel); font-size: 0.7rem; text-transform: uppercase; cursor: pointer; transition: transform 0.1s; text-decoration: none; box-shadow: 4px 4px 0 #000; margin-top: 1.5rem;}
-.btn:hover { background: var(--gold); color: #000; transform: translateY(-4px); border-color: var(--cream);}
+.btn { padding: 1rem 2rem; font-family: var(--font-pixel); font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; border: 1px solid var(--gd); transition: all 0.3s; display: inline-block; text-decoration: none; background: rgba(0,0,0,0.5); color: var(--gb); margin-top: 2rem;}
+.btn:hover { background: var(--gold); color: #000; border-color: #fff; transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
 
 /* PROGRESS */
-.progress-container { width: 100%; max-width: 600px; margin-bottom: 2rem; display: none;}
-.progress-label { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gold); margin-bottom: 0.5rem; text-align: left; text-shadow: 2px 2px 0 #000;}
-.progress-bar-bg { width: 100%; height: 16px; background: #000; border: 4px solid #444; }
-.progress-bar-fill { height: 100%; background: var(--gold); width: 0%; transition: width 0.3s; }
+.progress-container { width: 100%; max-width: 600px; margin-bottom: 4rem; display: none;}
+.progress-label { font-family: var(--font-pixel); font-size: 0.45rem; color: var(--gd); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;}
+.progress-bar-bg { width: 100%; height: 4px; background: #111; border-radius: 2px; }
+.progress-bar-fill { height: 100%; background: var(--gold); width: 0%; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--gold); }
 
 /* QUESTIONS */
-.question-block { display: none; width: 100%; max-width: 600px; }
-.question-block.active { display: block; animation: flashIn 0.2s steps(2); }
-@keyframes flashIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+.question-block { display: none; width: 100%; max-width: 650px; }
+.question-block.active { display: block; animation: fadeIn 0.8s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-.q-box { background: #000; border: 4px solid var(--gd); padding: 1.5rem; margin-bottom: 1.5rem; position: relative; box-shadow: inset 0 0 0 4px #000, 4px 4px 0 #000; }
-.q-step { position: absolute; top: -0.8rem; left: 1rem; background: var(--gd); color: #000; font-family: var(--font-pixel); font-size: 0.6rem; padding: 0.4rem 0.8rem; border: 2px solid #FFF;}
-.q-prompt { font-size: 1.6rem; color: var(--cream); line-height: 1.5; min-height: 60px; margin-bottom: 1.5rem;}
+.q-box { background: #080605; border: 1px solid #222; padding: 3rem 2rem; margin-bottom: 2rem; position: relative; box-shadow: inset 0 0 30px #000, 0 10px 30px rgba(0,0,0,0.5); }
+.q-step { position: absolute; top: -12px; left: 2rem; background: var(--gd); color: #000; font-family: var(--font-pixel); font-size: 0.45rem; padding: 5px 12px; font-weight: bold;}
+.q-prompt { font-family: var(--font-ancient); font-size: 2rem; color: var(--cream); line-height: 1.3; margin-bottom: 2.5rem; font-weight: 600; text-align: center;}
 
-.q-input { width: 100%; padding: 1rem; background: #111; border: 4px solid #444; color: var(--lg); font-family: var(--font-text); font-size: 1.4rem; resize: none; outline: none; height: 120px; line-height: 1.5; transition: border-color 0.1s; box-shadow: inset 4px 4px 0 #000;}
-.q-input:focus { border-color: var(--gold); }
-.q-input::placeholder { color: #444; }
+.q-input { width: 100%; padding: 1.5rem; background: #000; border: 1px solid #333; color: var(--lg); font-family: var(--font-ancient); font-size: 1.5rem; resize: none; outline: none; height: 160px; line-height: 1.5; transition: border-color 0.3s; font-style: italic; }
+.q-input:focus { border-color: var(--gold); box-shadow: inset 0 0 15px rgba(255,215,0,0.05); }
 
 /* REFLECTION */
-.reflection-block { display: none; width: 100%; max-width: 600px; text-align: center;}
-.reflection-block.active { display: block; animation: flashIn 0.2s steps(2); }
+.reflection-block { display: none; width: 100%; max-width: 700px; text-align: center;}
+.reflection-block.active { display: block; animation: flashIn 1s ease-out; }
+@keyframes flashIn { from { filter: brightness(3); opacity: 0; } to { filter: brightness(1); opacity: 1; } }
 
-.reflection-mirror { background: #000; border: 4px solid var(--gold); padding: 2.5rem 1.5rem; position: relative; margin-bottom: 1.5rem; box-shadow: inset 0 0 0 4px #000, inset 0 0 0 8px var(--gd), 6px 6px 0 #553300; text-align: left;}
-.reflection-eyebrow { position: absolute; top: -0.8rem; left: 50%; transform: translateX(-50%); background: var(--gold); color: #000; font-family: var(--font-pixel); font-size: 0.6rem; padding: 0.4rem 0.8rem; border: 2px solid #FFF; white-space: nowrap;}
+.reflection-mirror { background: #0a0806; border: 1px solid var(--gold); padding: 4rem 2rem; position: relative; margin-bottom: 2rem; box-shadow: inset 0 0 30px rgba(0,0,0,1), 0 0 40px rgba(255,215,0,0.1); text-align: center;}
+.reflection-mirror::before { content: '⬡ ⬡ ⬡'; color: var(--gold); font-size: 0.6rem; letter-spacing: 1em; display: block; margin-bottom: 2rem; opacity: 0.5; }
 
-.reflection-label { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--muted); margin-bottom: 1rem; }
-.reflection-text { font-size: 1.6rem; color: var(--cream); line-height: 1.6; min-height: 80px;}
-.reflection-text::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 1rem; color: var(--gold);}
-.reflection-sig { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gd); text-align: right; margin-top: 1.5rem; }
+.reflection-label { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--muted); margin-bottom: 1.5rem; letter-spacing: 3px; text-transform: uppercase; }
+.reflection-text { font-family: var(--font-ancient); font-size: 1.8rem; color: var(--gold); line-height: 1.5; font-style: italic; font-weight: 600;}
+.reflection-text::after { content: '✦'; display: inline-block; animation: blink 1.5s infinite; margin-left: 15px; color: var(--gd);}
+@keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-.reflection-note { font-size: 1rem; color: var(--muted); line-height: 1.5; text-align: center; margin-bottom: 1.5rem; }
+.reflection-sig { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gd); text-align: center; margin-top: 3rem; letter-spacing: 2px; }
+.reflection-note { font-family: var(--font-ancient); font-size: 1.2rem; color: var(--muted); line-height: 1.6; text-align: center; margin: 2rem auto; max-width: 500px; font-style: italic; }
 
-/* HUD (BOTTOM) */
-.hud { display: flex; justify-content: center; align-items: center; padding: 1rem 2rem; background: #000; border-top: 4px solid #333; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; flex-wrap: wrap; gap: 20px; }
-.hud-stat { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; }
-.hud-val { color: var(--gold); font-size: 1rem; text-shadow: 2px 2px 0 #553300; }
-.hud-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
-.hud-link:hover { color: #000; background: var(--gd); }
-
-/* ── MOUSE FIX ── */
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+/* FLOATING GAUGE */
+.depth-gauge {
+  position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:92%!important; height:42px!important; background:rgba(12,10,7,.95)!important;
+  border:1px solid rgba(255,215,0,.3)!important; border-radius:2px!important; padding:0 20px!important;
+  z-index:9999!important; display:flex!important; align-items:center!important; justify-content:center!important;
+  gap:1.5rem!important; flex-wrap:nowrap!important; box-shadow: 0 5px 20px rgba(0,0,0,0.9)!important;
+}
+.dg-stat { display:flex; align-items:center; gap:0.5rem; font-family:var(--font-pixel); font-size:0.45rem; color:var(--muted); text-transform:uppercase; letter-spacing: 1px;}
+.dg-val { font-family:var(--font-text); font-size:1.1rem; color:var(--gold); }
+.dg-link { font-family:var(--font-pixel); font-size:0.45rem; color:var(--gd); text-decoration:none; text-transform:uppercase; transition:color 0.3s; letter-spacing: 1px;}
+.dg-link:hover { color:var(--gold); }
+.dg-sep { color:var(--faint); font-size:0.6rem; }
 </style>
 </head>
 <body>
 
+<script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
 
 <header>
@@ -130,13 +131,13 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
     <canvas id="mirrorCanvas" class="mirror-canvas" width="32" height="40"></canvas>
     <div class="mirror-eyebrow">THE ORACLE'S CHAMBER</div>
     <h1 class="mirror-title">THE MIRROR <em>ROOM</em></h1>
-    <p class="mirror-sub">Lord Oro holds up a lantern to your interior world. Five questions. No right answers. No data saved. At the end he reflects one line back at you.</p>
+    <p class="mirror-sub">Lord Oro holds up a lantern to your interior world. Five questions. No right answers. No data saved to the mine. Only a reflection remains.</p>
     
-    <div style="font-size: 1.2rem; color: var(--gd); max-width: 500px; margin: 2rem auto; padding: 1.5rem; background: #000; border: 4px dashed #333; font-style: italic;">
-      "The mirror doesn't show you what you look like. It shows you what you're made of. Those are different things." — Lord Oro
+    <div class="ritual-note">
+      "The mirror doesn't show you what you look like. It shows you what you're made of. Those are different things."<br><br>— LORD ORO
     </div>
     
-    <button class="btn" onclick="startMirror()">LOOK INTO THE MIRROR</button>
+    <button class="btn" onclick="startMirror()">DESCEND INTO REFLECTION</button>
   </div>
 
   <div class="progress-container" id="progressContainer">
@@ -145,15 +146,16 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
   </div>
 
   <div id="questionsBlock"></div>
-  
   <div class="reflection-block" id="reflectionBlock"></div>
 </main>
 
-<div class="hud">
-  <div class="hud-stat">GOLD: <span class="hud-val" id="dgGold">0</span></div>
-  <div class="hud-stat">LORE: <span class="hud-val" id="dgLore">0</span></div>
-  <a href="lorevault.html" class="hud-link">VAULT</a>
-  <a href="lantern.html" class="hud-link">LANTERN</a>
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> LORE</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">VAULT</a>
+  <a href="lantern.html" class="dg-link">LANTERN</a>
 </div>
 
 <script>
@@ -162,45 +164,17 @@ function drawMirror() {
   const canvas = document.getElementById('mirrorCanvas');
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
-  
   let frame = 0;
-  
   function render() {
     ctx.clearRect(0, 0, 32, 40);
-    
-    // Frame
-    ctx.fillStyle = '#8B6914';
-    ctx.fillRect(0, 0, 32, 40);
-    ctx.fillStyle = '#FFD700';
-    ctx.fillRect(2, 2, 28, 36);
-    ctx.fillStyle = '#111';
-    ctx.fillRect(4, 4, 24, 32);
-    
-    // Glass Base
-    ctx.fillStyle = '#0a0a2a';
-    ctx.fillRect(5, 5, 22, 30);
-    
-    // Animated Glint
+    ctx.fillStyle = '#8B6914'; ctx.fillRect(0, 0, 32, 40);
+    ctx.fillStyle = '#FFD700'; ctx.fillRect(2, 2, 28, 36);
+    ctx.fillStyle = '#050302'; ctx.fillRect(4, 4, 24, 32);
+    ctx.fillStyle = '#0a0a2a'; ctx.fillRect(5, 5, 22, 30);
     const offset = (frame % 120) - 20;
-    
     ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-    ctx.beginPath();
-    ctx.moveTo(5, offset);
-    ctx.lineTo(27, offset + 22);
-    ctx.lineTo(27, offset + 30);
-    ctx.lineTo(5, offset + 8);
-    ctx.fill();
-
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-    ctx.beginPath();
-    ctx.moveTo(5, offset + 12);
-    ctx.lineTo(27, offset + 34);
-    ctx.lineTo(27, offset + 38);
-    ctx.lineTo(5, offset + 16);
-    ctx.fill();
-    
-    frame++;
-    requestAnimationFrame(render);
+    ctx.beginPath(); ctx.moveTo(5, offset); ctx.lineTo(27, offset + 22); ctx.lineTo(27, offset + 30); ctx.lineTo(5, offset + 8); ctx.fill();
+    frame++; requestAnimationFrame(render);
   }
   render();
 }
@@ -212,7 +186,7 @@ const QUESTIONS = [
   { step: 'THE SECOND QUESTION', prompt: 'What did you want to be before someone told you to be practical?' },
   { step: 'THE THIRD QUESTION', prompt: 'What would you do with your life if success was already guaranteed?' },
   { step: 'THE FOURTH QUESTION', prompt: 'Who do you become when no one is watching?' },
-  { step: 'THE FIFTH QUESTION', prompt: 'What does the word goldmine mean to you — not here, not in Lord Oro\'s world. In yours.' },
+  { step: 'THE FIFTH QUESTION', prompt: 'What does the word goldmine mean to you?' },
 ];
 
 function generateReflection(answers) {
@@ -222,21 +196,17 @@ function generateReflection(answers) {
   if (combined.match(/book|write|story|novel|poem|song|music|album/))
     return "The thing you keep coming back to — that's not a hobby. That's the mine. Keep digging it.";
   if (combined.match(/family|children|son|daughter|parent|mother|father|kids/))
-    return "What you're building is not for you. You already know this. The people who come after you will feel the difference.";
+    return "What you're building is not for you. The people who come after you will feel the difference.";
   if (combined.match(/travel|move|leave|korea|japan|abroad|world|free/))
     return "The life you described is already drawn. The only question left is when you start walking toward it.";
   if (combined.match(/money|financial|debt|stable|secure|safe/))
-    return "Safety is a place you pass through. It's not where the gold is. You know this. You've always known this.";
+    return "Safety is a place you pass through. It's not where the gold is. You know this.";
   if (combined.match(/love|relationship|partner|lonely|connection|alone/))
-    return "The person you become when no one is watching — that's who deserves to be loved. Lead with that one.";
+    return "The person you become when no one is watching — that's who deserves to be loved.";
   if (combined.match(/business|company|empire|brand|build|create|make/))
-    return "The empire is already inside you. The mine is just the first tunnel. Keep going down.";
+    return "The empire is already inside you. The mine is just the first tunnel.";
   if (combined.match(/fear|afraid|scared|fail|failure|wrong/))
-    return "The fear you named — that's not a warning. That's a map. Everything you're afraid of not finishing is worth finishing.";
-    
-  const lastAnswer = answers[4] || '';
-  if (lastAnswer.length > 10)
-    return `"${lastAnswer.trim().charAt(0).toUpperCase() + lastAnswer.trim().slice(1, 60)}..." — Lord Oro heard that. The mine already knew.`;
+    return "The fear you named — that's not a warning. That's a map. It's worth finishing.";
     
   return "You answered honestly. That alone is rarer than you think. The mine respects you for it.";
 }
@@ -265,7 +235,6 @@ function startMirror() {
 function renderQuestion(idx) {
   const q = QUESTIONS[idx];
   const block = document.getElementById('questionsBlock');
-  
   document.getElementById('progressLabel').textContent = `QUESTION ${idx + 1}/${QUESTIONS.length}`;
   document.getElementById('progressBar').style.width = `${((idx) / QUESTIONS.length) * 100}%`;
 
@@ -274,9 +243,9 @@ function renderQuestion(idx) {
       <div class="q-box">
         <div class="q-step">${q.step}</div>
         <div class="q-prompt" id="qPrompt"></div>
-        <textarea class="q-input" id="currentInput" placeholder="> AWAITING INPUT... NO DATA WILL BE SAVED TO SERVERS."></textarea>
+        <textarea class="q-input" id="currentInput" placeholder="AWAITING INPUT..."></textarea>
       </div>
-      <button class="btn" style="width:100%; margin-top: 0;" onclick="nextQuestion()">${idx < QUESTIONS.length - 1 ? 'NEXT QUESTION' : 'SHOW ME THE REFLECTION'}</button>
+      <button class="btn" style="width:100%; margin-top: 0;" onclick="nextQuestion()">${idx < QUESTIONS.length - 1 ? 'NEXT STEP' : 'REVEAL REFLECTION'}</button>
     </div>`;
     
   typeText('qPrompt', q.prompt);
@@ -287,11 +256,8 @@ function nextQuestion() {
   const input = document.getElementById('currentInput');
   answers[currentQ] = input.value.trim() || '...';
   currentQ++;
-  if (currentQ >= QUESTIONS.length) {
-    showReflection();
-  } else {
-    renderQuestion(currentQ);
-  }
+  if (currentQ >= QUESTIONS.length) showReflection();
+  else renderQuestion(currentQ);
 }
 
 function showReflection() {
@@ -303,50 +269,38 @@ function showReflection() {
   rb.classList.add('active');
   rb.innerHTML = `
     <div class="reflection-mirror">
-      <div class="reflection-eyebrow">LORD ORO REFLECTS</div>
-      <div class="reflection-label">SYSTEM OUTPUT:</div>
+      <div class="reflection-label">LORD ORO REFLECTS:</div>
       <div class="reflection-text" id="rText"></div>
       <div class="reflection-sig">— LORD ORO, THE MIRROR ROOM</div>
     </div>
-    <div class="reflection-note">Your answers were not saved, sent, or recorded anywhere. They exist only in this session. When you close this page, they're gone. The reflection is yours to keep.</div>
-    <button class="btn btn-gold" onclick="restartMirror()">LOOK AGAIN</button>`;
+    <div class="reflection-note">Your words were not saved to any server. They exist only in this session. The reflection is yours to carry.</div>
+    <button class="btn" onclick="location.reload()">LOOK AGAIN</button>`;
     
   typeText('rText', `"${reflection}"`, 30);
   
+  // XP Award
+  if(typeof NMNWallet !== 'undefined') NMNWallet.addXP(50);
+
   // Save to lore vault
   try {
     const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
-    vault.push({ text: reflection, source: 'The Mirror Room', date: new Date().toLocaleDateString() });
+    vault.push({ text: `Mirror Reflection: ${reflection}`, source: 'The Mirror Room', date: new Date().toLocaleDateString() });
     localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
-    document.getElementById('dgLore').textContent = vault.length;
+    syncHUD();
   } catch(e) {}
 }
 
-function restartMirror() {
-  answers = []; currentQ = 0;
-  document.getElementById('reflectionBlock').classList.remove('active');
-  document.getElementById('reflectionBlock').innerHTML = '';
-  document.getElementById('startBlock').style.display = 'block';
+function syncHUD() {
+  try {
+    const loreCount = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]').length;
+    document.getElementById('dgLore').textContent = loreCount;
+    if(typeof NMNWallet !== 'undefined') {
+        document.getElementById('dgGold').textContent = NMNWallet.get().gold;
+    }
+  } catch(e) {}
 }
 
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && e.ctrlKey && document.getElementById('currentInput')) nextQuestion();
-});
-
-// ── LOCAL STORAGE HUD ──
-(function(){
-  try{
-    document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
-    document.getElementById('dgGold').textContent=localStorage.getItem('nmn_total_gold')||'0';
-  }catch(e){}
-})();
-
-</script>
-
-<script>
-if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
-}
+window.onload = syncHUD;
 </script>
 
 </body>
