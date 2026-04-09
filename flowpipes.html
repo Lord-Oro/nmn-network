@@ -5,15 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Ore Flow — Sector 1</title>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-P5WL9XNDY8');
-</script>
-<link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
+
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
 
 <style>
 /* ── CORE NMN VARIABLES & AESTHETIC ── */
@@ -34,6 +31,7 @@ body {
     linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
     linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
   background-size: 32px 32px;
+  padding-bottom: 65px !important;
 }
 
 /* OVERRIDE ALL OLD FONTS */
@@ -119,14 +117,14 @@ header {
 }
 .dg-stat { font-size: 0.4rem; color: var(--gd); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
 .dg-val { color: var(--gold); font-size: 0.6rem; }
-.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; pointer-events: auto!important;}
 .dg-link:hover { color: var(--gold); }
-
-/* CUSTOM CURSOR */
-body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
 </style>
 </head>
 <body>
+
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
 
 <header>
   <a href="index.html" class="logo">NMN — Lord Oro</a>
@@ -151,9 +149,9 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     <canvas id="gameCanvas"></canvas>
     
     <div class="overlay" id="winOverlay">
-      <div class="ov-title">VEIN SEALED</div>
-      <p class="ov-sub">The energy flows cleanly. The mine provides.</p>
-      <div class="ov-gold">+25 GOLD EXTRACTED</div>
+      <div class="ov-title" id="winTitle">VEIN SEALED</div>
+      <p class="ov-sub" id="winSub">The energy flows cleanly. The mine provides.</p>
+      <div class="ov-gold" id="winGold">+25 GOLD EXTRACTED</div>
       <div style="display:flex; gap:10px; margin-top:10px;">
         <button class="btn btn-gold" onclick="nextLevel()">NEXT PROTOCOL</button>
         <button class="btn btn-outline" onclick="resetLevel()">REPLAY</button>
@@ -168,7 +166,7 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 
 <div class="depth-gauge">
   <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold</div>
-  <span class="dg-sep">⬡</span>
+  <span class="dg-sep" style="color:var(--faint);">⬡</span>
   <a href="lorevault.html" class="dg-link">📜 Vault</a>
   <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
 </div>
@@ -218,6 +216,9 @@ const SFX = {
 let CELL = 56;
 const MAX_BOARD_SIZE = 500;
 const COLORS = ['#FFD700', '#00BFFF', '#9B59B6', '#2ECC71', '#E74C3C', '#FF8C00', '#E8F0F0', '#FF69B4'];
+
+const bgMine = new Image(); bgMine.src = 'goldmine_stable.jpg';
+const bgGlitch = new Image(); bgGlitch.src = 'obsidian_glitched.jpg';
 
 const LEVELS = [
   [5, [[0,0,4,0,0], [0,4,4,4,1], [0,1,0,3,2], [4,1,4,3,3]]],
@@ -359,18 +360,49 @@ function checkWin() {
     SFX.win();
     screenShake = 15;
     
-    // Award Gold
-    try {
-      let currentGold = parseInt(localStorage.getItem('nmn_total_gold') || '0');
-      localStorage.setItem('nmn_total_gold', currentGold + 25);
-      document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold');
-    } catch(e) {}
+    // Base Gold logic
+    let goldReward = 25 + (curLevel * 5);
+    
+    // Final Level Lore Integration
+    if (curLevel === LEVELS.length - 1) {
+        goldReward += 100;
+        document.getElementById('winTitle').innerHTML = 'SYSTEM PURGED';
+        document.getElementById('winTitle').style.color = 'var(--purple)';
+        document.getElementById('winSub').innerHTML = 'The Glitch has been sealed. The flow is restored.';
+        document.getElementById('winGold').innerHTML = `+${goldReward} GOLD EXTRACTED<br><span style="color:var(--lg);font-size:0.5rem;display:block;margin-top:10px;">LORE FRAGMENT SAVED</span>`;
+        
+        try {
+            const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
+            vault.push({ text: `Restored the Glitched Obsidian Ore Flow. The system holds.`, source: 'Ore Flow - Sector 1', date: new Date().toLocaleDateString() });
+            localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
+        } catch(e) {}
+    } else {
+        document.getElementById('winTitle').innerHTML = 'VEIN SEALED';
+        document.getElementById('winTitle').style.color = 'var(--neon-green)';
+        document.getElementById('winSub').innerHTML = 'The energy flows cleanly. The mine provides.';
+        document.getElementById('winGold').innerHTML = `+${goldReward} GOLD EXTRACTED`;
+    }
+
+    // Award Gold globally
+    if (typeof NMNWallet !== 'undefined') {
+        NMNWallet.addGold(goldReward);
+        NMNWallet.addXP(20);
+        syncGauge();
+    }
 
     setTimeout(() => {
       document.getElementById('winOverlay').classList.add('visible');
     }, 800);
   }
   updateHUD();
+}
+
+function syncGauge() {
+    try {
+        if(typeof NMNWallet !== 'undefined') {
+            document.getElementById('dgGold').textContent = NMNWallet.get().gold;
+        }
+    } catch(e) {}
 }
 
 function updateHUD() {
@@ -390,6 +422,24 @@ function draw() {
     screenShake *= 0.85;
     if (screenShake < 0.5) screenShake = 0;
   }
+
+  // Crossfade Backgrounds based on level
+  let glitchFactor = curLevel / (LEVELS.length - 1); // 0 to 1
+  
+  ctx.save();
+  ctx.globalAlpha = (1 - glitchFactor) * 0.4;
+  if(bgMine.complete && bgMine.naturalWidth) {
+      ctx.drawImage(bgMine, 0, 0, canvas.width, canvas.height);
+  }
+  
+  ctx.globalAlpha = glitchFactor * 0.4;
+  if(bgGlitch.complete && bgGlitch.naturalWidth) {
+      ctx.drawImage(bgGlitch, 0, 0, canvas.width, canvas.height);
+  }
+  ctx.restore();
+  
+  ctx.fillStyle = 'rgba(5, 3, 6, 0.6)'; // Darken overlay for playability
+  ctx.fillRect(0,0,canvas.width,canvas.height);
 
   // Background Grid Lines
   ctx.strokeStyle = 'rgba(255,215,0,0.1)'; ctx.lineWidth = 2;
@@ -481,15 +531,10 @@ window.addEventListener('mouseup', () => { drawing = false; updateHUD(); });
 
 canvas.addEventListener('touchstart', e => { e.preventDefault(); const [r,c] = getRC(e); startDraw(r,c); }, {passive:false});
 canvas.addEventListener('touchmove', e => { e.preventDefault(); if (drawing) { const [r,c] = getRC(e); continueDraw(r,c); }}, {passive:false});
-window.addEventListener('touchend', () => { drawing = false; updateHUD(); });-*
+window.addEventListener('touchend', () => { drawing = false; updateHUD(); });
 
 buildLevelSelect(); loadLevel();
-</script>
-
-<script>
-try {
-    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold') || '0';
-} catch(e) {}
+syncGauge();
 </script>
 
 <div style="text-align:center;padding:1rem;font-family:'Press Start 2P',monospace;font-size:.3rem;color:#4a3c28; margin-top: auto;">
