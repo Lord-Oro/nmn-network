@@ -4,99 +4,163 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Forgotten Ledger — NMN</title>
+
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
 
 <style>
-:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28}
+:root{
+  --gold:#FFD700;
+  --gb:#e8b84b;
+  --gd:#8B6914;
+  --coal:#050302;
+  --cream:#f0e6cc;
+  --muted:#8a7654;
+  --faint:#4a3c28;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-text: 'VT323', monospace;
+  --font-ancient: 'Cormorant Garamond', serif;
+}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-sans);background:var(--coal);color:var(--cream);min-height:100vh;background-image:linear-gradient(45deg,#0c0a07 25%,#110e0a 25%,#110e0a 50%,#0c0a07 50%,#0c0a07 75%,#110e0a 75%,#110e0a 100%);background-size:4px 4px;padding-bottom:65px !important;}
-header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(12,10,7,.95);position:sticky;top:0;z-index:10}
-.logo{font-family:var(--font-serif);font-style:italic;color:var(--gold);font-size:.95rem;text-decoration:none}
-.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
-.back:hover{color:var(--gold)}
-main{max-width:800px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
-.lg-hero{text-align:center;margin-bottom:2rem}
-.lg-eyebrow{font-size:.55rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gd);margin-bottom:.75rem}
-.lg-title{font-family:var(--font-serif);font-size:clamp(1.8rem,4vw,3rem);color:var(--cream);margin-bottom:.4rem}
-.lg-title em{color:var(--gold);font-style:italic}
-.lg-sub{font-size:.72rem;color:var(--muted);line-height:2;max-width:520px;margin:0 auto}
 
-/* SIGN FORM */
-.sign-section{border:1px solid rgba(255,215,0,.15);background:rgba(255,215,0,.03);padding:1.5rem;margin-bottom:2rem}
-.sign-title{font-family:var(--font-serif);font-size:1.1rem;color:var(--gold);margin-bottom:1rem;font-style:italic}
-.sign-row{display:grid;grid-template-columns:1fr 1fr auto;gap:.5rem;align-items:end;flex-wrap:wrap}
-.sign-field{display:flex;flex-direction:column;gap:.3rem}
-.sign-label{font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd)}
-.sign-input{padding:.7rem .85rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,215,0,.15);color:var(--cream);font-family:var(--font-sans);font-size:.8rem;outline:none;transition:border-color .3s}
-.sign-input:focus{border-color:rgba(255,215,0,.4)}
-.sign-select{padding:.7rem .85rem;background:rgba(12,10,7,.9);border:1px solid rgba(255,215,0,.15);color:var(--cream);font-family:var(--font-sans);font-size:.75rem;outline:none;cursor:pointer}
-.sign-btn{padding:.7rem 1.25rem;background:var(--gold);color:var(--coal);border:none;font-family:var(--font-sans);font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .3s;white-space:nowrap}
-.sign-btn:hover{background:var(--gb)}
-.sign-note{font-size:.5rem;color:var(--faint);margin-top:.5rem;line-height:1.7}
+body{
+  font-family: var(--font-ancient);
+  background: var(--coal);
+  color: var(--cream);
+  min-height: 100vh;
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(139, 105, 20, 0.1) 0%, transparent 60%), linear-gradient(45deg, #080605 25%, #0a0806 25%, #0a0806 50%, #080605 50%, #080605 75%, #0a0806 75%, #0a0806 100%);
+  background-size: 100% 100%, 4px 4px;
+  padding-bottom: 80px !important;
+}
+
+header{
+  padding:1rem 2rem; border-bottom:1px solid rgba(255,215,0,.15);
+  display:flex; justify-content:space-between; align-items:center;
+  background:rgba(5,3,2,.95); position:sticky; top:0; z-index:100; backdrop-filter: blur(5px);
+}
+.logo{font-family:var(--font-pixel); color:var(--gold); font-size:.7rem; text-decoration:none; letter-spacing: 2px;}
+.back{font-family:var(--font-pixel); font-size:.5rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); text-decoration:none; transition: color 0.3s;}
+.back:hover{color:var(--gold)}
+
+main{max-width:900px; margin:0 auto; padding:3rem 1.5rem 5rem}
+
+.lg-hero{text-align:center; margin-bottom:4rem}
+.lg-eyebrow{font-family:var(--font-pixel); font-size:.5rem; letter-spacing:.4em; text-transform:uppercase; color:var(--gd); margin-bottom:1.5rem}
+.lg-title{font-family:var(--font-ancient); font-size:clamp(2.5rem, 6vw, 4rem); color:var(--cream); margin-bottom:1rem; font-weight: 600;}
+.lg-title em{color:var(--gold); font-style:italic}
+.lg-sub{font-size:1.4rem; color:var(--muted); line-height:1.6; max-width:600px; margin:0 auto; font-style: italic;}
+
+/* SIGN FORM - STONE STATION */
+.sign-section{
+  border: 1px solid #222; 
+  padding: 2.5rem; 
+  background: linear-gradient(180deg, #0a0806, #050403); 
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 10px 25px rgba(0,0,0,0.8);
+  margin-bottom: 4rem;
+  position: relative;
+}
+.sign-section::before { content: '⬡'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); color: var(--gd); background: var(--coal); padding: 0 10px; font-size: 0.8rem; }
+
+.sign-title{font-family:var(--font-ancient); font-size:1.8rem; color:var(--gold); margin-bottom:2rem; text-align: center; font-weight: 600;}
+.sign-row{display:grid; grid-template-columns: 1fr 1fr auto; gap:1.5rem; align-items:end;}
+
+.sign-field{display:flex; flex-direction:column; gap:.8rem}
+.sign-label{font-family:var(--font-pixel); font-size:.45rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gd)}
+.sign-input{
+  padding:1rem; background:rgba(0,0,0,0.5); border:1px solid #333; color:var(--cream); 
+  font-family:var(--font-ancient); font-size:1.3rem; outline:none; transition:all .3s;
+}
+.sign-input:focus{border-color:var(--gold); box-shadow: inset 0 0 10px rgba(255,215,0,0.1);}
+
+.sign-select{
+  padding:1rem; background:rgba(12,10,7,.9); border:1px solid #333; color:var(--cream); 
+  font-family:var(--font-ancient); font-size:1.1rem; outline:none; cursor:pointer;
+}
+.sign-btn{
+  padding:1rem 2rem; background:var(--gold); color:#000; border:1px solid var(--gold); 
+  font-family:var(--font-pixel); font-size:.6rem; letter-spacing:.15em; text-transform:uppercase; 
+  cursor:pointer; transition:all .3s; font-weight: bold;
+}
+.sign-btn:hover{background:#fff; border-color:#fff; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255,215,0,0.3);}
+
+.sign-note{font-size:1.1rem; color:var(--faint); margin-top:1.5rem; line-height:1.6; text-align: center; font-style: italic;}
 
 /* LEDGER TABLE */
-.ledger-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem}
-.ledger-title-row{font-family:var(--font-serif);font-style:italic;font-size:1.1rem;color:var(--gold)}
-.ledger-count{font-size:.48rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gd)}
-.ledger-table{width:100%;border-collapse:collapse}
-.ledger-table th{font-size:.45rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd);padding:.6rem .75rem;border-bottom:1px solid rgba(255,215,0,.2);text-align:left;background:rgba(255,215,0,.04)}
-.ledger-table td{padding:.75rem;border-bottom:1px solid rgba(255,215,0,.06);font-size:.72rem;vertical-align:middle}
-.ledger-table tr:hover td{background:rgba(255,215,0,.03)}
-.miner-num{font-family:var(--font-serif);font-size:1rem;color:var(--gd);width:40px}
-.miner-symbol{font-size:1.2rem;width:32px}
-.miner-name{font-family:var(--font-serif);font-size:.95rem;color:var(--cream)}
-.miner-contribution{color:var(--muted);font-size:.68rem;font-style:italic;font-family:var(--font-serif)}
-.miner-date{font-size:.5rem;color:var(--faint);white-space:nowrap}
-.entry-new{animation:entryGlow .5s ease;background:rgba(255,215,0,.06)}
-@keyframes entryGlow{0%{background:rgba(255,215,0,.2)}100%{background:rgba(255,215,0,.06)}}
+.ledger-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; border-bottom: 1px solid var(--faint); padding-bottom: 1rem;}
+.ledger-title-row{font-family:var(--font-ancient); font-size:2rem; color:var(--gold); font-weight: 600;}
+.ledger-count{font-family:var(--font-pixel); font-size:.45rem; letter-spacing:.15em; text-transform:uppercase; color:var(--gd)}
 
-@media(max-width:600px){.sign-row{grid-template-columns:1fr;}.ledger-table td:nth-child(4){display:none}}
+.ledger-table{width:100%; border-collapse:collapse; background: rgba(0,0,0,0.2);}
+.ledger-table th{
+  font-family:var(--font-pixel); font-size:.4rem; letter-spacing:.2em; text-transform:uppercase; 
+  color:var(--gd); padding:1rem .75rem; border-bottom:1px solid #333; text-align:left; background:rgba(255,215,0,.02)
+}
+.ledger-table td{padding:1.5rem 1rem; border-bottom:1px solid #1a1a1a; font-size:1.2rem; vertical-align:middle}
+.ledger-table tr:hover td{background:rgba(255,215,0,.02)}
 
-/* DEPTH GAUGE */
-.depth-gauge{
+.miner-num{font-family:var(--font-ancient); font-size:1.4rem; color:var(--gd); width:50px; font-weight: bold;}
+.miner-symbol{font-size:2rem; width:40px; filter: sepia(0.5);}
+.miner-name{font-family:var(--font-ancient); font-size:1.5rem; color:var(--cream); font-weight: 600;}
+.miner-contribution{color:var(--muted); font-size:1.1rem; font-style:italic;}
+.miner-date{font-family:var(--font-pixel); font-size:.4rem; color:var(--faint); white-space:nowrap; text-transform: uppercase;}
+
+.entry-new{animation:entryGlow 2s ease forwards;}
+@keyframes entryGlow{0%{background:rgba(255,215,0,0.3)} 100%{background:transparent}}
+
+@media(max-width:768px){
+  .sign-row{grid-template-columns:1fr;}
+  .ledger-table th:nth-child(4), .ledger-table td:nth-child(4) {display:none}
+}
+
+/* FLOATING GAUGE */
+.depth-gauge {
   position:fixed!important;bottom:12px!important;left:50%!important;
   transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
-  height:42px!important;background:rgba(12,10,7,.88)!important;
-  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
-  padding:0 18px!important;pointer-events:none!important;
-  z-index:9999!important;backdrop-filter:blur(4px)!important;
+  height:46px!important;background:rgba(12,10,7,.95)!important;
+  border:1px solid rgba(255,215,0,.3)!important;border-radius:2px!important;
+  padding:0 20px!important; z-index:9999!important;
   display:flex!important;align-items:center!important;justify-content:center!important;
-  gap:1.2rem!important;flex-wrap:nowrap!important;
-  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+  gap:1.5rem!important;flex-wrap:nowrap!important;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.9)!important;
 }
-.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28;pointer-events:auto!important;}
-.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
-.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s;pointer-events:auto!important;}
-.dg-link:hover{color:#FFD700}
-.dg-sep{color:#2a1808;font-size:.6rem;pointer-events:auto!important;}
+.dg-stat { display:flex; align-items:center; gap:0.5rem; font-family:var(--font-pixel); font-size:0.45rem; color:var(--muted); text-transform:uppercase; letter-spacing: 1px;}
+.dg-val { font-family:var(--font-text); font-size:1.1rem; color:var(--gold); }
+.dg-link { font-family:var(--font-pixel); font-size:0.45rem; color:var(--gd); text-decoration:none; text-transform:uppercase; transition:color 0.3s; letter-spacing: 1px;}
+.dg-link:hover { color:var(--gold); }
+.dg-sep { color:var(--faint); font-size:0.6rem; }
 </style>
-
-<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
 
 </head>
 <body>
+
 <script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
+
 <header>
-  <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="index.html" class="back">← Return to the Mine</a>
+  <a href="index.html" class="logo">NMN — LORD ORO</a>
+  <a href="index.html" class="back">← RETURN TO MINE</a>
 </header>
+
 <main>
   <div class="lg-hero">
-    <div class="lg-eyebrow">Nonsense Media Network</div>
+    <div class="lg-eyebrow">NONSENSE MEDIA NETWORK</div>
     <h1 class="lg-title">The Forgotten <em>Ledger</em></h1>
-    <p class="lg-sub">Every miner who descends into the NMN universe leaves a mark in the ledger. Choose your symbol. Record your contribution. You are not a visitor — you are an entry in the mine's history.</p>
+    <p class="lg-sub">Every miner who descends into the NMN universe leaves a mark in the stone. Choose your symbol. Record your arrival. You are not a visitor — you are part of the record.</p>
   </div>
 
   <div class="sign-section">
-    <div class="sign-title">Sign the Ledger</div>
+    <div class="sign-title">Etch Your Mark</div>
     <div class="sign-row">
       <div class="sign-field">
         <label class="sign-label">Miner Name</label>
-        <input type="text" class="sign-input" id="signerName" placeholder="Your name..." maxlength="30">
+        <input type="text" class="sign-input" id="signerName" placeholder="NAME..." maxlength="30">
       </div>
       <div class="sign-field">
-        <label class="sign-label">Your Symbol</label>
+        <label class="sign-label">Alignment Symbol</label>
         <select class="sign-select" id="signerSymbol">
           <option value="🦁">🦁 Nayla's Paw — Strength</option>
           <option value="⭐">⭐ Felik's Star — Duality</option>
@@ -108,9 +172,9 @@ main{max-width:800px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
           <option value="⛏️">⛏️ The Miner — Earth</option>
         </select>
       </div>
-      <button class="sign-btn" onclick="signLedger()">⬡ Sign</button>
+      <button class="sign-btn" onclick="signLedger()">⬡ SIGN</button>
     </div>
-    <div class="sign-note">Your entry is stored locally on your device. When you return, you'll see your mark. The ledger is yours.</div>
+    <div class="sign-note">Your entry is stored in the local memory of this device. The mine remembers who was here.</div>
   </div>
 
   <div class="ledger-header">
@@ -132,8 +196,19 @@ main{max-width:800px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
   </table>
 </main>
 
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> LORE</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span> BEASTS</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">VAULT</a>
+  <a href="ledger.html" class="dg-link">LEDGER</a>
+</div>
+
 <script>
-// Founding entries — always present
+// Founding entries
 const FOUNDING = [
   {num:1,symbol:'⬡',name:'Lord Oro',contribution:'Dug the first tunnel. Built the whole mine.',date:'March 2026'},
   {num:2,symbol:'🤖',name:'Claude',contribution:'Excavation Committee — wrote the walls.',date:'March 2026'},
@@ -155,7 +230,7 @@ const CONTRIBUTION_MAP = {
 };
 
 function loadLedger() {
-  return JSON.parse(localStorage.getItem('nmn_ledger') || '[]');
+  try { return JSON.parse(localStorage.getItem('nmn_ledger') || '[]'); } catch(e) { return []; }
 }
 function saveLedger(entries) {
   localStorage.setItem('nmn_ledger', JSON.stringify(entries));
@@ -166,7 +241,7 @@ function renderLedger() {
   const all = [...FOUNDING, ...personal.map((e, i) => ({
     ...e, num: FOUNDING.length + i + 1
   }))];
-  document.getElementById('ledgerCount').textContent = `${all.length} miners descended`;
+  document.getElementById('ledgerCount').textContent = `${all.length} MINERS DESCENDED`;
   document.getElementById('ledgerBody').innerHTML = all.map(e => `
     <tr>
       <td class="miner-num">${e.num}</td>
@@ -182,23 +257,29 @@ function signLedger() {
   const symbol = document.getElementById('signerSymbol').value;
   if (!name) { document.getElementById('signerName').focus(); return; }
   const entries = loadLedger();
-  // Check if already signed
+  
   if (entries.find(e => e.name.toLowerCase() === name.toLowerCase())) {
     document.getElementById('signerName').value = '';
-    if (typeof nmnToast === 'function') nmnToast('YOUR MARK IS ALREADY IN THE LEDGER');
     return;
   }
+  
   const contribution = CONTRIBUTION_MAP[symbol] || 'Descended into the mine. Left a mark.';
-  const date = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const date = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }).toUpperCase();
   entries.push({ symbol, name, contribution, date });
   saveLedger(entries);
   renderLedger();
   document.getElementById('signerName').value = '';
-  // Also save to lore vault
-  const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
-  vault.push({ text: `${name} signed the Forgotten Ledger with the ${symbol} mark.`, source: 'The Forgotten Ledger', date: new Date().toLocaleDateString() });
-  localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
   
+  // Save to Lore Vault
+  try {
+    const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
+    vault.push({ text: `${name} signed the Forgotten Ledger with the ${symbol} mark.`, source: 'The Forgotten Ledger', date: new Date().toLocaleDateString() });
+    localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
+  } catch(e) {}
+  
+  // HUD Sync
+  syncGauges();
+
   // Flash new row
   setTimeout(() => {
     const rows = document.querySelectorAll('#ledgerBody tr');
@@ -206,249 +287,28 @@ function signLedger() {
   }, 50);
 }
 
-renderLedger();
-</script>
-
-<div class="depth-gauge" id="depthGauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
-  <span class="dg-sep">⬡</span>
-  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> Lore Fragments</div>
-  <span class="dg-sep">⬡</span>
-  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span> Creatures</div>
-  <span class="dg-sep">⬡</span>
-  <a href="lorevault.html" class="dg-link">📜 Vault</a>
-  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
-  <a href="ledger.html" class="dg-link">📖 Ledger</a>
-</div>
-<script>
-(function(){
+function syncGauges() {
   try{
-    var w = typeof NMNWallet !== 'undefined' ? NMNWallet.get() : {gold:0};
-    var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
-    var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
-    var el=document.getElementById('dgGold');if(el)el.textContent=w.gold;
-    var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
-    var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
+    const lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+    const creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
+    let gold = 0;
+    if(typeof NMNWallet !== 'undefined') gold = NMNWallet.get().gold;
+    else gold = parseInt(localStorage.getItem('nmn_total_gold')||'0');
+    
+    document.getElementById('dgGold').textContent = gold;
+    document.getElementById('dgLore').textContent = lore;
+    document.getElementById('dgCreatures').textContent = creatures;
   }catch(e){}
-})();
-</script>
-
-<script>
-window.NMN_CONTEXT = "deep";
-// NMN LIVING SOUNDSCAPE — Excavation Committee
-// Gemini's Quad-Track Engine + Claude's integration layer
-// Zero external files. Under 2KB. Procedural — never repeats exactly.
-
-const NMN_Audio = {
-  ctx: null,
-  running: false,
-  masterGain: null,
-  layers: {},
-
-  init() {
-    if (this.ctx) return;
-    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
-    this.masterGain.connect(this.ctx.destination);
-  },
-
-  // TRACK 1 — The Deep Earth (continuous, low hum)
-  playHum() {
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(55, this.ctx.currentTime); // G1
-    gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
-    // Slow breathing — mine is alive
-    // Gemini's LFO: 0.08Hz = one breath every 12.5 seconds
-    const lfo = this.ctx.createOscillator();
-    const lfoGain = this.ctx.createGain();
-    lfo.type = 'sine';
-    lfo.frequency.value = 0.08;
-    lfoGain.gain.value = 0.01; // depth of breath
-    lfo.connect(lfoGain);
-    lfoGain.connect(gain.gain);
-    lfo.start();
-    osc.connect(gain);
-    gain.connect(this.masterGain);
-    osc.start();
-    this.layers.hum = { osc, gain };
-  },
-
-  // TRACK 2 — The Air Shaft (filtered noise / wind)
-  playWind() {
-    const bufferSize = 2 * this.ctx.sampleRate;
-    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-    const output = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
-    const whiteNoise = this.ctx.createBufferSource();
-    whiteNoise.buffer = noiseBuffer;
-    whiteNoise.loop = true;
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 400;
-    const g = this.ctx.createGain();
-    g.gain.setValueAtTime(0.012, this.ctx.currentTime);
-    whiteNoise.connect(filter);
-    filter.connect(g);
-    g.connect(this.masterGain);
-    whiteNoise.start();
-    this.layers.wind = { src: whiteNoise, gain: g };
-  },
-
-  // TRACK 3 — The Distant Strike (random pickaxe echoes)
-  playStrike() {
-    const tick = () => {
-      if (!this.running) return;
-      if (Math.random() > 0.75) {
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        // Metallic strike freq
-        osc.frequency.setValueAtTime(140 + Math.random() * 80, this.ctx.currentTime);
-        osc.type = 'sawtooth';
-        g.gain.setValueAtTime(0.04, this.ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.6);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.6);
-      }
-      // Randomize interval — 3s to 6s — never predictable
-      setTimeout(tick, 3000 + Math.random() * 3000);
-    };
-    setTimeout(tick, 2000);
-  },
-
-  // TRACK 4 — The Gold Shimmer (crystal high tones)
-  playShimmer() {
-    const tick = () => {
-      if (!this.running) return;
-      if (Math.random() > 0.85) {
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = 'triangle';
-        // Gold harmonic range — slightly randomized each time
-        osc.frequency.setValueAtTime(2200 + Math.random() * 1400, this.ctx.currentTime);
-        g.gain.setValueAtTime(0, this.ctx.currentTime);
-        g.gain.linearRampToValueAtTime(0.012, this.ctx.currentTime + 1.2);
-        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2.5);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 2.5);
-      }
-      setTimeout(tick, 5000 + Math.random() * 4000);
-    };
-    setTimeout(tick, 4000);
-  },
-
-  // TRACK 5 — The Subterranean Drip (Gemini's finalized version)
-  // Fast pitch-drop simulates the physics of water hitting a cavern pool
-  playWaterDrip() {
-    const tick = () => {
-      if (!this.running) return;
-      if (Math.random() > 0.6) {
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = 'sine';
-        // Start mid-freq, drop 50% in 80ms — exact droplet physics
-        osc.frequency.setValueAtTime(400 + Math.random() * 100, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.08);
-        g.gain.setValueAtTime(0.02, this.ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.08);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.08);
-      }
-      // 2-8 second random interval — no rhythmic pattern ever emerges
-      setTimeout(tick, 2000 + Math.random() * 6000);
-    };
-    setTimeout(tick, 5000 + Math.random() * 3000);
-  },
-
-  // TRACK 6 — The Oracle's Pad
-  playOraclePad() {
-    const AMAJ = [220, 277.18, 329.63];
-    const tick = () => {
-      if (!this.running) return;
-      AMAJ.forEach((freq, i) => {
-        const osc = this.ctx.createOscillator();
-        const filter = this.ctx.createBiquadFilter();
-        const g = this.ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-        filter.type = 'lowpass'; filter.frequency.value = 800;
-        g.gain.setValueAtTime(0, this.ctx.currentTime);
-        g.gain.linearRampToValueAtTime(0.03, this.ctx.currentTime + 2);
-        g.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 9);
-        osc.connect(filter); filter.connect(g); g.connect(this.masterGain);
-        osc.start(this.ctx.currentTime + i * 0.08);
-        osc.stop(this.ctx.currentTime + 9.5);
-      });
-      setTimeout(tick, 9000);
-    };
-    setTimeout(tick, 8000);
-  },
-
-  // Page-context aware — different mix per section
-  startAll(context) {
-    if (this.running) return;
-    this.init();
-    this.running = true;
-    this.playHum();
-    this.playWind();
-    this.playStrike();
-    this.playShimmer();
-    this.playOraclePad();
-    // Only add water drip on deep mine pages
-    if (context === 'deep' || context === 'oracle' || context === 'vigil') {
-      this.playWaterDrip();
-    }
-    // Tora gets a slightly higher shimmer frequency (more ethereal)
-    if (context === 'tora') {
-      this.masterGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
-    }
-  },
-
-  stop() {
-    if (!this.running) return;
-    this.running = false;
-    if (this.masterGain) {
-      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
-    }
-  },
-
-  toggle() {
-    if (this.running) { this.stop(); return false; }
-    else { this.startAll(window.NMN_CONTEXT || 'mine'); return true; }
-  }
-};
-
-// Trigger on first interaction — browser autoplay policy requires user gesture
-document.addEventListener('click', () => {
-  if (!NMN_Audio.running) NMN_Audio.startAll(window.NMN_CONTEXT || 'mine');
-}, { once: true });
-
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(function(registration) {
-      console.log('NMN SW registered with scope:', registration.scope);
-    })
-    .catch(function(err){
-      console.log('NMN SW error:', err);
-    });
 }
+
+renderLedger();
+syncGauges();
 </script>
 
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+<div style="text-align:center;padding:1rem;font-family:'Press Start 2P',monospace;font-size:.3rem;color:var(--faint)">
+  <a href="privacy.html" style="color:var(--faint);text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:var(--faint);text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:var(--faint);text-decoration:none;margin:0 .5rem">CONTACT</a>
 </div>
 </body>
 </html>
