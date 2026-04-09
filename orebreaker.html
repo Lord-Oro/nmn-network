@@ -5,15 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Ore Breaker — Sector 1</title>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-P5WL9XNDY8');
-</script>
-<link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
 
 <style>
 /* ── CORE NMN VARIABLES & AESTHETIC ── */
@@ -21,6 +18,7 @@
   --gold: #FFD700; --gb: #e8b84b; --gd: #8B6914;
   --coal: #050308; --shaft: #08060A; --rock: #0A080C;
   --cream: #E8E0D0; --neon-green: #00FF88;
+  --purple: #AA55FF;
   --font-pixel: 'Press Start 2P', cursive;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -34,22 +32,7 @@ body {
     linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
     linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
   background-size: 32px 32px;
-}
-
-/* OVERRIDE ALL OLD FONTS */
-h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
-
-/* CRT SCANLINES & VIGNETTE */
-body::after {
-  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
-  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.08) 50%),
-              linear-gradient(90deg,rgba(232,184,75,0.015),rgba(197,146,0,0.008),rgba(255,215,0,0.015));
-  background-size:100% 3px,3px 100%; pointer-events:none; z-index:10000; opacity:0.18;
-}
-body::before {
-  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
-  background:radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.65) 100%);
-  pointer-events:none; z-index:9999;
+  padding-bottom: 65px !important;
 }
 
 /* HEADER */
@@ -68,7 +51,7 @@ header {
   padding: 0.5rem 2rem; background: rgba(5,3,8,0.9);
   border-bottom: 1px solid rgba(255,215,0,0.15); flex-shrink: 0; z-index: 50; flex-wrap: wrap; gap: 10px;
 }
-.hud-stat { font-size: 0.5rem; color: var(--gd); display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.hud-stat { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gd); display: flex; flex-direction: column; align-items: center; gap: 5px; }
 .hud-val { color: var(--gold); font-size: 0.8rem; text-shadow: 0 0 10px rgba(255,215,0,0.3); }
 .hud-val.danger { color: #ff4444; text-shadow: 0 0 10px rgba(255,68,68,0.5); }
 
@@ -76,7 +59,7 @@ header {
 .game-area { flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 1rem; }
 .canvas-wrap {
   position: relative; width: 100%; max-width: 800px; height: 100%; max-height: 600px;
-  background: #050306; border: 2px solid var(--gd);
+  background: #000; border: 2px solid var(--gd);
   box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 0 30px rgba(255,215,0,0.1);
 }
 canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; touch-action: none; }
@@ -84,42 +67,25 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 /* OVERLAYS */
 .overlay {
   position: absolute; inset: 0; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; background: rgba(5,3,8,0.95); z-index: 100;
+  align-items: center; justify-content: center; background: rgba(5,3,8,0.95); z-index: 100; text-align: center;
 }
 .overlay.hidden { display: none !important; }
-.ov-title { font-size: 1.5rem; color: var(--gold); text-shadow: 0 0 20px rgba(255,215,0,.5); text-align: center; line-height: 1.5; margin-bottom: 1rem; }
-.ov-sub { font-size: .45rem; color: var(--cream); text-align: center; line-height: 2; max-width: 400px; margin-bottom: 2rem; }
-.ov-stats { display: flex; gap: 2rem; margin-bottom: 2rem; }
-.ov-stat-box { text-align: center; }
-.ov-stat-box span { display: block; font-size: 0.4rem; color: var(--gd); margin-bottom: 0.5rem; }
-.ov-stat-box strong { font-size: 1.2rem; color: var(--gold); }
+.ov-title { font-size: 1.5rem; color: var(--gold); text-shadow: 0 0 20px rgba(255,215,0,.5); margin-bottom: 1rem; }
+.ov-sub { font-size: .45rem; color: var(--cream); line-height: 2; max-width: 400px; margin-bottom: 2rem; }
 
 .btn {
-  padding: 0.8rem 1.5rem; font-family: var(--font-sans); font-size: 0.5rem; letter-spacing: 0.2em;
-  text-transform: uppercase; cursor: pointer; border: none; transition: all 0.3s; display: inline-block; text-decoration: none;
+  padding: 0.8rem 1.5rem; font-size: 0.5rem; letter-spacing: 0.1em;
+  text-transform: uppercase; cursor: pointer; border: none; transition: 0.3s;
 }
-.btn-gold { background: var(--gold); color: var(--coal); }
+.btn-gold { background: var(--gold); color: #000; }
 .btn-gold:hover { background: #fff; box-shadow: 0 0 20px rgba(255,215,0,.6); transform: scale(1.05); }
 
 /* CONTROLS */
 .controls-bar {
   display: flex; justify-content: center; align-items: center;
-  padding: 0.5rem 2rem; background: rgba(5,3,8,0.9); border-top: 1px solid var(--gd); z-index: 50;
+  padding: 0.8rem; background: rgba(5,3,8,0.9); border-top: 1px solid var(--gd); z-index: 50;
 }
 .ctrl-hint { font-size: 0.35rem; color: var(--gd); }
-.mobile-ctrl { display: none; gap: 10px; width: 100%; justify-content: space-between; }
-.mob-btn {
-  background: rgba(255,215,0,0.1); border: 1px solid var(--gd); color: var(--gold);
-  padding: 0.8rem; font-size: 0.8rem; flex: 1; text-align: center; user-select: none;
-}
-.mob-btn:active { background: rgba(255,215,0,0.3); }
-
-@media (max-width: 768px) {
-  .ctrl-hint { display: none; }
-  .mobile-ctrl { display: flex; }
-  header { padding: 0.8rem 1rem; }
-  .logo { font-size: 0.5rem; }
-}
 
 /* FLOATING GAUGE */
 .depth-gauge {
@@ -130,15 +96,15 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
   justify-content:center!important; gap:1.2rem!important; box-shadow:0 0 20px rgba(255,215,0,.08)!important;
 }
 .dg-stat { font-size: 0.4rem; color: var(--gd); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
-.dg-val { color: var(--gold); font-size: 0.6rem; }
-.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+.dg-val { color: var(--gold); font-size: 0.6rem; font-family: var(--font-text); }
+.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; pointer-events: auto!important;}
 .dg-link:hover { color: var(--gold); }
-
-/* CUSTOM CURSOR */
-body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
 </style>
 </head>
 <body>
+
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
 
 <header>
   <a href="index.html" class="logo">NMN — Lord Oro</a>
@@ -147,7 +113,7 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 
 <div class="hud">
   <div class="hud-stat">SCORE <span class="hud-val" id="h-score">0</span></div>
-  <div class="hud-stat">LEVEL <span class="hud-val" id="h-level">1</span></div>
+  <div class="hud-stat">DEPTH <span class="hud-val" id="h-level">1</span></div>
   <div class="hud-stat">PICKS <span class="hud-val danger" id="h-lives">3</span></div>
 </div>
 
@@ -157,15 +123,15 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     
     <div class="overlay" id="ov-start">
       <h1 class="ov-title">ORE BREAKER</h1>
-      <p class="ov-sub">Shatter the obsidian barriers. Extract the gold. Do not lose your pickaxe.</p>
+      <p class="ov-sub">Shatter the barriers between you and the gold. The deeper you dig, the more unstable the mine becomes.</p>
       <button class="btn btn-gold" onclick="startGame()">STRIKE THE VEIN</button>
     </div>
     
     <div class="overlay hidden" id="ov-over">
-      <h1 class="ov-title" style="color:#ff4444; text-shadow:0 0 20px rgba(255,68,68,0.5);">PICKAXE LOST</h1>
-      <div class="ov-stats">
-        <div class="ov-stat-box"><span>FINAL SCORE</span><strong id="final-score">0</strong></div>
-        <div class="ov-stat-box"><span>GOLD EXTRACTED</span><strong id="final-gold">0</strong></div>
+      <h1 class="ov-title" style="color:#ff4444;">SHAFT COLLAPSED</h1>
+      <div style="margin: 1rem 0;">
+        <div class="hud-stat">FINAL SCORE <strong class="hud-val" id="final-score">0</strong></div>
+        <div class="hud-stat">GOLD EXTRACTED <strong class="hud-val" id="final-gold">0</strong></div>
       </div>
       <button class="btn btn-gold" onclick="startGame()">DIG AGAIN</button>
     </div>
@@ -173,17 +139,14 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 </div>
 
 <div class="controls-bar">
-  <span class="ctrl-hint">CONTROLS: DRAG MOUSE / TOUCH TO MOVE PADDLE. [SPACE] TO LAUNCH.</span>
-  <div class="mobile-ctrl">
-    <div class="mob-btn" id="mob-left">◀</div>
-    <div class="mob-btn" id="mob-launch">LAUNCH</div>
-    <div class="mob-btn" id="mob-right">▶</div>
-  </div>
+  <span class="ctrl-hint">CONTROLS: MOVE MOUSE/TOUCH. [SPACE] TO LAUNCH.</span>
 </div>
 
-<div class="depth-gauge">
+<div class="depth-gauge" id="depthGauge">
   <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold</div>
-  <span class="dg-sep">⬡</span>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> Lore</div>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
   <a href="lorevault.html" class="dg-link">📜 Vault</a>
   <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
 </div>
@@ -215,7 +178,7 @@ document.addEventListener('click', () => { if (!NMN_Audio.running) NMN_Audio.sta
 const SFX = {
   play(freq, type, dur, vol = 0.1) {
     if (!NMN_Audio.ctx) return;
-    const osc = NMN_Audio.ctx.createOscillator(); const gain = NMN_Audio.ctx.createGain();
+    const osc = NMN_Audio.ctx.createOscillator(); const gain = this.ctx.createGain();
     osc.type = type; osc.frequency.setValueAtTime(freq, NMN_Audio.ctx.currentTime);
     gain.gain.setValueAtTime(0, NMN_Audio.ctx.currentTime);
     gain.gain.linearRampToValueAtTime(vol, NMN_Audio.ctx.currentTime + 0.01);
@@ -225,7 +188,7 @@ const SFX = {
   },
   bounce() { this.play(400, 'square', 0.1, 0.05); },
   breakRock() { this.play(150 + Math.random()*50, 'sawtooth', 0.15, 0.1); },
-  breakGold() { this.play(800 + Math.random()*200, 'sine', 0.3, 0.1); setTimeout(()=>this.play(1200, 'triangle', 0.4, 0.1), 50); },
+  breakGold() { this.play(800 + Math.random()*200, 'sine', 0.3, 0.1); },
   lose() { this.play(100, 'sawtooth', 0.8, 0.3); }
 };
 </script>
@@ -235,6 +198,9 @@ const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
 let W, H;
 
+const bgMine = new Image(); bgMine.src = 'goldmine_stable.jpg';
+const bgGlitch = new Image(); bgGlitch.src = 'obsidian_glitched.jpg';
+
 function resize() {
   const wrap = cv.parentElement;
   W = cv.width = wrap.clientWidth;
@@ -243,39 +209,14 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-// ── GAME STATE ──
-const TYPES = {
-  EMPTY: 0,
-  ROCK1: 1, // #444
-  ROCK2: 2, // #666
-  COPPER: 3, // #B87333
-  SILVER: 4, // #C0C0C0
-  GOLD: 5, // #FFD700
-  OBSIDIAN: 6 // #222 (Takes 2 hits)
-};
-
-const COLORS = {
-  [TYPES.ROCK1]: '#444444',
-  [TYPES.ROCK2]: '#666666',
-  [TYPES.COPPER]: '#B87333',
-  [TYPES.SILVER]: '#C0C0C0',
-  [TYPES.GOLD]: '#FFD700',
-  [TYPES.OBSIDIAN]: '#332233'
-};
+const TYPES = { EMPTY: 0, ROCK1: 1, ROCK2: 2, COPPER: 3, SILVER: 4, GOLD: 5, OBSIDIAN: 6 };
+const COLORS = { [TYPES.ROCK1]: '#444', [TYPES.ROCK2]: '#666', [TYPES.COPPER]: '#B87333', [TYPES.SILVER]: '#C0C0C0', [TYPES.GOLD]: '#FFD700', [TYPES.OBSIDIAN]: '#332233' };
 
 let blocks = [];
 let paddle = { x: 0, y: 0, w: 80, h: 10, speed: 8 };
 let ball = { x: 0, y: 0, r: 5, vx: 0, vy: 0, speed: 6, active: false };
-let particles = [];
-let texts = [];
-let screenShake = 0;
-
-let score = 0;
-let goldExtracted = 0;
-let lives = 3;
-let level = 1;
-let gameRunning = false;
-let loopId = null;
+let particles = [], texts = [], screenShake = 0;
+let score = 0, goldExtracted = 0, lives = 3, level = 1, gameRunning = false, loopId = null;
 
 const keys = {};
 window.addEventListener('keydown', e => { 
@@ -284,325 +225,157 @@ window.addEventListener('keydown', e => {
 });
 window.addEventListener('keyup', e => delete keys[e.key]);
 
-// Touch / Mouse Controls
-let isDragging = false;
-cv.addEventListener('mousedown', e => { isDragging = true; if(!ball.active && gameRunning) launchBall(); movePaddle(e); });
-cv.addEventListener('mousemove', e => { if(isDragging) movePaddle(e); });
-window.addEventListener('mouseup', () => isDragging = false);
-
-cv.addEventListener('touchstart', e => { e.preventDefault(); if(!ball.active && gameRunning) launchBall(); movePaddle(e.touches[0]); }, {passive:false});
-cv.addEventListener('touchmove', e => { e.preventDefault(); movePaddle(e.touches[0]); }, {passive:false});
-
-const mobL = document.getElementById('mob-left');
-const mobR = document.getElementById('mob-right');
-const mobLaunch = document.getElementById('mob-launch');
-
-mobL.addEventListener('touchstart', e => { e.preventDefault(); keys['ArrowLeft']=true; }, {passive:false});
-mobL.addEventListener('touchend', e => { delete keys['ArrowLeft']; });
-mobR.addEventListener('touchstart', e => { e.preventDefault(); keys['ArrowRight']=true; }, {passive:false});
-mobR.addEventListener('touchend', e => { delete keys['ArrowRight']; });
-mobLaunch.addEventListener('touchstart', e => { e.preventDefault(); if(!ball.active && gameRunning) launchBall(); }, {passive:false});
-
-function movePaddle(e) {
+cv.addEventListener('mousemove', e => {
   const rect = cv.getBoundingClientRect();
-  const scaleX = cv.width / rect.width;
-  let px = (e.clientX - rect.left) * scaleX;
-  paddle.x = Math.max(paddle.w/2, Math.min(W - paddle.w/2, px));
-}
+  paddle.x = (e.clientX - rect.left) * (W / rect.width);
+});
+
+cv.addEventListener('touchstart', e => {
+  e.preventDefault();
+  if(!ball.active && gameRunning) launchBall();
+}, {passive:false});
+
+cv.addEventListener('touchmove', e => {
+  e.preventDefault();
+  const rect = cv.getBoundingClientRect();
+  paddle.x = (e.touches[0].clientX - rect.left) * (W / rect.width);
+}, {passive:false});
 
 function launchBall() {
   ball.active = true;
   ball.vy = -ball.speed;
-  ball.vx = (Math.random() - 0.5) * 4; // Slight random angle
+  ball.vx = (Math.random() - 0.5) * 4;
 }
 
 function generateLevel() {
   blocks = [];
-  const cols = 10;
-  const rows = 4 + Math.min(level, 6);
-  const padding = 40;
-  const bw = (W - padding*2) / cols;
-  const bh = 20;
+  const cols = 10, rows = 4 + Math.min(level, 6);
+  const padding = 40, bw = (W - padding*2) / cols, bh = 20;
 
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      const roll = Math.random();
       let type = TYPES.ROCK1;
-      
+      const roll = Math.random();
       if (roll < 0.05 + (level*0.01)) type = TYPES.GOLD;
       else if (roll < 0.15) type = TYPES.SILVER;
       else if (roll < 0.3) type = TYPES.COPPER;
       else if (roll < 0.4 && level > 2) type = TYPES.OBSIDIAN;
-      else if (roll < 0.7) type = TYPES.ROCK2;
-
-      // Create block (with small gap)
-      blocks.push({
-        x: padding + c * bw + 2,
-        y: 60 + r * bh + 2,
-        w: bw - 4,
-        h: bh - 4,
-        type: type,
-        hp: type === TYPES.OBSIDIAN ? 2 : 1
-      });
+      blocks.push({ x: padding + c * bw + 2, y: 60 + r * bh + 2, w: bw - 4, h: bh - 4, type: type, hp: type === TYPES.OBSIDIAN ? 2 : 1 });
     }
   }
 }
 
-function resetBall() {
-  ball.active = false;
-  ball.vx = 0; ball.vy = 0;
-  ball.y = paddle.y - ball.r - 2;
-  ball.x = paddle.x;
-}
-
 function startGame() {
-  if (loopId) cancelAnimationFrame(loopId);
-  
   score = 0; goldExtracted = 0; lives = 3; level = 1;
-  particles = []; texts = []; screenShake = 0;
-  
-  paddle.y = H - 30;
-  paddle.x = W / 2;
-  ball.speed = 6;
-  
-  generateLevel();
-  resetBall();
-  
+  paddle.y = H - 30; paddle.x = W / 2; ball.speed = 6;
+  generateLevel(); resetBall();
   gameRunning = true;
   document.getElementById('ov-start').classList.add('hidden');
   document.getElementById('ov-over').classList.add('hidden');
-  
   updateHUD();
   loop();
 }
 
-function spawnParticles(x, y, color, count, burst = 5) {
-  for(let i=0; i<count; i++) {
-    particles.push({
-      x, y, vx: (Math.random()-0.5)*burst, vy: (Math.random()-1)*burst,
-      life: 1, decay: 0.02 + Math.random()*0.03, color, r: Math.random()*3+1
-    });
-  }
-}
+function resetBall() { ball.active = false; ball.vx = 0; ball.vy = 0; ball.y = paddle.y - ball.r - 2; ball.x = paddle.x; }
 
-function spawnText(x, y, text, color) {
-  texts.push({ x, y, text, color, life: 1, vy: -1 });
-}
-
-// ── UPDATE LOOP ──
 function update() {
   if(!gameRunning) return;
-
-  // Paddle Movement (Keyboard)
-  if (keys['ArrowLeft'] || keys['a']) paddle.x = Math.max(paddle.w/2, paddle.x - paddle.speed);
-  if (keys['ArrowRight'] || keys['d']) paddle.x = Math.min(W - paddle.w/2, paddle.x + paddle.speed);
-
-  // Ball attached to paddle
-  if (!ball.active) {
-    ball.x = paddle.x;
-    ball.y = paddle.y - ball.r - 1;
-  } else {
-    // Ball Movement
-    ball.x += ball.vx;
-    ball.y += ball.vy;
-
-    // Wall Collisions
-    if (ball.x - ball.r <= 0) { ball.x = ball.r; ball.vx *= -1; SFX.bounce(); }
-    if (ball.x + ball.r >= W) { ball.x = W - ball.r; ball.vx *= -1; SFX.bounce(); }
-    if (ball.y - ball.r <= 0) { ball.y = ball.r; ball.vy *= -1; SFX.bounce(); }
-
-    // Paddle Collision
-    if (ball.vy > 0 && ball.y + ball.r >= paddle.y - paddle.h/2 && ball.y - ball.r <= paddle.y + paddle.h/2) {
-      if (ball.x >= paddle.x - paddle.w/2 && ball.x <= paddle.x + paddle.w/2) {
-        ball.vy *= -1;
-        // Adjust angle based on where it hit the paddle
-        let hitPoint = ball.x - paddle.x;
-        ball.vx = (hitPoint / (paddle.w/2)) * (ball.speed * 0.8);
-        // Normalize speed
-        let currentSpeed = Math.sqrt(ball.vx*ball.vx + ball.vy*ball.vy);
-        ball.vx = (ball.vx / currentSpeed) * ball.speed;
-        ball.vy = (ball.vy / currentSpeed) * ball.speed;
-        SFX.bounce();
-      }
+  if (!ball.active) { ball.x = paddle.x; ball.y = paddle.y - ball.r - 1; } 
+  else {
+    ball.x += ball.vx; ball.y += ball.vy;
+    if (ball.x - ball.r <= 0 || ball.x + ball.r >= W) { ball.vx *= -1; SFX.bounce(); }
+    if (ball.y - ball.r <= 0) { ball.vy *= -1; SFX.bounce(); }
+    if (ball.vy > 0 && ball.y + ball.r >= paddle.y - paddle.h/2 && ball.x >= paddle.x - paddle.w/2 && ball.x <= paddle.x + paddle.w/2) {
+      ball.vy *= -1;
+      ball.vx = ((ball.x - paddle.x) / (paddle.w/2)) * (ball.speed * 0.8);
+      SFX.bounce();
     }
+    if (ball.y > H) { lives--; SFX.lose(); screenShake = 10; lives <= 0 ? endGame() : resetBall(); }
 
-    // Bottom out (Lose Life)
-    if (ball.y - ball.r > H) {
-      lives--;
-      SFX.lose();
-      screenShake = 10;
-      updateHUD();
-      if (lives <= 0) endGame();
-      else resetBall();
-    }
-
-    // Block Collisions
     for (let i = blocks.length - 1; i >= 0; i--) {
       let b = blocks[i];
-      // Simple AABB collision
-      if (ball.x + ball.r > b.x && ball.x - ball.r < b.x + b.w &&
-          ball.y + ball.r > b.y && ball.y - ball.r < b.y + b.h) {
-        
-        // Determine bounce direction
-        const overlapL = (ball.x + ball.r) - b.x;
-        const overlapR = (b.x + b.w) - (ball.x - ball.r);
-        const overlapT = (ball.y + ball.r) - b.y;
-        const overlapB = (b.y + b.h) - (ball.y - ball.r);
-        const minOverlap = Math.min(overlapL, overlapR, overlapT, overlapB);
-
-        if (minOverlap === overlapL || minOverlap === overlapR) ball.vx *= -1;
-        else ball.vy *= -1;
-
-        // Damage Block
-        b.hp--;
+      if (ball.x + ball.r > b.x && ball.x - ball.r < b.x + b.w && ball.y + ball.r > b.y && ball.y - ball.r < b.y + b.h) {
+        ball.vy *= -1; b.hp--;
         if (b.hp <= 0) {
-          // Break Block
-          let pts = 10;
-          let burst = 5;
-          if (b.type === TYPES.COPPER) { pts = 25; goldExtracted += 1; }
-          if (b.type === TYPES.SILVER) { pts = 50; goldExtracted += 2; }
-          if (b.type === TYPES.GOLD) { pts = 150; goldExtracted += 10; burst = 12; SFX.breakGold(); spawnText(b.x + b.w/2, b.y, "GOLD!", "#FFD700"); screenShake = 5; }
-          else { SFX.breakRock(); }
+          let g = 0;
+          if (b.type === TYPES.COPPER) g = 1;
+          if (b.type === TYPES.SILVER) g = 2;
+          if (b.type === TYPES.GOLD) { g = 10; SFX.breakGold(); triggerLoreChance(); }
+          else SFX.breakRock();
           
-          if (b.type === TYPES.OBSIDIAN) pts = 100;
-
-          score += pts;
-          spawnParticles(b.x + b.w/2, b.y + b.h/2, COLORS[b.type], 10, burst);
+          goldExtracted += g;
+          if(window.NMNWallet) NMNWallet.addGold(g);
+          score += (g * 10) + 10;
           blocks.splice(i, 1);
-          updateHUD();
-          
-          // Next Level check
-          if (blocks.length === 0) {
-            level++;
-            ball.speed = Math.min(10, ball.speed + 0.5); // Cap speed
-            generateLevel();
-            resetBall();
-            spawnText(W/2, H/2, "VEIN CLEARED", "#00FF88");
-            updateHUD();
-          }
-        } else {
-          // Hit Obsidian but didn't break
-          SFX.bounce();
-          b.type = TYPES.ROCK1; // Change color to show damage
+          if (blocks.length === 0) { level++; ball.speed += 0.5; generateLevel(); resetBall(); }
         }
-        break; // Only hit one block per frame
+        updateHUD(); break;
       }
     }
   }
-
-  // Update FX
-  particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += 0.2; p.life -= p.decay; });
+  particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.life -= p.decay; });
   particles = particles.filter(p => p.life > 0);
-  
-  texts.forEach(t => { t.y += t.vy; t.life -= 0.02; });
-  texts = texts.filter(t => t.life > 0);
-  
-  if(screenShake > 0) screenShake *= 0.85;
-  if(screenShake < 0.5) screenShake = 0;
+  if(screenShake > 0) screenShake *= 0.8;
 }
 
-// ── DRAWING ──
-function draw() {
-  ctx.fillStyle = '#050306'; ctx.fillRect(0, 0, W, H);
-  
-  ctx.save();
-  if(screenShake > 0) {
-    ctx.translate((Math.random()-0.5)*screenShake, (Math.random()-0.5)*screenShake);
-  }
-
-  // Draw Blocks
-  blocks.forEach(b => {
-    ctx.fillStyle = COLORS[b.type];
-    ctx.fillRect(b.x, b.y, b.w, b.h);
-    
-    // Highlight
-    ctx.fillStyle = 'rgba(255,255,255,0.15)';
-    ctx.fillRect(b.x, b.y, b.w, 2);
-    ctx.fillRect(b.x, b.y, 2, b.h);
-    
-    // Shadow
-    ctx.fillStyle = 'rgba(0,0,0,0.3)';
-    ctx.fillRect(b.x, b.y + b.h - 2, b.w, 2);
-    ctx.fillRect(b.x + b.w - 2, b.y, 2, b.h);
-
-    if(b.type === TYPES.GOLD) {
-      ctx.shadowBlur = 10; ctx.shadowColor = '#FFD700';
-      ctx.fillStyle = 'rgba(255,215,0,0.4)'; ctx.fillRect(b.x, b.y, b.w, b.h);
-      ctx.shadowBlur = 0;
+function triggerLoreChance() {
+    if (Math.random() < 0.05) {
+        try {
+            const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
+            const entry = { text: `Artifact Found: Shattered a perfect Gold Vein at Depth ${level}.`, source: 'Ore Breaker', date: new Date().toLocaleDateString() };
+            vault.push(entry);
+            localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
+            if(window.nmnToast) nmnToast("LORE FRAGMENT SECURED");
+        } catch(e) {}
     }
-  });
+}
 
-  // Draw Paddle
-  ctx.fillStyle = '#c9962a';
-  ctx.fillRect(paddle.x - paddle.w/2, paddle.y - paddle.h/2, paddle.w, paddle.h);
-  ctx.fillStyle = '#8B6914';
-  ctx.fillRect(paddle.x - paddle.w/2 + 2, paddle.y - paddle.h/2 + 2, paddle.w - 4, paddle.h - 4);
+function draw() {
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+  let glitchFactor = Math.min(1, (level - 1) / 5);
+  ctx.save();
+  ctx.globalAlpha = (1 - glitchFactor) * 0.4;
+  if(bgMine.complete) ctx.drawImage(bgMine, 0, 0, W, H);
+  ctx.globalAlpha = glitchFactor * 0.4;
+  if(bgGlitch.complete) ctx.drawImage(bgGlitch, 0, 0, W, H);
+  ctx.restore();
+
+  ctx.save();
+  if(screenShake > 0) ctx.translate((Math.random()-0.5)*screenShake, (Math.random()-0.5)*screenShake);
+
+  blocks.forEach(b => { ctx.fillStyle = COLORS[b.type]; ctx.fillRect(b.x, b.y, b.w, b.h); });
+  ctx.fillStyle = '#c9962a'; ctx.fillRect(paddle.x - paddle.w/2, paddle.y - paddle.h/2, paddle.w, paddle.h);
+  ctx.fillStyle = '#00FF88'; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); ctx.fill();
   
-  // Draw Ball
-  ctx.fillStyle = '#00FF88';
-  ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); ctx.fill();
-  ctx.shadowBlur = 10; ctx.shadowColor = '#00FF88'; ctx.fill(); ctx.shadowBlur = 0;
-
-  // FX
-  particles.forEach(p => {
-    ctx.globalAlpha = Math.max(0, p.life);
-    ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, p.r, p.r);
-  });
-  ctx.globalAlpha = 1;
-
-  texts.forEach(t => {
-    ctx.globalAlpha = Math.max(0, t.life);
-    ctx.fillStyle = t.color; ctx.font = '14px "Press Start 2P"'; ctx.textAlign = 'center';
-    ctx.fillText(t.text, t.x, t.y);
-  });
-  ctx.globalAlpha = 1;
-  ctx.textAlign = 'left';
-
+  particles.forEach(p => { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, p.r, p.r); });
   ctx.restore();
 }
 
-function loop() {
-  if(gameRunning) { update(); draw(); }
-  loopId = requestAnimationFrame(loop);
-}
+function loop() { if(gameRunning) { update(); draw(); } loopId = requestAnimationFrame(loop); }
 
 function updateHUD() {
   document.getElementById('h-score').textContent = score;
   document.getElementById('h-level').textContent = level;
   document.getElementById('h-lives').textContent = lives;
+  syncGauge();
+}
+
+function syncGauge() {
+    if(window.NMNWallet) {
+        document.getElementById('dgGold').textContent = NMNWallet.get().gold;
+        document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]').length;
+    }
 }
 
 function endGame() {
   gameRunning = false;
-  
-  // Save Gold
-  try {
-    let currentGold = parseInt(localStorage.getItem('nmn_total_gold') || '0');
-    localStorage.setItem('nmn_total_gold', currentGold + goldExtracted);
-    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold');
-  } catch(e) {}
-
   document.getElementById('final-score').textContent = score;
   document.getElementById('final-gold').textContent = goldExtracted;
   document.getElementById('ov-over').classList.remove('hidden');
 }
 
-// Initial draw
-ctx.fillStyle = '#050306'; ctx.fillRect(0,0,cv.width,cv.height);
-
+syncGauge();
 </script>
-
-<script>
-try {
-    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold') || '0';
-} catch(e) {}
-</script>
-
-<div style="text-align:center;padding:1rem;font-family:'Press Start 2P',monospace;font-size:.3rem;color:#4a3c28; margin-top: auto;">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
-</div>
 
 </body>
 </html>
