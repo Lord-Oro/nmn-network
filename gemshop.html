@@ -5,17 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ivy's Gemstone Shop — NMN Retro</title>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-P5WL9XNDY8');
-</script>
-
-<link rel="icon" href="logo.jpg" type="image/jpeg">
-<link rel="shortcut icon" href="logo.jpg" type="image/jpeg">
-<link rel="apple-touch-icon" href="logo.jpg">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
 
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
@@ -25,10 +17,11 @@
   --gold: #FFD700;
   --gb: #e8b84b;
   --gd: #AA7700;
-  --bg-color: #000000;
-  --panel-bg: #111111;
+  --bg-color: #050302;
+  --panel-bg: #0a0806;
   --cream: #f0e6cc;
-  --muted: #aaaaaa;
+  --muted: #8a7654;
+  --faint: #4a3c28;
   --lg: #55FF55; 
   --red: #FF5555;
   --blue: #5555FF;
@@ -43,8 +36,8 @@ html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex
 body {
   font-family: var(--font-text);
   color: var(--cream);
-  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
-  padding-bottom: 60px;
+  background-image: repeating-linear-gradient(0deg, #050302 0px, #050302 2px, #0a0806 2px, #0a0806 4px);
+  padding-bottom: 80px;
   font-size: 1.2rem;
 }
 
@@ -57,42 +50,43 @@ body {
 
 /* HEADER */
 header {
-  padding: 1rem 2rem; border-bottom: 4px solid var(--lg);
+  padding: 1rem 2rem; border-bottom: 2px solid var(--gd);
   display: flex; justify-content: space-between; align-items: center;
-  background: #000; z-index: 1000; position: sticky; top: 0;
+  background: rgba(5,3,2,0.95); z-index: 1000; position: sticky; top: 0;
+  backdrop-filter: blur(5px);
 }
-.logo { font-family: var(--font-pixel); color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
+.logo { font-family: var(--font-pixel); color: var(--gold); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
 .back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
 .back:hover { color: var(--gold); }
 
 /* SHOP HEADER */
-.shop-title { text-align: center; padding: 1.5rem 1rem 0.5rem; background: #000; border-bottom: 4px dashed #333; margin-bottom: 1rem;}
-.shop-name { font-family: var(--font-pixel); font-size: 1.5rem; color: var(--cream); text-shadow: 3px 3px 0 #553300;}
+.shop-title { text-align: center; padding: 2.5rem 1rem 1.5rem; background: radial-gradient(circle at center, #0a0806, #050302); border-bottom: 2px dashed var(--gd); margin-bottom: 1.5rem;}
+.shop-name { font-family: var(--font-pixel); font-size: 1.8rem; color: var(--cream); text-shadow: 3px 3px 0 #553300;}
 .shop-name em { color: var(--gold); font-style: normal; }
-.shop-sub { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gd); margin-top: 0.8rem; }
-.ivy-note { font-family: var(--font-text); font-style: italic; font-size: 1.2rem; color: var(--muted); margin: 0.5rem 0; }
+.shop-sub { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gd); margin-top: 1rem; letter-spacing: 0.1em; }
+.ivy-note { font-family: var(--font-text); font-style: italic; font-size: 1.3rem; color: var(--muted); margin: 1rem 0 0; }
 
 /* HUD & MINE SIM CONTAINER */
 .hud-container { display: flex; gap: 1rem; padding: 0.5rem 1rem; align-items: stretch; justify-content: center; flex-wrap: wrap; max-width: 900px; margin: 0 auto 1rem auto; }
 
 /* HUD */
-.hud { flex: 1; display: flex; justify-content: space-evenly; gap: 1rem; padding: 1rem; background: #000; border: 4px solid #444; flex-wrap: wrap; box-shadow: 4px 4px 0 #000;}
+.hud { flex: 1; display: flex; justify-content: space-evenly; gap: 1rem; padding: 1.5rem; background: #000; border: 4px solid #333; flex-wrap: wrap; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 4px 4px 0 #000;}
 .hud-cell { text-align: center; }
-.hud-val { font-family: var(--font-pixel); font-size: 1.2rem; color: var(--gold); line-height: 1; text-shadow: 2px 2px 0 #553300;}
-.hud-lab { font-family: var(--font-pixel); font-size: 0.45rem; color: var(--muted); margin-top: 0.5rem; text-transform: uppercase;}
+.hud-val { font-family: var(--font-pixel); font-size: 1.4rem; color: var(--gold); line-height: 1; text-shadow: 2px 2px 0 #553300;}
+.hud-lab { font-family: var(--font-pixel); font-size: 0.45rem; color: var(--muted); margin-top: 0.8rem; text-transform: uppercase;}
 .level-bar { width: 100px; height: 8px; background: #222; border: 2px solid #555; margin: 0.5rem auto 0; position: relative;}
 .level-fill { height: 100%; background: var(--gold); transition: width 0.4s; }
 
 /* MINE SIM OBSERVER */
-.mine-sim-window { width: 160px; background: #000; border: 4px solid #444; display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; box-shadow: 4px 4px 0 #000;}
+.mine-sim-window { width: 160px; background: #000; border: 4px solid #333; display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; box-shadow: 4px 4px 0 #000;}
 .mine-sim-header { background: var(--gd); color: #000; font-family: var(--font-pixel); font-size: 0.5rem; padding: 6px; text-align: center; border-bottom: 4px solid #000; }
 .mine-sim-view { flex: 1; position: relative; background: #111; background-image: linear-gradient(90deg, #222 2px, transparent 2px), linear-gradient(#222 2px, transparent 2px); background-size: 10px 10px; min-height: 60px; }
 .worker-dot { position: absolute; width: 6px; height: 6px; background: var(--gold); box-shadow: 0 0 5px var(--gold); border-radius: 0; animation: dig 2s infinite alternate steps(5); border: 1px solid #FFF;}
 @keyframes dig { 0% { transform: translate(5px, 20px); } 100% { transform: translate(40px, 25px); } }
 
 /* POWER-UP TRAY */
-.powerup-tray { display: flex; justify-content: center; gap: 1rem; padding: 0.5rem 1rem; flex-wrap: wrap; max-width: 900px; margin: 0 auto;}
-.pu-btn { padding: 0.8rem 1rem; font-family: var(--font-pixel); font-size: 0.6rem; border: 4px solid; background: #000; cursor: pointer; transition: transform 0.1s; box-shadow: 4px 4px 0 #000;}
+.powerup-tray { display: flex; justify-content: center; gap: 1rem; padding: 0.5rem 1rem; flex-wrap: wrap; max-width: 900px; margin: 0 auto 1rem;}
+.pu-btn { padding: 1rem 1.2rem; font-family: var(--font-pixel); font-size: 0.6rem; border: 4px solid; background: #000; cursor: pointer; transition: transform 0.1s; box-shadow: 4px 4px 0 #000;}
 .pu-btn:hover:not(:disabled) { transform: translateY(-4px); }
 .pu-btn:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(100%); box-shadow: none;}
 .pu-hammer { border-color: #cc6633; color: #ff8855; } .pu-hammer:hover:not(:disabled) { background: #331100; }
@@ -102,9 +96,9 @@ header {
 
 /* BOARD */
 .board-wrap { display: flex; justify-content: center; padding: 1rem; position: relative; }
-#board { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; background: #000; border: 6px solid #FFF; padding: 6px; max-width: 480px; width: 100%; box-shadow: inset 0 0 0 4px #000, inset 0 0 0 8px var(--gd), 10px 10px 0 #000;}
+#board { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; background: #0a0806; border: 6px solid #FFF; padding: 8px; max-width: 500px; width: 100%; box-shadow: inset 0 0 0 4px #000, inset 0 0 0 8px var(--gd), 10px 10px 0 #000;}
 
-.cell { aspect-ratio: 1; background: #111; border: 2px solid #222; display: flex; align-items: center; justify-content: center; font-family: var(--font-pixel); font-size: clamp(1.2rem, 4vw, 1.8rem); cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; position: relative; text-shadow: 2px 2px 0 #000; }
+.cell { aspect-ratio: 1; background: #111; border: 2px solid #222; display: flex; align-items: center; justify-content: center; font-family: var(--font-pixel); font-size: clamp(1.4rem, 5vw, 2rem); cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; position: relative; text-shadow: 2px 2px 0 #000; }
 .cell:hover { transform: scale(1.1); background: #222; border-color: #444; z-index: 2;}
 .cell.selected { box-shadow: 0 0 0 4px var(--gold); transform: scale(1.1); z-index: 3; border-color: #FFF; background: #332200;}
 .cell.matched { animation: gemPop 0.3s steps(3) forwards; }
@@ -113,24 +107,24 @@ header {
 @keyframes gemFall { from { transform: translateY(-40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
 /* COMBO FLASH */
-.combo-flash { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; font-family: var(--font-pixel); font-size: 1.5rem; color: var(--gold); text-shadow: 4px 4px 0 #553300; opacity: 0; z-index: 10; white-space: nowrap; }
+.combo-flash { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; font-family: var(--font-pixel); font-size: 2rem; color: var(--gold); text-shadow: 4px 4px 0 #553300; opacity: 0; z-index: 10; white-space: nowrap; }
 .combo-flash.show { animation: comboAnim 0.8s steps(5) forwards; }
 @keyframes comboAnim { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); } 30% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); } 70% { opacity: 1; transform: translate(-50%, -60%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -70%) scale(0.8); } }
 
 /* MESSAGES */
-.msg-bar { text-align: center; min-height: 2rem; padding: 0.5rem 1rem; font-family: var(--font-pixel); font-size: 0.7rem; color: var(--gold); text-shadow: 2px 2px 0 #000; margin-top: 1rem;}
+.msg-bar { text-align: center; min-height: 2rem; padding: 0.5rem 1rem; font-family: var(--font-pixel); font-size: 0.75rem; color: var(--gold); text-shadow: 2px 2px 0 #000; margin-top: 1rem;}
 
 /* OVERLAYS */
-.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; align-items: center; justify-content: center; flex-direction: column; text-align: center; padding: 2rem; }
+.overlay { display: none; position: fixed; inset: 0; background: rgba(5,3,2,0.95); z-index: 100; align-items: center; justify-content: center; flex-direction: column; text-align: center; padding: 2rem; }
 .overlay.show { display: flex; animation: flashIn 0.2s steps(2); }
 @keyframes flashIn { 0% { opacity: 0; } 100% { opacity: 1; } }
 
-.ov-box { background: #000; border: 6px solid #FFF; padding: 2rem; max-width: 600px; width: 100%; box-shadow: inset 0 0 0 4px #000, inset 0 0 0 8px var(--gd), 10px 10px 0 #000; }
-.ov-title { font-family: var(--font-pixel); font-size: 1.8rem; color: var(--gold); margin-bottom: 1.5rem; text-shadow: 4px 4px 0 #553300;}
+.ov-box { background: #000; border: 6px solid #FFF; padding: 3rem 2rem; max-width: 600px; width: 100%; box-shadow: inset 0 0 0 4px #000, inset 0 0 0 8px var(--gd), 10px 10px 0 #000; }
+.ov-title { font-family: var(--font-pixel); font-size: 2rem; color: var(--gold); margin-bottom: 1.5rem; text-shadow: 4px 4px 0 #553300;}
 .ov-title em { color: var(--cream); font-style: normal; }
 .ov-sub { font-size: 1.4rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem; text-align: left; }
-.ov-legend { font-size: 1rem; color: var(--gd); text-align: left; background: #111; padding: 1rem; border: 4px solid #333; margin-bottom: 1.5rem;}
-.ov-stats { font-family: var(--font-pixel); font-size: 0.8rem; color: var(--gold); margin-bottom: 2rem; line-height: 2; text-align: left;}
+.ov-legend { font-size: 1.1rem; color: var(--gd); text-align: left; background: #111; padding: 1.5rem; border: 4px solid #333; margin-bottom: 2rem; line-height: 1.6;}
+.ov-stats { font-family: var(--font-pixel); font-size: 0.9rem; color: var(--gold); margin-bottom: 2.5rem; line-height: 2; text-align: left;}
 
 .ov-btn { padding: 1.2rem 2rem; font-family: var(--font-pixel); font-size: 0.8rem; border: 4px solid #FFF; background: #000; color: var(--cream); cursor: pointer; transition: transform 0.1s; margin: 0.5rem; box-shadow: 4px 4px 0 #000; text-decoration: none; display: inline-block;}
 .ov-btn:hover { background: var(--gold); color: #000; transform: translateY(-4px); }
@@ -138,22 +132,27 @@ header {
 .ov-btn.primary:hover { background: var(--gold); }
 
 /* LORE TOAST */
-.lore-toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(80px); background: #000; border: 4px solid var(--gd); padding: 1rem; max-width: 320px; width: 90%; z-index: 500; opacity: 0; transition: opacity 0.2s steps(2), transform 0.2s steps(2); pointer-events: none; box-shadow: 6px 6px 0 #000;}
+.lore-toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(80px); background: #000; border: 4px solid var(--gd); padding: 1.5rem; max-width: 400px; width: 90%; z-index: 500; opacity: 0; transition: opacity 0.2s steps(2), transform 0.2s steps(2); pointer-events: none; box-shadow: 6px 6px 0 #000;}
 .lore-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.lore-toast-label { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gold); margin-bottom: 0.5rem; }
-.lore-toast-text { font-size: 1.2rem; color: var(--cream); line-height: 1.4; }
+.lore-toast-label { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gold); margin-bottom: 0.8rem; }
+.lore-toast-text { font-size: 1.3rem; color: var(--cream); line-height: 1.5; }
 .lore-toast-text strong { font-family: var(--font-pixel); font-size: 0.7rem; color: var(--gold); }
 
-/* BOTTOM HUD */
-.bottom-hud { display: flex; justify-content: center; align-items: center; padding: 1rem 2rem; background: #000; border-top: 4px solid #333; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; flex-wrap: wrap; gap: 20px; }
-.bh-stat { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; }
-.bh-val { color: var(--gold); font-size: 1rem; text-shadow: 2px 2px 0 #553300; }
-.bh-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
-.bh-link:hover { color: #000; background: var(--gd); }
+/* FLOATING GAUGE */
+.depth-gauge {
+  position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:92%!important; height:42px!important; background:rgba(12,10,7,.95)!important;
+  border:1px solid rgba(255,215,0,.4)!important; border-radius:22px!important; padding:0 18px!important;
+  z-index:9999!important; display:flex!important; align-items:center!important;
+  justify-content:center!important; gap:1.2rem!important; box-shadow:0 0 20px rgba(0,0,0,0.9)!important;
+}
+.dg-stat { font-size: 0.4rem; color: var(--gd); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; font-family: var(--font-pixel); }
+.dg-val { color: var(--gold); font-size: 0.8rem; font-family: var(--font-text); }
+.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; pointer-events: auto!important; font-family: var(--font-pixel); }
+.dg-link:hover { color: var(--gold); }
+.dg-sep { color: var(--faint); font-size: 0.6rem; }
 
-/* Monetag In-Page Push — Zone 10763810 */
 </style>
-<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
 
 </head>
 <body>
@@ -162,7 +161,7 @@ header {
 
 <header>
   <a href="index.html" class="logo">NMN GEM SHOP</a>
-  <a href="games.html" class="back">← RETURN TO HALL</a>
+  <a href="games.html" class="back">← RETURN TO FORGE</a>
 </header>
 
 <div class="shop-title">
@@ -229,7 +228,7 @@ header {
     <div class="ov-title" style="color:var(--red);">SHOP <em>CLOSED</em></div>
     <div class="ov-stats" id="gameStats"></div>
     <button class="ov-btn primary" onclick="restartGame()">REOPEN SHOP</button>
-    <a href="games.html" class="ov-btn">BACK TO HALL</a>
+    <a href="games.html" class="ov-btn">BACK TO FORGE</a>
   </div>
 </div>
 
@@ -241,15 +240,17 @@ header {
   </div>
 </div>
 
-<div class="bottom-hud">
-  <div class="bh-stat">TOTAL GOLD: <span class="bh-val" id="dgGold">0</span></div>
-  <div class="bh-stat">LORE: <span class="bh-val" id="dgLore">0</span></div>
-  <a href="lorevault.html" class="bh-link">VAULT</a>
-  <a href="lantern.html" class="bh-link">LANTERN</a>
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> LORE</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">VAULT</a>
+  <a href="lantern.html" class="dg-link">LANTERN</a>
 </div>
 
 <div class="lore-toast" id="loreToast">
-  <div class="lore-toast-label">⬡ LORE FRAGMENT</div>
+  <div class="lore-toast-label">⬡ NEW LORE FRAGMENT SAVED</div>
   <div class="lore-toast-text" id="loreToastText"></div>
 </div>
 
@@ -381,6 +382,7 @@ function processMatches(matched){
   }
   
   const matchSize=matched.length;
+  // Trigger Lore Toast
   if(Math.floor(score/200) > Math.floor((score-matchSize*50)/200) && matched[0]) showBirthstoneFact(board[matched[0].r] ? board[matched[0].r][matched[0].c] : null);
   
   let pts=0;
@@ -484,6 +486,15 @@ function activatePower(p){
   setMsg(`SELECT A TARGET FOR ${p.toUpperCase()}`);
 }
 
+function syncGauge() {
+    try {
+        if(typeof NMNWallet !== 'undefined') {
+            document.getElementById('dgGold').textContent = NMNWallet.get().gold;
+        }
+        document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+    } catch(e) {}
+}
+
 function updateHUD(){
   document.getElementById('scoreVal').textContent=score.toLocaleString();
   document.getElementById('goldVal').textContent=gold;
@@ -506,19 +517,24 @@ function showLevelComplete(){
   // Add earned gold to V2 Wallet securely
   if(typeof NMNWallet !== 'undefined' && gold > 0) {
       NMNWallet.addGold(gold);
-      document.getElementById('dgGold').textContent = NMNWallet.get().gold;
+      NMNWallet.addXP(level * 10);
+      syncGauge();
   }
   
   document.getElementById('levelStats').innerHTML=`SCORE: ${score.toLocaleString()}<br>SESSION GOLD EARNED: ${gold}<br>MOVES LEFT: ${moves}<br>COMBO PEAK: ×${combo-1}`;
   document.getElementById('levelOv').classList.add('show');
   
-  try{const v=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]');v.push({text:`Cleared Level ${level} in Ivy's Gemstone Shop with ${score} points.`,source:"Ivy's Gemstone Shop",date:new Date().toLocaleDateString()});localStorage.setItem('nmn_lore_vault',JSON.stringify(v))}catch(e){}
+  try{
+    const v=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]');
+    v.push({text:`Cleared Level ${level} in Ivy's Gemstone Shop with ${score} points.`,source:"Ivy's Gemstone Shop",date:new Date().toLocaleDateString()});
+    localStorage.setItem('nmn_lore_vault',JSON.stringify(v));
+    syncGauge();
+  }catch(e){}
 }
 
 function nextLevel(){
   document.getElementById('levelOv').classList.remove('show');
   level++; 
-  // Harder scaling
   levelTarget=Math.floor(levelTarget*1.8); 
   moves=15+Math.floor(level/2); 
   combo=1;
@@ -535,7 +551,7 @@ function gameOver(){
   // Deposit whatever gold was accumulated before failing
   if(typeof NMNWallet !== 'undefined' && gold > 0) {
       NMNWallet.addGold(gold);
-      document.getElementById('dgGold').textContent = NMNWallet.get().gold;
+      syncGauge();
   }
   
   document.getElementById('gameStats').innerHTML=`LEVEL: ${level}<br>FINAL SCORE: ${score.toLocaleString()}<br>GOLD EARNED: ${gold}`;
@@ -561,9 +577,23 @@ function showBirthstoneFact(gemObj) {
   const t = document.getElementById('loreToast');
   const tx = document.getElementById('loreToastText');
   if(!t||!tx) return;
-  tx.innerHTML = `<strong style="color:${gemObj.color}">${data.name}</strong><br><span style="font-size:1rem;">${data.fact}</span>`;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 4500);
+  
+  // Lore Vault Storage
+  try {
+      const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
+      const factText = `Ivy's Shop Record: ${data.name} — ${data.fact}`;
+      
+      // Only save if it hasn't been saved yet
+      if (!vault.some(v => v.text === factText)) {
+          vault.push({ text: factText, source: "Ivy's Gemstone Shop", date: new Date().toLocaleDateString() });
+          localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
+          syncGauge();
+          
+          tx.innerHTML = `<strong style="color:${gemObj.color}">${data.name}</strong><br><span style="font-size:1rem;">${data.fact}</span>`;
+          t.classList.add('show');
+          setTimeout(()=>t.classList.remove('show'), 4500);
+      }
+  } catch(e) {}
 }
 
 function checkSpecialMove(matchSize, gemObj) {
@@ -576,16 +606,6 @@ function checkSpecialMove(matchSize, gemObj) {
     setMsg(`💥 BURST! +1 MOVE!`);
   }
 }
-
-// Init Bottom HUD
-(function(){
-  try{
-    if(typeof NMNWallet !== 'undefined') {
-        document.getElementById('dgGold').textContent = NMNWallet.get().gold;
-    }
-    document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
-  }catch(e){}
-})();
 
 // ── AUDIO SYSTEM ──
 const NMN_Audio = {
@@ -613,14 +633,9 @@ const NMN_Audio = {
   }
 };
 document.addEventListener('click', () => { if (!NMN_Audio.running) NMN_Audio.startAll(); }, { once: true });
-</script>
 
-<button id="nmn-sound-btn" onclick="
-  const on = NMN_Audio.toggle();
-  this.textContent = on ? '🔊 SOUND ON' : '🔇 SOUND OFF';
-  this.style.color = on ? 'var(--gold)' : 'var(--muted)';
-  this.style.borderColor = on ? 'var(--gold)' : 'var(--muted)';
-" style="position:fixed;bottom:80px;right:.75rem;z-index:998;background:#000;border:4px solid var(--muted);color:var(--muted);font-family:var(--font-pixel);font-size:.5rem;padding:.8rem;cursor:pointer;transition:transform .1s">🔇 SOUND OFF</button>
+syncGauge();
+</script>
 
 </body>
 </html>
