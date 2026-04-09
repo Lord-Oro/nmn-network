@@ -3,110 +3,213 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Privacy Policy — Nonsense Media Network</title>
+<title>Privacy Protocol — NMN</title>
+
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
+
 <link rel="stylesheet" href="nmn-theme.css">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=VT323&display=swap" rel="stylesheet">
+
 <style>
-body{padding-top:56px;max-width:860px;margin:0 auto}
-.legal-wrap{padding:4rem 2rem}
-.legal-title{font-family:var(--font-display);font-size:clamp(1.6rem,4vw,2.8rem);color:var(--gold);margin-bottom:.5rem}
-.legal-sub{font-family:var(--font-pixel);font-size:.38rem;color:var(--gd);letter-spacing:.2em;margin-bottom:3rem}
-.legal-section{margin-bottom:2.5rem}
-.legal-section h2{font-family:var(--font-pixel);font-size:.48rem;color:var(--gold);letter-spacing:.2em;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid rgba(255,215,0,.1)}
-.legal-section p{font-size:.72rem;color:var(--muted);line-height:2;margin-bottom:1rem}
-.legal-section ul{list-style:none;padding:0}
-.legal-section ul li{font-size:.72rem;color:var(--muted);line-height:2;padding-left:1rem}
-.legal-section ul li::before{content:'⛏ ';color:var(--gd)}
-.back-link{display:inline-block;font-family:var(--font-pixel);font-size:.42rem;color:var(--gold);border:1px solid rgba(255,215,0,.3);padding:.5rem 1rem;text-decoration:none;margin-top:2rem;transition:all .2s}
-.back-link:hover{background:rgba(255,215,0,.06);border-color:var(--gold)}
+:root {
+  --gold: #FFD700;
+  --gd: #8B6914;
+  --coal: #050302;
+  --cream: #f0e6cc;
+  --muted: #8a7654;
+  --faint: #4a3c28;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-ancient: 'Cormorant Garamond', serif;
+}
+
+body {
+    padding-top: 56px;
+    background: var(--coal);
+    color: var(--cream);
+    min-height: 100vh;
+    font-family: var(--font-ancient);
+    background-image: radial-gradient(ellipse at 50% 0%, rgba(139, 105, 20, 0.05) 0%, transparent 70%);
+}
+
+.legal-wrap {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 6rem;
+}
+
+.legal-header {
+    text-align: center;
+    margin-bottom: 4rem;
+    border-bottom: 1px solid var(--faint);
+    padding-bottom: 2rem;
+}
+
+.legal-title {
+    font-family: var(--font-ancient);
+    font-size: clamp(2.5rem, 6vw, 3.5rem);
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.legal-sub {
+    font-family: var(--font-pixel);
+    font-size: 0.4rem;
+    color: var(--gd);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.legal-section {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid #1a1a1a;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    box-shadow: inset 0 0 20px #000;
+}
+
+.legal-section h2 {
+    font-family: var(--font-pixel);
+    font-size: 0.5rem;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.legal-section h2::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--faint), transparent);
+}
+
+.legal-section p {
+    font-size: 1.2rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+}
+
+.legal-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.legal-section ul li {
+    font-size: 1.1rem;
+    color: var(--muted);
+    line-height: 1.8;
+    padding-left: 1.5rem;
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+.legal-section ul li::before {
+    content: '⬡';
+    position: absolute;
+    left: 0;
+    color: var(--gd);
+    font-size: 0.8rem;
+}
+
+.back-link {
+    display: inline-block;
+    font-family: var(--font-pixel);
+    font-size: 0.45rem;
+    color: var(--gb);
+    border: 1px solid var(--gd);
+    padding: 1rem 1.5rem;
+    text-decoration: none;
+    margin-top: 3rem;
+    transition: all 0.3s ease;
+    background: rgba(0,0,0,0.5);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.back-link:hover {
+    background: var(--gold);
+    color: #000;
+    border-color: #fff;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+    transform: translateY(-3px);
+}
+
+/* FOOTER */
+.legal-footer {
+    text-align: center;
+    padding: 2rem;
+    font-family: var(--font-pixel);
+    font-size: 0.3rem;
+    color: var(--faint);
+    border-top: 1px dashed var(--faint);
+    margin-top: 4rem;
+}
 </style>
-
-<style id="nmn-cursor">
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
-</style>
-
-<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
-
 </head>
 <body>
+
 <script src="nmn-nav.js"></script>
+
 <div class="legal-wrap">
-  <p class="legal-title">Privacy Policy</p>
-  <p class="legal-sub">⛏ MINING PRIVACY PROTOCOL — LAST UPDATED APRIL 2026 ⛏</p>
+    <div class="legal-header">
+        <h1 class="legal-title">Privacy Protocol</h1>
+        <p class="legal-sub">⛏ DATA EXTRACTION SECURITY — v2.6 — APRIL 2026 ⛏</p>
+    </div>
 
-  <div class="legal-section">
-    <h2>WHO WE ARE</h2>
-    <p>Nonsense Media Network ("NMN," "we," "us") is operated by Lord Oro / Jose Torres. Our website is located at nonsensemedianetwork.com. Contact: doradoyoro@gmail.com</p>
-  </div>
+    <div class="legal-section">
+        <h2>GOVERNANCE</h2>
+        <p>Nonsense Media Network ("NMN") is a self-contained digital extraction operated by Lord Oro. Our coordinates are secured at nonsensemedianetwork.com.</p>
+        <p>Inquiries regarding data shielding should be directed to: <strong>doradoyoro@gmail.com</strong></p>
+    </div>
 
-  <div class="legal-section">
-    <h2>INFORMATION WE COLLECT</h2>
-    <p>We do not collect personal information directly. Your game progress (Gold, Lore Fragments, XP) is stored locally in your browser's localStorage and never transmitted to our servers.</p>
-    <p>When you subscribe to our newsletter or contact us, we collect the information you voluntarily provide (email address, name).</p>
-  </div>
+    <div class="legal-section">
+        <h2>LOCAL STORAGE</h2>
+        <p>The mine respects your autonomy. Your progression data (Gold, Lore Fragments, XP, and Game States) is etched locally into your browser's memory (localStorage).</p>
+        <ul>
+            <li>Progression data never leaves your device.</li>
+            <li>We do not maintain a central database of your "Empire" standing.</li>
+            <li>Clearing your browser cache will collapse your local mine progress.</li>
+        </ul>
+    </div>
 
-  <div class="legal-section">
-    <h2>THIRD-PARTY ADVERTISING</h2>
-    <p>Nonsense Media Network uses Monetag to serve advertisements. Monetag and its partners may use cookies and similar technologies to serve ads based on your prior visits to this and other websites.</p>
-    <ul>
-      <li>Monetag Privacy Policy: monetag.com/privacy-policy</li>
-      <li>You may opt out of personalized advertising at: optout.aboutads.info</li>
-      <li>EU users may opt out via: youronlinechoices.eu</li>
-    </ul>
-    <p>We also participate in the Amazon Associates affiliate program. Links to Amazon products may earn us a small commission at no cost to you.</p>
-  </div>
+    <div class="legal-section">
+        <h2>THIRD-PARTY SENSORS</h2>
+        <p>To keep the lights burning in the Recreation Hall, NMN utilizes external service providers:</p>
+        <ul>
+            <li><strong>Monetag:</strong> Used to serve localized advertisements. They may use cookies to analyze your journey through the mine.</li>
+            <li><strong>Amazon Associates:</strong> Links to the Goldmine Collection on Amazon may generate a commission for the Architect at no cost to you.</li>
+            <li><strong>Google Analytics:</strong> We monitor traffic volume to optimize tunnel stability.</li>
+        </ul>
+    </div>
 
-  <div class="legal-section">
-    <h2>COOKIES</h2>
-    <p>We use cookies for analytics and advertising purposes. Third-party vendors, including Monetag, use cookies to serve ads based on your visits to this site and other sites on the internet. You can opt out of the use of cookies by visiting your browser settings or the Network Advertising Initiative opt-out page.</p>
-  </div>
+    <div class="legal-section">
+        <h2>MINER RIGHTS</h2>
+        <p>You carry the right to modify or purge any information you voluntarily provide (such as newsletter registration).</p>
+        <p>We adhere to the shielding standards of the GDPR (EU) and CCPA (California). If you wish to invoke these protocols, send a signal to our contact address.</p>
+    </div>
 
-  <div class="legal-section">
-    <h2>PATREON & GOFUNDME</h2>
-    <p>If you support us through Patreon or GoFundMe, those platforms have their own privacy policies which govern your data. We do not receive your payment information directly.</p>
-  </div>
+    <div style="text-align: center;">
+        <a href="index.html" class="back-link">⛏ RETURN TO SURFACE</a>
+    </div>
 
-  <div class="legal-section">
-    <h2>YOUR RIGHTS</h2>
-    <p>You have the right to access, correct, or delete any personal data you have provided to us. To exercise these rights, contact us at doradoyoro@gmail.com.</p>
-    <p>California residents have additional rights under CCPA. EU/EEA residents have rights under GDPR. Contact us to exercise these rights.</p>
-  </div>
-
-  <div class="legal-section">
-    <h2>CHANGES TO THIS POLICY</h2>
-    <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated date. Continued use of the site constitutes acceptance of the updated policy.</p>
-  </div>
-
-  <a href="index.html" class="back-link">⛏ RETURN TO THE MINE</a>
+    <div class="legal-footer">
+        NONSENSE MEDIA NETWORK — THE MINE NEVER FORGETS
+    </div>
 </div>
 
-<script id="nmn-glow">
-(function(){
-  var r=document.createElement('div');
-  r.id='pickaxe-glow';
-  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
-  document.body.appendChild(r);
-  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
-  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
-  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
-})();
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(function(registration) {
-      console.log('NMN SW registered with scope:', registration.scope);
-    })
-    .catch(function(err){
-      console.log('NMN SW error:', err);
-    });
-}
-</script>
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28;margin-bottom: 2rem;">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+<div style="text-align:center;padding:1rem;font-family:var(--font-pixel);font-size:.3rem;color:var(--faint);margin-bottom: 2rem;">
+  <a href="privacy.html" style="color:var(--faint);text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:var(--faint);text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:var(--faint);text-decoration:none;margin:0 .5rem">CONTACT</a>
 </div>
+
 </body>
 </html>
