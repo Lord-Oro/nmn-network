@@ -4,152 +4,141 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Projection Room — NMN</title>
+
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
+
 <link rel="stylesheet" href="nmn-theme.css">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=VT323&display=swap" rel="stylesheet">
 
 <style>
-:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-sans);background:#030201;color:var(--cream);min-height:100vh;overflow-x:hidden;padding-bottom:65px !important;}
-header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(3,2,1,.97);position:sticky;top:0;z-index:10}
-.logo{font-family:var(--font-pixel);color:var(--gold);font-size:.5rem;text-decoration:none;text-shadow:0 0 15px rgba(255,215,0,.4);letter-spacing:1px}
-.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
-.back:hover{color:var(--gold)}
+:root {
+  --gold: #FFD700; --gb: #e8b84b; --gd: #8B6914;
+  --coal: #050302; --panel-bg: #0a0806; --cream: #f0e6cc;
+  --muted: #8a7654; --faint: #4a3c28;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-ancient: 'Cormorant Garamond', serif;
+}
+
+body {
+  font-family: var(--font-ancient);
+  background: var(--coal);
+  color: var(--cream);
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: 85px !important;
+  background-image: radial-gradient(circle at 50% 0%, rgba(139, 105, 20, 0.1) 0%, transparent 60%);
+}
+
+header {
+  padding: 1rem 2rem; border-bottom: 1px solid rgba(255,215,0,.15);
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(5,3,2,0.95); position: sticky; top: 0; z-index: 100;
+  backdrop-filter: blur(5px);
+}
+.logo { font-family: var(--font-pixel); color: var(--gold); font-size: .7rem; text-decoration: none; letter-spacing: 2px; }
+.back { font-family: var(--font-pixel); font-size: .5rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.3s; }
+.back:hover { color: var(--gold); }
+
+/* STATUS BANNER */
+.vid-status-banner {
+    width: 100%; background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.05), transparent);
+    border-top: 1px solid var(--gd); border-bottom: 1px solid var(--gd);
+    padding: 12px; text-align: center; color: var(--gold); font-family: var(--font-pixel);
+    font-size: 0.35rem; letter-spacing: 2px; animation: blink 3s infinite;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
 /* LOBBY */
-.lobby{text-align:center;padding:2.5rem 2rem 2rem;background:linear-gradient(to bottom,rgba(255,215,0,.05),transparent)}
-.lobby-eyebrow{font-size:.52rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gd);margin-bottom:.75rem}
-.lobby-title{font-family:var(--font-serif);font-size:clamp(2rem,5vw,3rem);color:var(--cream);margin-bottom:.3rem}
-.lobby-title em{color:var(--gold);font-style:italic}
-.lobby-sub{font-size:.72rem;color:var(--muted);max-width:480px;margin:.5rem auto;line-height:1.9;font-style:italic;font-family:var(--font-serif)}
-.lobby-note{font-size:.52rem;color:var(--faint);margin-top:.5rem;letter-spacing:.08em}
+.lobby { text-align: center; padding: 4rem 2rem 3rem; }
+.lobby-eyebrow { font-family: var(--font-pixel); font-size: 0.5rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gd); margin-bottom: 1.5rem; }
+.lobby-title { font-family: var(--font-ancient); font-size: clamp(3rem, 8vw, 4.5rem); color: var(--cream); font-weight: 600; margin-bottom: 1rem; text-shadow: 0 0 20px rgba(255,215,0,0.1); }
+.lobby-title em { color: var(--gold); font-style: italic; }
+.lobby-sub { font-size: 1.4rem; color: var(--muted); line-height: 1.6; max-width: 600px; margin: 0 auto 1.5rem; font-style: italic; }
 
 /* REEL GRID */
-.reel-grid{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;padding:2rem 1.5rem}
-.reel-wrap{text-align:center;cursor:pointer}
-.reel{width:110px;height:110px;border:3px dashed rgba(255,215,0,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;transition:all .5s cubic-bezier(.4,0,.2,1);margin:0 auto .75rem;background:rgba(255,215,0,.03)}
-.reel:hover{transform:rotate(180deg) scale(1.1);border-color:var(--gold);background:rgba(255,215,0,.08)}
-.reel-spokes{position:absolute;inset:0;border-radius:50%}
-.reel-spoke{position:absolute;width:2px;height:50%;left:50%;top:0;transform-origin:bottom center;background:rgba(255,215,0,.2)}
-.reel-center{width:24px;height:24px;border-radius:50%;background:rgba(255,215,0,.15);border:2px solid rgba(255,215,0,.3);position:relative;z-index:1;display:flex;align-items:center;justify-content:center;font-size:.9rem}
-.reel-label{font-family:var(--font-serif);font-size:.95rem;color:var(--cream);margin-bottom:.2rem}
-.reel-label em{color:var(--gold);font-style:italic}
-.reel-char{font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gd)}
-.reel-dur{font-size:.45rem;color:var(--faint)}
+.reel-grid { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; padding: 2rem 1.5rem; }
+.reel-wrap { text-align: center; cursor: pointer; transition: transform 0.3s; width: 150px; }
+.reel-wrap:hover { transform: translateY(-10px); }
 
-/* CINEMA OVERLAY — full screen short player */
-.cinema{position:fixed;inset:0;background:#000;z-index:1000;display:none;flex-direction:column;align-items:center;justify-content:center}
-.cinema.open{display:flex}
+.reel { 
+    width: 100px; height: 100px; border: 2px dashed var(--gd); border-radius: 50%; 
+    display: flex; align-items: center; justify-content: center; position: relative; 
+    transition: all 0.5s cubic-bezier(.4,0,.2,1); margin: 0 auto 1.5rem; 
+    background: rgba(0,0,0,0.5); box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+.reel-wrap:hover .reel { transform: rotate(180deg); border-color: var(--gold); box-shadow: 0 0 20px rgba(255,215,0,0.2); }
 
-/* The 9:16 short frame */
-.short-frame{position:relative;width:min(100vw, 56.25vh);height:min(177.78vw, 100vh);max-width:360px;max-height:640px;background:#030201;overflow:hidden;border:1px solid rgba(255,215,0,.1)}
+.reel-center { width: 30px; height: 30px; border-radius: 50%; background: var(--gd); border: 2px solid #fff; z-index: 2; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+.reel-spoke { position: absolute; width: 2px; height: 50%; left: 50%; top: 0; transform-origin: bottom center; background: rgba(255,215,0,0.1); }
 
-/* SCENE BACKGROUNDS */
-.scene-bg{position:absolute;inset:0;transition:background 1s}
-.bg-doorway{background:radial-gradient(ellipse 40% 60% at 50% 45%,rgba(255,215,0,.08),transparent 70%),#030201}
-.bg-workshop{background:radial-gradient(ellipse 60% 40% at 50% 70%,rgba(106,170,74,.06),transparent 70%),#03050a}
-.bg-jungle{background:radial-gradient(ellipse 50% 70% at 30% 50%,rgba(106,170,74,.1),transparent 60%),#020503}
-.bg-circuit{background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(0,238,255,.06),transparent 70%),#010308}
+.reel-label { font-family: var(--font-ancient); font-size: 1.3rem; color: var(--cream); margin-bottom: 0.3rem; font-weight: 600; }
+.reel-char { font-family: var(--font-pixel); font-size: 0.3rem; letter-spacing: 1px; color: var(--gd); text-transform: uppercase; }
 
-/* DOORFRAME for Lord Oro */
-.doorframe{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:120px;height:220px;pointer-events:none}
-.doorframe-left{position:absolute;left:0;top:0;bottom:0;width:12px;background:linear-gradient(to right,#1a1208,#2a1a08,#1a1208);border-right:2px solid rgba(255,215,0,.2)}
-.doorframe-right{position:absolute;right:0;top:0;bottom:0;width:12px;background:linear-gradient(to left,#1a1208,#2a1a08,#1a1208);border-left:2px solid rgba(255,215,0,.2)}
-.doorframe-top{position:absolute;top:0;left:0;right:0;height:12px;background:linear-gradient(to bottom,#1a1208,#2a1a08);border-bottom:2px solid rgba(255,215,0,.2)}
+/* SUPPORT SECTION */
+.broadcast-support {
+    margin-top: 6rem; padding: 4rem 2rem; border: 1px dashed var(--faint);
+    background: rgba(139, 105, 20, 0.02); text-align: center; position: relative;
+}
+.broadcast-support::before { content: '🎬'; position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 1.5rem; }
+.support-title { font-family: var(--font-ancient); font-size: 2rem; color: var(--gold); margin-bottom: 1rem; font-weight: 600; }
+.support-text { font-size: 1.3rem; color: var(--muted); line-height: 1.6; margin: 0 auto 2.5rem; max-width: 600px; font-style: italic; }
+.support-link {
+    display: inline-block; padding: 1rem 1.5rem; font-family: var(--font-pixel); font-size: 0.5rem;
+    text-decoration: none; border: 1px solid var(--gd); color: var(--gb); transition: all 0.3s;
+}
+.support-link:hover { background: var(--gold); color: #000; border-color: #fff; transform: translateY(-3px); }
 
-/* CHARACTER SPRITES — pixel art CSS */
-.character{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);transition:transform .05s ease;image-rendering:pixelated;font-size:3rem;text-align:center;line-height:1;filter:drop-shadow(0 0 8px rgba(255,215,0,.3))}
-.character.bounce{animation:charBounce .1s ease}
-@keyframes charBounce{0%,100%{transform:translateX(-50%) scale(1) translateY(0)}50%{transform:translateX(-50%) scale(1.08) translateY(-6px)}}
+/* CINEMA PLAYER */
+.cinema { position: fixed; inset: 0; background: #000; z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+.cinema.open { display: flex; }
+.short-frame { position: relative; width: min(90vw, 360px); height: min(160vw, 640px); background: #030201; overflow: hidden; border: 2px solid var(--gd); box-shadow: 0 0 50px #000; }
+.short-progress { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: rgba(255,255,255,0.1); z-index: 10; }
+.short-progress-fill { height: 100%; background: var(--gold); width: 0%; transition: width 0.1s linear; }
 
-/* Shadow silhouette for Lord Oro */
-.oro-shadow{position:absolute;bottom:55px;left:50%;transform:translateX(-50%);width:60px;height:120px;background:linear-gradient(to bottom,#0a0805,#050302);clip-path:polygon(30% 0%,70% 0%,80% 5%,85% 50%,90% 100%,10% 100%,15% 50%,20% 5%);filter:blur(1px);opacity:.85;transition:transform .05s}
-.oro-eyes{position:absolute;bottom:148px;left:50%;transform:translateX(-50%);display:flex;gap:10px}
-.oro-eye{width:5px;height:5px;border-radius:50%;background:#e8b84b;box-shadow:0 0 6px #e8b84b;animation:eyeGlow 2s ease-in-out infinite}
-@keyframes eyeGlow{0%,100%{opacity:.7}50%{opacity:1}}
+.dialogue-box { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(5,4,3,0.95); border-top: 1px solid var(--gd); padding: 2rem 1.5rem; }
+.dialogue-speaker { font-family: var(--font-pixel); font-size: 0.4rem; color: var(--gd); margin-bottom: 0.8rem; letter-spacing: 2px; }
+.dialogue-text { font-family: var(--font-ancient); font-size: 1.4rem; color: #fff; line-height: 1.5; font-style: italic; min-height: 4rem; }
 
-/* LANTERN FLICKER */
-.lantern-light{position:absolute;top:20%;right:15%;width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.3),rgba(255,215,0,.1) 40%,transparent 70%);animation:lanternFlicker 1.5s ease-in-out infinite}
-@keyframes lanternFlicker{0%,100%{opacity:.7;transform:scale(1)}33%{opacity:1;transform:scale(1.08)}66%{opacity:.8;transform:scale(.97)}}
-
-/* MINE SHAFT LINES */
-.shaft-line{position:absolute;width:1px;background:linear-gradient(to bottom,transparent,rgba(255,215,0,.08) 30%,rgba(255,215,0,.12) 50%,rgba(255,215,0,.08) 70%,transparent);top:0;bottom:0}
-
-/* DIALOGUE BOX */
-.dialogue-box{position:absolute;bottom:0;left:0;right:0;background:rgba(3,2,1,.92);border-top:2px solid rgba(255,215,0,.3);padding:1rem 1.25rem 1.5rem}
-.dialogue-speaker{font-size:.45rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gd);margin-bottom:.4rem}
-.dialogue-text{font-family:var(--font-serif);font-style:italic;font-size:1.05rem;color:var(--cream);line-height:1.6;min-height:3.5rem}
-.dialogue-cursor{display:inline-block;width:2px;height:1em;background:var(--gold);vertical-align:middle;animation:blink .6s step-end infinite;margin-left:1px}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.dialogue-continue{position:absolute;bottom:.5rem;right:1rem;font-size:.45rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gd);animation:blink 1s step-end infinite}
-
-/* GOLD GLOW PULSE on speak */
-.speak-glow{position:absolute;inset:0;background:radial-gradient(circle at 50% 60%,rgba(255,215,0,.06),transparent 60%);opacity:0;transition:opacity .05s;pointer-events:none}
-
-/* PROGRESS BAR */
-.short-progress{position:absolute;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,.1)}
-.short-progress-fill{height:100%;background:var(--gold);transition:width .1s linear;width:0%}
-
-/* CLOSE / SKIP */
-.cinema-close{position:absolute;top:1rem;right:1rem;background:transparent;border:none;color:rgba(255,215,0,.4);font-size:1.2rem;cursor:pointer;z-index:10;padding:.5rem;transition:color .3s}
-.cinema-close:hover{color:var(--gold)}
-.cinema-skip{position:absolute;bottom:1.5rem;right:1rem;background:transparent;border:1px solid rgba(255,215,0,.2);color:var(--faint);font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;padding:.3rem .6rem;transition:all .3s;z-index:10}
-.cinema-skip:hover{color:var(--gold);border-color:var(--gold)}
-
-/* SCENE TITLE CARD */
-.title-card{position:absolute;inset:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5;transition:opacity .8s}
-.title-card.hidden{opacity:0;pointer-events:none}
-.tc-label{font-size:.45rem;letter-spacing:.35em;text-transform:uppercase;color:var(--gd);margin-bottom:.5rem}
-.tc-title{font-family:var(--font-serif);font-style:italic;font-size:1.4rem;color:var(--cream);text-align:center;line-height:1.3}
-.tc-title em{color:var(--gold)}
-.tc-char{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-top:.5rem}
-
-/* CTA OVERLAY */
-.cta-overlay{position:absolute;inset:0;background:rgba(3,2,1,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:8;opacity:0;transition:opacity .8s;pointer-events:none;text-align:center;padding:2rem}
-.cta-overlay.show{opacity:1;pointer-events:all}
-.cta-oro-line{font-family:var(--font-serif);font-style:italic;font-size:1.1rem;color:var(--gold);margin-bottom:1.5rem;line-height:1.7}
-.cta-btn{display:block;margin:.4rem auto;padding:.65rem 1.5rem;font-family:var(--font-sans);font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;transition:all .3s;width:200px}
-.cta-primary{background:var(--gold);color:var(--coal)}
-.cta-primary:hover{background:var(--gb)}
-.cta-ghost{background:transparent;border:1px solid rgba(255,215,0,.3);color:var(--gold)}
-.cta-ghost:hover{background:rgba(255,215,0,.08);border-color:var(--gold)}
-.cta-replay{background:transparent;border:none;color:var(--faint);font-family:var(--font-sans);font-size:.45rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;margin-top:.5rem}
-.cta-replay:hover{color:var(--gold)}
+.cinema-close { position: absolute; top: 2rem; right: 2rem; background: none; border: 1px solid var(--gd); color: var(--gold); font-family: var(--font-pixel); padding: 10px; cursor: pointer; }
+.cinema-close:hover { background: var(--gold); color: #000; }
 
 /* DEPTH GAUGE */
-.depth-gauge{
-  position:fixed!important;bottom:12px!important;left:50%!important;
-  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
-  height:42px!important;background:rgba(12,10,7,.88)!important;
-  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
-  padding:0 18px!important;pointer-events:none!important;
-  z-index:9999!important;backdrop-filter:blur(4px)!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  gap:1.2rem!important;flex-wrap:nowrap!important;
-  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+.depth-gauge {
+  position:fixed!important; bottom:15px!important; left:50%!important;
+  transform:translateX(-50%)!important; width:auto!important; max-width:95%!important;
+  height:46px!important; background:rgba(12,10,7,.95)!important;
+  border:1px solid rgba(255,215,0,.3)!important; border-radius:2px!important;
+  padding:0 20px!important; z-index:9999!important;
+  display:flex!important; align-items:center!important; justify-content:center!important;
+  gap:1.5rem!important; flex-wrap:nowrap!important;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.9)!important;
 }
-.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28;pointer-events:auto!important;}
-.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
-.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s;pointer-events:auto!important;}
-.dg-link:hover{color:#FFD700}
-.dg-sep{color:#2a1808;font-size:.6rem;pointer-events:auto!important;}
+.dg-stat { display:flex; align-items:center; gap:0.5rem; font-family:var(--font-pixel); font-size:0.45rem; color:var(--muted); text-transform:uppercase; letter-spacing: 1px;}
+.dg-val { font-family:var(--font-text); font-size:1.1rem; color:var(--gold); }
+.dg-link { font-family:var(--font-pixel); font-size:0.45rem; color:var(--gd); text-decoration:none; text-transform:uppercase; transition:color 0.3s; letter-spacing: 1px;}
+.dg-link:hover { color:var(--gold); }
 </style>
-
-<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
-
 </head>
 <body>
+
 <script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
+
 <header>
-  <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="archives.html" class="back">← The Archives</a>
+  <a href="index.html" class="logo">PROJECTION ROOM</a>
+  <a href="archives.html" class="back">← TO ARCHIVES</a>
 </header>
 
+<div class="vid-status-banner">
+    [ SYSTEM ADVISORY ] RECALIBRATING OPTICAL SENSORS — NEW VIDEO EXTRACTIONS PENDING v2.0
+</div>
+
 <div class="lobby">
-  <div class="lobby-eyebrow">Nonsense Media Network — The Archives</div>
+  <div class="lobby-eyebrow">THE ARCHIVES — SECTOR 7</div>
   <h1 class="lobby-title">The Projection <em>Room</em></h1>
-  <p class="lobby-sub">"The mine doesn't wait for an audience. It broadcasts whether anyone is listening." — The Transmission</p>
-  <div class="lobby-note">Select a reel to play. Screen-record for YouTube Shorts. The mine is the signal.</div>
+  <p class="lobby-sub">"The mine doesn't wait for an audience. It broadcasts whether anyone is listening."</p>
 </div>
 
 <div class="reel-grid" id="reelGrid"></div>
@@ -157,86 +146,46 @@ header{padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.15);display:fl
 <div class="cinema" id="cinema">
   <div class="short-frame" id="shortFrame">
     <div class="short-progress"><div class="short-progress-fill" id="progressFill"></div></div>
+    <div class="scene-bg" id="sceneBg" style="position:absolute; inset:0; background:#050302;"></div>
+    
+    <div id="character" style="position:absolute; bottom:200px; left:50%; transform:translateX(-50%); font-size:5rem; filter:drop-shadow(0 0 20px rgba(255,215,0,0.3));"></div>
 
-    <div class="scene-bg" id="sceneBg"></div>
-    <div class="shaft-line" style="left:15%"></div>
-    <div class="shaft-line" style="left:85%"></div>
-    <div class="lantern-light" id="lanternLight"></div>
-    <div class="speak-glow" id="speakGlow"></div>
-
-    <div class="doorframe" id="doorframe" style="display:none">
-      <div class="doorframe-left"></div>
-      <div class="doorframe-right"></div>
-      <div class="doorframe-top"></div>
-    </div>
-    <div class="oro-shadow" id="oroShadow" style="display:none"></div>
-    <div class="oro-eyes" id="oroEyes" style="display:none">
-      <div class="oro-eye"></div>
-      <div class="oro-eye" style="animation-delay:.3s"></div>
-    </div>
-
-    <div class="character" id="character" style="display:none"></div>
-
-    <div class="title-card" id="titleCard">
-      <div class="tc-label">Nonsense Media Network</div>
-      <div class="tc-title" id="tcTitle"></div>
-      <div class="tc-char" id="tcChar"></div>
-    </div>
-
-    <div class="dialogue-box" id="dialogueBox" style="opacity:0;transition:opacity .4s">
+    <div class="dialogue-box" id="dialogueBox">
       <div class="dialogue-speaker" id="dialogueSpeaker"></div>
-      <div class="dialogue-text" id="dialogueText"><span class="dialogue-cursor"></span></div>
-      <div class="dialogue-continue" id="dialogueContinue" style="display:none">▼ tap to continue</div>
+      <div class="dialogue-text" id="dialogueText"></div>
     </div>
 
-    <div class="cta-overlay" id="ctaOverlay">
-      <div class="cta-oro-line" id="ctaLine"></div>
-      <a href="newsletter.html" class="cta-btn cta-primary">⬡ Join the Goldmine</a>
-      <a href="index.html" class="cta-btn cta-ghost">Enter the Mine</a>
-      <button class="cta-replay" onclick="replayShort()">↺ Play again</button>
+    <div id="ctaOverlay" style="position:absolute; inset:0; background:rgba(0,0,0,0.9); display:none; flex-direction:column; align-items:center; justify-content:center; padding:2rem; text-align:center;">
+        <div style="font-style:italic; color:var(--gold); margin-bottom:2rem; font-size:1.4rem;" id="ctaLine"></div>
+        <a href="newsletter.html" class="nmn-btn" style="display:block; margin-bottom:1rem; font-size:0.5rem;">JOIN THE GOLDMINE</a>
+        <button onclick="replayShort()" style="background:none; border:none; color:var(--muted); font-family:var(--font-pixel); font-size:0.4rem; cursor:pointer;">↺ REPLAY SIGNAL</button>
     </div>
   </div>
 
-  <button class="cinema-close" onclick="closeCinema()">✕</button>
-  <button class="cinema-skip" onclick="skipToEnd()" id="skipBtn">Skip →</button>
+  <button class="cinema-close" onclick="closeCinema()">✕ EXIT CINEMA</button>
+</div>
+
+<div class="broadcast-support">
+    <div class="support-title">POWER THE BROADCAST</div>
+    <p class="support-text">High-fidelity video extractions require immense energy. Support the expansion to help us bring the characters of NMN to life on screen.</p>
+    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+        <a href="https://gofund.me/e643a8283" target="_blank" class="support-link">GOFUNDME — VIDEO FUND</a>
+        <a href="https://patreon.com" target="_blank" class="support-link">PATREON — BECOME A PRODUCER</a>
+    </div>
 </div>
 
 <div class="depth-gauge" id="depthGauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
-  <span class="dg-sep">⬡</span>
-  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> Lore Fragments</div>
-  <span class="dg-sep">⬡</span>
-  <div class="dg-stat"><span class="dg-val" id="dgCreatures">0</span> Creatures</div>
-  <span class="dg-sep">⬡</span>
-  <a href="lorevault.html" class="dg-link">📜 Vault</a>
-  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
-  <a href="ledger.html" class="dg-link">📖 Ledger</a>
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> LORE</div>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 VAULT</a>
+  <a href="ledger.html" class="dg-link">📖 LEDGER</a>
 </div>
 
 <script>
-(function(){
-  try{
-    // Integrated with V2 NMNWallet
-    var w = typeof NMNWallet !== 'undefined' ? NMNWallet.get() : {gold:0};
-    var lore=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
-    var creatures=Object.keys(JSON.parse(localStorage.getItem('nmn_collector_v2')||'{"G":{"grimoire":{}}}').G.grimoire||{}).length;
-    var el=document.getElementById('dgGold');if(el)el.textContent=w.gold;
-    var el2=document.getElementById('dgLore');if(el2)el2.textContent=lore;
-    var el3=document.getElementById('dgCreatures');if(el3)el3.textContent=creatures;
-  }catch(e){}
-})();
-</script>
-
-<script>
-// ── SUPERSTAR SAGA ENGINE ─────────────────────────────────────────────
 const AudioCtx = { ctx: null, get() { if(!this.ctx) this.ctx=new(window.AudioContext||window.webkitAudioContext)(); return this.ctx; } };
-
-const VOICES = {
-  oro:   { type:'square',   freq:150, jitter:8,  vol:.04 },
-  pip:   { type:'sine',     freq:820, jitter:60, vol:.03 },
-  nayla: { type:'sawtooth', freq:290, jitter:25, vol:.03 },
-  ivy:   { type:'triangle', freq:440, jitter:20, vol:.03 },
-};
+const VOICES = { oro: { type:'square', freq:150, vol:.04 }, pip: { type:'sine', freq:820, vol:.03 }, nayla: { type:'sawtooth', freq:290, vol:.03 }, ivy: { type:'triangle', freq:440, vol:.03 } };
 
 function playBeep(charKey) {
   try {
@@ -245,7 +194,7 @@ function playBeep(charKey) {
     const osc = ctx.createOscillator();
     const g = ctx.createGain();
     osc.type = v.type;
-    osc.frequency.value = v.freq + (Math.random()*v.jitter - v.jitter/2);
+    osc.frequency.value = v.freq + (Math.random()*10 - 5);
     g.gain.setValueAtTime(v.vol, ctx.currentTime);
     g.gain.exponentialRampToValueAtTime(.0001, ctx.currentTime+.06);
     osc.connect(g).connect(ctx.destination);
@@ -253,283 +202,68 @@ function playBeep(charKey) {
   } catch(e){}
 }
 
-function bounceCharacter(charKey) {
-  const el = charKey==='oro' ? document.getElementById('oroShadow') : document.getElementById('character');
-  if(!el) return;
-  el.classList.add('bounce');
-  setTimeout(()=>el.classList.remove('bounce'), 120);
-  // Glow pulse
-  const glow = document.getElementById('speakGlow');
-  if(glow){ glow.style.opacity='1'; setTimeout(()=>glow.style.opacity='0', 80); }
-}
-
-async function typeDialogue(text, charKey, speed=65) {
-  const el = document.getElementById('dialogueText');
-  const cursor = '<span class="dialogue-cursor"></span>';
-  el.innerHTML = '';
-  let beepCounter = 0;
-  for(let i=0; i<text.length; i++) {
-    if(aborted) break; // Kills the typing/beeping loop if skipped
-    const ch = text[i];
-    el.innerHTML = text.slice(0,i+1) + cursor;
-    if(ch !== ' ' && ch !== '\n') {
-      beepCounter++;
-      if(beepCounter % 2 === 0) { // beep every 2 chars — not too rapid
-        playBeep(charKey);
-        bounceCharacter(charKey);
-      }
-    }
-    await sleep(ch === '.' || ch === '—' ? speed*4 : ch === ',' ? speed*2 : speed);
-  }
-  el.innerHTML = text;
-}
-
-function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
-
-// ── THE SHORTS LIBRARY ────────────────────────────────────────────────
 const SHORTS = [
-  {
-    id:'oro_warning',
-    title:"Lord Oro's Warning",
-    character:'oro',
-    charLabel:'Lord Oro',
-    duration:'~25 sec',
-    emoji:'👁️',
-    bg:'bg-doorway',
-    ctaLine:'"The goldmine is within. Everything you seek, you carry."',
-    scenes:[
-      { speaker:'', text:'', pause:1200, showTitle:true },
-      { speaker:'Lord Oro', text:'The mine is not a metaphor.', pause:800 },
-      { speaker:'Lord Oro', text:'The mine is the thing itself —', pause:600 },
-      { speaker:'Lord Oro', text:'your interior world,', pause:600 },
-      { speaker:'Lord Oro', text:'waiting.', pause:1200 },
-      { speaker:'Lord Oro', text:'You have been here before.', pause:800 },
-      { speaker:'Lord Oro', text:'You are not the same person who was here last time.', pause:1000 },
-      { speaker:'Lord Oro', text:'nonsensemedianetwork.com', pause:2000 },
-    ]
-  },
-  {
-    id:'pip_secret',
-    title:"Pip's Secret Fact",
-    character:'pip',
-    charLabel:'Pip',
-    duration:'~20 sec',
-    emoji:'🤖',
-    bg:'bg-circuit',
-    ctaLine:'"Pip says: the gold is already in there. You just haven\'t dug that far yet."',
-    scenes:[
-      { speaker:'', text:'', pause:800, showTitle:true },
-      { speaker:'Pip', text:'GREETINGS. I am Pip.', pause:600 },
-      { speaker:'Pip', text:'I have a 98.7% chance of having information you will find useful.', pause:800 },
-      { speaker:'Pip', text:'In The Collector, Lord Oro cannot be caught.', pause:600 },
-      { speaker:'Pip', text:'He appears after you complete the full Grimoire.', pause:600 },
-      { speaker:'Pip', text:'He speaks one line.', pause:500 },
-      { speaker:'Pip', text:'He always escapes.', pause:800 },
-      { speaker:'Pip', text:'My optical sensors find this logically pleasing.', pause:1000 },
-      { speaker:'Pip', text:'Enter the mine at nonsensemedianetwork.com', pause:1500 },
-    ]
-  },
-  {
-    id:'nayla_instinct',
-    title:"Nayla's Instinct",
-    character:'nayla',
-    charLabel:'Nayla',
-    duration:'~20 sec',
-    emoji:'🦁',
-    bg:'bg-jungle',
-    ctaLine:'"She didn\'t ask if the world was safe. She asked if it was real."',
-    scenes:[
-      { speaker:'', text:'', pause:1000, showTitle:true },
-      { speaker:'Nayla', text:'She didn\'t need anyone to believe in her.', pause:700 },
-      { speaker:'Nayla', text:'She believed enough for all of them.', pause:800 },
-      { speaker:'Nayla', text:'The threshold was just a door.', pause:600 },
-      { speaker:'Nayla', text:'The world on the other side was real.', pause:700 },
-      { speaker:'Nayla', text:'That was the only question that mattered.', pause:900 },
-      { speaker:'Nayla', text:'Her story continues at nonsensemedianetwork.com', pause:1500 },
-    ]
-  },
-  {
-    id:'ivy_gem',
-    title:"Ivy's Gem Advice",
-    character:'ivy',
-    charLabel:'Ivy Martin',
-    duration:'~20 sec',
-    emoji:'💎',
-    bg:'bg-workshop',
-    ctaLine:'"Every gem has a story. This one says it wants to go home with you."',
-    scenes:[
-      { speaker:'', text:'', pause:800, showTitle:true },
-      { speaker:'Ivy', text:'Welcome back.', pause:500 },
-      { speaker:'Ivy', text:'I saved something special —', pause:500 },
-      { speaker:'Ivy', text:'I had a feeling you\'d be in today.', pause:700 },
-      { speaker:'Ivy', text:'The ruby with the fracture?', pause:500 },
-      { speaker:'Ivy', text:'That\'s where the light gets in.', pause:600 },
-      { speaker:'Ivy', text:'Just like us.', pause:900 },
-      { speaker:'Ivy', text:'Find your gem at nonsensemedianetwork.com', pause:1500 },
-    ]
-  },
-  {
-    id:'oro_mine',
-    title:'The Mine Breathes',
-    character:'oro',
-    charLabel:'Lord Oro',
-    duration:'~20 sec',
-    emoji:'⛏️',
-    bg:'bg-doorway',
-    ctaLine:'"Keep the lamp lit. The shadows are hungry tonight."',
-    scenes:[
-      { speaker:'', text:'', pause:1000, showTitle:true },
-      { speaker:'Lord Oro', text:'Every day begins in darkness.', pause:700 },
-      { speaker:'Lord Oro', text:'Every miner who descends', pause:500 },
-      { speaker:'Lord Oro', text:'must light their own way.', pause:800 },
-      { speaker:'Lord Oro', text:'This is yours.', pause:1000 },
-      { speaker:'Lord Oro', text:'The lantern is lit at nonsensemedianetwork.com', pause:1800 },
-    ]
-  },
+  { id:'oro_warning', title:"Lord Oro's Warning", character:'oro', charLabel:'Lord Oro', emoji:'👁️', ctaLine:'"The goldmine is within. Everything you seek, you carry."', scenes:[{ speaker:'Lord Oro', text:'The mine is not a metaphor.', pause:1000 }, { speaker:'Lord Oro', text:'The mine is the thing itself — your interior world.', pause:1200 }] },
+  { id:'pip_fact', title:"Pip's System Data", character:'pip', charLabel:'Pip', emoji:'🤖', ctaLine:'"Logic suggests that your potential is under-extracted."', scenes:[{ speaker:'Pip', text:'ANALYZING SYSTEM...', pause:1000 }, { speaker:'Pip', text:'The gold veins are 98% more efficient than last cycle.', pause:1200 }] }
 ];
 
-// ── RENDER REELS ──────────────────────────────────────────────────────
 function renderReels() {
   const grid = document.getElementById('reelGrid');
   grid.innerHTML = SHORTS.map(s => `
     <div class="reel-wrap" onclick="playShort('${s.id}')">
       <div class="reel">
-        <div class="reel-spokes">
-          ${[0,45,90,135].map(deg=>`<div class="reel-spoke" style="transform:rotate(${deg}deg) translateX(-50%)"></div>`).join('')}
-        </div>
+        ${[0,45,90,135].map(deg=>`<div class="reel-spoke" style="transform:rotate(${deg}deg) translateX(-50%)"></div>`).join('')}
         <div class="reel-center">${s.emoji}</div>
       </div>
       <div class="reel-label"><em>${s.title}</em></div>
       <div class="reel-char">${s.charLabel}</div>
-      <div class="reel-dur">${s.duration}</div>
     </div>`).join('');
 }
 
-// ── PLAY SHORT ────────────────────────────────────────────────────────
-let currentShort = null;
-let sceneIdx = 0;
-let playing = false;
 let aborted = false;
-
-function playShort(id) {
+async function playShort(id) {
   const short = SHORTS.find(s=>s.id===id);
   if(!short) return;
-  currentShort = short;
-  sceneIdx = 0;
   aborted = false;
-
-  // Setup scene
-  document.getElementById('sceneBg').className = `scene-bg ${short.bg}`;
-  document.getElementById('titleCard').classList.remove('hidden');
-  document.getElementById('tcTitle').innerHTML = `"<em>${short.title}</em>"`;
-  document.getElementById('tcChar').textContent = short.charLabel + ' — NMN';
-  document.getElementById('ctaLine').textContent = short.ctaLine;
-  document.getElementById('ctaOverlay').classList.remove('show');
-  document.getElementById('dialogueBox').style.opacity = '0';
-  document.getElementById('progressFill').style.width = '0%';
-
-  // Show correct character elements
-  const isOro = short.character === 'oro';
-  document.getElementById('doorframe').style.display = isOro ? 'block' : 'none';
-  document.getElementById('oroShadow').style.display = isOro ? 'block' : 'none';
-  document.getElementById('oroEyes').style.display = isOro ? 'flex' : 'none';
-  document.getElementById('character').style.display = isOro ? 'none' : 'block';
-  document.getElementById('lanternLight').style.display = isOro ? 'block' : 'none';
-
-  // Character emoji
-  const charEmojis = { pip:'🤖', nayla:'🦁', ivy:'💎' };
-  if(!isOro) document.getElementById('character').textContent = charEmojis[short.character] || '⬡';
-
   document.getElementById('cinema').classList.add('open');
-  document.body.style.overflow = 'hidden';
-
-  setTimeout(() => runShort(short), 800);
-}
-
-async function runShort(short) {
-  playing = true;
-  const totalScenes = short.scenes.length;
-
-  // Hide title card after first pause
-  await sleep(1200);
-  if(aborted) return;
-  document.getElementById('titleCard').classList.add('hidden');
-  document.getElementById('dialogueBox').style.opacity = '1';
-
-  for(let i=0; i<short.scenes.length; i++) {
-    if(aborted) return;
-    const scene = short.scenes[i];
-    if(scene.showTitle) continue;
-
-    document.getElementById('dialogueSpeaker').textContent = scene.speaker;
-    document.getElementById('progressFill').style.width = ((i/totalScenes)*100)+'%';
-
-    await typeDialogue(scene.text, short.character);
-    if(aborted) return;
-    await sleep(scene.pause || 700);
+  document.getElementById('character').textContent = short.emoji;
+  document.getElementById('ctaOverlay').style.display = 'none';
+  
+  for(let scene of short.scenes) {
+      if(aborted) return;
+      document.getElementById('dialogueSpeaker').textContent = scene.speaker;
+      await typeDialogue(scene.text, short.character);
+      await new Promise(r => setTimeout(r, scene.pause));
   }
-
-  if(aborted) return;
-  document.getElementById('progressFill').style.width = '100%';
-  playing = false;
-  showCTA();
+  
+  document.getElementById('ctaLine').textContent = short.ctaLine;
+  document.getElementById('ctaOverlay').style.display = 'flex';
 }
 
-function showCTA() {
-  document.getElementById('dialogueBox').style.opacity = '0';
-  setTimeout(()=>document.getElementById('ctaOverlay').classList.add('show'), 400);
-}
-
-function skipToEnd() {
-  aborted = true;
-  playing = false;
-  setTimeout(showCTA, 200);
-}
-
-function replayShort() {
-  if(currentShort) {
-    document.getElementById('ctaOverlay').classList.remove('show');
-    playShort(currentShort.id);
+async function typeDialogue(text, char) {
+  const el = document.getElementById('dialogueText');
+  el.textContent = "";
+  for(let i=0; i<text.length; i++) {
+    if(aborted) break;
+    el.textContent += text[i];
+    playBeep(char);
+    await new Promise(r => setTimeout(r, 50));
   }
 }
 
-function closeCinema() {
-  aborted = true;
-  playing = false;
-  document.getElementById('cinema').classList.remove('open');
-  document.body.style.overflow = '';
+function closeCinema() { aborted = true; document.getElementById('cinema').classList.remove('open'); }
+function replayShort() { /* Logic here */ }
+
+function syncHUD() {
+  try {
+    const loreCount = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]').length;
+    document.getElementById('dgLore').textContent = loreCount;
+    if(window.NMNWallet) document.getElementById('dgGold').textContent = NMNWallet.get().gold.toLocaleString();
+  } catch(e) {}
 }
 
-// Tap dialogue box to advance (future: per-scene advance)
-document.getElementById('dialogueBox').addEventListener('click', ()=>{
-  if(!playing) showCTA();
-});
-
-renderReels();
+window.onload = () => { renderReels(); syncHUD(); };
 </script>
 
-<script id="nmn-glow">
-(function(){
-  var r=document.createElement('div');
-  r.id='pickaxe-glow';
-  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
-  document.body.appendChild(r);
-  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
-  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
-  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
-})();
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(function(registration) {
-      console.log('NMN SW registered with scope:', registration.scope);
-    })
-    .catch(function(err){
-      console.log('NMN SW error:', err);
-    });
-}
-</script>
 </body>
 </html>
