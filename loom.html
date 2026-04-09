@@ -3,129 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-<title>Weaver's Loom — NMN</title>
-<link rel="stylesheet" href="nmn-theme.css">
-<style>
-body{padding-top:56px;overflow:hidden;background:var(--coal);}
-.game-wrap{max-width:820px;margin:0 auto;padding:.75rem 1rem}
-.hud{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding:.5rem .75rem;background:rgba(0,0,0,.5);border:1px solid rgba(255,215,0,.1);margin-bottom:8px}
-.hud-stat{font-family:var(--font-pixel);font-size:.46rem;color:var(--gold)}
-.hud-stat span{color:var(--cream)}
-.canvas-wrap{position:relative;background:#070605;border:2px solid rgba(255,215,0,.2);box-shadow:inset 0 0 40px rgba(0,0,0,.8)}
-canvas{display:block;width:100%;image-rendering:pixelated}
-.controls{display:flex;gap:6px;padding:.5rem .75rem;background:rgba(0,0,0,.4);border:1px solid rgba(255,215,0,.08);border-top:none;flex-wrap:wrap}
-.ctrl-btn{font-family:var(--font-pixel);font-size:.38rem;background:var(--shaft);color:var(--muted);border:1px solid rgba(255,215,0,.2);padding:5px 10px;letter-spacing:.05em;transition:all .2s;cursor:pointer;}
-.ctrl-btn:hover{color:var(--gold);border-color:var(--gold);background:rgba(255,215,0,0.1);}
-.overlay{position:absolute;inset:0;background:rgba(7,6,5,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;z-index:10}
-.overlay.hidden{display:none}
-.ov-title{font-family:var(--font-display);font-size:clamp(1.4rem,4vw,2.2rem);color:var(--gold);text-shadow:0 0 30px rgba(255,215,0,.4);text-align:center}
-.ov-sub{font-family:var(--font-pixel);font-size:.4rem;color:var(--muted);text-align:center;line-height:2.2;max-width:340px}
-.ov-btn{font-family:var(--font-pixel);font-size:.48rem;background:var(--gold);color:var(--coal);border:none;padding:.75rem 2rem;letter-spacing:.1em;transition:all .2s;margin-top:.5rem;cursor:pointer;}
-.ov-btn:hover{background:#fff;box-shadow:0 0 25px rgba(255,215,0,.7)}
-.ov-stat{font-family:var(--font-pixel);font-size:.52rem;color:var(--cream);text-align:center}
-.ov-stat strong{color:var(--gold)}
-.gem-row{display:flex;gap:4px}
-.gem-pip{width:14px;height:14px;border:1px solid rgba(255,215,0,.3);background:var(--shaft);font-size:7px;display:flex;align-items:center;justify-content:center;transition:all .2s;color:transparent;}
-.gem-pip.lit{border-color:var(--gold);background:#1a1500;box-shadow:0 0 6px var(--gold);color:var(--gold);}
-</style>
+<title>Weaver's Loom — NMN Retro</title>
 
-<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
+
+<link rel="stylesheet" href="nmn-theme.css">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #FFD700; --gb: #e8b84b; --gd: #8B6914;
+  --coal: #050308; --shaft: #08060A; --rock: #0A080C;
+  --cream: #E8E0D0; --neon-green: #00FF88;
+  --font-pixel: 'Press Start 2P', cursive;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; background: var(--coal); }
+
+body {
+  font-family: var(--font-pixel);
+  color: var(--cream);
+  display: flex; flex-direction: column;
+  background-image: 
+    linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
+  background-size: 32px 32px;
+  padding-bottom: 65px !important;
+}
+
+header {
+  padding: 1rem 2rem; border-bottom: 2px solid var(--gd);
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(5,3,14,.95); z-index: 1000; flex-shrink: 0;
+}
+.logo { color: var(--gold); font-size: .65rem; text-decoration: none; text-shadow: 0 0 10px rgba(255,215,0,.4); }
+.back-btn { font-size: .45rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+.back-btn:hover { color: var(--gold); }
+
+.game-wrap { max-width: 820px; margin: 0 auto; padding: .75rem 1rem; flex: 1; display: flex; flex-direction: column; }
+
+.hud {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1rem; background: rgba(5,3,8,0.9);
+  border: 1px solid rgba(255,215,0,0.15); margin-bottom: 10px; z-index: 50;
+}
+.hud-stat { font-size: .45rem; color: var(--gd); display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.hud-val { color: var(--gold); font-size: 0.8rem; text-shadow: 0 0 10px rgba(255,215,0,0.3); }
+
+.canvas-wrap {
+  position: relative; flex: 1; background: #000; border: 2px solid var(--gd);
+  box-shadow: inset 0 0 40px rgba(0,0,0,1), 0 0 30px rgba(255,215,0,0.1);
+  min-height: 300px;
+}
+canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+
+.overlay {
+  position: absolute; inset: 0; background: rgba(5,3,8,.95); 
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; z-index: 10;
+}
+.overlay.hidden { display: none; }
+.ov-title { font-size: 1.5rem; color: var(--gold); text-shadow: 0 0 20px rgba(255,215,0,.5); text-align: center; }
+.ov-sub { font-size: .45rem; color: var(--cream); text-align: center; line-height: 2; max-width: 400px; }
+
+.btn {
+  padding: 0.8rem 1.5rem; font-size: 0.5rem; letter-spacing: 0.1em;
+  text-transform: uppercase; cursor: pointer; border: none; transition: 0.3s;
+}
+.btn-gold { background: var(--gold); color: #000; }
+.btn-gold:hover { background: #fff; box-shadow: 0 0 20px rgba(255,215,0,.6); transform: scale(1.05); }
+
+.controls { display: flex; gap: 10px; padding: 1rem; background: rgba(5,3,8,0.9); border-top: 1px solid var(--gd); }
+.ctrl-btn { background: #111; border: 1px solid var(--gd); color: var(--gd); padding: 8px 15px; font-size: 0.4rem; cursor: pointer; transition: 0.2s; }
+.ctrl-btn:hover { color: var(--gold); border-color: var(--gold); }
+
+.depth-gauge {
+  position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:92%!important; height:42px!important; background:rgba(12,10,7,.88)!important;
+  border:1px solid rgba(255,215,0,.4)!important; border-radius:22px!important; padding:0 18px!important;
+  z-index:9999!important; backdrop-filter:blur(4px)!important; display:flex!important; align-items:center!important;
+  justify-content:center!important; gap:1.2rem!important; box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+}
+</style>
 
 </head>
 <body>
+
 <script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
-<script src="nmn-scene.js"></script>
 
-<header style="padding:.8rem 2rem;border-bottom:1px solid rgba(255,215,0,.15);display:flex;justify-content:space-between;align-items:center;background:rgba(12,10,7,.95);">
-  <a href="index.html" style="font-family:var(--font-serif);font-style:italic;color:var(--gold);font-size:.95rem;text-decoration:none">NMN — Lord Oro</a>
-  <a href="games.html" style="font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none">← Recreation Hall</a>
+<header>
+  <a href="index.html" class="logo">NMN — LORD ORO</a>
+  <a href="games.html" class="back-btn">← RETURN TO FORGE</a>
 </header>
 
 <div class="game-wrap">
   <div class="hud">
-    <span class="hud-stat">SCORE <span id="h-score">0</span></span>
-    <span class="hud-stat">LVL <span id="h-level">1</span></span>
-    <span class="hud-stat">MOVES <span id="h-moves">20</span></span>
-    <span class="hud-stat">COMBO <span id="h-combo">x1</span></span>
-    <div class="gem-row" title="3 Gems = 100 Gold">
-      <div class="gem-pip" id="gp0">◆</div><div class="gem-pip" id="gp1">◆</div>
-      <div class="gem-pip" id="gp2">◆</div><div class="gem-pip" id="gp3">◆</div>
-      <div class="gem-pip" id="gp4">◆</div>
-    </div>
+    <div class="hud-stat">SCORE <span class="hud-val" id="h-score">0</span></div>
+    <div class="hud-stat">DEPTH <span class="hud-val" id="h-level">1</span></div>
+    <div class="hud-stat">MOVES <span class="hud-val" id="h-moves">20</span></div>
+    <div class="hud-stat">COMBO <span class="hud-val" id="h-combo">x1</span></div>
   </div>
 
   <div class="canvas-wrap">
     <canvas id="cv"></canvas>
+    
     <div class="overlay" id="ov-start">
-      <p class="ov-title">Weaver's Loom</p>
-      <p class="ov-sub">Swap adjacent tiles to match 3 or more ore veins. Chain matches multiply your gold. Clear the board before moves run out.</p>
-      <button class="ov-btn" onclick="startGame()">⛏ WEAVE THE ORE</button>
+      <p class="ov-title">WEAVER'S LOOM</p>
+      <p class="ov-sub">Align the elemental ore. Match 3 or more to extract gold. Chain reactions stabilize the mine walls.</p>
+      <button class="btn btn-gold" onclick="startGame()">⛏ START LOOM</button>
     </div>
+
     <div class="overlay hidden" id="ov-over">
-      <p class="ov-title">Loom Stopped</p>
-      <div class="ov-stat">SCORE <strong id="final-score">0</strong></div>
-      <div class="ov-stat">GOLD EARNED <strong id="final-gold">0</strong> ⛏</div>
-      <button class="ov-btn" onclick="startGame()">⛏ REWEAVE</button>
-      <a href="gemshop.html" style="font-family:var(--font-pixel);font-size:.38rem;color:var(--muted);text-decoration:none;margin-top:1rem;display:inline-block;border:1px solid rgba(255,215,0,0.3);padding:0.5rem 1rem;">💎 ENTER GEM SHOP →</a>
+      <p class="ov-title">LOOM HALTED</p>
+      <div style="text-align: center; margin: 1rem 0;">
+          <div class="hud-stat" style="margin-bottom:10px;">FINAL SCORE <strong class="hud-val" id="final-score">0</strong></div>
+          <div class="hud-stat">GOLD EARNED <strong class="hud-val" id="final-gold">0</strong></div>
+      </div>
+      <button class="btn btn-gold" onclick="startGame()">⛏ REWEAVE</button>
+      <a href="gemshop.html" class="btn" style="color:var(--gd); border:1px solid var(--gd); margin-top:10px; text-decoration:none; display:inline-block; font-size:0.4rem;">💎 GEM SHOP →</a>
     </div>
   </div>
 
   <div class="controls">
-    <button class="ctrl-btn" onclick="startGame()">▶ NEW GAME</button>
-    <button class="ctrl-btn" onclick="convertGems()">⚗ CONVERT GEMS</button>
-    <span style="font-family:var(--font-pixel);font-size:.32rem;color:var(--faint);margin-left:auto;align-self:center">CLICK/TAP TO SWAP TILES</span>
+    <button class="ctrl-btn" onclick="startGame()">▶ RESET</button>
+    <button class="ctrl-btn" onclick="if(window.NMNWallet) NMNWallet.convertGems()">⚗ CONVERT</button>
+    <span style="font-size:.32rem; color:var(--muted); margin-left:auto; align-self:center;">CLICK GEMS TO SWAP</span>
   </div>
+</div>
+
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat" style="font-size:0.4rem; color:var(--gd); text-transform:uppercase;">
+      <span style="color:var(--gold); font-size:0.6rem; margin-right:5px;" id="dgGold">0</span> Gold Collected
+  </div>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <a href="lorevault.html" style="font-size:0.4rem; color:var(--gd); text-decoration:none; text-transform:uppercase;">📜 Vault</a>
+  <a href="lantern.html" style="font-size:0.4rem; color:var(--gd); text-decoration:none; text-transform:uppercase; margin-left:15px;">🕯️ Lantern</a>
 </div>
 
 <script>
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
 
+const bgMine = new Image(); bgMine.src = 'goldmine_stable.jpg';
+const bgGlitch = new Image(); bgGlitch.src = 'obsidian_glitched.jpg';
+
 function resize(){
-  const W = Math.min(cv.parentElement.clientWidth, 820);
-  cv.width = W; 
-  cv.height = Math.floor(W * 0.6);
-  cv.style.width = W + 'px'; 
-  cv.style.height = cv.height + 'px';
+  const wrap = cv.parentElement;
+  cv.width = wrap.clientWidth; 
+  cv.height = wrap.clientHeight;
 }
-resize(); 
 window.addEventListener('resize', resize);
+resize();
 
-// Lore-themed ore colors
-const COLORS = [
-  '#FF2020', // Pyro's Flame
-  '#1E90FF', // Calypso's Tide
-  '#FFD700', // Lord Oro's Gold
-  '#20D050', // Ivy's Emerald
-  '#CC22FF', // Juni's Amethyst
-  '#FF8C00'  // Nayla's Ember
-];
-const ROWS = 8, COLS = 11;
-const TILE = () => Math.min(Math.floor(cv.width/COLS), Math.floor(cv.height/ROWS));
+const COLORS = ['#FF2020', '#1E90FF', '#FFD700', '#20D050', '#CC22FF', '#FF8C00'];
+const ROWS = 8, COLS = 10;
+const TILE = () => Math.floor(Math.min(cv.width/COLS, cv.height/ROWS));
 
-let G = null, _locked = false;
-
-function initState(){
-  return {
-    score: 0, level: 1, cycle: 1, moves: 20, combo: 1,
-    grid: makeGrid(), sel: null,
-    animQueue: [], running: true,
-    sessionGold: 0,
-  };
-}
+let G = null;
 
 function makeGrid(){
   const g = Array(ROWS).fill(0).map(() =>
     Array(COLS).fill(0).map(() => ({c: COLORS[Math.floor(Math.random()*COLORS.length)], scale: 1, flash: 0}))
   );
-  // Ensure no pre-existing matches
   for(let r=0; r<ROWS; r++) {
       for(let c=0; c<COLS; c++){
-        let attempts = 0;
-        while(hasMatchAt(g, r, c) && attempts < 10){
+        while(hasMatchAt(g, r, c)){
           g[r][c].c = COLORS[Math.floor(Math.random()*COLORS.length)];
-          attempts++;
         }
       }
   }
@@ -140,145 +186,79 @@ function hasMatchAt(g, r, c){
 }
 
 function startGame(){
-  if(_locked) return; 
-  _locked = true;
-  
-  if (window.NMNScene) NMNScene.destroy();
-  G = initState();
-  
+  G = {
+    score: 0, level: 1, moves: 20, combo: 1,
+    grid: makeGrid(), sel: null,
+    running: true, sessionGold: 0
+  };
   document.getElementById('ov-start').classList.add('hidden');
   document.getElementById('ov-over').classList.add('hidden');
   updateHUD();
-  
-  if (window.NMNScene) {
-      NMNScene.raf(loop);
-  } else {
-      requestAnimationFrame(loop);
-  }
-  
-  _locked = false;
 }
 
-// ── INPUT ──
-const handleInput = (e) => {
+function handleClick(e){
   if(!G || !G.running) return;
+  const rect = cv.getBoundingClientRect();
   const T = TILE();
-  const OX = Math.floor((cv.width - COLS*T)/2);
-  const OY = Math.floor((cv.height - ROWS*T)/2);
-  const r = cv.getBoundingClientRect();
+  const mx = (e.clientX || e.touches[0].clientX) - rect.left;
+  const my = (e.clientY || e.touches[0].clientY) - rect.top;
   
-  // Handle both mouse and touch events
-  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-  
-  const mx = (clientX - r.left) * (cv.width/r.width);
-  const my = (clientY - r.top) * (cv.height/r.height);
-  
-  const col = Math.floor((mx - OX)/T);
-  const row = Math.floor((my - OY)/T);
-  
+  const col = Math.floor(mx / T);
+  const row = Math.floor(my / T);
   if(col < 0 || col >= COLS || row < 0 || row >= ROWS) return;
-  handleClick(row, col);
-};
 
-cv.addEventListener('click', handleInput);
-cv.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e); }, {passive: false});
-
-function handleClick(row, col){
   if(!G.sel){
     G.sel = {row, col};
-    G.grid[row][col].scale = 1.15;
-    return;
-  }
-  const {row: r2, col: c2} = G.sel;
-  G.grid[r2][c2].scale = 1;
-  
-  if(row === r2 && col === c2) { G.sel = null; return; }
-  
-  if(Math.abs(row-r2) + Math.abs(col-c2) === 1){
-    swap(row, col, r2, c2);
-    const cleared = clearMatches();
-    
-    if(cleared > 0){
-      G.combo++;
-      const pts = cleared * 15 * G.combo * G.cycle;
-      G.score += pts;
+  } else {
+    const r2 = G.sel.row, c2 = G.sel.col;
+    if(Math.abs(row-r2) + Math.abs(col-c2) === 1){
+      const t1 = G.grid[row][col], t2 = G.grid[r2][c2];
+      G.grid[row][col] = t2; G.grid[r2][c2] = t1;
       
-      const goldEarned = Math.ceil(pts/8);
-      G.sessionGold += goldEarned;
-      
-      if(window.NMNWallet) {
-          NMNWallet.addGold(goldEarned);
-          NMNWallet.addXP(cleared * 8);
-          // Award up to 3 gems based on combo
-          for(let i=0; i<Math.min(cleared, 3); i++) NMNWallet.addGem();
+      const cleared = processBoard();
+      if(cleared === 0) { // swap back
+        G.grid[row][col] = t1; G.grid[r2][c2] = t2;
+      } else {
+        G.moves--;
+        if(G.moves <= 0) endGame();
       }
-      
-      checkLevelUp();
-    } else {
-      swap(row, col, r2, c2); // swap back if no match
-      G.combo = 1;
     }
-    
-    G.moves--;
-    
-    if(G.moves <= 0){
-      G.running = false;
-      document.getElementById('final-score').textContent = G.score;
-      document.getElementById('final-gold').textContent = G.sessionGold;
-      document.getElementById('ov-over').classList.remove('hidden');
-    }
-    updateHUD();
+    G.sel = null;
   }
-  G.sel = null;
+  updateHUD();
 }
 
-function swap(r1, c1, r2, c2){
-  const tmp = G.grid[r1][c1];
-  G.grid[r1][c1] = G.grid[r2][c2];
-  G.grid[r2][c2] = tmp;
-}
+cv.addEventListener('mousedown', handleClick);
+cv.addEventListener('touchstart', (e) => { e.preventDefault(); handleClick(e); });
 
-function clearMatches(){
-  const g = G.grid; 
-  let cleared = 0; 
+function processBoard(){
+  let totalCleared = 0;
+  const g = G.grid;
   const toRemove = new Set();
-  
-  // Horizontal
+
   for(let r=0; r<ROWS; r++) {
-      for(let c=0; c<COLS-2; c++){
-        if(g[r][c].c && g[r][c].c === g[r][c+1].c && g[r][c].c === g[r][c+2].c){
-          toRemove.add(`${r},${c}`); 
-          toRemove.add(`${r},${c+1}`); 
-          toRemove.add(`${r},${c+2}`);
-        }
+    for(let c=0; c<COLS-2; c++){
+      if(g[r][c].c === g[r][c+1].c && g[r][c].c === g[r][c+2].c){
+        toRemove.add(`${r},${c}`); toRemove.add(`${r},${c+1}`); toRemove.add(`${r},${c+2}`);
       }
+    }
   }
-  // Vertical
   for(let r=0; r<ROWS-2; r++) {
-      for(let c=0; c<COLS; c++){
-        if(g[r][c].c && g[r][c].c === g[r+1][c].c && g[r][c].c === g[r+2][c].c){
-          toRemove.add(`${r},${c}`); 
-          toRemove.add(`${r+1},${c}`); 
-          toRemove.add(`${r+2},${c}`);
-        }
+    for(let c=0; c<COLS; c++){
+      if(g[r][c].c === g[r+1][c].c && g[r][c].c === g[r+2][c].c){
+        toRemove.add(`${r},${c}`); toRemove.add(`${r+1},${c}`); toRemove.add(`${r+2},${c}`);
       }
+    }
   }
-  
-  toRemove.forEach(k => {
-    const [r, c] = k.split(',').map(Number);
-    g[r][c].flash = 8; 
-    cleared++;
-  });
-  
-  // Drop and refill
-  setTimeout(() => {
+
+  if(toRemove.size > 0){
+    totalCleared = toRemove.size;
     toRemove.forEach(k => {
       const [r,c] = k.split(',').map(Number);
       g[r][c].c = null;
     });
     
-    // Gravity
+    // Gravity & Refill
     for(let c=0; c<COLS; c++){
       let empty = ROWS-1;
       for(let r=ROWS-1; r>=0; r--){
@@ -288,147 +268,68 @@ function clearMatches(){
           empty--;
         }
       }
-      for(let r=empty; r>=0; r--) {
-          g[r][c] = {c: COLORS[Math.floor(Math.random()*COLORS.length)], scale: 1, flash: 0};
-      }
+      for(let r=empty; r>=0; r--) g[r][c] = {c: COLORS[Math.floor(Math.random()*COLORS.length)], scale: 1};
     }
-  }, 180);
-  
-  return cleared;
-}
 
-function checkLevelUp(){
-  if(G.score >= G.level * 600 * G.cycle){
-    G.level++; 
-    if(G.level > 8){ G.level=1; G.cycle++; }
-    G.moves = Math.min(G.moves + 5, 30);
-    if(window.nmnToast) nmnToast(`⬆ LEVEL ${G.level} — LOOM DEEPENS`);
+    const goldVal = totalCleared * 2 * G.level;
+    G.score += totalCleared * 10;
+    G.sessionGold += goldVal;
+    if(window.NMNWallet) NMNWallet.addGold(goldVal);
+    
+    // Deeper progression logic
+    if(G.score > G.level * 500) G.level++;
+
+    processBoard(); // Recursive check for cascades
   }
+  return totalCleared;
 }
 
-function convertGems() {
-    if(window.NMNWallet) {
-        NMNWallet.convertGems();
-        updateHUD();
-    }
+function endGame(){
+  G.running = false;
+  document.getElementById('final-score').textContent = G.score;
+  document.getElementById('final-gold').textContent = G.sessionGold;
+  document.getElementById('ov-over').classList.remove('hidden');
 }
 
-// ── DRAW ──
 function draw(){
   const W = cv.width, H = cv.height;
-  ctx.fillStyle = '#070605'; 
-  ctx.fillRect(0, 0, W, H);
-  
-  // Background grid texture
-  ctx.strokeStyle = 'rgba(255,215,0,.03)'; 
-  ctx.lineWidth = 1;
-  for(let x=0; x<W; x+=24) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
-  for(let y=0; y<H; y+=24) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+  ctx.fillStyle = '#000'; ctx.fillRect(0,0,W,H);
 
-  if(!G) return;
-  
-  const T = TILE();
-  const OX = Math.floor((W - COLS*T)/2);
-  const OY = Math.floor((H - ROWS*T)/2);
+  if(G){
+    let glitchFactor = (G.level - 1) / 7;
+    ctx.save();
+    ctx.globalAlpha = (1 - glitchFactor) * 0.4;
+    if(bgMine.complete) ctx.drawImage(bgMine, 0, 0, W, H);
+    ctx.globalAlpha = glitchFactor * 0.4;
+    if(bgGlitch.complete) ctx.drawImage(bgGlitch, 0, 0, W, H);
+    ctx.restore();
 
-  // Tiles
-  for(let r=0; r<ROWS; r++) {
+    const T = TILE();
+    for(let r=0; r<ROWS; r++){
       for(let c=0; c<COLS; c++){
         const tile = G.grid[r][c];
         if(!tile.c) continue;
-        
-        const tx = OX + c*T, ty = OY + r*T;
-        const s = tile.scale || 1;
-        const pad = Math.floor(T*(1-s)/2);
-        const sz = T - 4;
-
-        // Flash
-        if(tile.flash > 0){
-          tile.flash--;
-          ctx.fillStyle = 'rgba(255,255,255,0.6)';
-          ctx.fillRect(tx+2, ty+2, sz, sz);
-        }
-        
-        // Tile Base
         ctx.fillStyle = tile.c;
-        ctx.fillRect(tx+2+pad, ty+2+pad, sz-pad*2, sz-pad*2);
-        
-        // Shine
-        ctx.fillStyle = 'rgba(255,255,255,.22)';
-        ctx.fillRect(tx+3+pad, ty+3+pad, Math.floor(sz*.3), Math.floor(sz*.3));
-        
-        // Dark shadow
-        ctx.fillStyle = 'rgba(0,0,0,.25)';
-        ctx.fillRect(tx+sz-4+pad, ty+sz-4+pad, 6, 6);
-
-        // Selected outline
+        ctx.fillRect(c*T+2, r*T+2, T-4, T-4);
         if(G.sel && G.sel.row === r && G.sel.col === c){
-          ctx.strokeStyle = '#fff'; 
-          ctx.lineWidth = 2;
-          ctx.strokeRect(tx+2, ty+2, sz, sz);
+          ctx.strokeStyle = '#FFF'; ctx.lineWidth = 2;
+          ctx.strokeRect(c*T+2, r*T+2, T-4, T-4);
         }
       }
+    }
   }
-
-  // Combo display
-  if(G.combo > 1){
-    ctx.save(); 
-    ctx.globalAlpha = Math.min(1, G.combo*.2);
-    ctx.fillStyle = '#FFD700'; 
-    ctx.font = `${Math.min(G.combo*2, 12)}px "Press Start 2P"`;
-    ctx.textAlign = 'center'; 
-    ctx.fillText(`${G.combo}x COMBO CHAIN`, W/2, 18);
-    ctx.restore(); 
-    ctx.textAlign = 'left';
-  }
-}
-
-function loop(){
-  draw();
-  if(window.NMNScene) {
-      NMNScene.raf(loop);
-  } else {
-      requestAnimationFrame(loop);
-  }
+  requestAnimationFrame(draw);
 }
 
 function updateHUD(){
+  if(!G) return;
   document.getElementById('h-score').textContent = G.score;
   document.getElementById('h-level').textContent = G.level;
   document.getElementById('h-moves').textContent = G.moves;
-  document.getElementById('h-combo').textContent = 'x' + G.combo;
-  
-  if (window.NMNWallet) {
-      const w = NMNWallet.get();
-      const gemCount = w.gems || 0;
-      for(let i=0; i<5; i++){
-        const p = document.getElementById('gp'+i);
-        if(p) p.classList.toggle('lit', i < gemCount);
-      }
-  }
+  if(window.NMNWallet) document.getElementById('dgGold').textContent = NMNWallet.get().gold;
 }
 
-// initial render background
-ctx.fillStyle = '#070605'; 
-ctx.fillRect(0, 0, cv.width, cv.height);
+draw();
 </script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(function(registration) {
-      console.log('NMN SW registered with scope:', registration.scope);
-    })
-    .catch(function(err){
-      console.log('NMN SW error:', err);
-    });
-}
-</script>
-
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28;margin-top:1rem;">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
-</div>
 </body>
 </html>
