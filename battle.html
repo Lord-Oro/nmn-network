@@ -5,14 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Mine Siege — Sector 1</title>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-P5WL9XNDY8');
-</script>
-<link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
+
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
 
@@ -133,6 +129,13 @@ canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
 }
 .wind-arrow { color: var(--neon-green); font-size: 0.8rem; }
 
+.arena-bar {
+  position: absolute; top: 15px; left: 20px;
+  background: rgba(5,3,8,0.9); border: 2px solid var(--gd); cursor: pointer;
+  padding: 8px 15px; font-size: 0.5rem; color: var(--cream); z-index: 15; transition: border-color 0.2s;
+}
+.arena-bar:hover { border-color: var(--gold); }
+
 .turn-indicator {
   position: absolute; top: 15px; right: 20px;
   background: rgba(5,3,8,0.9); border: 2px solid var(--gold);
@@ -149,28 +152,10 @@ canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
 .overlay-title { font-size: 2rem; color: var(--gold); margin-bottom: 1rem; text-shadow: 0 0 20px rgba(255,215,0,0.5); }
 .overlay-sub { font-size: 0.6rem; color: var(--cream); margin-bottom: 2rem; text-align: center; line-height: 1.8; }
 .btn-group { display: flex; gap: 1rem; }
-.btn-outline { background: transparent; border: 2px solid var(--gold); color: var(--gold); padding: 0.8rem 1.5rem; font-size: 0.5rem; cursor: pointer; text-decoration: none; }
+.btn-outline { background: transparent; border: 2px solid var(--gold); color: var(--gold); padding: 0.8rem 1.5rem; font-size: 0.5rem; cursor: pointer; text-decoration: none; transition: background 0.2s;}
 .btn-outline:hover { background: rgba(255,215,0,0.1); }
 
-/* FLOATING GAUGE */
-.depth-gauge {
-  position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
-  width:auto!important; max-width:92%!important; height:42px!important; background:rgba(12,10,7,.88)!important;
-  border:1px solid rgba(255,215,0,.4)!important; border-radius:22px!important; padding:0 18px!important;
-  z-index:9999!important; backdrop-filter:blur(4px)!important; display:flex!important; align-items:center!important;
-  justify-content:center!important; gap:1.2rem!important; box-shadow:0 0 20px rgba(255,215,0,.08)!important;
-}
-.dg-stat { font-size: 0.4rem; color: var(--gd); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
-.dg-val { color: var(--gold); font-size: 0.6rem; font-family: var(--font-serif); }
-.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; pointer-events: auto!important;}
-.dg-link:hover { color: var(--gold); }
-
-/* CUSTOM CURSOR */
-body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
 </style>
-
-<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
-
 </head>
 <body>
 
@@ -179,7 +164,7 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 
 <header>
   <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="games.html" class="back-btn">← Return to Forge</a>
+  <a href="index.html" class="back-btn">← RETURN TO MINE</a>
 </header>
 
 <div class="hud">
@@ -196,6 +181,10 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 
 <div class="game-area">
   <canvas id="c"></canvas>
+
+  <div class="arena-bar" id="arenaBar" onclick="toggleArena()" style="display:none">
+    ARENA: <span id="arenaStr" style="color:var(--gold)">DEEP MINE</span>
+  </div>
 
   <div class="wind-bar" id="windBar" style="display:none">
     <span>WIND</span> <span class="wind-arrow" id="windArrow">→</span> <span id="windStr">CALM</span>
@@ -260,16 +249,10 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     <p class="overlay-sub" id="goSub"></p>
     <div class="btn-group">
       <button class="start-btn" style="margin-top:0;" onclick="resetGame()">FIGHT AGAIN</button>
-      <a href="games.html" class="btn-outline">EXIT</a>
+      <a href="minewars.html" class="btn-outline">READ ARCHIVE</a>
+      <a href="index.html" class="btn-outline" style="border-color:#444; color:#888;">EXIT</a>
     </div>
   </div>
-</div>
-
-<div class="depth-gauge" id="depthGauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
-  <span class="dg-sep" style="color:var(--faint);">⬡</span>
-  <a href="lorevault.html" class="dg-link">📜 Vault</a>
-  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
 </div>
 
 <script>
@@ -353,14 +336,39 @@ const MATCHUPS = {
   'Void': { strong: ['Crystal'], weak: ['Shadow'] }
 };
 
+// ARENA BACKGROUND LOGIC
+const ARENAS = [
+  { name: 'DEEP MINE', img: null },
+  { name: 'SECTOR ZERO', img: new Image() },
+  { name: 'PYRO ELEPHANT', img: new Image() },
+  { name: 'JUNI ELEPHANT', img: new Image() },
+  { name: 'ORID ELEPHANT', img: new Image() },
+  { name: 'HELIOS ELEPHANT', img: new Image() },
+  { name: 'OLYDIA ELEPHANT', img: new Image() },
+  { name: 'WANDERER ELEPHANT', img: new Image() }
+];
+
+ARENAS[1].img.src = 'image_0.jpg';
+ARENAS[2].img.src = 'Pyro elephant beta.jpg';
+ARENAS[3].img.src = 'Juni elephant beta.jpg';
+ARENAS[4].img.src = 'Orid elephant beta.jpg';
+ARENAS[5].img.src = 'Helios elephant beta.jpg';
+ARENAS[6].img.src = 'Olydia elephant beta.jpg';
+ARENAS[7].img.src = 'Wanderer elephant beta.jpg';
+
+let currentArena = 0;
+
+function toggleArena() {
+  currentArena = (currentArena + 1) % ARENAS.length;
+  document.getElementById('arenaStr').textContent = ARENAS[currentArena].name;
+}
+
 let W, H, gameRunning = false;
 let p1, p2, projectiles = [], particles = [], floatTexts = [];
 let wind = { x: 0, str: 'CALM' }, turn = 'player', round = 1;
 let selectedMine = -1, selectedAmmo = 0, ammoStock = [];
 let mouseX = 0, mouseY = 0;
 let screenShake = 0;
-
-// ── NEW: CENTER WALL ──
 let centerWall = { x: 0, y: 0, w: 40, h: 0 };
 
 function resize() {
@@ -391,6 +399,7 @@ function startBattle() {
   document.getElementById('windBar').style.display = 'flex';
   document.getElementById('turnIndicator').style.display = 'block';
   document.getElementById('ammoBar').style.display = 'flex';
+  document.getElementById('arenaBar').style.display = 'block';
 
   let aiMine = selectedMine;
   while (aiMine === selectedMine) aiMine = Math.floor(Math.random() * 5);
@@ -411,10 +420,9 @@ function startBattle() {
 }
 
 function generateWall() {
-  // Spawns a procedural wall in the middle to block direct shots
   centerWall.w = 30 + Math.random() * 30;
   centerWall.x = (W / 2) - (centerWall.w / 2);
-  centerWall.h = (H * 0.3) + Math.random() * (H * 0.4); // 30% to 70% of screen height
+  centerWall.h = (H * 0.3) + Math.random() * (H * 0.4); 
   centerWall.y = H - centerWall.h;
 }
 
@@ -431,7 +439,7 @@ function selectAmmo(idx) {
   document.querySelectorAll('.ammo-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
 }
 
-// FIRE MECHANIC (Uses Mouse Position)
+// FIRE MECHANIC
 canvas.addEventListener('click', () => {
   if (!gameRunning || turn !== 'player' || projectiles.length > 0) return;
   if (ammoStock[selectedAmmo].remaining <= 0) { selectAmmo(0); return; }
@@ -440,11 +448,9 @@ canvas.addEventListener('click', () => {
   const startX = p1.x + p1.w/2;
   const startY = p1.y;
   
-  // Calculate vector based on mouse pull
   const dx = mouseX - startX;
   const dy = mouseY - startY;
   
-  // Limit power
   const maxPower = 20;
   const dist = Math.min(Math.sqrt(dx*dx + dy*dy) * 0.05, maxPower);
   const angle = Math.atan2(dy, dx);
@@ -460,34 +466,25 @@ canvas.addEventListener('click', () => {
 
   if (ammoStock[selectedAmmo].remaining !== Infinity) ammoStock[selectedAmmo].remaining--;
   updateAmmoBar();
-  document.getElementById('turnIndicator').style.display = 'none'; // Hide until next turn
-  turn = 'flight'; // State change to wait for impact
+  document.getElementById('turnIndicator').style.display = 'none'; 
+  turn = 'flight'; 
 });
 
 // ENEMY AI
 function aiShoot() {
   if(!gameRunning || p2.hp <= 0) return;
-  const ammo = { ...AMMOS[Math.floor(Math.random() * 2)] }; // AI uses basic/fire
+  const ammo = { ...AMMOS[Math.floor(Math.random() * 2)] }; 
   const startX = p2.x + p2.w/2;
   const startY = p2.y;
   const targetX = p1.x + p1.w/2;
   
-  // Advanced Physics calculation to hit player over the wall
   const dist = targetX - startX;
-  const error = (Math.random() - 0.5) * 80; // AI miss factor
+  const error = (Math.random() - 0.5) * 80; 
   
-  // AI calculates height needed to clear the center wall
   const wallClearanceHeight = startY - centerWall.y + 20;
-  // Calculate required VY to reach that height (v^2 = 2*g*h)
   const neededVy = -Math.sqrt(2 * 0.3 * Math.max(wallClearanceHeight, 100)); 
-  
-  // Time in air: t = -2 * vy / g
   const timeInAir = (-2 * neededVy) / 0.3;
-  
-  // Calculate required VX to travel distance in that time
   const neededVx = (dist + error) / timeInAir;
-  
-  // Adjust for wind
   const adjustedVx = neededVx - (wind.x * (timeInAir * 0.5)); 
 
   projectiles.push({
@@ -552,7 +549,6 @@ function checkGameOver() {
         NMNWallet.addGold(goldEarned);
         NMNWallet.addXP(250);
         document.getElementById('goSub').innerHTML = `Enemy mine destroyed.<br><br><span style="color:var(--gold)">+${goldEarned} GOLD EARNED</span>`;
-        syncGauge();
     } else {
         document.getElementById('goSub').textContent = 'Your structure collapsed.';
     }
@@ -566,7 +562,6 @@ function checkGameOver() {
 function endTurn() {
   if (!gameRunning) return;
   
-  // Apply burn
   [p1, p2].forEach(p => {
     if (p.burn > 0) {
       p.hp = Math.max(0, p.hp - p.burn);
@@ -578,9 +573,8 @@ function endTurn() {
 
   if (round % 2 === 0) { randomizeWind(); generateWall(); }
   
-  turn = turn === 'flight' && p1.hp > 0 && p2.hp > 0 ? (projectiles[0]?.shooter === p1 ? 'enemy' : 'player') : 'player'; // Safety fallback
+  turn = turn === 'flight' && p1.hp > 0 && p2.hp > 0 ? (projectiles[0]?.shooter === p1 ? 'enemy' : 'player') : 'player'; 
   
-  // State machine handling
   if(projectiles.length === 0) {
       if(round % 2 !== 0) turn = 'enemy';
       else turn = 'player';
@@ -614,17 +608,14 @@ function drawMine(mine, x, y, isEnemy) {
   ctx.save();
   const m = MINES[mine.mine];
   
-  // Draw 16-bit Fort structure
-  ctx.fillStyle = '#1a1a1a'; ctx.fillRect(x, y, mine.w, mine.h); // Base
-  ctx.fillStyle = m.color; ctx.fillRect(x, y, mine.w, 4); // Roof trim
-  ctx.fillRect(x, y, 4, mine.h); ctx.fillRect(x + mine.w - 4, y, 4, mine.h); // Pillars
+  ctx.fillStyle = '#1a1a1a'; ctx.fillRect(x, y, mine.w, mine.h); 
+  ctx.fillStyle = m.color; ctx.fillRect(x, y, mine.w, 4); 
+  ctx.fillRect(x, y, 4, mine.h); ctx.fillRect(x + mine.w - 4, y, 4, mine.h); 
   
-  // Central Eye / Core
   ctx.fillStyle = '#000'; ctx.fillRect(x + mine.w/2 - 10, y + 20, 20, 20);
   ctx.fillStyle = m.color; ctx.font = '16px sans-serif'; ctx.textAlign = 'center';
   ctx.fillText(m.icon, x + mine.w/2, y + 36);
 
-  // Burn FX
   if (mine.burn > 0) {
     ctx.fillStyle = `rgba(255, 68, 68, ${0.5 + Math.random()*0.5})`;
     ctx.fillRect(x + Math.random()*mine.w, y - 10 + Math.random()*mine.h, 6, 6);
@@ -633,9 +624,20 @@ function drawMine(mine, x, y, isEnemy) {
 }
 
 function draw() {
-  ctx.fillStyle = '#050308'; ctx.fillRect(0, 0, W, H);
+  // BACKGROUND RENDERING
+  if (currentArena === 0) {
+    ctx.fillStyle = '#050308'; ctx.fillRect(0, 0, W, H);
+  } else {
+    const img = ARENAS[currentArena].img;
+    if (img.complete && img.naturalWidth !== 0) {
+      ctx.drawImage(img, 0, 0, W, H);
+      ctx.fillStyle = 'rgba(5, 3, 8, 0.75)'; 
+      ctx.fillRect(0, 0, W, H);
+    } else {
+      ctx.fillStyle = '#050308'; ctx.fillRect(0, 0, W, H);
+    }
+  }
   
-  // Screen Shake logic
   ctx.save();
   if (screenShake > 0) {
     ctx.translate((Math.random()-0.5)*screenShake, (Math.random()-0.5)*screenShake);
@@ -643,23 +645,19 @@ function draw() {
     if (screenShake < 0.5) screenShake = 0;
   }
 
-  // Draw Ground Line
   ctx.strokeStyle = '#8B6914'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(0, H - 20); ctx.lineTo(W, H - 20); ctx.stroke();
 
   if (!p1 || !p2) { ctx.restore(); return; }
 
-  // ── DRAW CENTER WALL (THE SPIRE) ──
   ctx.fillStyle = '#110a11';
   ctx.fillRect(centerWall.x, centerWall.y, centerWall.w, centerWall.h);
   ctx.strokeStyle = 'rgba(255,215,0,0.2)';
   ctx.strokeRect(centerWall.x, centerWall.y, centerWall.w, centerWall.h);
 
-  // Draw Mines
   drawMine(p1, p1.x, p1.y, false);
   drawMine(p2, p2.x, p2.y, true);
 
-  // Draw Trajectory Aiming Line (Player Turn)
   if (turn === 'player' && gameRunning && projectiles.length === 0) {
     const startX = p1.x + p1.w/2, startY = p1.y;
     const dx = mouseX - startX, dy = mouseY - startY;
@@ -673,43 +671,37 @@ function draw() {
     ctx.strokeStyle = 'rgba(255,215,0,0.4)'; ctx.setLineDash([5, 5]);
     ctx.beginPath(); ctx.moveTo(simX, simY);
     for (let i = 0; i < 30; i++) {
-      simVx += wind.x; simVy += 0.3; // gravity
+      simVx += wind.x; simVy += 0.3; 
       simX += simVx; simY += simVy;
       if (simY > H) break;
-      // Stop line if it hits the center wall
       if (simX > centerWall.x && simX < centerWall.x + centerWall.w && simY > centerWall.y) break;
       ctx.lineTo(simX, simY);
     }
     ctx.stroke(); ctx.setLineDash([]);
   }
 
-  // Update & Draw Projectiles
   let projectileDied = false;
   projectiles.forEach(p => {
-    p.vx += wind.x; p.vy += 0.3; // Gravity
+    p.vx += wind.x; p.vy += 0.3; 
     p.x += p.vx; p.y += p.vy;
 
-    // Collisions with Mines
     const t = p.shooter === p1 ? p2 : p1;
     if (p.x > t.x && p.x < t.x + t.w && p.y > t.y && p.y < t.y + t.h) {
       applyDamage(t, p.ammo, p.shooter); p.dead = true; projectileDied = true;
     }
     
-    // Collisions with Center Wall
     if (p.x > centerWall.x && p.x < centerWall.x + centerWall.w && p.y > centerWall.y) {
       spawnExplosion(p.x, p.y, p.ammo.color, false); 
       SFX.wallHit();
       p.dead = true; projectileDied = true;
     }
 
-    // Floor Collision
     if (p.y > H - 20) {
       spawnExplosion(p.x, H - 20, p.ammo.color, p.ammo.explode); 
       SFX.wallHit();
       p.dead = true; projectileDied = true;
     }
 
-    // Render projectile
     if(!p.dead) {
         ctx.fillStyle = p.ammo.color;
         ctx.beginPath(); ctx.arc(p.x, p.y, p.ammo.r, 0, Math.PI*2); ctx.fill();
@@ -719,10 +711,9 @@ function draw() {
   
   projectiles = projectiles.filter(p => !p.dead);
   if (projectileDied && projectiles.length === 0) {
-      setTimeout(endTurn, 800); // Wait a second after explosion before swapping turns
+      setTimeout(endTurn, 800); 
   }
 
-  // Particles & Text
   particles.forEach(p => {
     p.x += p.vx; p.y += p.vy; p.vy += 0.2; p.life -= 0.02;
     ctx.fillStyle = p.color; ctx.globalAlpha = Math.max(0, p.life);
@@ -752,22 +743,8 @@ function resetGame() {
   document.getElementById('windBar').style.display = 'none';
   document.getElementById('turnIndicator').style.display = 'none';
   document.getElementById('ammoBar').style.display = 'none';
+  document.getElementById('arenaBar').style.display = 'none';
   gameRunning = false;
-}
-
-function syncGauge() {
-    try {
-        if(typeof NMNWallet !== 'undefined') {
-            document.getElementById('dgGold').textContent = NMNWallet.get().gold;
-        }
-    } catch(e) {}
-}
-syncGauge();
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
 }
 </script>
 
