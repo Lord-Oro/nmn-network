@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Archives — NMN Retro</title>
 
-<link rel="icon" href="favicon.png" type="image/png">
-<link rel="shortcut icon" href="favicon.png" type="image/png">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
 
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
@@ -55,6 +56,13 @@ header {
 
 main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem 1rem; }
 
+/* ANNOUNCEMENT BANNER */
+.update-banner { background: rgba(255, 215, 0, 0.1); border: 2px dashed var(--gold); padding: 1rem; margin-bottom: 2rem; text-align: center; position: relative; animation: pulseBorder 3s infinite;}
+@keyframes pulseBorder { 0%, 100% { border-color: var(--gd); } 50% { border-color: var(--gold); } }
+.update-title { font-family: var(--font-pixel); color: var(--gold); font-size: 0.6rem; margin-bottom: 0.5rem; letter-spacing: 0.1em; }
+.update-text { color: var(--cream); font-size: 1.1rem; line-height: 1.4; }
+.update-text em { color: var(--lg); font-style: normal; }
+
 /* HERO */
 .arch-hero { text-align: center; margin-bottom: 2rem; background: #000; padding: 2rem; border: 4px solid #444; }
 .arch-eyebrow { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); margin-bottom: 1rem; text-shadow: 2px 2px 0 #000; }
@@ -99,6 +107,11 @@ main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem 1rem; }
 .book-link { display: block; padding: 1rem; background: transparent; border: 4px solid var(--gold); color: var(--gold); font-family: var(--font-pixel); font-size: 0.6rem; text-decoration: none; text-align: center; text-transform: uppercase; transition: all 0.1s;}
 .book-link:hover { background: var(--gold); color: #000; }
 
+.ch1-link { background: #111; color: var(--lg); border-color: var(--lg); margin-top: 0.5rem; }
+.ch1-link:hover { background: var(--lg); color: #000; }
+.ch1-locked { background: #111; color: var(--muted); border-color: var(--muted); cursor: not-allowed; margin-top: 0.5rem;}
+.ch1-locked:hover { background: #111; color: var(--muted); }
+
 /* PROGRESS BAR */
 .progress-bar { background: #000; border: 4px solid #444; height: 20px; margin-bottom: 0.5rem; width: 100%; }
 .progress-fill { height: 100%; background: var(--gold); transition: width 0.5s; }
@@ -125,13 +138,12 @@ main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem 1rem; }
 .hud-val { color: var(--gold); font-size: 1rem; text-shadow: 2px 2px 0 #553300; }
 .hud-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
 .hud-link:hover { color: #000; background: var(--gd); }
-
-/* ── MOUSE FIX ── */
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
 </style>
 
 </head>
 <body>
+
+<script src="nmn-nav.js"></script>
 
 <header>
   <a href="index.html" class="logo">NMN ARCHIVES</a>
@@ -139,6 +151,13 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
 </header>
 
 <main>
+  <div class="update-banner">
+    <div class="update-title">▶ ARCHITECT TRANSMISSION PENDING</div>
+    <div class="update-text">
+      Sector expansion is underway. The next network update will decrypt <em>CHAPTER 1</em> of all recorded lore directly into the Archives. You will be able to read the opening fragments of <strong>Pyro & Helios</strong>, <strong>Juni the Immortal</strong>, and <strong>Outbreak From the Stars</strong> before acquiring full clearance.
+    </div>
+  </div>
+
   <div class="arch-hero retro-box">
     <div class="arch-eyebrow">NONSENSE MEDIA NETWORK</div>
     <h1 class="arch-title">THE <em>ARCHIVES</em></h1>
@@ -159,6 +178,7 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
       <div class="book-title">All Tabbies Have a <em>Place Too</em></div>
       <div class="book-desc">A story about belonging, identity, and the quiet power of knowing where you fit. For every tabby who ever wondered.</div>
       <a href="https://www.amazon.com?tag=lordoro0c25-20" class="book-link" target="_blank">READ ON AMAZON</a>
+      <a href="#" class="book-link ch1-locked">DECRYPTING CH 1...</a>
     </div>
     
     <div class="book-card published">
@@ -168,6 +188,7 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
       <div class="book-desc">Fire and light. Two elementals searching for the one thing neither of them can create on their own. What home actually means.</div>
       <div class="book-excerpt">"Pyro didn't know what home meant until he had one to protect."</div>
       <a href="https://www.amazon.com/dp/B0DX6N7QKM?tag=lordoro0c25-20" class="book-link" target="_blank">READ ON AMAZON</a>
+      <a href="#" class="book-link ch1-locked">DECRYPTING CH 1...</a>
     </div>
   </div>
 
@@ -181,6 +202,7 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
       <div class="book-excerpt">"The first sign wasn't fire. It was silence where sound had been."</div>
       <div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div>
       <div class="progress-label">85% — FORMATTING</div>
+      <a href="outbreak-from-the-stars.html" class="book-link ch1-link">READ CHAPTER 1</a>
     </div>
     
     <div class="book-card progress">
@@ -191,6 +213,7 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
       <div class="book-excerpt">"Every century she tried to remember the first person who loved her. Every century the face got slightly less clear."</div>
       <div class="progress-bar"><div class="progress-fill" style="width:78%"></div></div>
       <div class="progress-label">78% — FINAL CHAPTERS</div>
+      <a href="juni-the-immortal.html" class="book-link ch1-link">READ CHAPTER 1</a>
     </div>
     
     <div class="book-card progress">
@@ -352,12 +375,6 @@ typeQuote();
   }catch(e){}
 })();
 
-</script>
-
-<script>
-if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
-}
 </script>
 
 </body>
