@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Chamber of Dual Souls — NMN Retro</title>
+<title>The Chamber of Dual Souls — NMN</title>
 
-<link rel="icon" href="logo.jpg" type="image/jpeg">
-<link rel="shortcut icon" href="logo.jpg" type="image/jpeg">
-<link rel="apple-touch-icon" href="logo.jpg">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
 
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
 
 <style>
@@ -17,121 +17,123 @@
   --gold: #FFD700;
   --gb: #e8b84b;
   --gd: #AA7700;
-  --bg-color: #000000;
-  --panel-bg: #111111;
+  --bg-color: #050302;
+  --panel-bg: #0a0806;
   --cream: #f0e6cc;
-  --muted: #aaaaaa;
+  --muted: #8a7654;
   --lg: #55FF55; 
   --soul1: #FFD700;
   --soul2: #5555FF;
   --font-pixel: 'Press Start 2P', monospace;
   --font-text: 'VT323', monospace;
+  --font-ancient: 'Cormorant Garamond', serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; overflow-x: hidden; }
+html, body { min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
 body {
-  font-family: var(--font-text);
+  font-family: var(--font-ancient);
   color: var(--cream);
-  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
+  background: linear-gradient(90deg, rgba(30,20,0,0.8) 0%, rgba(5,3,2,1) 50%, rgba(0,10,30,0.8) 100%);
+  background-attachment: fixed;
   padding-bottom: 60px;
   font-size: 1.2rem;
 }
 
-/* 16-BIT UI BORDER HELPER */
-.retro-box {
-  background: var(--panel-bg);
-  border: 4px solid #FFF;
-  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
-}
-
 /* HEADER */
 header {
-  padding: 1rem 2rem; border-bottom: 4px solid var(--gd);
+  padding: 1rem 2rem; border-bottom: 2px solid rgba(255,215,0,0.1);
   display: flex; justify-content: space-between; align-items: center;
-  background: #000; z-index: 1000; position: sticky; top: 0;
+  background: rgba(5,3,2,0.95); z-index: 1000; position: sticky; top: 0;
+  backdrop-filter: blur(5px);
 }
 .logo { font-family: var(--font-pixel); color: var(--gold); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
-.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
 .back:hover { color: var(--gold); }
 
-main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; flex: 1; width: 100%; display: flex; flex-direction: column; gap: 2rem;}
+main { max-width: 900px; margin: 0 auto; padding: 3rem 1rem; flex: 1; width: 100%; display: flex; flex-direction: column; gap: 3rem;}
 
 /* HERO / SPLIT DASHBOARD */
-.soul-dashboard { display: grid; grid-template-columns: 1fr 1fr; border: 4px solid var(--gd); background: #000; position: relative; box-shadow: 4px 4px 0 #000;}
+.soul-dashboard { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #222; background: linear-gradient(180deg, #0a0806, #050403); box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 10px 25px rgba(0,0,0,0.8); position: relative;}
 @media(max-width: 600px) { .soul-dashboard { grid-template-columns: 1fr; } }
 
-.soul-side { padding: 2rem; display: flex; flex-direction: column; align-items: center; text-align: center; transition: background 0.3s steps(5); position: relative;}
-.soul-left { border-right: 4px solid var(--gd); background: rgba(255,215,0,0.05); }
-@media(max-width: 600px) { .soul-left { border-right: none; border-bottom: 4px solid var(--gd); } }
-.soul-right { background: rgba(85,85,255,0.05); }
+.soul-side { padding: 3rem 2rem; display: flex; flex-direction: column; align-items: center; text-align: center; transition: background 0.3s steps(5); position: relative;}
+.soul-left { border-right: 1px solid #222; background: rgba(255,215,0,0.02); }
+@media(max-width: 600px) { .soul-left { border-right: none; border-bottom: 1px solid #222; } }
+.soul-right { background: rgba(85,85,255,0.02); }
 
-.soul-canvas { width: 64px; height: 64px; image-rendering: pixelated; margin-bottom: 1rem; filter: drop-shadow(4px 4px 0 #000); animation: float 4s ease-in-out infinite; }
+.soul-canvas { width: 80px; height: 80px; image-rendering: pixelated; margin-bottom: 1.5rem; filter: drop-shadow(4px 4px 0 #000); animation: float 4s ease-in-out infinite; }
 .soul-left .soul-canvas { animation-delay: 0s; }
 .soul-right .soul-canvas { animation-delay: 2s; }
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
-.soul-name { font-family: var(--font-pixel); font-size: 0.8rem; margin-bottom: 0.5rem; text-shadow: 2px 2px 0 #000; }
+.soul-name { font-family: var(--font-ancient); font-size: 1.8rem; font-weight: 600; margin-bottom: 0.5rem; text-shadow: 2px 2px 0 #000; letter-spacing: 1px;}
 .soul-left .soul-name { color: var(--soul1); }
 .soul-right .soul-name { color: var(--soul2); }
 
-.soul-type { font-family: var(--font-pixel); font-size: 0.45rem; letter-spacing: 0.1em; margin-bottom: 1rem; color: var(--muted); }
-.soul-desc { font-size: 1rem; color: var(--muted); line-height: 1.5; max-width: 280px; }
+.soul-type { font-family: var(--font-pixel); font-size: 0.45rem; letter-spacing: 0.2em; margin-bottom: 1.5rem; color: var(--muted); }
+.soul-desc { font-family: var(--font-ancient); font-size: 1.2rem; color: var(--cream); line-height: 1.6; max-width: 280px; font-style: italic;}
 
 /* CENTER SCALE */
-.scale-container { padding: 1.5rem; background: #000; border: 4px solid var(--gd); box-shadow: 4px 4px 0 #000; text-align: center; position: relative; }
-.scale-label { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 2px 2px 0 #000; }
-.scale-bar-wrap { width: 100%; height: 24px; background: #111; border: 4px solid #444; position: relative; margin-bottom: 1rem; }
-.scale-bar { width: 100%; height: 100%; background: linear-gradient(90deg, var(--soul1) 0%, var(--soul2) 100%); opacity: 0.5; }
-.scale-needle { position: absolute; top: -4px; bottom: -4px; width: 8px; background: #FFF; left: 50%; transform: translateX(-50%); transition: left 0.5s steps(10); border: 2px solid #000; }
-.scale-pct { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gold); }
+.scale-container { padding: 2rem; background: radial-gradient(circle at center, #0a0806, #050403); border: 1px solid var(--gd); box-shadow: 0 5px 15px rgba(0,0,0,0.8); text-align: center; position: relative; }
+.scale-label { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); margin-bottom: 1.5rem; letter-spacing: 0.2em; }
+.scale-bar-wrap { width: 100%; height: 8px; background: #111; border: 1px solid #333; position: relative; margin-bottom: 1.5rem; border-radius: 4px; }
+.scale-bar { width: 100%; height: 100%; background: linear-gradient(90deg, var(--soul1) 0%, var(--soul2) 100%); opacity: 0.5; border-radius: 4px;}
+.scale-needle { position: absolute; top: -8px; bottom: -8px; width: 4px; background: var(--cream); left: 50%; transform: translateX(-50%); transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px rgba(255,255,255,0.5); border-radius: 2px;}
+.scale-pct { font-family: var(--font-ancient); font-weight: 600; font-size: 1.4rem; color: var(--gold); letter-spacing: 1px;}
 
 /* QUESTION AREA */
-.question-area { background: #000; border: 4px solid #FFF; padding: 2rem; box-shadow: inset 0 0 0 4px #000, inset 0 0 0 8px var(--gd), 10px 10px 0 #000; }
-.q-number { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); margin-bottom: 1rem; border-bottom: 4px dashed #333; padding-bottom: 0.5rem;}
-.q-text { font-size: 1.6rem; color: var(--cream); line-height: 1.5; margin-bottom: 2rem; text-align: left; min-height: 80px; }
-.q-text::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 1rem; color: var(--gold);}
-@keyframes blink { 0%, 50%, 100% { opacity: 1; } 25%, 75% { opacity: 0; } }
+.question-area { background: #050403; border: 1px solid #333; padding: 3rem 2rem; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 10px 25px rgba(0,0,0,0.8); position: relative; }
+.question-area::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--gd), transparent); }
+.q-number { font-family: var(--font-pixel); font-size: 0.5rem; letter-spacing: 0.2em; color: var(--gd); margin-bottom: 2rem; border-bottom: 1px dashed #333; padding-bottom: 1rem; text-align: center;}
+.q-text { font-family: var(--font-ancient); font-size: 1.8rem; color: var(--cream); line-height: 1.6; margin-bottom: 3rem; text-align: center; min-height: 100px; font-weight: 600;}
+.q-text::after { content: '✦'; display: inline-block; animation: pulse 1.5s infinite; margin-left: 15px; font-size: 1rem; color: var(--gd);}
+@keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.1); } }
 
-.q-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.q-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
 @media(max-width: 600px) { .q-choices { grid-template-columns: 1fr; } }
-.q-btn { padding: 1.5rem 1rem; font-family: var(--font-text); font-size: 1.3rem; cursor: pointer; border: 4px solid #444; background: #111; color: var(--muted); transition: transform 0.1s; line-height: 1.4; text-align: left; }
-.q-btn:hover { transform: translateY(-4px); box-shadow: 4px 4px 0 #000; color: var(--cream); }
-.q-btn::before { content: '▶ '; opacity: 0; font-family: var(--font-pixel); font-size: 0.8rem;}
-.q-btn:hover::before { opacity: 1; }
+.q-btn { padding: 2rem 1.5rem; font-family: var(--font-ancient); font-size: 1.3rem; cursor: pointer; border: 1px solid #222; background: #0a0806; color: var(--muted); transition: all 0.3s; line-height: 1.5; text-align: center; font-style: italic; }
+.q-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.8); color: var(--cream); }
 
-.q-btn-left:hover { border-color: var(--soul1); background: rgba(255,215,0,0.1); }
-.q-btn-left:hover::before { color: var(--soul1); }
-.q-btn-right:hover { border-color: var(--soul2); background: rgba(85,85,255,0.1); }
-.q-btn-right:hover::before { color: var(--soul2); }
+.q-btn-left:hover { border-color: rgba(255,215,0,0.5); background: rgba(255,215,0,0.05); }
+.q-btn-right:hover { border-color: rgba(85,85,255,0.5); background: rgba(85,85,255,0.05); }
 
 /* RESULT */
-.result-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 100; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; overflow-y: auto;}
-.result-overlay.active { display: flex; animation: flashIn 0.2s steps(2);}
-@keyframes flashIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+.result-overlay { display: none; position: fixed; inset: 0; background: rgba(5,3,2,0.98); z-index: 100; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; overflow-y: auto;}
+.result-overlay.active { display: flex; animation: flashIn 0.4s ease-out;}
+@keyframes flashIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
 
-.result-box { background: #000; border: 6px solid #FFF; padding: 2rem; max-width: 600px; width: 100%; box-shadow: inset 0 0 0 4px #000, inset 0 0 0 8px var(--gd), 10px 10px 0 #000; text-align: left;}
-.result-balance { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); margin-bottom: 1rem; border-bottom: 4px dashed #333; padding-bottom: 0.5rem;}
-.result-title { font-family: var(--font-pixel); font-size: 1.6rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 3px 3px 0 #553300;}
-.result-title em { font-style: normal; }
-.result-desc { font-size: 1.3rem; color: var(--cream); line-height: 1.6; margin-bottom: 1.5rem; }
-.result-lore { font-size: 1.2rem; color: var(--lg); padding: 1.5rem; border-left: 4px solid var(--lg); background: rgba(0,255,136,0.05); margin-bottom: 2rem; font-style: italic;}
+.result-box { background: #0a0806; border: 1px solid var(--gd); padding: 3rem 2rem; max-width: 700px; width: 100%; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 10px 40px rgba(0,0,0,0.9); text-align: center; position: relative;}
+.result-box::before { content: '⬡ ⬡ ⬡'; color: var(--gd); font-size: 0.6rem; letter-spacing: 1em; display: block; margin-bottom: 2rem; }
+.result-balance { font-family: var(--font-pixel); font-size: 0.5rem; letter-spacing: 0.2em; color: var(--muted); margin-bottom: 1.5rem; }
+.result-title { font-family: var(--font-ancient); font-size: 2.5rem; color: var(--cream); margin-bottom: 1.5rem; font-weight: 600; text-shadow: 0 0 20px rgba(255,215,0,0.1);}
+.result-title em { font-style: italic; }
+.result-desc { font-family: var(--font-ancient); font-size: 1.4rem; color: var(--cream); line-height: 1.6; margin-bottom: 2rem; }
+.result-lore { font-family: var(--font-ancient); font-size: 1.3rem; color: var(--gb); padding: 2rem; border-top: 1px solid rgba(255,215,0,0.1); border-bottom: 1px solid rgba(255,215,0,0.1); background: rgba(255,215,0,0.02); margin-bottom: 3rem; font-style: italic;}
 
-.btn { padding: 1.2rem 2rem; font-family: var(--font-pixel); font-size: 0.7rem; text-transform: uppercase; cursor: pointer; border: 4px solid #FFF; transition: transform 0.1s; display: inline-block; text-decoration: none; background: #000; color: var(--cream); margin: 0.5rem 0;}
-.btn-gold { background: var(--gd); color: var(--cream); box-shadow: 4px 4px 0 #000; }
-.btn-gold:hover { background: var(--gold); color: #000; transform: translateY(-4px); }
-.btn:hover:not(.btn-gold) { background: #222; transform: translateY(-2px); }
+.btn-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.btn { padding: 1rem 2rem; font-family: var(--font-pixel); font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; border: 1px solid var(--gd); transition: all 0.3s; display: inline-block; text-decoration: none; background: rgba(0,0,0,0.5); color: var(--gb);}
+.btn-gold { background: var(--gold); color: #000; border-color: var(--gold); font-weight: bold; }
+.btn-gold:hover { background: #fff; border-color: #fff; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255,215,0,0.3); }
+.btn:hover:not(.btn-gold) { background: rgba(255,215,0,0.1); color: var(--gold); border-color: var(--gold); transform: translateY(-2px); }
 
 /* HUD (BOTTOM) */
-.hud { display: flex; justify-content: center; align-items: center; padding: 1rem 2rem; background: #000; border-top: 4px solid #333; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; flex-wrap: wrap; gap: 20px; }
-.hud-stat { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; }
-.hud-val { color: var(--gold); font-size: 1rem; text-shadow: 2px 2px 0 #553300; }
-.hud-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
-.hud-link:hover { color: #000; background: var(--gd); }
-
-/* ── MOUSE FIX ── */
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+.depth-gauge {
+  position:fixed!important;bottom:12px!important;left:50%!important;
+  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
+  height:42px!important;background:rgba(12,10,7,.95)!important;
+  border:1px solid rgba(255,215,0,.2)!important;border-radius:2px!important;
+  padding:0 20px!important; z-index:9999!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:1.5rem!important;flex-wrap:nowrap!important;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.9)!important;
+}
+.dg-stat { display:flex; align-items:center; gap:0.5rem; font-family:var(--font-pixel); font-size:0.45rem; color:var(--muted); text-transform:uppercase; letter-spacing: 1px;}
+.dg-val { font-family:var(--font-text); font-size:1.1rem; color:var(--gold); }
+.dg-link { font-family:var(--font-pixel); font-size:0.45rem; color:var(--gd); text-decoration:none; text-transform:uppercase; transition:color 0.3s; letter-spacing: 1px;}
+.dg-link:hover { color:var(--gold); }
+.dg-sep { color:var(--faint); font-size:0.6rem; }
 </style>
 
 </head>
@@ -186,19 +188,21 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
     <div class="result-desc" id="resultDesc"></div>
     <div class="result-lore" id="resultLore"></div>
     
-    <div style="text-align: center; margin-top: 2rem;">
-      <button class="btn btn-gold" onclick="shareScore()">SHARE RESULT</button>
+    <div class="btn-group">
+      <a href="#" id="ctaBtn" class="btn btn-gold">DECRYPT LORE</a>
+      <button class="btn" onclick="shareScore()">SHARE RESULT</button>
       <button class="btn" onclick="restartChamber()">RECALIBRATE</button>
-      <a href="oracle.html" class="btn">EXIT CHAMBER</a>
     </div>
   </div>
 </div>
 
-<div class="hud">
-  <div class="hud-stat">GOLD: <span class="hud-val" id="dgGold">0</span></div>
-  <div class="hud-stat">LORE: <span class="hud-val" id="dgLore">0</span></div>
-  <a href="lorevault.html" class="hud-link">VAULT</a>
-  <a href="lantern.html" class="hud-link">LANTERN</a>
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> LORE</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">VAULT</a>
+  <a href="lantern.html" class="dg-link">LANTERN</a>
 </div>
 
 <script>
@@ -215,7 +219,7 @@ function drawSprite(canvasId, seedStr, colorHex) {
 
   ctx.fillStyle = colorHex;
   ctx.shadowColor = colorHex;
-  ctx.shadowBlur = 5;
+  ctx.shadowBlur = 8;
   
   for(let x=0; x<8; x++) {
     for(let y=0; y<16; y++) {
@@ -238,38 +242,38 @@ window.addEventListener('DOMContentLoaded', () => {
 const QUESTIONS = [
   {
     text: "A city is burning. You can save the people who betrayed you, or let them burn to save strangers who never knew you existed. You choose—",
-    left: "Save the ones who betrayed me. What they did doesn't change what I should do.",
-    right: "Save the strangers. The betrayers made their choices. So will I."
+    left: "\"Save the ones who betrayed me. What they did doesn't change what I should do.\"",
+    right: "\"Save the strangers. The betrayers made their choices. So will I.\""
   },
   {
     text: "You find out the truth about your origin — and it is not what you were told. It changes everything you thought you were. You—",
-    left: "Hold on to who I built myself to be. Origin is not destiny.",
-    right: "Let the old self go. What's true is more useful than what's comfortable."
+    left: "\"Hold on to who I built myself to be. Origin is not destiny.\"",
+    right: "\"Let the old self go. What's true is more useful than what's comfortable.\""
   },
   {
     text: "Someone you love is making a catastrophic mistake. They haven't asked for your opinion. You—",
-    left: "Say nothing. They have the right to their own catastrophe.",
-    right: "Speak. Love that stays quiet when it should talk isn't love."
+    left: "\"Say nothing. They have the right to their own catastrophe.\"",
+    right: "\"Speak. Love that stays quiet when it should talk isn't love.\""
   },
   {
     text: "You've built something remarkable. It will be destroyed unless you compromise everything that made it remarkable. You—",
-    left: "Let it be destroyed. A compromised version of it isn't the thing.",
-    right: "Compromise. Something is better than nothing. Rebuild from there."
+    left: "\"Let it be destroyed. A compromised version of it isn't the thing.\"",
+    right: "\"Compromise. Something is better than nothing. Rebuild from there.\""
   },
   {
     text: "You are given the choice between being remembered for something you didn't do, or forgotten for something you did. You take—",
-    left: "The false memory. I know the truth. That's enough.",
-    right: "The forgetting. The truth of what I did matters more than anyone's memory of me."
+    left: "\"The false memory. I know the truth. That's enough.\"",
+    right: "\"The forgetting. The truth of what I did matters more than anyone's memory of me.\""
   },
   {
     text: "You can end a long conflict by lying once — and the lie will never be discovered. You—",
-    left: "Tell the lie. Peace built on a small fiction is still peace.",
-    right: "Tell the truth. Peace that requires a lie to exist is not peace."
+    left: "\"Tell the lie. Peace built on a small fiction is still peace.\"",
+    right: "\"Tell the truth. Peace that requires a lie to exist is not peace.\""
   },
   {
     text: "At the end of everything — what do you want? Not what you think you should want. What you actually want.",
-    left: "To have been loved well by a few people who knew the real thing.",
-    right: "To have changed something that would have stayed the same without me."
+    left: "\"To have been loved well by a few people who knew the real thing.\"",
+    right: "\"To have changed something that would have stayed the same without me.\""
   }
 ];
 
@@ -278,19 +282,25 @@ const RESULTS = {
     balance: 'SYSTEM OVERRIDE: THE FIRST SOUL DOMINATES',
     title: 'THE <em style="color:var(--soul1)">WARM</em> SIDE',
     desc: 'Felik\'s first soul recognizes you. You choose loyalty, identity, and the quiet dignity of knowing your own truth without requiring others to confirm it. This is the soul that chose to stay with what it built. That is not weakness. That is the deepest kind of strength.',
-    lore: '"The first soul chose Felik before he was born. It was not an accident. Felik earned it by being the kind of person worth choosing." — Lord Oro'
+    lore: '"The first soul chose Felik before he was born. It was not an accident. Felik earned it by being the kind of person worth choosing." — Lord Oro',
+    ctaLink: 'archives.html',
+    ctaText: 'READ NELA\'S LORE'
   },
   right: {
     balance: 'SYSTEM OVERRIDE: THE SECOND SOUL DOMINATES',
     title: 'THE <em style="color:var(--soul2)">CLEAR</em> SIDE',
     desc: 'Felik\'s second soul recognizes you. You choose clarity, impact, and the uncomfortable truth over the comfortable story. This is the soul that asked to stay — and Felik said yes — because it saw what he couldn\'t see alone. You carry the same clarity. Use it with care.',
-    lore: '"The second soul didn\'t ask to share a body. It asked to share a life. Felik said yes. That agreement changed both of them." — Lord Oro'
+    lore: '"The second soul didn\'t ask to share a body. It asked to share a life. Felik said yes. That agreement changed both of them." — Lord Oro',
+    ctaLink: 'archives.html',
+    ctaText: 'READ FELIK\'S ORIGIN'
   },
   balanced: {
     balance: 'SYSTEM OVERRIDE: THE SOULS ARE BALANCED',
     title: 'THE <em style="color:var(--lg)">AGREEMENT</em>',
     desc: 'You are Felik himself — holding both truths without letting either destroy the other. The first soul warms. The second soul clarifies. Together they are the rarest thing: a person who can love fully and see clearly at the same time. Lord Oro says this is the hardest balance to maintain.',
-    lore: '"To carry two souls is not a curse. It is a conversation that never ends. The ones who can hold both without either winning — those are the dangerous ones." — Lord Oro'
+    lore: '"To carry two souls is not a curse. It is a conversation that never ends. The ones who can hold both without either winning — those are the dangerous ones." — Lord Oro',
+    ctaLink: 'lorevault.html',
+    ctaText: 'ENTER THE VAULT'
   }
 };
 
@@ -331,8 +341,8 @@ function updateBalance() {
   else if (pct < 40) document.getElementById('scalePct').textContent = 'SECOND SOUL RISING';
   else document.getElementById('scalePct').textContent = 'IN BALANCE';
   
-  const leftOpacity = 0.05 + (pct / 100) * 0.2;
-  const rightOpacity = 0.05 + ((100 - pct) / 100) * 0.2;
+  const leftOpacity = 0.02 + (pct / 100) * 0.15;
+  const rightOpacity = 0.02 + ((100 - pct) / 100) * 0.15;
   document.getElementById('soulLeft').style.background = `rgba(255,215,0,${leftOpacity})`;
   document.getElementById('soulRight').style.background = `rgba(85,85,255,${rightOpacity})`;
 }
@@ -365,6 +375,11 @@ function showResult() {
   document.getElementById('resultTitle').innerHTML = result.title;
   document.getElementById('resultDesc').textContent = result.desc;
   document.getElementById('resultLore').textContent = result.lore;
+  
+  const ctaBtn = document.getElementById('ctaBtn');
+  ctaBtn.href = result.ctaLink;
+  ctaBtn.textContent = result.ctaText;
+  
   document.getElementById('resultOv').classList.add('active');
 
   // Save to Vault
@@ -380,8 +395,8 @@ function restartChamber() {
   answers = { left: 0, right: 0 };
   current = 0;
   document.getElementById('resultOv').classList.remove('active');
-  document.getElementById('soulLeft').style.background = 'rgba(255,215,0,0.05)';
-  document.getElementById('soulRight').style.background = 'rgba(85,85,255,0.05)';
+  document.getElementById('soulLeft').style.background = 'rgba(255,215,0,0.02)';
+  document.getElementById('soulRight').style.background = 'rgba(85,85,255,0.02)';
   document.getElementById('scaleNeedle').style.left = '50%';
   document.getElementById('scalePct').textContent = 'BALANCED';
   renderQuestion();
@@ -403,12 +418,6 @@ function updateGlobalHUD() {
 }
 
 renderQuestion();
-</script>
-
-<script>
-if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
-}
 </script>
 
 </body>
