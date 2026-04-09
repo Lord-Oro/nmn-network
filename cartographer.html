@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Cartographer's Table — NMN Retro</title>
 
-<link rel="icon" href="logo.jpg" type="image/jpeg">
-<link rel="shortcut icon" href="logo.jpg" type="image/jpeg">
-<link rel="apple-touch-icon" href="logo.jpg">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
 
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
@@ -86,6 +86,11 @@ main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; flex: 1; width: 100
 .rp-default { font-family: var(--font-pixel); font-size: 0.8rem; color: var(--muted); text-align: center; animation: pulse 2s infinite; }
 @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
+/* CTA BUTTON (Hidden until typing completes) */
+.rp-cta { display: inline-block; margin-top: 1.5rem; padding: 1rem 2rem; background: transparent; border: 4px solid var(--gold); color: var(--gold); font-family: var(--font-pixel); font-size: 0.8rem; text-decoration: none; text-transform: uppercase; transition: all 0.2s; opacity: 0; pointer-events: none; text-align: center; max-width: 300px; }
+.rp-cta.visible { opacity: 1; pointer-events: auto; }
+.rp-cta:hover { background: var(--gold); color: #000; transform: translateY(-2px); box-shadow: 4px 4px 0 #553300; }
+
 /* LEGEND */
 .map-legend { display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; margin-top: 1rem; background: #000; border: 4px solid #444; padding: 1rem;}
 .legend-item { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-pixel); font-size: 0.5rem; color: var(--cream); }
@@ -98,8 +103,6 @@ main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; flex: 1; width: 100
 .hud-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
 .hud-link:hover { color: #000; background: var(--gd); }
 
-/* ── MOUSE FIX ── */
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
 </style>
 </head>
 <body>
@@ -208,54 +211,63 @@ const REGIONS = {
     title:'THE MINE',
     titleEm:'LORD ORO\'S DOMAIN',
     status:'active', statusText:'[ FULLY ACTIVE ]',
-    desc:'The mine is the central hub of the NMN universe. It is where the Recreation Hall lives, where the Oracle\'s Chamber is carved into the rock, and where the Lore Vault is kept. The gold that runs through the walls is the same gold that runs through the writing. This is home base.'
+    desc:'The mine is the central hub of the NMN universe. It is where the Recreation Hall lives, where the Oracle\'s Chamber is carved into the rock, and where the Lore Vault is kept. The gold that runs through the walls is the same gold that runs through the writing. This is home base.',
+    ctaLink: 'archives.html', ctaText: 'DESCEND INTO ARCHIVES'
   },
   nela: {
     eyebrow:'SECTOR 2: IN PROGRESS',
     title:'NELA\'S WORLD',
     titleEm:'IMAGINARY FRIENDS',
     status:'progress', statusText:'[ IN DEVELOPMENT ]',
-    desc:'A world that exists parallel to the real one. In this world, the imaginary friends of every child who ever believed become real — physical, present. Nela the Lioness ran through this world. So did Pip. So did Felik, carrying his second soul. The fog here will clear as the story completes.'
+    desc:'A world that exists parallel to the real one. In this world, the imaginary friends of every child who ever believed become real — physical, present. Nela the Lioness ran through this world. So did Pip. So did Felik, carrying his second soul. The fog here will clear as the story completes.',
+    ctaLink: 'archives.html', ctaText: 'VIEW LORE FRAGMENTS'
   },
   ocean: {
     eyebrow:'SECTOR 3: LOCKED',
     title:'SET SAIL',
     titleEm:'ACT II',
     status:'locked', statusText:'[ ENCRYPTED / FOGGED ]',
-    desc:'An adventure that begins where the mine\'s shore ends — a voyage into open water with a crew that shouldn\'t be together and a destination that shouldn\'t exist. The ocean is patient. Access will be granted upon completion.'
+    desc:'An adventure that begins where the mine\'s shore ends — a voyage into open water with a crew that shouldn\'t be together and a destination that shouldn\'t exist. The ocean is patient. Access will be granted upon completion.',
+    ctaLink: 'patreon.html', ctaText: 'FUND EXPANSION'
   },
   space: {
     eyebrow:'SECTOR 4: LOCKED',
     title:'ICE',
     titleEm:'DEEP SPACE',
     status:'locked', statusText:'[ ENCRYPTED / FOGGED ]',
-    desc:'Lord Oro\'s take on the cosmos — personal, mythological, and stranger than most sci-fi dares to be. The world is cold and vast and contains something that has been waiting a very long time. This is the furthest region. It will open last.'
+    desc:'Lord Oro\'s take on the cosmos — personal, mythological, and stranger than most sci-fi dares to be. The world is cold and vast and contains something that has been waiting a very long time. This is the furthest region. It will open last.',
+    ctaLink: 'patreon.html', ctaText: 'FUND EXPANSION'
   },
   brooklyn: {
     eyebrow:'ORIGIN POINT',
     title:'BROOKLYN',
     titleEm:'THE REAL WORLD',
     status:'active', statusText:'[ CONSTANT ]',
-    desc:'Brooklyn is not a fictional region. It is the real place where Lord Oro was built. Where Elizabeth Rose was written at twelve. Where the mine was discovered inside a person before it had a name. Brooklyn appears in the texture of everything: the cadence of the sentences, the instinct to build something out of nothing.'
+    desc:'Brooklyn is not a fictional region. It is the real place where Lord Oro was built. Where Elizabeth Rose was written at twelve. Where the mine was discovered inside a person before it had a name. Brooklyn appears in the texture of everything: the cadence of the sentences, the instinct to build something out of nothing.',
+    ctaLink: 'patreon.html', ctaText: 'SUPPORT THE ARCHITECT'
   },
   city: {
     eyebrow:'FUTURE REGION',
     title:'THE CITY ABOVE',
     titleEm:'SOMEDAY',
     status:'locked', statusText:'[ PLANNED ]',
-    desc:'The goldmine isn\'t enough — you build the city above it. This region represents everything that comes after the mine is fully excavated: the publishing house, the label, the studio. The city above the mine is the endgame.'
+    desc:'The goldmine isn\'t enough — you build the city above it. This region represents everything that comes after the mine is fully excavated: the publishing house, the label, the studio. The city above the mine is the endgame.',
+    ctaLink: 'patreon.html', ctaText: 'SUPPORT THE ARCHITECT'
   },
 };
 
 let typeTimer = null;
-function typeText(elId, text, speed=15) {
+function typeText(elId, text, speed=15, onComplete) {
   const el = document.getElementById(elId);
   el.textContent = "";
   if(typeTimer) clearInterval(typeTimer);
   let i = 0;
   typeTimer = setInterval(() => {
     el.textContent += text.charAt(i++);
-    if (i >= text.length) clearInterval(typeTimer);
+    if (i >= text.length) {
+        clearInterval(typeTimer);
+        if(onComplete) onComplete();
+    }
   }, speed);
 }
 
@@ -270,9 +282,12 @@ document.querySelectorAll('.map-region').forEach(region => {
       <div class="rp-eyebrow">${data.eyebrow}</div>
       <div class="rp-title">${data.title} — <em>${data.titleEm}</em></div>
       <div class="rp-status ${data.status}">${data.statusText}</div>
-      <div class="rp-desc" id="typewriter-desc"></div>`;
+      <div class="rp-desc" id="typewriter-desc"></div>
+      <a href="${data.ctaLink}" class="rp-cta" id="regionCta">${data.ctaText} →</a>`;
       
-    typeText('typewriter-desc', data.desc);
+    typeText('typewriter-desc', data.desc, 15, () => {
+        document.getElementById('regionCta').classList.add('visible');
+    });
     panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
   });
 });
@@ -285,12 +300,6 @@ document.querySelectorAll('.map-region').forEach(region => {
   }catch(e){}
 })();
 
-</script>
-
-<script>
-if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
-}
 </script>
 
 </body>
