@@ -4,233 +4,118 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Deciphered Tablet — NMN</title>
-<link rel="stylesheet" href="nmn-theme.css">
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-P5WL9XNDY8');
-</script>
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+
+<link rel="stylesheet" href="nmn-theme.css">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=VT323&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --gold: #FFD700; --gold-bright: #e8b84b; --gold-dim: #7a5a18;
-  --coal: #0c0a07; --shaft: #110e09; --rock: #1a1510;
-  --cream: #f0e6cc; --muted: #8a7654; --faint: #4a3c28;
+  --gold: #FFD700; --gb: #e8b84b; --gd: #8B6914;
+  --coal: #050302; --panel-bg: #0a0806; --cream: #f0e6cc;
+  --muted: #8a7654; --faint: #4a3c28;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-ancient: 'Cormorant Garamond', serif;
 }
-* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: var(--font-sans);
+  font-family: var(--font-ancient);
   background: var(--coal);
   color: var(--cream);
   min-height: 100vh;
-  background-image: linear-gradient(45deg, #0c0a07 25%, #110e0a 25%, #110e0a 50%, #0c0a07 50%, #0c0a07 75%, #110e0a 75%, #110e0a 100%);
-  background-size: 4px 4px;
-  padding-top: 80px; /* FIXED: Prevents content from sliding under the header */
-  padding-bottom: 65px !important;
+  padding-top: 80px;
+  background-image: radial-gradient(circle at 50% 30%, rgba(139, 105, 20, 0.05) 0%, transparent 70%);
 }
 
-/* FIXED: Made header fixed so it matches the rest of V2 and doesn't overlap the game title */
 header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 10000;
-  padding: 1.2rem 2rem;
-  border-bottom: 1px solid rgba(255,215,0,0.15);
+  padding: 1rem 2rem; border-bottom: 1px solid rgba(255,215,0,.15);
   display: flex; justify-content: space-between; align-items: center;
-  background: rgba(12,10,7,0.95);
-  backdrop-filter: blur(8px);
+  background: rgba(5,3,2,0.95); backdrop-filter: blur(8px);
 }
-.logo { font-family: var(--font-serif); font-style: italic; color: var(--gold); font-size: 1rem; text-decoration: none; }
-.back { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
-.back:hover { color: var(--gold); }
+.logo { font-family: var(--font-pixel); color: var(--gold); font-size: .6rem; text-decoration: none; }
+.back { font-family: var(--font-pixel); font-size: .45rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
 
-main { max-width: 900px; margin: 0 auto; padding: 2rem; position: relative; z-index: 1; }
+main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; position: relative; }
 
-.game-header { text-align: center; margin-bottom: 2rem; }
-.eyebrow { font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 0.75rem; }
-.game-title { font-family: var(--font-serif); font-size: clamp(2rem, 5vw, 3.5rem); color: var(--cream); line-height: 1; margin-bottom: 0.5rem; }
+.game-header { text-align: center; margin-bottom: 3rem; }
+.eyebrow { font-family: var(--font-pixel); font-size: 0.4rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gd); margin-bottom: 1rem; }
+.game-title { font-family: var(--font-ancient); font-size: clamp(2.5rem, 6vw, 4rem); color: var(--cream); font-weight: 600; line-height: 1; margin-bottom: 0.5rem; }
 .game-title em { color: var(--gold); font-style: italic; }
-.game-sub { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.08em; }
 
-/* STATS BAR */
+/* STATS TABLET */
 .stats-bar {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 1rem 1.5rem;
-  background: rgba(255,215,0,0.04);
-  border: 1px solid rgba(255,215,0,0.1);
-  margin-bottom: 1.5rem;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  background: linear-gradient(180deg, #0a0806, #050403);
+  border: 1px solid #222; padding: 1.5rem; margin-bottom: 2rem;
+  box-shadow: inset 0 0 20px #000; text-align: center;
 }
-.stat { text-align: center; }
-.stat-val { font-family: var(--font-serif); font-size: 1.8rem; color: var(--gold); line-height: 1; }
-.stat-lab { font-size: 0.55rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--faint); }
+.stat-val { font-family: var(--font-ancient); font-size: 2rem; color: var(--gold); font-weight: 700; }
+.stat-lab { font-family: var(--font-pixel); font-size: 0.35rem; color: var(--faint); text-transform: uppercase; margin-top: 5px; }
 
-/* TIMER BAR */
-.timer-bar { height: 4px; background: #1a1208; margin-bottom: 1.5rem; }
-.timer-fill { height: 100%; background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-bright)); transition: width 0.1s linear; box-shadow: 0 0 8px rgba(255,215,0,0.4); }
-
-/* LANGUAGE TABS */
-.lang-tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border: 1px solid rgba(255,215,0,0.1); }
-.lang-tab {
-  flex: 1; padding: 0.6rem; text-align: center;
-  font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
-  color: var(--faint); cursor: pointer; background: var(--coal);
-  border-right: 1px solid rgba(255,215,0,0.1); transition: all 0.3s;
-}
-.lang-tab:last-child { border-right: none; }
-.lang-tab.active { background: rgba(255,215,0,0.08); color: var(--gold); }
-.lang-tab:hover { color: var(--muted); }
-
-/* GAME BOARD */
-.board-label {
-  font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase;
-  color: var(--gold-dim); margin-bottom: 0.75rem; text-align: center;
-}
-
-.match-area {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.column { display: flex; flex-direction: column; gap: 0.6rem; }
-.col-label { font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--faint); margin-bottom: 0.3rem; text-align: center; }
+/* TILES */
+.match-area { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+.column { display: flex; flex-direction: column; gap: 0.8rem; }
+.col-label { font-family: var(--font-pixel); font-size: 0.4rem; color: var(--gd); margin-bottom: 1rem; text-align: center; border-bottom: 1px solid #222; padding-bottom: 10px; }
 
 .tile {
-  padding: 1rem 1.2rem;
-  background: var(--rock);
-  border: 1px solid rgba(255,215,0,0.1);
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: var(--font-serif);
-  font-size: 1.1rem;
-  color: var(--muted);
-  text-align: center;
-  position: relative;
-  user-select: none;
+  padding: 1.2rem; background: #080605; border: 1px solid #1a1a1a;
+  cursor: pointer; transition: all 0.3s; font-family: var(--font-ancient);
+  font-size: 1.4rem; color: var(--muted); text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
-.tile:hover { border-color: rgba(255,215,0,0.4); color: var(--cream); background: #2a2015; }
-.tile.selected { border-color: var(--gold); color: var(--gold); background: rgba(255,215,0,0.1); }
-.tile.matched { border-color: #2a7a2a; color: #4aaa4a; background: rgba(42,122,42,0.1); cursor: default; animation: matchPulse 0.4s ease; }
-.tile.wrong { border-color: #7a2a2a; color: #aa4a4a; background: rgba(122,42,42,0.1); animation: wrongShake 0.3s ease; }
-.tile.hidden { opacity: 0; pointer-events: none; }
+.tile:hover { border-color: var(--gd); color: var(--cream); transform: translateY(-2px); }
+.tile.selected { border-color: var(--gold); color: var(--gold); background: rgba(255,215,0,0.05); box-shadow: 0 0 15px rgba(255,215,0,0.1); }
+.tile.matched { border-color: var(--neon-green, #00FF88); color: #00FF88; opacity: 0.4; cursor: default; }
 
-@keyframes matchPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(74,170,74,0.4); }
-  100% { transform: scale(1); }
+/* TABS */
+.lang-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 2rem; }
+.lang-tab {
+  background: #000; border: 1px solid #222; color: var(--faint);
+  padding: 8px 15px; font-family: var(--font-pixel); font-size: 0.35rem; cursor: pointer;
 }
-@keyframes wrongShake {
-  0%,100% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  75% { transform: translateX(6px); }
-}
+.lang-tab.active { border-color: var(--gold); color: var(--gold); }
 
-/* FEEDBACK */
-.feedback {
-  text-align: center; padding: 0.75rem;
-  font-family: var(--font-serif);
-  font-style: italic; font-size: 1rem;
-  min-height: 40px; color: var(--gold);
+/* FLOATING GAUGE */
+.depth-gauge {
+  position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:95%!important; height:46px!important; background:rgba(5,4,3,.95)!important;
+  border:1px solid rgba(255,215,0,.3)!important; border-radius:2px!important; padding:0 20px!important;
+  z-index:9999!important; display:flex!important; align-items:center!important; justify-content:center!important;
+  gap:1.5rem!important; flex-wrap:nowrap!important; box-shadow: 0 5px 20px rgba(0,0,0,0.9)!important;
 }
-
-/* ROUND COMPLETE */
-.round-complete {
-  display: none; text-align: center;
-  padding: 2rem; background: rgba(255,215,0,0.05);
-  border: 1px solid rgba(255,215,0,0.2); margin-top: 1rem;
-}
-.round-complete.visible { display: block; }
-.round-title { font-family: var(--font-serif); font-size: 2rem; color: var(--gold); margin-bottom: 0.5rem; }
-.round-score { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.5rem; letter-spacing: 0.1em; }
-.round-gold { font-size: 0.85rem; color: var(--gold); margin-bottom: 1.5rem; font-family: var(--font-pixel); }
-
-/* BUTTONS */
-.btn {
-  padding: 0.75rem 2rem; font-family: var(--font-sans);
-  font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
-  cursor: pointer; border: none; transition: all 0.3s; text-decoration: none; display: inline-block;
-}
-.btn-gold { background: var(--gold); color: var(--coal); }
-.btn-gold:hover { background: var(--gold-bright); }
-.btn-outline { background: transparent; color: var(--gold); border: 1px solid rgba(255,215,0,0.4); margin-left: 1rem; }
-.btn-outline:hover { border-color: var(--gold); background: rgba(255,215,0,0.08); }
-
-/* SCHOLAR RANK */
-.rank-display {
-  text-align: center; margin-top: 1.5rem;
-  padding: 1rem; border: 1px solid rgba(255,215,0,0.1);
-  background: rgba(255,215,0,0.03);
-}
-.rank-title { font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 0.3rem; }
-.rank-name { font-family: var(--font-serif); font-size: 1.4rem; color: var(--gold); }
-
-@media (max-width: 600px) {
-  .stats-bar { flex-wrap: wrap; gap: 1rem; }
-  .tile { font-size: 0.9rem; padding: 0.75rem; }
-}
-
-/* DEPTH GAUGE */
-.depth-gauge{
-  position:fixed!important;bottom:12px!important;left:50%!important;
-  transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
-  height:42px!important;background:rgba(12,10,7,.88)!important;
-  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
-  padding:0 18px!important;pointer-events:none!important;
-  z-index:9999!important;backdrop-filter:blur(4px)!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  gap:1.2rem!important;flex-wrap:nowrap!important;
-  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
-}
-.dg-stat{display:flex;align-items:center;gap:.4rem;font-family:var(--font-sans);font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:#4a3c28;pointer-events:auto!important;}
-.dg-val{font-family:var(--font-serif);font-size:.85rem;color:#FFD700;line-height:1}
-.dg-link{font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:#4a3c28;text-decoration:none;transition:color .3s;pointer-events:auto!important;}
-.dg-link:hover{color:#FFD700}
-.dg-sep{color:#2a1808;font-size:.6rem;pointer-events:auto!important;}
-
-/* CUSTOM CURSOR */
-body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
 </style>
-
-<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
-
 </head>
 <body>
+
 <script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
 
 <header>
-  <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="games.html" class="back">← Recreation Hall</a>
+  <a href="index.html" class="logo">DECIPHERED TABLET</a>
+  <a href="games.html" class="back">← RETURN TO FORGE</a>
 </header>
 
 <main>
   <div class="game-header">
-    <div class="eyebrow">The Excavation Committee</div>
+    <div class="eyebrow">THE EXCAVATION COMMITTEE</div>
     <h1 class="game-title">The Deciphered <em>Tablet</em></h1>
-    <p class="game-sub">Match the ancient words. Four languages. One goldmine.</p>
+    <p style="font-size: 1.2rem; font-style: italic; color: var(--muted);">Align the ancient tongues to reveal the veins of gold.</p>
   </div>
 
   <div class="stats-bar">
-    <div class="stat"><div class="stat-val" id="scoreVal">0</div><div class="stat-lab">Score</div></div>
-    <div class="stat"><div class="stat-val" id="roundVal">1</div><div class="stat-lab">Round</div></div>
-    <div class="stat"><div class="stat-val" id="matchesVal">0/6</div><div class="stat-lab">Matches</div></div>
-    <div class="stat"><div class="stat-val" id="streakVal">0</div><div class="stat-lab">Streak</div></div>
-    <div class="stat"><div class="stat-val" id="timeVal">60</div><div class="stat-lab">Seconds</div></div>
+    <div class="stat"><div class="stat-val" id="scoreVal">0</div><div class="stat-lab">SCORE</div></div>
+    <div class="stat"><div class="stat-val" id="timeVal">60</div><div class="stat-lab">TIME</div></div>
+    <div class="stat"><div class="stat-val" id="streakVal">0</div><div class="stat-lab">STREAK</div></div>
   </div>
-
-  <div class="timer-bar"><div class="timer-fill" id="timerFill" style="width:100%"></div></div>
 
   <div class="lang-tabs">
     <div class="lang-tab active" onclick="setMode('kr-es')">🇰🇷 ↔ 🇵🇷</div>
     <div class="lang-tab" onclick="setMode('kr-no')">🇰🇷 ↔ 🇳🇴</div>
     <div class="lang-tab" onclick="setMode('kr-jp')">🇰🇷 ↔ 🇯🇵</div>
-    <div class="lang-tab" onclick="setMode('es-jp')">🇵🇷 ↔ 🇯🇵</div>
   </div>
-
-  <div class="board-label">Click a word from each column to match them</div>
 
   <div class="match-area">
     <div class="column">
@@ -243,287 +128,137 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     </div>
   </div>
 
-  <div class="feedback" id="feedback">Select a word from each column to find matches...</div>
+  <div id="feedback" style="text-align:center; font-style:italic; color:var(--gold); min-height:30px; margin-bottom:2rem;">Select fragments to match...</div>
 
-  <div class="round-complete" id="roundComplete">
-    <div class="round-title">⬡ Tablet Deciphered</div>
-    <div class="round-score" id="roundScore"></div>
-    <div class="round-gold" id="roundGold"></div>
-    <button class="btn btn-gold" onclick="nextRound()">Next Tablet</button>
-    <a href="games.html" class="btn btn-outline">Return to Hall</a>
+  <div id="roundComplete" style="display:none; text-align:center; background:rgba(255,215,0,0.05); padding:2rem; border:1px solid var(--gd);">
+      <h2 style="font-family:var(--font-ancient); font-size:2rem; color:var(--gold);">TABLET DECODED</h2>
+      <p id="roundGold" style="font-family:var(--font-pixel); font-size:0.5rem; margin:1rem 0;"></p>
+      <button class="nmn-btn" onclick="nextRound()">EXCAVATE NEXT TABLET</button>
   </div>
 
-  <div class="rank-display">
-    <div class="rank-title">Your Scholar Rank</div>
-    <div class="rank-name" id="rankName">Novice Digger</div>
-  </div>
 </main>
 
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat" style="font-family:var(--font-pixel); font-size:0.4rem; color:var(--muted); text-transform:uppercase;">
+      <span style="color:var(--gold); font-size:0.7rem; margin-right:5px;" id="dgGold">0</span> Gold
+  </div>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <div class="dg-stat" style="font-family:var(--font-pixel); font-size:0.4rem; color:var(--muted); text-transform:uppercase;">
+      <span style="color:var(--gold); font-size:0.7rem; margin-right:5px;" id="dgLore">0</span> Lore
+  </div>
+</div>
+
 <script>
-// WORD PAIRS — Lord Oro's four language universe
 const wordSets = {
-  'kr-es': {
-    left: 'Korean', right: 'Spanish',
-    pairs: [
+  'kr-es': { left: 'Korean', right: 'Spanish', pairs: [
       { left: '금 (geum)', right: 'Oro', meaning: 'Gold' },
       { left: '산 (san)', right: 'Montaña', meaning: 'Mountain' },
       { left: '불 (bul)', right: 'Fuego', meaning: 'Fire' },
       { left: '물 (mul)', right: 'Agua', meaning: 'Water' },
-      { left: '별 (byeol)', right: 'Estrella', meaning: 'Star' },
-      { left: '길 (gil)', right: 'Camino', meaning: 'Path' },
-      { left: '빛 (bit)', right: 'Luz', meaning: 'Light' },
-      { left: '꿈 (kkum)', right: 'Sueño', meaning: 'Dream' },
-    ]
-  },
-  'kr-no': {
-    left: 'Korean', right: 'Norwegian',
-    pairs: [
+      { left: '별 (byeol)', right: 'Estrella', meaning: 'Star' }
+  ]},
+  'kr-no': { left: 'Korean', right: 'Norwegian', pairs: [
       { left: '금 (geum)', right: 'Gull', meaning: 'Gold' },
-      { left: '산 (san)', right: 'Fjell', meaning: 'Mountain' },
-      { left: '물 (mul)', right: 'Vann', meaning: 'Water' },
-      { left: '불 (bul)', right: 'Ild', meaning: 'Fire' },
-      { left: '별 (byeol)', right: 'Stjerne', meaning: 'Star' },
       { left: '길 (gil)', right: 'Vei', meaning: 'Path' },
-      { left: '빛 (bit)', right: 'Lys', meaning: 'Light' },
       { left: '꿈 (kkum)', right: 'Drøm', meaning: 'Dream' },
-    ]
-  },
-  'kr-jp': {
-    left: 'Korean', right: 'Japanese',
-    pairs: [
+      { left: '빛 (bit)', right: 'Lys', meaning: 'Light' },
+      { left: '산 (san)', right: 'Fjell', meaning: 'Mountain' }
+  ]},
+  'kr-jp': { left: 'Korean', right: 'Japanese', pairs: [
       { left: '금 (geum)', right: '金 (kin)', meaning: 'Gold' },
       { left: '산 (san)', right: '山 (yama)', meaning: 'Mountain' },
       { left: '불 (bul)', right: '火 (hi)', meaning: 'Fire' },
       { left: '물 (mul)', right: '水 (mizu)', meaning: 'Water' },
-      { left: '별 (byeol)', right: '星 (hoshi)', meaning: 'Star' },
-      { left: '길 (gil)', right: '道 (michi)', meaning: 'Path' },
-      { left: '빛 (bit)', right: '光 (hikari)', meaning: 'Light' },
-      { left: '꿈 (kkum)', right: '夢 (yume)', meaning: 'Dream' },
-    ]
-  },
-  'es-jp': {
-    left: 'Spanish', right: 'Japanese',
-    pairs: [
-      { left: 'Oro', right: '金 (kin)', meaning: 'Gold' },
-      { left: 'Montaña', right: '山 (yama)', meaning: 'Mountain' },
-      { left: 'Fuego', right: '火 (hi)', meaning: 'Fire' },
-      { left: 'Agua', right: '水 (mizu)', meaning: 'Water' },
-      { left: 'Estrella', right: '星 (hoshi)', meaning: 'Star' },
-      { left: 'Camino', right: '道 (michi)', meaning: 'Path' },
-      { left: 'Luz', right: '光 (hikari)', meaning: 'Light' },
-      { left: 'Sueño', right: '夢 (yume)', meaning: 'Dream' },
-    ]
-  }
+      { left: '별 (byeol)', right: '星 (hoshi)', meaning: 'Star' }
+  ]}
 };
 
-const ranks = [
-  { min: 0, name: 'Novice Digger' },
-  { min: 100, name: 'Copper Finder' },
-  { min: 300, name: 'Silver Seeker' },
-  { min: 600, name: 'Gold Tracker' },
-  { min: 1000, name: 'Vein Reader' },
-  { min: 2000, name: 'Master Prospector' },
-  { min: 5000, name: 'Lord Oro\'s Scholar' },
-];
+const state = { mode: 'kr-es', score: 0, round: 1, streak: 0, matches: 0, selectedL: null, selectedR: null, timeLeft: 60, pairs: [] };
 
-const state = {
-  mode: 'kr-es',
-  score: 0,
-  round: 1,
-  streak: 0,
-  matches: 0,
-  totalPairs: 6,
-  selectedLeft: null,
-  selectedRight: null,
-  timeLeft: 60,
-  timerInterval: null,
-  pairs: [],
-  matched: new Set()
-};
-
-function setMode(mode) {
-  state.mode = mode;
-  document.querySelectorAll('.lang-tab').forEach((t,i) => {
-    t.classList.toggle('active', ['kr-es','kr-no','kr-jp','es-jp'][i] === mode);
-  });
-  resetRound();
-}
-
-function shuffle(arr) {
-  return [...arr].sort(() => Math.random() - 0.5);
-}
-
-function getScrambledPairs() {
-  const all = wordSets[state.mode].pairs;
-  const selected = shuffle(all).slice(0, state.totalPairs);
-  return selected;
+function setMode(m) {
+    state.mode = m;
+    document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    resetRound();
 }
 
 function resetRound() {
-  clearInterval(state.timerInterval);
-  state.matches = 0;
-  state.selectedLeft = null;
-  state.selectedRight = null;
-  state.matched = new Set();
-  state.timeLeft = Math.max(30, 60 - (state.round - 1) * 5);
-  state.pairs = getScrambledPairs();
-
-  const set = wordSets[state.mode];
-  document.getElementById('leftLabel').textContent = set.left;
-  document.getElementById('rightLabel').textContent = set.right;
-  document.getElementById('roundComplete').classList.remove('visible');
-  document.getElementById('feedback').textContent = 'Select a word from each column to find matches...';
-
-  renderBoard();
-  updateStats();
-  startTimer();
+    state.matches = 0; state.selectedL = null; state.selectedR = null;
+    state.timeLeft = 60; state.pairs = [...wordSets[state.mode].pairs].sort(() => Math.random() - 0.5);
+    document.getElementById('leftLabel').textContent = wordSets[state.mode].left;
+    document.getElementById('rightLabel').textContent = wordSets[state.mode].right;
+    document.getElementById('roundComplete').style.display = 'none';
+    renderBoard();
 }
 
 function renderBoard() {
-  const leftCol = document.getElementById('leftCol');
-  const rightCol = document.getElementById('rightCol');
+    const leftCol = document.getElementById('leftCol');
+    const rightCol = document.getElementById('rightCol');
+    const leftWords = [...state.pairs].sort(() => Math.random() - 0.5);
+    const rightWords = [...state.pairs].sort(() => Math.random() - 0.5);
 
-  const leftWords = shuffle(state.pairs.map(p => p.left));
-  const rightWords = shuffle(state.pairs.map(p => p.right));
-
-  leftCol.innerHTML = leftWords.map(w =>
-    `<div class="tile" data-side="left" data-word="${w}" onclick="selectTile(this)">${w}</div>`
-  ).join('');
-
-  rightCol.innerHTML = rightWords.map(w =>
-    `<div class="tile" data-side="right" data-word="${w}" onclick="selectTile(this)">${w}</div>`
-  ).join('');
+    leftCol.innerHTML = leftWords.map(w => `<div class="tile" onclick="selectTile(this, 'L')">${w.left}</div>`).join('');
+    rightCol.innerHTML = rightWords.map(w => `<div class="tile" onclick="selectTile(this, 'R')">${w.right}</div>`).join('');
 }
 
-function selectTile(el) {
-  if (el.classList.contains('matched') || el.classList.contains('wrong')) return;
-  const side = el.dataset.side;
-
-  // Deselect same side
-  document.querySelectorAll(`.tile[data-side="${side}"].selected`).forEach(t => t.classList.remove('selected'));
-  el.classList.add('selected');
-
-  if (side === 'left') state.selectedLeft = el.dataset.word;
-  else state.selectedRight = el.dataset.word;
-
-  if (state.selectedLeft && state.selectedRight) checkMatch();
+function selectTile(el, side) {
+    if(el.classList.contains('matched')) return;
+    document.querySelectorAll(`.column:nth-child(${side === 'L' ? 1 : 2}) .tile`).forEach(t => t.classList.remove('selected'));
+    el.classList.add('selected');
+    if(side === 'L') state.selectedL = el; else state.selectedR = el;
+    if(state.selectedL && state.selectedR) checkMatch();
 }
 
 function checkMatch() {
-  const pair = state.pairs.find(p => p.left === state.selectedLeft && p.right === state.selectedRight);
-  const leftTile = document.querySelector(`.tile[data-side="left"][data-word="${state.selectedLeft}"]`);
-  const rightTile = document.querySelector(`.tile[data-side="right"][data-word="${state.selectedRight}"]`);
-
-  if (pair) {
-    leftTile.classList.remove('selected');
-    rightTile.classList.remove('selected');
-    leftTile.classList.add('matched');
-    rightTile.classList.add('matched');
-    state.matches++;
-    state.streak++;
-    const bonus = state.streak > 2 ? Math.floor(state.streak * 1.5) : 1;
-    const points = 50 * bonus;
-    state.score += points;
-    document.getElementById('feedback').textContent = `✓ ${pair.meaning}! ${state.streak > 2 ? `Streak ×${state.streak} — +${points} pts!` : `+${points} pts`}`;
-    if (state.matches >= state.totalPairs) setTimeout(roundComplete, 600);
-  } else {
-    leftTile.classList.add('wrong');
-    rightTile.classList.add('wrong');
-    state.streak = 0;
-    state.score = Math.max(0, state.score - 10);
-    document.getElementById('feedback').textContent = 'Not a match. Keep digging...';
-    setTimeout(() => {
-      leftTile.classList.remove('wrong', 'selected');
-      rightTile.classList.remove('wrong', 'selected');
-    }, 600);
-  }
-
-  state.selectedLeft = null;
-  state.selectedRight = null;
-  updateStats();
-}
-
-function startTimer() {
-  const fill = document.getElementById('timerFill');
-  const total = state.timeLeft;
-  state.timerInterval = setInterval(() => {
-    state.timeLeft--;
-    fill.style.width = (state.timeLeft / total * 100) + '%';
-    document.getElementById('timeVal').textContent = state.timeLeft;
-    if (state.timeLeft <= 10) fill.style.background = 'linear-gradient(90deg, #7a2a2a, #aa4a4a)';
-    if (state.timeLeft <= 0) { clearInterval(state.timerInterval); roundComplete(true); }
-  }, 1000);
-}
-
-function roundComplete(timeout = false) {
-  clearInterval(state.timerInterval);
-  const bonus = timeout ? 0 : state.timeLeft * 5;
-  state.score += bonus;
-  
-  // Calculate and Award Actual Gold via V2 Wallet
-  const goldEarned = Math.floor(25 + (timeout ? 0 : state.timeLeft));
-  if (typeof NMNWallet !== 'undefined') {
-      NMNWallet.addGold(goldEarned);
-      document.getElementById('dgGold').textContent = NMNWallet.get().gold;
-  }
-  
-  document.getElementById('roundComplete').classList.add('visible');
-  document.getElementById('roundScore').textContent = `${state.matches}/${state.totalPairs} matched • Time bonus: +${bonus} pts • Total: ${state.score} pts`;
-  document.getElementById('roundGold').textContent = `⛏ +${goldEarned} GOLD EARNED`;
-  
-  updateStats();
-  updateRank();
-}
-
-function nextRound() {
-  state.round++;
-  state.totalPairs = Math.min(8, 6 + Math.floor(state.round / 3));
-  resetRound();
-}
-
-function updateStats() {
-  document.getElementById('scoreVal').textContent = state.score;
-  document.getElementById('roundVal').textContent = state.round;
-  document.getElementById('matchesVal').textContent = `${state.matches}/${state.totalPairs}`;
-  document.getElementById('streakVal').textContent = state.streak;
-}
-
-function updateRank() {
-  const rank = [...ranks].reverse().find(r => state.score >= r.min) || ranks[0];
-  document.getElementById('rankName').textContent = rank.name;
-}
-
-// INIT
-resetRound();
-</script>
-
-<div class="depth-gauge" id="depthGauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
-  <span class="dg-sep">⬡</span>
-  <a href="lorevault.html" class="dg-link">📜 Vault</a>
-  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
-</div>
-
-<script>
-(function(){
-  try{
-    if(typeof NMNWallet !== 'undefined') {
-        document.getElementById('dgGold').textContent = NMNWallet.get().gold;
+    const pair = state.pairs.find(p => p.left === state.selectedL.textContent && p.right === state.selectedR.textContent);
+    if(pair) {
+        state.selectedL.classList.add('matched'); state.selectedR.classList.add('matched');
+        state.matches++; state.streak++; state.score += 50 * state.streak;
+        if(state.matches === state.pairs.length) roundComplete();
+    } else {
+        state.streak = 0;
+        state.selectedL.classList.remove('selected'); state.selectedR.classList.remove('selected');
     }
-  }catch(e){}
-})();
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
+    state.selectedL = null; state.selectedR = null;
+    updateHUD();
 }
+
+function roundComplete() {
+    const gold = 50 + (state.timeLeft);
+    if(window.NMNWallet) {
+        NMNWallet.addGold(gold);
+        NMNWallet.addXP(20);
+    }
+    document.getElementById('roundGold').textContent = `+${gold} GOLD EXTRACTED`;
+    document.getElementById('roundComplete').style.display = 'block';
+    if(Math.random() < 0.1) triggerLore();
+}
+
+function triggerLore() {
+    try {
+        const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
+        const entry = { text: `Linguistic Discovery: Ancient roots link the word for 'Gold' across the four tongues.`, source: 'Deciphered Tablet', date: new Date().toLocaleDateString() };
+        vault.push(entry);
+        localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
+    } catch(e) {}
+}
+
+function nextRound() { state.round++; resetRound(); }
+
+function updateHUD() {
+    document.getElementById('scoreVal').textContent = state.score;
+    document.getElementById('timeVal').textContent = state.timeLeft;
+    document.getElementById('streakVal').textContent = state.streak;
+    if(window.NMNWallet) {
+        document.getElementById('dgGold').textContent = NMNWallet.get().gold.toLocaleString();
+        document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]').length;
+    }
+}
+
+setInterval(() => { if(state.timeLeft > 0 && document.getElementById('roundComplete').style.display === 'none') { state.timeLeft--; updateHUD(); } }, 1000);
+
+window.onload = resetRound;
 </script>
 
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28; margin-top: auto;">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
-</div>
 </body>
 </html>
