@@ -5,15 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Ore Digger — Sector 1</title>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-P5WL9XNDY8');
-</script>
-<link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
+
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
 
 <style>
 /* ── CORE NMN VARIABLES & AESTHETIC ── */
@@ -79,7 +76,7 @@ header {
   background: #050306; border: 2px solid var(--gd);
   box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 0 30px rgba(255,215,0,0.1);
 }
-canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; touch-action: none;}
 
 /* OVERLAYS */
 .overlay {
@@ -130,15 +127,15 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
   justify-content:center!important; gap:1.2rem!important; box-shadow:0 0 20px rgba(255,215,0,.08)!important;
 }
 .dg-stat { font-size: 0.4rem; color: var(--gd); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
-.dg-val { color: var(--gold); font-size: 0.6rem; }
-.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+.dg-val { color: var(--gold); font-size: 0.6rem; font-family: var(--font-serif); }
+.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; pointer-events: auto!important;}
 .dg-link:hover { color: var(--gold); }
-
-/* CUSTOM CURSOR */
-body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
 </style>
 </head>
 <body>
+
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
 
 <header>
   <a href="index.html" class="logo">NMN — Lord Oro</a>
@@ -183,7 +180,7 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 
 <div class="depth-gauge">
   <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold</div>
-  <span class="dg-sep">⬡</span>
+  <span class="dg-sep" style="color:var(--faint);">⬡</span>
   <a href="lorevault.html" class="dg-link">📜 Vault</a>
   <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
 </div>
@@ -234,6 +231,10 @@ const SFX = {
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
 let W, H;
+
+// LOAD PARALLAX BACKGROUNDS
+const bgMine = new Image(); bgMine.src = 'goldmine_stable.jpg';
+const bgGlitch = new Image(); bgGlitch.src = 'obsidian_glitched.jpg';
 
 const COLS = 12;
 const ROWS = 20;
@@ -442,6 +443,25 @@ function update() {
 function draw() {
   ctx.fillStyle = '#050306'; ctx.fillRect(0, 0, W, H);
   
+  // PARALLAX BACKGROUND RENDERING (Revealed through EMPTY tiles)
+  let bgScroll = (cameraY * CELL_H * 0.2) % H; 
+  let glitchFactor = Math.min(1, depth / 150); 
+  
+  ctx.save();
+  // Stable Goldmine Background
+  ctx.globalAlpha = (1 - glitchFactor) * 0.5;
+  if(bgMine.complete && bgMine.naturalWidth) {
+     ctx.drawImage(bgMine, 0, -bgScroll, W, H);
+     ctx.drawImage(bgMine, 0, H - bgScroll, W, H);
+  }
+  // Glitch Obsidian Background
+  ctx.globalAlpha = glitchFactor * 0.5;
+  if(bgGlitch.complete && bgGlitch.naturalWidth) {
+     ctx.drawImage(bgGlitch, 0, -bgScroll, W, H);
+     ctx.drawImage(bgGlitch, 0, H - bgScroll, W, H);
+  }
+  ctx.restore();
+  
   ctx.save();
   if(screenShake > 0) {
     ctx.translate((Math.random()-0.5)*screenShake, (Math.random()-0.5)*screenShake);
@@ -532,27 +552,29 @@ function updateHUD() {
 }
 
 function endGame() {
-  // Save Gold
-  try {
-    let currentGold = parseInt(localStorage.getItem('nmn_total_gold') || '0');
-    localStorage.setItem('nmn_total_gold', currentGold + gold);
-    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold');
-  } catch(e) {}
+  // Save Gold globally to Wallet V2
+  if(typeof NMNWallet !== 'undefined') {
+      NMNWallet.addGold(gold);
+      NMNWallet.addXP(Math.floor(depth / 2));
+      syncGauge();
+  }
 
   document.getElementById('final-depth').textContent = depth + 'm';
   document.getElementById('final-gold').textContent = gold;
   document.getElementById('ov-over').classList.remove('hidden');
 }
 
+function syncGauge() {
+    try {
+        if(typeof NMNWallet !== 'undefined') {
+            document.getElementById('dgGold').textContent = NMNWallet.get().gold;
+        }
+    } catch(e) {}
+}
+
 // Initial draw
 ctx.fillStyle = '#050306'; ctx.fillRect(0,0,cv.width,cv.height);
-
-</script>
-
-<script>
-try {
-    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold') || '0';
-} catch(e) {}
+syncGauge();
 </script>
 
 <div style="text-align:center;padding:1rem;font-family:'Press Start 2P',monospace;font-size:.3rem;color:#4a3c28; margin-top: auto;">
