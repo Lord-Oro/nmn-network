@@ -1,4 +1,10 @@
-// Global Google Analytics Handshake
+/* ════════════════════════════════════════════
+   nmn-nav.js — The Empire's Central Nervous System
+   Handles: Analytics, Global Nav, Lantern Cursor, 
+   Lore Toasts, and Wallet Syncing.
+   ════════════════════════════════════════════ */
+
+// 1. Google Analytics Handshake
 (function() {
     var gaScript = document.createElement('script');
     gaScript.async = true;
@@ -11,205 +17,123 @@
     gtag('config', 'G-P5WL9XNDY8');
 })();
 
-/* ════════════════════════════════════════════
-   nmn-nav.js — Shared pixel nav + lantern cursor
-   Include at TOP of <body> on every page:
-   <script src="nmn-nav.js"></script>
-   ════════════════════════════════════════════ */
 (function(){
 
-// Wait for body if script is loaded too early
+// 2. The Architect's Styles (Direct Injection to fix Cursor/Nav visibility)
+const injectStyles = () => {
+    const style = document.createElement('style');
+    style.textContent = `
+        /* Cursor & Halo */
+        #nmn-cursor { position: fixed; pointer-events: none; z-index: 100000; transform: translate(-50%, -50%); transition: transform 0.1s; opacity: 0; }
+        #nmn-halo { position: fixed; pointer-events: none; z-index: 99999; width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,215,0,0.15) 0%, transparent 70%); transform: translate(-50%, -50%); pointer-events: none; }
+        #nmn-pool { position: fixed; pointer-events: none; z-index: 99998; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,215,0,0.05) 0%, transparent 70%); transform: translate(-50%, -50%); }
+        
+        #nmn-cursor.hot { transform: translate(-50%, -50%) scale(1.2); }
+        .l-flame { animation: flicker 0.1s infinite alternate; }
+        @keyframes flicker { from { opacity: 0.8; transform: scale(0.9); } to { opacity: 1; transform: scale(1.1); } }
+
+        /* Shared Nav */
+        #nmn-nav { position: fixed; top: 0; left: 0; right: 0; height: 56px; background: rgba(5,3,2,0.95); border-bottom: 2px solid #8B6914; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 99997; backdrop-filter: blur(5px); font-family: 'Press Start 2P', cursive; }
+        .nmn-nav-logo { color: #FFD700; text-decoration: none; font-size: 0.8rem; text-shadow: 0 0 10px rgba(255,215,0,0.4); }
+        .nmn-nav-links { display: flex; gap: 15px; }
+        .nmn-nav-link { color: #8a7654; text-decoration: none; font-size: 0.45rem; transition: color 0.3s; }
+        .nmn-nav-link:hover { color: #FFD700; }
+        .nmn-nav-back { color: #00FF88; text-decoration: none; font-size: 0.45rem; border: 1px solid #00FF88; padding: 5px 10px; }
+
+        /* Toast Notifications */
+        #nmn-toast { position: fixed; top: 70px; right: 20px; background: #000; border: 2px solid #FFD700; color: #FFF; padding: 15px; font-family: 'VT323', monospace; font-size: 1.2rem; z-index: 100001; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-width: 300px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        #nmn-toast.show { transform: translateX(0); }
+    `;
+    document.head.appendChild(style);
+};
+
 const initNav = () => {
     if (!document.body) return setTimeout(initNav, 50);
+    injectStyles();
 
-    // ── INJECT CURSOR HTML ──
+    // 3. Inject Cursor HTML
     document.body.insertAdjacentHTML('afterbegin',`
     <div id="nmn-pool"></div>
     <div id="nmn-halo"></div>
     <div id="nmn-cursor">
-      <svg viewBox="0 0 48 64" width="48" height="64" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 48 64" width="32" height="42" xmlns="http://www.w3.org/2000/svg">
         <g class="l-body">
-          <rect x="22" y="0" width="4" height="3" fill="#6a5a30" rx="1"/>
-          <rect x="23" y="3" width="2" height="5" fill="#8B6914"/>
-          <rect x="14" y="8" width="20" height="3" fill="#8B6914" rx="1"/>
-          <rect x="17" y="11" width="14" height="2" fill="#B8860B"/>
-          <rect x="14" y="13" width="3" height="26" fill="#8B6914"/>
-          <rect x="31" y="13" width="3" height="26" fill="#8B6914"/>
-          <rect x="17" y="13" width="14" height="6" fill="#1a1000" opacity="0.6"/>
-          <rect x="17" y="20" width="14" height="6" fill="#1a1000" opacity="0.6"/>
-          <rect x="17" y="27" width="14" height="6" fill="#1a1000" opacity="0.6"/>
-          <rect x="17" y="34" width="14" height="5" fill="#1a1000" opacity="0.6"/>
-          <rect x="14" y="19" width="20" height="2" fill="#8B6914"/>
-          <rect x="14" y="26" width="20" height="2" fill="#8B6914"/>
-          <rect x="14" y="33" width="20" height="2" fill="#8B6914"/>
-          <rect class="l-glow" x="17" y="13" width="14" height="26" fill="#FFD700" opacity="0.45" rx="1"/>
+          <rect x="14" y="13" width="20" height="26" fill="#FFD700" opacity="0.3" rx="1"/>
           <g class="l-flame">
             <ellipse cx="24" cy="26" rx="5" ry="7" fill="#FF8C00" opacity="0.9"/>
             <ellipse cx="24" cy="27" rx="3.5" ry="5" fill="#FFD700"/>
-            <ellipse cx="24" cy="28" rx="2" ry="3" fill="#FFFAAA"/>
-            <ellipse cx="24" cy="22" rx="1.5" ry="2.5" fill="#FF6600" opacity="0.7"/>
           </g>
-          <rect x="18" y="14" width="2" height="10" fill="rgba(255,255,255,0.12)" rx="1"/>
+          <rect x="14" y="8" width="20" height="3" fill="#8B6914" rx="1"/>
+          <rect x="14" y="13" width="3" height="26" fill="#8B6914"/>
+          <rect x="31" y="13" width="3" height="26" fill="#8B6914"/>
           <rect x="14" y="39" width="20" height="3" fill="#8B6914" rx="1"/>
-          <rect x="19" y="44" width="10" height="3" fill="#8B6914" rx="1"/>
         </g>
       </svg>
     </div>
     <div id="nmn-toast"></div>
-    <div class="nmn-beam nmn-beam-1"></div>
-    <div class="nmn-beam nmn-beam-2"></div>
-    <div class="nmn-beam nmn-beam-3"></div>
-    <div class="nmn-beam nmn-beam-4"></div>
     `);
 
-    // ── INJECT PIXEL NAV ──
+    // 4. Inject Dynamic Nav
     const path = window.location.pathname.split('/').pop() || 'index.html';
     const isHome = path === 'index.html' || path === '';
-    
-    // Dynamic Back Button: Falls back to index if arriving directly via external link
-    const backBtnHtml = !isHome 
-        ? `<a href="index.html" onclick="if(history.length > 1) { history.back(); return false; }" class="nmn-nav-back">← BACK</a>` 
-        : '';
+    const backBtn = !isHome ? `<a href="index.html" class="nmn-nav-back">← BACK</a>` : '';
 
     document.body.insertAdjacentHTML('afterbegin',`
     <nav id="nmn-nav">
       <a href="index.html" class="nmn-nav-logo">⛏ NMN</a>
       <div class="nmn-nav-links">
-        <a href="games.html" class="nmn-nav-link">🎮 GAMES</a>
-        <a href="oracle.html" class="nmn-nav-link">🔮 ORACLE</a>
-        <a href="archives.html" class="nmn-nav-link">📖 BOOKS</a>
-        <a href="gemshop.html" class="nmn-nav-link">💎 GEMS</a>
-        <a href="lantern.html" class="nmn-nav-link">🕯 MINE</a>
-        <a href="https://patreon.com/lordoro" target="_blank" class="nmn-nav-link">🏅 PATREON</a>
-        <a href="https://gofund.me/e643a8283" target="_blank" class="nmn-nav-link">🙏 FUND</a>
+        <a href="games.html" class="nmn-nav-link">GAMES</a>
+        <a href="oracle.html" class="nmn-nav-link">ORACLE</a>
+        <a href="library.html" class="nmn-nav-link">BOOKS</a>
+        <a href="expansion.html" class="nmn-nav-link">UPDATES</a>
       </div>
-      ${backBtnHtml}
+      ${backBtn}
     </nav>
     `);
 
-    // ── CURSOR LOGIC (Desktop Only) ──
+    // 5. Cursor Tracking Logic
     const CE = document.getElementById('nmn-cursor');
     const HA = document.getElementById('nmn-halo');
     const PO = document.getElementById('nmn-pool');
-    const isTouchDevice = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
+    const isTouch = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
 
-    if (!isTouchDevice) {
-        if(CE) CE.style.opacity = '1';
+    if (!isTouch) {
+        CE.style.opacity = '1';
         document.addEventListener('mousemove', e => {
-            CE.style.left = e.clientX + 'px'; CE.style.top = e.clientY + 'px';
-            HA.style.left = e.clientX + 'px'; HA.style.top = e.clientY + 'px';
-            PO.style.left = e.clientX + 'px'; PO.style.top = e.clientY + 'px';
+            const x = e.clientX, y = e.clientY;
+            CE.style.left = x + 'px'; CE.style.top = y + 'px';
+            HA.style.left = x + 'px'; HA.style.top = y + 'px';
+            PO.style.left = x + 'px'; PO.style.top = y + 'px';
         });
 
-        // ── MUTATION OBSERVER FOR DYNAMIC ELEMENTS ──
         const bindHot = (el) => {
-            if(el._nmnHot) return;
-            el._nmnHot = true;
-            el.addEventListener('mouseenter', () => { CE.classList.add('hot'); HA.classList.add('hot'); PO.classList.add('hot'); });
-            el.addEventListener('mouseleave', () => { CE.classList.remove('hot'); HA.classList.remove('hot'); PO.classList.remove('hot'); });
+            el.addEventListener('mouseenter', () => CE.classList.add('hot'));
+            el.addEventListener('mouseleave', () => CE.classList.remove('hot'));
         };
-
-        const bindAllHot = () => {
-            document.querySelectorAll('a, button, .nmn-card, .game-card, .work-card, .px-btn, .btn, .nmn-btn, .shop-buy, .tier-btn, .book-btn, .gtab, .gctrl').forEach(bindHot);
-        };
-
-        // Bind initial elements
-        bindAllHot();
-
-        // Watch for elements added by Javascript (Gem Shop, Games)
-        const observer = new MutationObserver(bindAllHot);
-        observer.observe(document.body, { childList: true, subtree: true });
+        document.querySelectorAll('a, button, .action-btn, .upgrade-card').forEach(bindHot);
     } else {
-        // Hide custom cursor elements cleanly on mobile to save performance
-        if(CE) CE.style.display = 'none';
-        if(HA) HA.style.display = 'none';
-        if(PO) PO.style.display = 'none';
+        [CE, HA, PO].forEach(el => el.style.display = 'none');
     }
 
-    // ── TOAST HELPER (global) ──
-    window.nmnToast = function(msg, duration) {
+    // 6. Global Toast System (Retention Injection)
+    window.nmnToast = function(msg, duration = 3000) {
         const t = document.getElementById('nmn-toast');
         if(!t) return;
-        t.textContent = msg;
+        t.innerHTML = msg;
         t.classList.add('show');
-        clearTimeout(window._nmnToastTimer);
-        window._nmnToastTimer = setTimeout(() => t.classList.remove('show'), duration || 2200);
+        setTimeout(() => t.classList.remove('show'), duration);
     };
 
-    // ── FADE IN OBSERVER ──
-    if('IntersectionObserver' in window) {
-        const obs = new IntersectionObserver(entries => {
-            entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.nmn-fade').forEach(el => obs.observe(el));
-    }
-
-    // ── DISABLE OLD CURSOR LAMP IF EXISTS ──
-    const oldLamp = document.getElementById('cursor-lamp');
-    if(oldLamp) { oldLamp.style.display = 'none'; }
+    // Auto-Lore Engagement (Triggers once every 5 minutes if tab stays open)
+    setInterval(() => {
+        const prompts = [
+            "LORE EXTRACT: 'The first soul chose Felik before he was born...'",
+            "EXTRACTION READY: 'Outbreak from the Stars' is now available.",
+            "MINER TIP: Use Gold to unlock new chapters in the Grimoire."
+        ];
+        window.nmnToast(prompts[Math.floor(Math.random()*prompts.length)]);
+    }, 300000);
 };
 
-// Start injection process
 initNav();
-
 })();
-
-// ── LANGUAGE SYSTEM — available on ALL pages ──
-window.NMN_LANGS = {
-    en:{flag:'🇺🇸',label:'EN',title:'The goldmine',em:'is within.'},
-    ko:{flag:'🇰🇷',label:'한',title:'금광은',em:'내 안에 있다.'},
-    es:{flag:'🇵🇷',label:'ES',title:'La mina de oro',em:'está dentro.'},
-    ja:{flag:'🇯🇵',label:'JP',title:'金鉱は',em:'内にある。'},
-    no:{flag:'🇳🇴',label:'NO',title:'Gullgruven',em:'er inni deg.'},
-};
-
-window.setLang = function(l) {
-    var d = window.NMN_LANGS[l];
-    if(!d) return;
-
-    // 1. Update trigger button
-    var btn = document.getElementById('langBtn');
-    if(btn) btn.textContent = d.flag + ' ' + d.label;
-
-    // 2. Gemini's explicit textNode targeting — keeps <em> intact
-    var titleEl = document.querySelector('.hero-title');
-    if(titleEl) {
-        var textNode = Array.from(titleEl.childNodes).find(function(n){ return n.nodeType === 3; });
-        if(textNode) textNode.textContent = d.title + ' ';
-        var emEl = titleEl.querySelector('em');
-        if(emEl) emEl.textContent = d.em;
-    }
-
-    // 3. Save preference
-    try { localStorage.setItem('nmn_lang', l); } catch(e){}
-
-    // 4. Close menu
-    var menu = document.getElementById('langMenu');
-    if(menu) menu.classList.remove('open');
-
-    // 5. Fire lesson popup if available
-    if(l !== 'en' && typeof launchLesson === 'function') launchLesson(l);
-};
-
-window.toggleLang = function() {
-    var menu = document.getElementById('langMenu');
-    if(menu) menu.classList.toggle('open');
-};
-
-// Close on outside click
-document.addEventListener('click', function(e) {
-    if(!e.target.closest('.lang-switcher')) {
-        var menu = document.getElementById('langMenu');
-        if(menu) menu.classList.remove('open');
-    }
-});
-
-// Restore saved lang — Gemini's 100ms delay for full DOM paint
-window.addEventListener('DOMContentLoaded', function() {
-    try {
-        var saved = localStorage.getItem('nmn_lang');
-        if(saved && saved !== 'en') {
-            setTimeout(function() { setLang(saved); }, 100);
-        }
-    } catch(e){}
-});
