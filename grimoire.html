@@ -4,49 +4,70 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Eskanar's Grimoire — NMN</title>
+
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
 
 <style>
-:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#070605;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28;--pu:#6a3a8a;--lpu:#9a6aaa;--dp:#3a1a5a}
+:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#050302;--panel-bg:#0a0806;--cream:#f0e6cc;--muted:#8a7654;--faint:#4a3c28;--pu:#6a3a8a;--lpu:#9a6aaa;--dp:#3a1a5a; --font-pixel: 'Press Start 2P', monospace; --font-text: 'VT323', monospace; --font-ancient: 'Cormorant Garamond', serif;}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-sans);background:#05030a;color:var(--cream);min-height:100vh;background-image:linear-gradient(45deg,#05030a 25%,#080512 25%,#080512 50%,#05030a 50%,#05030a 75%,#080512 75%,#080512 100%);background-size:4px 4px;padding-bottom:50px}
-header{padding:.8rem 2rem;border-bottom:1px solid rgba(106,58,138,.2);display:flex;justify-content:space-between;align-items:center;background:rgba(5,3,10,.97);position:sticky;top:0;z-index:10}
-.logo{font-family:var(--font-serif);font-style:italic;color:var(--lpu);font-size:1rem;text-decoration:none}
-.back{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+
+body{font-family:var(--font-ancient);background:var(--coal);color:var(--cream);min-height:100vh;background-image:radial-gradient(ellipse at 50% 0%, rgba(106, 58, 138, 0.1) 0%, transparent 60%), linear-gradient(45deg, #080605 25%, #0a0806 25%, #0a0806 50%, #080605 50%, #080605 75%, #0a0806 75%, #0a0806 100%);background-size:100% 100%, 4px 4px;padding-bottom:80px!important}
+
+/* HEADER */
+header{padding:1rem 2rem;border-bottom:1px solid rgba(106,58,138,.3);display:flex;justify-content:space-between;align-items:center;background:rgba(5,3,2,.95);position:sticky;top:0;z-index:100;backdrop-filter:blur(5px)}
+.logo{font-family:var(--font-pixel);font-style:normal;color:var(--lpu);font-size:0.7rem;text-decoration:none;letter-spacing:2px;transition:color 0.3s;}
+.logo:hover{color:var(--gold);}
+.back{font-family:var(--font-pixel);font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.3s;}
 .back:hover{color:var(--lpu)}
 
 /* GRIMOIRE COVER */
-.cover{text-align:center;padding:3rem 2rem 2rem;background:linear-gradient(to bottom,rgba(106,58,138,.08),transparent)}
-.cover-paw{font-size:2.5rem;display:block;margin-bottom:.75rem;animation:pawFloat 4s ease-in-out infinite}
+.cover{text-align:center;padding:4rem 2rem 3rem;background:linear-gradient(180deg, rgba(106,58,138,.08), transparent);position:relative;}
+.cover::after { content: '▼'; display: block; color: var(--dp); font-size: 0.8rem; margin-top: 2rem; animation: float 2s infinite ease-in-out; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+
+.cover-paw{font-size:2.5rem;display:block;margin-bottom:1rem;animation:pawFloat 4s ease-in-out infinite}
 @keyframes pawFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-.cover-eyebrow{font-size:.52rem;letter-spacing:.4em;text-transform:uppercase;color:var(--dp);margin-bottom:.75rem}
-.cover-title{font-family:var(--font-serif);font-size:clamp(2rem,6vw,3.5rem);color:var(--cream);line-height:1;margin-bottom:.3rem}
+.cover-eyebrow{font-family:var(--font-pixel);font-size:.5rem;letter-spacing:.4em;text-transform:uppercase;color:var(--dp);margin-bottom:1.5rem}
+.cover-title{font-family:var(--font-ancient);font-size:clamp(3rem,6vw,4.5rem);color:var(--cream);line-height:1.1;margin-bottom:.5rem;font-weight:600;text-shadow:0 0 20px rgba(106,58,138,0.3)}
 .cover-title em{color:var(--lpu);font-style:italic;display:block}
-.cover-sub{font-family:var(--font-serif);font-style:italic;font-size:.9rem;color:var(--muted);max-width:480px;margin:.75rem auto;line-height:1.8}
-.cover-tora{font-size:.62rem;color:var(--dp);letter-spacing:.15em;font-style:italic;font-family:var(--font-serif)}
-.progress-bar-wrap{max-width:400px;margin:1.25rem auto 0}
-.progress-label{font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dp);margin-bottom:.4rem;display:flex;justify-content:space-between}
+.cover-sub{font-size:1.3rem;color:var(--muted);max-width:600px;margin:1.5rem auto;line-height:1.6;font-style:italic;}
+
+.cover-tora{font-style:italic;font-size:1.4rem;color:var(--gb);max-width:550px;margin:2rem auto 0;line-height:1.6;padding:2rem;border:1px solid rgba(106,58,138,0.2);background:rgba(106,58,138,0.02);position:relative;}
+.cover-tora::before, .cover-tora::after { content: '🔮'; position: absolute; left: 50%; transform: translateX(-50%); font-size: 0.8rem; }
+.cover-tora::before { top: -12px; }
+.cover-tora::after { bottom: -12px; }
+
+.progress-bar-wrap{max-width:400px;margin:3rem auto 0}
+.progress-label{font-family:var(--font-pixel);font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dp);margin-bottom:1rem;display:flex;justify-content:space-between}
 .progress-bar{height:4px;background:rgba(106,58,138,.15);border-radius:2px}
-.progress-fill{height:100%;background:linear-gradient(to right,var(--dp),var(--lpu));border-radius:2px;transition:width .6s ease}
+.progress-fill{height:100%;background:linear-gradient(to right,var(--dp),var(--lpu));border-radius:2px;transition:width .6s ease;box-shadow:0 0 10px var(--lpu);}
 
 /* CHAPTER LIST */
-main{max-width:800px;margin:0 auto;padding:2rem 1.5rem}
-.chapters-label{font-size:.52rem;letter-spacing:.35em;text-transform:uppercase;color:var(--dp);margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem}
-.chapters-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(106,58,138,.2),transparent)}
-.chapter-row{border:1px solid rgba(106,58,138,.12);background:rgba(106,58,138,.03);margin-bottom:.5rem;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+main{max-width:850px;margin:0 auto;padding:2rem 1.5rem}
+.chapters-label{font-family:var(--font-pixel);font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;color:var(--dp);margin-bottom:2rem;display:flex;align-items:center;gap:1rem}
+.chapters-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(106,58,138,.3),transparent)}
+
+.chapter-row{border:1px solid #222;background:linear-gradient(180deg, #0a0806, #050403);margin-bottom:1rem;cursor:pointer;transition:all .4s;position:relative;overflow:hidden;box-shadow:inset 0 0 20px rgba(0,0,0,0.8), 0 5px 15px rgba(0,0,0,0.5);}
 .chapter-row::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lpu);transform:scaleY(0);transition:transform .3s}
+.chapter-row:hover{transform:translateY(-3px);border-color:#333;box-shadow:inset 0 0 20px rgba(0,0,0,0.9), 0 10px 25px rgba(0,0,0,0.8);}
 .chapter-row:hover::after,.chapter-row.unlocked:hover::after{transform:scaleY(1)}
-.chapter-row.locked{opacity:.5;cursor:default}
-.chapter-row.locked:hover{transform:none}
+.chapter-row.locked{opacity:.5;cursor:default;box-shadow:none;}
+.chapter-row.locked:hover{transform:none;border-color:#222;}
 .chapter-row.completed::after{transform:scaleY(1);background:var(--gold)}
-.chapter-header{padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem}
-.ch-num{font-family:var(--font-serif);font-style:italic;font-size:.85rem;color:var(--dp);width:28px;flex-shrink:0;text-align:right}
-.ch-cat{font-size:1.3rem;flex-shrink:0}
+
+.chapter-header{padding:1.5rem;display:flex;align-items:center;gap:1.5rem}
+.ch-num{font-style:italic;font-size:1.4rem;color:var(--dp);width:30px;flex-shrink:0;text-align:right;font-weight:bold;}
+.ch-cat{font-size:1.8rem;flex-shrink:0}
 .ch-info{flex:1}
-.ch-name{font-family:var(--font-serif);font-size:1.1rem;color:var(--cream);margin-bottom:.15rem}
+.ch-name{font-size:1.6rem;color:var(--cream);margin-bottom:.2rem;font-weight:600;}
 .ch-name em{color:var(--lpu);font-style:italic}
-.ch-sub{font-size:.52rem;color:var(--muted);letter-spacing:.08em}
-.ch-status{font-size:.45rem;letter-spacing:.15em;text-transform:uppercase;flex-shrink:0}
+.ch-sub{font-family:var(--font-pixel);font-size:.45rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;line-height:1.4;}
+.ch-status{font-family:var(--font-pixel);font-size:.45rem;letter-spacing:.15em;text-transform:uppercase;flex-shrink:0}
 .ch-status.open{color:var(--lpu)}
 .ch-status.done{color:var(--gold)}
 .ch-status.locked{color:var(--faint)}
@@ -54,133 +75,127 @@ main{max-width:800px;margin:0 auto;padding:2rem 1.5rem}
 /* CHAPTER VIEW */
 .chapter-view{display:none;animation:chReveal .5s ease}
 .chapter-view.show{display:block}
-@keyframes chReveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.cv-header{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid rgba(106,58,138,.15)}
-.cv-cat{font-size:3rem}
-.cv-title{font-family:var(--font-serif);font-size:1.8rem;color:var(--cream);line-height:1.1}
+@keyframes chReveal{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.cv-header{display:flex;align-items:center;gap:1.5rem;margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid rgba(106,58,138,.2)}
+.cv-cat{font-size:3.5rem}
+.cv-title{font-size:2.5rem;color:var(--cream);line-height:1.1;font-weight:600;}
 .cv-title em{color:var(--lpu);font-style:italic}
-.cv-meta{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dp);margin-top:.3rem}
-.cv-back{font-size:.52rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dp);text-decoration:none;cursor:pointer;background:none;border:none;margin-bottom:1.25rem;display:block;padding:0}
+.cv-meta{font-family:var(--font-pixel);font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dp);margin-top:1rem}
+.cv-back{font-family:var(--font-pixel);font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dp);text-decoration:none;cursor:pointer;background:none;border:none;margin-bottom:2rem;display:block;padding:0;transition:color 0.3s;}
 .cv-back:hover{color:var(--lpu)}
 
 /* HISTORY BLOCK */
-.history-block{margin-bottom:1.5rem}
-.block-label{font-size:.48rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dp);margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
-.block-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(106,58,138,.2),transparent)}
-.history-text{font-family:var(--font-serif);font-size:.95rem;color:var(--cream);line-height:1.9}
+.history-block{margin-bottom:3rem}
+.block-label{font-family:var(--font-pixel);font-size:.5rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dp);margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem}
+.block-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(106,58,138,.3),transparent)}
+.history-text{font-size:1.4rem;color:var(--cream);line-height:1.7}
 
 /* POEM BLOCK */
-.poem-block{border-left:2px solid var(--dp);padding:1rem 1.25rem;background:rgba(106,58,138,.04);margin-bottom:1.5rem}
-.poem-label{font-size:.45rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dp);margin-bottom:.6rem}
-.poem-text{font-family:var(--font-serif);font-style:italic;font-size:1rem;color:var(--cream);line-height:2.1;white-space:pre-line}
-.poem-sig{font-size:.48rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gd);margin-top:.6rem;text-align:right}
+.poem-block{border-left:2px solid var(--dp);padding:1.5rem 2rem;background:rgba(106,58,138,.04);margin-bottom:3rem}
+.poem-label{font-family:var(--font-pixel);font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dp);margin-bottom:1rem}
+.poem-text{font-style:italic;font-size:1.3rem;color:var(--cream);line-height:2;white-space:pre-line}
+.poem-sig{font-family:var(--font-pixel);font-size:.45rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gd);margin-top:1.5rem;text-align:right}
 
 /* TORA MARGIN NOTE */
-.tora-note{background:rgba(58,26,90,.15);border:1px solid rgba(106,58,138,.2);padding:.85rem 1rem;margin-bottom:1.5rem;position:relative}
-.tora-note::before{content:'🔮';position:absolute;top:-.7rem;left:1rem;background:#05030a;padding:0 .4rem;font-size:.9rem}
-.tora-label{font-size:.42rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dp);margin-bottom:.4rem}
-.tora-text{font-family:var(--font-serif);font-style:italic;font-size:.88rem;color:var(--lpu);line-height:1.7}
+.tora-note{background:rgba(58,26,90,.08);border:1px solid rgba(106,58,138,.2);padding:1.5rem 2rem;margin-bottom:3rem;position:relative}
+.tora-note::before{content:'🔮';position:absolute;top:-1rem;left:1.5rem;background:var(--coal);padding:0 .5rem;font-size:1.2rem}
+.tora-label{font-family:var(--font-pixel);font-size:.45rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dp);margin-bottom:1rem}
+.tora-text{font-style:italic;font-size:1.2rem;color:var(--lpu);line-height:1.6}
 
 /* PUZZLE */
-.puzzle-block{border:1px solid rgba(106,58,138,.2);background:rgba(5,3,10,.8);padding:1.25rem;margin-bottom:1.5rem}
-.puzzle-label{font-size:.48rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dp);margin-bottom:.75rem}
-.puzzle-instruction{font-family:var(--font-serif);font-style:italic;font-size:.88rem;color:var(--muted);margin-bottom:1rem;line-height:1.7}
+.puzzle-block{border:1px solid rgba(106,58,138,.3);background:linear-gradient(180deg, #0a0806, #050403);padding:2rem;margin-bottom:3rem;box-shadow:inset 0 0 20px rgba(0,0,0,0.9), 0 10px 25px rgba(0,0,0,0.8);}
+.puzzle-label{font-family:var(--font-pixel);font-size:.5rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dp);margin-bottom:1.5rem}
+.puzzle-instruction{font-style:italic;font-size:1.2rem;color:var(--muted);margin-bottom:2rem;line-height:1.6}
+
 /* PUZZLE TYPES */
-.color-options{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem}
-.color-chip{width:44px;height:44px;border-radius:4px;cursor:pointer;border:3px solid transparent;transition:all .2s;flex-shrink:0}
+.color-options{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.color-chip{width:50px;height:50px;border-radius:4px;cursor:pointer;border:3px solid transparent;transition:all .2s;flex-shrink:0;box-shadow:0 5px 10px rgba(0,0,0,0.5);}
 .color-chip:hover{transform:scale(1.1)}
-.color-chip.selected{border-color:white;transform:scale(1.1)}
-.color-sequence{display:flex;gap:.5rem;margin-bottom:.75rem;min-height:50px;border:1px dashed rgba(106,58,138,.2);padding:.5rem;align-items:center;flex-wrap:wrap}
-.sequence-slot{width:44px;height:44px;border-radius:4px;border:2px dashed rgba(106,58,138,.3);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
-.word-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;margin-bottom:.75rem;font-family:monospace;font-size:.75rem}
-.wg-cell{padding:.3rem;text-align:center;cursor:pointer;border-radius:2px;transition:background .15s;color:var(--muted);line-height:1}
-.wg-cell.highlighted{background:rgba(106,58,138,.4);color:var(--cream)}
-.wg-cell.found{background:rgba(255,215,0,.3);color:var(--gb)}
-.match-pairs{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.75rem}
-.match-col{display:flex;flex-direction:column;gap:.4rem}
-.match-item{padding:.5rem .75rem;border:1px solid rgba(106,58,138,.2);font-size:.6rem;color:var(--muted);cursor:pointer;transition:all .2s;text-align:center}
-.match-item:hover{border-color:var(--lpu);color:var(--lpu)}
-.match-item.selected{border-color:var(--lpu);background:rgba(106,58,138,.1);color:var(--lpu)}
-.match-item.matched{border-color:var(--gold);background:rgba(255,215,0,.08);color:var(--gb);cursor:default}
-.fill-blank{width:100%;padding:.6rem .8rem;background:rgba(255,255,255,.03);border:1px solid rgba(106,58,138,.2);color:var(--cream);font-family:var(--font-serif);font-style:italic;font-size:.9rem;outline:none;margin-bottom:.75rem}
-.fill-blank:focus{border-color:var(--lpu)}
-.unlock-btn{width:100%;padding:.8rem;background:transparent;border:1px solid rgba(106,58,138,.3);color:var(--lpu);font-family:var(--font-sans);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s}
-.unlock-btn:hover{background:rgba(106,58,138,.08);border-color:var(--lpu)}
-.puzzle-feedback{font-size:.62rem;color:var(--dp);margin-top:.5rem;min-height:1rem;font-style:italic;font-family:var(--font-serif)}
+.color-chip.selected{border-color:white;transform:scale(1.1);box-shadow:0 0 15px rgba(255,255,255,0.3);}
+.color-sequence{display:flex;gap:1rem;margin-bottom:1.5rem;min-height:60px;border:1px dashed rgba(106,58,138,.3);padding:1rem;align-items:center;flex-wrap:wrap}
+
+.word-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-bottom:1.5rem;font-family:var(--font-pixel);font-size:.8rem}
+.wg-cell{padding:.8rem .4rem;text-align:center;cursor:pointer;border-radius:2px;transition:all .2s;color:var(--muted);background:rgba(255,255,255,0.02);border:1px solid #222;}
+.wg-cell:hover{background:rgba(255,255,255,0.05);border-color:#444;}
+.wg-cell.highlighted{background:rgba(106,58,138,.4);color:var(--cream);border-color:var(--lpu);}
+.wg-cell.found{background:rgba(255,215,0,.2);color:var(--gold);border-color:var(--gold);}
+
+.match-pairs{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
+.match-col{display:flex;flex-direction:column;gap:.8rem}
+.match-item{padding:1rem;border:1px solid rgba(106,58,138,.3);font-family:var(--font-text);font-size:1.2rem;color:var(--muted);cursor:pointer;transition:all .2s;text-align:center;background:rgba(0,0,0,0.5);}
+.match-item:hover{border-color:var(--lpu);color:var(--lpu);background:rgba(106,58,138,.1);}
+.match-item.selected{border-color:var(--lpu);background:rgba(106,58,138,.2);color:var(--cream);transform:scale(1.02);}
+.match-item.matched{border-color:var(--gold);background:rgba(255,215,0,.1);color:var(--gold);cursor:default;}
+
+.fill-blank{width:100%;padding:1rem;background:rgba(0,0,0,0.5);border:1px solid rgba(106,58,138,.3);color:var(--cream);font-family:var(--font-ancient);font-style:italic;font-size:1.3rem;outline:none;margin-bottom:1.5rem;transition:border-color 0.3s;}
+.fill-blank:focus{border-color:var(--lpu);box-shadow:inset 0 0 10px rgba(106,58,138,0.2);}
+
+.unlock-btn{width:100%;padding:1.2rem;background:transparent;border:1px solid var(--dp);color:var(--lpu);font-family:var(--font-pixel);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.unlock-btn:hover{background:rgba(106,58,138,.1);border-color:var(--lpu);color:var(--cream);box-shadow:0 0 15px rgba(106,58,138,0.3);}
+
+.puzzle-feedback{font-family:var(--font-ancient);font-size:1.2rem;color:var(--dp);margin-top:1rem;min-height:1.5rem;font-style:italic;text-align:center;}
 .puzzle-feedback.correct{color:var(--gold)}
-.puzzle-feedback.wrong{color:#aa4444}
+.puzzle-feedback.wrong{color:var(--red)}
 
 /* BLANK PAGE */
-.blank-page{text-align:center;padding:3rem 2rem;border:1px solid rgba(255,215,0,.15);background:rgba(255,215,0,.02)}
-.blank-oro{font-family:var(--font-serif);font-style:italic;font-size:1.1rem;color:var(--gd);line-height:1.9;margin-bottom:2rem;max-width:400px;margin-left:auto;margin-right:auto}
-.blank-input{width:100%;max-width:300px;padding:.75rem 1rem;background:transparent;border:none;border-bottom:1px solid rgba(255,215,0,.3);color:var(--cream);font-family:var(--font-serif);font-style:italic;font-size:1.2rem;outline:none;text-align:center;display:block;margin:0 auto 1rem}
+.blank-page{text-align:center;padding:4rem 2rem;border:1px solid rgba(255,215,0,.2);background:radial-gradient(circle at center, rgba(255,215,0,.05), transparent);margin-top:2rem;}
+.blank-oro{font-style:italic;font-size:1.4rem;color:var(--gb);line-height:1.6;margin-bottom:3rem;max-width:500px;margin-left:auto;margin-right:auto}
+.blank-input{width:100%;max-width:400px;padding:1rem;background:transparent;border:none;border-bottom:2px solid rgba(255,215,0,.4);color:var(--cream);font-family:var(--font-ancient);font-style:italic;font-size:1.8rem;outline:none;text-align:center;display:block;margin:0 auto 2rem;transition:border-color 0.3s;}
+.blank-input:focus{border-color:var(--gold);}
 .blank-input::placeholder{color:var(--faint)}
-.blank-save{padding:.6rem 1.5rem;background:transparent;border:1px solid rgba(255,215,0,.2);color:var(--gd);font-family:var(--font-sans);font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .3s}
-.blank-save:hover{border-color:var(--gold);color:var(--gold)}
-.blank-saved{font-size:.6rem;color:var(--gold);margin-top:.5rem;font-family:var(--font-serif);font-style:italic;min-height:1.2rem}
+.blank-save{padding:1rem 2rem;background:transparent;border:1px solid rgba(255,215,0,.3);color:var(--gd);font-family:var(--font-pixel);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.blank-save:hover{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,0.05);box-shadow:0 0 15px rgba(255,215,0,0.2);}
+.blank-saved{font-size:1.2rem;color:var(--gold);margin-top:1.5rem;font-style:italic;min-height:1.5rem}
 
 /* DEPTH GAUGE */
-.depth-gauge{position:fixed;bottom:0;left:0;right:0;height:34px;background:rgba(5,3,10,.97);border-top:1px solid rgba(106,58,138,.2);display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:999;padding:0 1rem}
-.dg-stat{display:flex;align-items:center;gap:.3rem;font-size:.4rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
-.dg-val{font-family:var(--font-serif);font-size:.8rem;color:var(--lpu)}
-.dg-sep{color:var(--faint)}
-.dg-link{font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-decoration:none}
-.dg-link:hover{color:var(--lpu)}
-</style>
-
-<style id="nmn-cursor">
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
-</style>
-<style id="floating-gauge">
 .depth-gauge{
   position:fixed!important;bottom:12px!important;left:50%!important;
   transform:translateX(-50%)!important;width:auto!important;max-width:92%!important;
-  height:42px!important;background:rgba(12,10,7,.88)!important;
-  border:1px solid rgba(255,215,0,.4)!important;border-radius:22px!important;
-  padding:0 18px!important;pointer-events:none!important;
-  z-index:9999!important;backdrop-filter:blur(4px)!important;
+  height:42px!important;background:rgba(12,10,7,.95)!important;
+  border:1px solid rgba(106,58,138,.3)!important;border-radius:2px!important;
+  padding:0 20px!important; z-index:9999!important;
   display:flex!important;align-items:center!important;justify-content:center!important;
-  gap:1.2rem!important;flex-wrap:nowrap!important;
-  box-shadow:0 0 20px rgba(255,215,0,.08)!important;
+  gap:1.5rem!important;flex-wrap:nowrap!important;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.9), inset 0 0 10px rgba(106,58,138,0.1)!important;
 }
-.dg-stat,.dg-link,.dg-sep{pointer-events:auto!important}
-body{padding-bottom:65px!important}
+.dg-stat { display:flex; align-items:center; gap:0.5rem; font-family:var(--font-pixel); font-size:0.45rem; color:var(--muted); text-transform:uppercase; letter-spacing: 1px;}
+.dg-val { font-family:var(--font-text); font-size:1.1rem; color:var(--lpu); }
+.dg-link { font-family:var(--font-pixel); font-size:0.45rem; color:var(--gd); text-decoration:none; text-transform:uppercase; transition:color 0.3s; letter-spacing: 1px;}
+.dg-link:hover { color:var(--gold); }
+.dg-sep { color:var(--faint); font-size:0.6rem; }
 </style>
-
-<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
-
 </head>
 <body>
+
 <script src="nmn-nav.js"></script>
 <header>
-  <a href="oracle.html" class="logo">🔮 The Oracle's Chamber</a>
-  <a href="oracle.html" class="back">← Back to the Chamber</a>
+  <a href="oracle.html" class="logo">🔮 THE ORACLE'S CHAMBER</a>
+  <a href="oracle.html" class="back">← RETURN TO CHAMBER</a>
 </header>
 
 <div class="cover">
   <span class="cover-paw">🐾</span>
-  <div class="cover-eyebrow">The Oracle's Chamber — Sacred Archive</div>
-  <h1 class="cover-title">Eskanar's<em>Grimoire</em></h1>
+  <div class="cover-eyebrow">THE ORACLE'S CHAMBER — SACRED ARCHIVE</div>
+  <h1 class="cover-title">Eskanar's <em>Grimoire</em></h1>
   <p class="cover-sub">A record of the cats who changed history — and the humans who finally understood what they were living with. Named for Eskanar. Kept by Tora. Read by whoever crawls far enough into the mine to find it.</p>
   <div class="cover-tora">"Every cat in here knew something its human was still learning." — Tora</div>
   <div class="progress-bar-wrap">
-    <div class="progress-label"><span>Chapters Read</span><span id="progressText">0 / 17</span></div>
+    <div class="progress-label"><span>CHAPTERS DECRYPTED</span><span id="progressText">0 / 17</span></div>
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
   </div>
 </div>
 
 <main>
-  <div class="chapters-label">The Sacred Chapters</div>
+  <div class="chapters-label">THE SACRED FRAGMENTS</div>
   <div id="chapterList"></div>
   <div id="chapterView" class="chapter-view"></div>
 </main>
 
-<div class="depth-gauge">
-  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span>&nbsp;Lore</div>
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> LORE</div>
   <span class="dg-sep">🐾</span>
-  <a href="lorevault.html" class="dg-link">📜 Vault</a>
-  <a href="oracle.html" class="dg-link">🔮 Chamber</a>
+  <a href="lorevault.html" class="dg-link">VAULT</a>
+  <a href="lantern.html" class="dg-link">LANTERN</a>
 </div>
 
 <script>
@@ -450,6 +465,10 @@ function isUnlocked(ch) {
   return getCompletedCount() >= earned;
 }
 
+function syncVaultDisplay() {
+  try{document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length}catch(e){}
+}
+
 // ── RENDER CHAPTER LIST ────────────────────────────────────────────────
 function renderList() {
   const completed = getCompletedCount();
@@ -476,6 +495,7 @@ function renderList() {
 
   document.getElementById('chapterView').classList.remove('show');
   document.getElementById('chapterList').style.display='block';
+  syncVaultDisplay();
 }
 
 // ── OPEN CHAPTER ──────────────────────────────────────────────────────
@@ -499,11 +519,11 @@ function openChapter(id) {
   } else if(ch.puzzle && !done) {
     puzzleHtml = buildPuzzle(ch);
   } else if(done) {
-    puzzleHtml = `<div style="text-align:center;padding:1rem;font-family:var(--font-serif);font-style:italic;color:var(--gold);font-size:.9rem">✦ This chapter has been read. The words remain.</div>`;
+    puzzleHtml = `<div style="text-align:center;padding:2rem;font-family:var(--font-ancient);font-style:italic;color:var(--gold);font-size:1.4rem; border-top: 1px solid rgba(255,215,0,0.1); margin-top: 2rem;">✦ This chapter has been decrypted. The words remain.</div>`;
   }
 
   view.innerHTML = `
-    <button class="cv-back" onclick="renderList()">← Back to all chapters</button>
+    <button class="cv-back" onclick="renderList()">← Back to Archive</button>
     <div class="cv-header">
       <span class="cv-cat">${ch.cat}</span>
       <div>
@@ -539,13 +559,13 @@ function buildPuzzle(ch) {
     inner = `<div class="color-options" id="colorOptions">
       ${p.colors.map((c,i)=>`<div class="color-chip" style="background:${c}" data-idx="${i}" onclick="selectColor(this,${i})" title="${p.labels[i]}"></div>`).join('')}
     </div>
-    <div style="font-size:.52rem;color:var(--faint);margin-bottom:.75rem">Selected order will appear below</div>
+    <div style="font-family:var(--font-pixel); font-size:.45rem;color:var(--faint);margin-bottom:.75rem">SELECTED ORDER WILL APPEAR BELOW</div>
     <div class="color-sequence" id="colorSeq"></div>`;
   } else if(p.type==='wordsearch') {
     inner = `<div class="word-grid" id="wordGrid">
       ${p.grid.map((row,r)=>row.map((cell,c)=>`<div class="wg-cell" data-r="${r}" data-c="${c}" onclick="toggleCell(this)">${cell}</div>`).join('')).join('')}
     </div>
-    <div style="font-size:.52rem;color:var(--faint);margin-bottom:.75rem">Find: ${p.words.join(' · ')}</div>`;
+    <div style="font-family:var(--font-pixel);font-size:.5rem;color:var(--muted);margin-bottom:1rem">FIND: ${p.words.join(' · ')}</div>`;
   } else if(p.type==='match') {
     inner = `<div class="match-pairs">
       <div class="match-col" id="matchLeft">
@@ -556,22 +576,22 @@ function buildPuzzle(ch) {
       </div>
     </div>`;
   } else if(p.type==='sequence') {
-    inner = `<div id="seqItems" style="display:flex;flex-direction:column;gap:.4rem;margin-bottom:.75rem">
-      ${shuffleArray([...p.items.entries()]).map(([orig,item])=>`<div class="match-item" data-orig="${orig}" draggable="true" onclick="seqClick(this)" style="cursor:pointer;display:flex;align-items:center;gap:.5rem"><span style="color:var(--dp);font-size:.5rem">▶</span>${item}</div>`).join('')}
+    inner = `<div id="seqItems" style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.5rem">
+      ${shuffleArray([...p.items.entries()]).map(([orig,item])=>`<div class="match-item" data-orig="${orig}" draggable="true" onclick="seqClick(this)" style="cursor:pointer;display:flex;align-items:center;gap:.8rem"><span style="color:var(--dp);font-size:.6rem;font-family:var(--font-pixel);">▶</span>${item}</div>`).join('')}
     </div>
-    <div style="font-size:.5rem;color:var(--faint);margin-bottom:.75rem">Tap items to arrange in correct order</div>`;
+    <div style="font-family:var(--font-pixel);font-size:.45rem;color:var(--faint);margin-bottom:.75rem">TAP ITEMS TO ARRANGE IN CORRECT ORDER</div>`;
   } else if(p.type==='fill') {
-    inner = p.blanks.map((label,i)=>`<div style="font-size:.6rem;color:var(--muted);margin-bottom:.3rem">${label}</div>
+    inner = p.blanks.map((label,i)=>`<div style="font-family:var(--font-pixel);font-size:.5rem;color:var(--muted);margin-bottom:.5rem">${label}</div>
       <input type="text" class="fill-blank" id="fill_${i}" placeholder="your answer..."></input>`).join('');
   } else if(p.type==='compass') {
-    inner = p.options.map((opt,i)=>`<div class="match-item" onclick="selectCompass(${i})" id="compass_${i}" style="margin-bottom:.4rem;cursor:pointer">${opt}</div>`).join('');
+    inner = p.options.map((opt,i)=>`<div class="match-item" onclick="selectCompass(${i})" id="compass_${i}" style="margin-bottom:.8rem;cursor:pointer">${opt}</div>`).join('');
   }
 
   return `<div class="puzzle-block">
-    <div class="puzzle-label">🔑 The Ritual — Complete to Enter the Chapter</div>
+    <div class="puzzle-label">🔑 The Ritual — Complete to Extract Lore</div>
     <div class="puzzle-instruction">${p.instruction}</div>
     ${inner}
-    <button class="unlock-btn" onclick="checkPuzzle('${ch.id}')">⬡ Enter the Chapter</button>
+    <button class="unlock-btn" onclick="checkPuzzle('${ch.id}')">⬡ DECRYPT CHAPTER</button>
     <div class="puzzle-feedback" id="puzzleFeedback"></div>
   </div>`;
 }
@@ -593,7 +613,7 @@ function selectColor(el, idx) {
   }
   const ch = CHAPTERS.find(c=>c.id===currentChapter.id);
   const seq = document.getElementById('colorSeq');
-  if(seq) seq.innerHTML = colorSequence.map(i=>`<div style="width:44px;height:44px;border-radius:4px;background:${ch.puzzle.colors[i]};border:2px solid rgba(255,255,255,.3)"></div>`).join('');
+  if(seq) seq.innerHTML = colorSequence.map(i=>`<div style="width:50px;height:50px;border-radius:4px;background:${ch.puzzle.colors[i]};border:2px solid rgba(255,255,255,.5);box-shadow:0 0 10px ${ch.puzzle.colors[i]};"></div>`).join('');
 }
 
 let selectedCells = [];
@@ -634,13 +654,13 @@ function selectMatch(el, side, idx) {
 }
 
 let seqSelected = null;
-let seqCurrent = [];
 function seqClick(el) {
   const items = [...document.getElementById('seqItems').children];
   if(!seqSelected) {
     seqSelected = el;
     el.style.borderColor = 'var(--lpu)';
-    el.style.color = 'var(--lpu)';
+    el.style.color = 'var(--cream)';
+    el.style.background = 'rgba(106,58,138,.2)';
   } else {
     const parent = document.getElementById('seqItems');
     const idx1 = [...parent.children].indexOf(seqSelected);
@@ -655,7 +675,7 @@ function seqClick(el) {
       seqSelected.remove(); el.remove();
     }
     seqSelected=null;
-    document.querySelectorAll('#seqItems .match-item').forEach(e=>{e.style.borderColor='';e.style.color='';});
+    document.querySelectorAll('#seqItems .match-item').forEach(e=>{e.style.borderColor='';e.style.color='';e.style.background='';});
   }
 }
 
@@ -700,10 +720,8 @@ function checkPuzzle(chId) {
   } else if(p.type==='fill') {
     const inputs = p.blanks.map((_,i)=>document.getElementById('fill_'+i)?.value?.toLowerCase().trim());
     if(p.answers.length === p.blanks.length) {
-      // Each blank has its own answer
       correct = inputs.every((val,i)=>val===p.answers[i]);
     } else {
-      // Any answer from the pool works for each blank (Istanbul districts)
       correct = inputs.every(val=>val&&p.answers.includes(val));
     }
     if(!correct) { fb.textContent='Not quite — the mine waits for the right words.'; fb.className='puzzle-feedback wrong'; return; }
@@ -725,12 +743,19 @@ function completeChapter(chId) {
   const ch = CHAPTERS.find(c=>c.id===chId);
   try {
     const v = JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]');
-    v.push({text:`Read Chapter ${ch.num} of Eskanar's Grimoire: "${ch.name}." ${ch.tora}`, source:"Eskanar's Grimoire", date:new Date().toLocaleDateString()});
-    localStorage.setItem('nmn_lore_vault', JSON.stringify(v));
+    
+    // Check to avoid duplicates if replayed
+    const entryText = `Decrypted Chapter ${ch.num} of Eskanar's Grimoire: "${ch.name}." ${ch.tora}`;
+    if (!v.some(item => item.text === entryText)) {
+        v.push({text: entryText, source:"Eskanar's Grimoire", date:new Date().toLocaleDateString()});
+        localStorage.setItem('nmn_lore_vault', JSON.stringify(v));
+    }
   } catch(e){}
 
   // Re-render chapter without puzzle
   openChapter(chId);
+  syncVaultDisplay();
+  
   // Show completion
   const fb = document.getElementById('puzzleFeedback');
   if(fb) { fb.textContent = `✦ "${ch.name}" is now part of your Grimoire.`; fb.className='puzzle-feedback correct'; }
@@ -753,36 +778,12 @@ function saveBlankWord() {
 
 // ── INIT ──────────────────────────────────────────────────────────────
 renderList();
-try{document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length}catch(e){}
-</script>
-<script id="nmn-glow">
-(function(){
-  var r=document.createElement('div');
-  r.id='pickaxe-glow';
-  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
-  document.body.appendChild(r);
-  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
-  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
-  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
-})();
 </script>
 
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(function(registration) {
-      console.log('NMN SW registered with scope:', registration.scope);
-    })
-    .catch(function(err){
-      console.log('NMN SW error:', err);
-    });
-}
-</script>
-
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28;margin-top:1.5rem">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+<div style="text-align:center;padding:1rem;font-family:var(--font-pixel);font-size:0.45rem;color:var(--faint);margin-top:2rem">
+  <a href="privacy.html" style="color:var(--faint);text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:var(--faint);text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:var(--faint);text-decoration:none;margin:0 .5rem">CONTACT</a>
 </div>
 </body>
 </html>
