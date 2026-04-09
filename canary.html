@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Canary's Song — NMN Retro</title>
 
-<link rel="icon" href="logo.jpg" type="image/jpeg">
-<link rel="shortcut icon" href="logo.jpg" type="image/jpeg">
-<link rel="apple-touch-icon" href="logo.jpg">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
 
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
@@ -64,6 +64,16 @@ main { max-width: 600px; margin: 0 auto; padding: 2rem 1rem; flex: 1; display: f
 .canary-title em { color: var(--gold); font-style: normal; }
 .canary-sub { font-size: 1.2rem; color: var(--muted); line-height: 1.5; }
 
+/* MILESTONE BANNER */
+.milestone-banner { background: rgba(85, 255, 85, 0.1); border: 2px dashed var(--lg); padding: 1.5rem; margin-bottom: 1.5rem; text-align: center; display: none; }
+.milestone-banner.active { display: block; animation: flashIn 0.5s; }
+.milestone-title { font-family: var(--font-pixel); color: var(--lg); font-size: 0.6rem; margin-bottom: 1rem; letter-spacing: 0.1em; text-shadow: 2px 2px 0 #000;}
+.milestone-text { font-size: 1.2rem; color: var(--cream); line-height: 1.5; margin-bottom: 1.5rem; font-style: italic; border-left: 3px solid var(--lg); padding-left: 1rem; text-align: left;}
+.cta-link { color: #000; background: var(--gold); padding: 0.8rem 1.5rem; font-family: var(--font-pixel); text-decoration: none; font-size: 0.6rem; display: inline-block; transition: transform 0.2s; border: 2px solid #FFF;}
+.cta-link:hover { transform: scale(1.05); background: #FFF; }
+
+@keyframes flashIn { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } }
+
 /* DIALOGUE / SCORE */
 .dialogue-box { background: #000; border: 4px solid var(--gd); padding: 1.5rem; margin-bottom: 1.5rem; text-align: left; position: relative; box-shadow: inset 0 0 0 4px #000, 4px 4px 0 #000; min-height: 100px;}
 .dialogue-name { position: absolute; top: -0.8rem; left: 1rem; background: var(--gd); color: #000; font-family: var(--font-pixel); font-size: 0.5rem; padding: 0.3rem 0.6rem; border: 2px solid #FFF;}
@@ -102,13 +112,12 @@ main { max-width: 600px; margin: 0 auto; padding: 2rem 1rem; flex: 1; display: f
 .hud-val { color: var(--gold); font-size: 1rem; text-shadow: 2px 2px 0 #553300; }
 .hud-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
 .hud-link:hover { color: #000; background: var(--gd); }
-
-/* ── MOUSE FIX ── */
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
 </style>
 
 </head>
 <body>
+
+<script src="nmn-nav.js"></script>
 
 <header>
   <a href="oracle.html" class="logo">NMN ORACLE</a>
@@ -119,6 +128,14 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
   <div class="canary-hero retro-box">
     <h1 class="canary-title">THE CANARY'S <em>SONG</em></h1>
     <p class="canary-sub">The mine speaks in four frequencies. Listen. Repeat. Survive.</p>
+  </div>
+
+  <div id="milestoneBanner" class="milestone-banner">
+    <div class="milestone-title">► DECRYPTED TRANSMISSION</div>
+    <div class="milestone-text">
+      "The Canary wasn't a bird. It was a machine. And in Sector 4, it didn't stop singing when the air went bad... it started translating."
+    </div>
+    <a href="https://www.amazon.com/dp/B0DX6N7QKM?tag=lordoro0c25-20" class="cta-link" target="_blank">INVESTIGATE SECTOR 4 OUTBREAK</a>
   </div>
 
   <div class="dialogue-box">
@@ -189,10 +206,10 @@ function drawIcon(canvasId, seedStr, colorHex) {
 
 // Generate the 4 node icons
 window.addEventListener('DOMContentLoaded', () => {
-  drawIcon('canv0', 'PickaxeRockStrike', '#AA7700'); // Strike
-  drawIcon('canv1', 'WaterCavernDrip', '#5555FF');   // Drip
-  drawIcon('canv2', 'AirCurrentWind', '#AAAAAA');    // Wind
-  drawIcon('canv3', 'CrystalShineGleam', '#55FF55'); // Shimmer
+  drawIcon('canv0', 'PickaxeRockStrike', '#AA7700'); 
+  drawIcon('canv1', 'WaterCavernDrip', '#5555FF');   
+  drawIcon('canv2', 'AirCurrentWind', '#AAAAAA');    
+  drawIcon('canv3', 'CrystalShineGleam', '#55FF55'); 
   typeText("SYSTEM STANDBY. AWAITING INITIALIZATION.");
   updateGlobalHUD();
 });
@@ -222,6 +239,7 @@ const MESSAGES = [
 
 let ctx = null, seq = [], playerSeq = [], round = 0, best = 0;
 let listening = false, playing = false;
+let milestoneHit = false;
 
 function getCtx(){ if(!ctx) ctx = new(window.AudioContext || window.webkitAudioContext)(); return ctx; }
 
@@ -268,7 +286,9 @@ async function playSequence() {
 
 function startGame() {
   seq = []; round = 0;
+  milestoneHit = false;
   document.getElementById('startBtn').style.display = 'none';
+  document.getElementById('milestoneBanner').classList.remove('active');
   nextRound();
 }
 
@@ -300,18 +320,33 @@ function playerNote(idx) {
     document.getElementById('valRound').textContent = round;
     document.getElementById('valBest').textContent = best;
     
-    // Reward System: Earn Gold based on Round
     let goldReward = round * 2;
     rewardGold(goldReward);
     
-    typeText(`SEQUENCE VERIFIED. +${goldReward} GOLD AWARDED.`);
-    setTimeout(nextRound, 1500);
+    // The Resonance Milestone Logic
+    if (round === 7 && !milestoneHit) {
+        milestoneHit = true;
+        document.getElementById('milestoneBanner').classList.add('active');
+        typeText(`RESONANCE REACHED. +${goldReward} GOLD. DECRYPTING...`);
+        
+        try {
+          const v = JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]');
+          v.push({text:`The Canary wasn't a bird. It was a machine. And in Sector 4, it didn't stop singing when the air went bad... it started translating.`, source:"The Canary's Song", date:new Date().toLocaleDateString()});
+          localStorage.setItem('nmn_lore_vault', JSON.stringify(v));
+          updateGlobalHUD();
+        } catch(e){}
+        
+        // Give them time to read the banner before next sequence
+        setTimeout(nextRound, 4500); 
+    } else {
+        typeText(`SEQUENCE VERIFIED. +${goldReward} GOLD AWARDED.`);
+        setTimeout(nextRound, 1500);
+    }
   }
 }
 
 function wrong() {
   listening = false;
-  // Play failure sound
   const c = getCtx();
   const osc = c.createOscillator(), g = c.createGain();
   osc.type = 'sawtooth'; osc.frequency.value = 80;
@@ -339,7 +374,6 @@ function wrong() {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-// ── GLOBAL GOLD SYSTEM ──
 function rewardGold(amount) {
   try {
     let currentGold = parseInt(localStorage.getItem('nmn_total_gold') || '0');
