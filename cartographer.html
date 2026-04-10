@@ -7,7 +7,6 @@
 
 <link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
 <link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
-<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
 
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
@@ -16,107 +15,172 @@
 :root {
   --gold: #FFD700;
   --gb: #e8b84b;
-  --gd: #AA7700;
-  --bg-color: #000000;
-  --panel-bg: #111111;
+  --gd: #8B6914;
+  --bg-color: #050308;
+  --panel-bg: #0a0806;
   --cream: #f0e6cc;
-  --muted: #aaaaaa;
+  --muted: #8a7654;
   --lg: #55FF55; 
+  --pu: #AA55FF;
   --font-pixel: 'Press Start 2P', monospace;
   --font-text: 'VT323', monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; }
+html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; scroll-behavior: smooth;}
 
 body {
-  font-family: var(--font-text);
+  font-family: var(--font-pixel);
   color: var(--cream);
-  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
-  padding-bottom: 60px;
-  font-size: 1.2rem;
+  background-image: 
+    radial-gradient(2px 2px at 40px 60px, #FFD700 30%, transparent 100%),
+    linear-gradient(rgba(10, 8, 12, 0.8) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(10, 8, 12, 0.8) 2px, transparent 2px);
+  background-size: 200px 200px, 32px 32px, 32px 32px;
+  padding-bottom: 100px;
+  line-height: 1.8;
+}
+
+h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
+
+/* ─── CUSTOM CURSOR & GLOW ─── */
+body, a, button, .map-region { 
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; 
+}
+#pickaxe-glow {
+    position: fixed; width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, transparent 70%);
+    pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
+}
+
+/* CRT EFFECTS */
+body::after{
+  content:""; position:fixed; inset:0;
+  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.1) 50%);
+  background-size:100% 4px; pointer-events:none; z-index:10000; opacity:0.4;
 }
 
 /* 16-BIT UI BORDER HELPER */
 .retro-box {
   background: var(--panel-bg);
-  border: 4px solid #FFF;
-  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
+  border: 4px solid var(--gd);
+  box-shadow: 6px 6px 0 #000;
 }
 
 /* HEADER */
 header {
-  padding: 1rem 2rem; border-bottom: 4px solid var(--lg);
+  padding: 1rem 2rem; border-bottom: 4px solid var(--gd);
   display: flex; justify-content: space-between; align-items: center;
-  background: #000; z-index: 1000; position: sticky; top: 0;
+  background: rgba(5,3,2,.98); z-index: 999; position: sticky; top: 70px;
 }
-.logo { font-family: var(--font-pixel); color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
-.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.logo { color: var(--gold); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #553300; }
+.back { font-size: 0.5rem; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: 0.2s;}
 .back:hover { color: var(--gold); }
 
-main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; flex: 1; width: 100%;}
+main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; flex: 1; width: 100%; position: relative; z-index: 10;}
+
+/* THE MINERS TRIBUTE */
+.tribute-box {
+    background: rgba(255, 215, 0, 0.05);
+    border: 4px dashed var(--gold);
+    padding: 2.5rem 2rem;
+    margin-bottom: 3rem;
+    text-align: left;
+    position: relative;
+    animation: goldPulse 4s infinite alternate;
+}
+@keyframes goldPulse {
+    0% { box-shadow: 0 0 10px rgba(255,215,0,0.1); border-color: var(--gd); }
+    100% { box-shadow: 0 0 20px rgba(255,215,0,0.3); border-color: var(--gold); }
+}
+.tribute-label {
+    position: absolute; top: -0.8rem; left: 1.5rem;
+    background: var(--gold); color: #000; font-size: 0.5rem;
+    padding: 0.5rem 1rem; border: 2px solid #FFF;
+}
+.tribute-text { font-size: 0.6rem; color: var(--cream); line-height: 2; font-family: var(--font-text)!important;}
+.tribute-text em { color: var(--lg); font-style: normal; font-family: var(--font-pixel)!important;}
+.tribute-text strong { color: var(--gold); font-family: var(--font-pixel)!important;}
 
 /* HERO */
-.ct-hero { text-align: center; margin-bottom: 2rem; background: #000; padding: 2rem; border: 4px solid #444; }
-.ct-eyebrow { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); margin-bottom: 1rem; text-shadow: 2px 2px 0 #000; }
-.ct-title { font-family: var(--font-pixel); font-size: 1.5rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 3px 3px 0 #553300;}
+.ct-hero { text-align: center; margin-bottom: 3rem; background: #000; padding: 3rem 2rem; border: 4px solid #333; box-shadow: inset 0 0 20px #000;}
+.ct-eyebrow { font-size: 0.5rem; color: var(--gd); margin-bottom: 1rem; text-shadow: 2px 2px 0 #000; letter-spacing: 2px;}
+.ct-title { font-size: 2rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 4px 4px 0 #553300; line-height: 1.4;}
 .ct-title em { color: var(--gold); font-style: normal; }
-.ct-sub { font-size: 1.3rem; color: var(--muted); line-height: 1.5; max-width: 600px; margin: 0 auto; }
+.ct-sub { font-size: 0.6rem; color: var(--muted); line-height: 2; max-width: 700px; margin: 0 auto; font-family: var(--font-text)!important;}
 
 /* MAP CONTAINER */
 .map-container { position: relative; width: 100%; background: #000; border: 6px solid #FFF; overflow: hidden; margin-bottom: 2rem; box-shadow: inset 0 0 0 4px #000, inset 0 0 0 8px var(--gd), 10px 10px 0 #000; }
-.map-svg { width: 100%; display: block; cursor: crosshair; }
+.map-svg { width: 100%; display: block; }
 
-.map-region { transition: opacity 0.2s; }
-.map-region:hover { opacity: 0.8; filter: drop-shadow(0 0 10px var(--gold)); cursor: pointer;}
+.map-region { transition: opacity 0.3s; }
+.map-region:hover { opacity: 0.9; filter: drop-shadow(0 0 15px var(--gold)); cursor: pointer;}
 
 /* REGION DETAIL PANEL */
-.region-panel { background: #000; border: 4px solid var(--gold); padding: 2rem; transition: all 0.3s; min-height: 200px; display: flex; flex-direction: column; justify-content: center; box-shadow: 4px 4px 0 #553300;}
-.rp-eyebrow { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); margin-bottom: 1rem; }
-.rp-title { font-family: var(--font-pixel); font-size: 1.2rem; color: var(--cream); margin-bottom: 0.5rem; line-height: 1.4;}
+.region-panel { background: #0a0806; border: 4px solid var(--gold); padding: 3rem 2rem; transition: all 0.3s; min-height: 250px; display: flex; flex-direction: column; justify-content: center; box-shadow: inset 0 0 20px #000, 8px 8px 0 #553300;}
+.rp-eyebrow { font-size: 0.5rem; color: var(--gd); margin-bottom: 1.5rem; letter-spacing: 1px;}
+.rp-title { font-size: 1.2rem; color: var(--cream); margin-bottom: 1rem; line-height: 1.4;}
 .rp-title em { color: var(--gold); font-style: normal; }
-.rp-status { font-family: var(--font-pixel); font-size: 0.6rem; margin-bottom: 1.5rem; display: inline-block; padding: 0.4rem; border: 2px solid; background: #111;}
+.rp-status { font-size: 0.5rem; margin-bottom: 2rem; display: inline-block; padding: 0.6rem; border: 2px solid; background: #000;}
 .rp-status.active { color: var(--gold); border-color: var(--gold); }
 .rp-status.progress { color: var(--lg); border-color: var(--lg); }
 .rp-status.locked { color: var(--muted); border-color: var(--muted); }
-.rp-desc { font-size: 1.4rem; color: var(--cream); line-height: 1.6; min-height: 60px;}
-.rp-desc::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 1rem; color: var(--gold);}
+
+.rp-desc { font-size: 0.6rem; color: var(--cream); line-height: 2; min-height: 60px; font-family: var(--font-text)!important;}
+.rp-desc::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 0.8rem; color: var(--gold);}
 @keyframes blink { 0%, 50%, 100% { opacity: 1; } 25%, 75% { opacity: 0; } }
 
-.rp-default { font-family: var(--font-pixel); font-size: 0.8rem; color: var(--muted); text-align: center; animation: pulse 2s infinite; }
+.rp-default { font-size: 0.6rem; color: var(--muted); text-align: center; animation: pulse 2s infinite; }
 @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
 /* CTA BUTTON (Hidden until typing completes) */
-.rp-cta { display: inline-block; margin-top: 1.5rem; padding: 1rem 2rem; background: transparent; border: 4px solid var(--gold); color: var(--gold); font-family: var(--font-pixel); font-size: 0.8rem; text-decoration: none; text-transform: uppercase; transition: all 0.2s; opacity: 0; pointer-events: none; text-align: center; max-width: 300px; }
+.rp-cta { display: inline-block; margin-top: 2rem; padding: 1.2rem 2rem; background: transparent; border: 4px solid var(--gold); color: var(--gold); font-size: 0.6rem; text-decoration: none; text-transform: uppercase; transition: 0.2s; opacity: 0; pointer-events: none; text-align: center; max-width: 350px; background: #000;}
 .rp-cta.visible { opacity: 1; pointer-events: auto; }
-.rp-cta:hover { background: var(--gold); color: #000; transform: translateY(-2px); box-shadow: 4px 4px 0 #553300; }
+.rp-cta:hover { background: var(--gold); color: #000; border-color: #FFF; transform: translateY(-4px); box-shadow: 6px 6px 0 #553300; }
 
 /* LEGEND */
-.map-legend { display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; margin-top: 1rem; background: #000; border: 4px solid #444; padding: 1rem;}
-.legend-item { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-pixel); font-size: 0.5rem; color: var(--cream); }
-.legend-dot { width: 12px; height: 12px; border: 2px solid #FFF; }
+.map-legend { display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; margin-top: 1rem; background: #000; border: 4px solid #333; padding: 1.5rem; box-shadow: 4px 4px 0 #000;}
+.legend-item { display: flex; align-items: center; gap: 0.8rem; font-size: 0.45rem; color: var(--cream); }
+.legend-dot { width: 14px; height: 14px; border: 2px solid #FFF; }
 
-/* HUD (BOTTOM) */
-.hud { display: flex; justify-content: center; align-items: center; padding: 1rem 2rem; background: #000; border-top: 4px solid #333; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; flex-wrap: wrap; gap: 20px; }
-.hud-stat { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; }
-.hud-val { color: var(--gold); font-size: 1rem; text-shadow: 2px 2px 0 #553300; }
-.hud-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
-.hud-link:hover { color: #000; background: var(--gd); }
-
+/* DEPTH GAUGE (BOTTOM HUD) */
+.depth-gauge {
+  position:fixed!important; bottom:15px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:95%!important; height:46px!important; background:#000!important;
+  border:4px solid var(--gd)!important; padding:0 20px!important;
+  z-index:9999!important; display:flex!important; align-items:center!important;
+  justify-content:center!important; gap:1.5rem!important; box-shadow: 4px 4px 0 #000!important;
+}
+.dg-stat { font-size: 10px; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
+.dg-val { color: var(--gold); font-size: 14px; }
+.dg-link { font-size: 10px; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: 0.3s; pointer-events: auto!important;}
+.dg-link:hover { color: var(--gold); }
 </style>
-<style id="nmn-cursor-global">body,*{cursor:none!important}</style>
-<style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
+
 </head>
 <body>
 
 <script src="nmn-nav.js"></script>
+<script src="nmn-wallet.js"></script>
 
 <header>
-  <a href="index.html" class="logo">NMN CARTOGRAPHER</a>
+  <a href="index.html" class="logo">⛏ NMN CARTOGRAPHER</a>
   <a href="index.html" class="back">← RETURN TO MINE</a>
 </header>
 
+<div id="pickaxe-glow"></div>
+
 <main>
+  
+  <div class="tribute-box">
+      <div class="tribute-label">FOR THE MINERS</div>
+      <div class="tribute-text">
+          "The gold was never in the ground. It was in the hands that dug for it." <br><br>
+          To the fans, the early adopters, the Architects—this map exists because you believed in the tunnels before they were drawn. Your belief is the ore that built this empire. The more you believe, the harder I swing the pickaxe. <em>Welcome to the ranks.</em>
+      </div>
+  </div>
+
   <div class="ct-hero retro-box">
     <div class="ct-eyebrow">NONSENSE MEDIA NETWORK</div>
     <h1 class="ct-title">THE CARTOGRAPHER'S <em>TABLE</em></h1>
@@ -153,7 +217,8 @@ main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; flex: 1; width: 100
 
       <g class="map-region" data-region="ocean">
         <polygon points="580,200 780,200 860,320 780,440 580,400" fill="rgba(85,85,255,0.1)" stroke="#5555FF" stroke-width="4" stroke-dasharray="8"/>
-        <rect x="580" y="200" width="280" height="240" fill="rgba(0,0,0,0.6)"/> <text x="710" y="300" text-anchor="middle" font-family="'Press Start 2P', monospace" font-size="10" fill="#5555FF">THE OCEAN</text>
+        <rect x="580" y="200" width="280" height="240" fill="rgba(0,0,0,0.6)"/> 
+        <text x="710" y="300" text-anchor="middle" font-family="'Press Start 2P', monospace" font-size="10" fill="#5555FF">THE OCEAN</text>
         <text x="710" y="320" text-anchor="middle" font-family="'VT323', monospace" font-size="16" fill="#7777AA">ACT II: SET SAIL</text>
         <rect x="700" y="350" width="20" height="20" fill="#5555FF"/>
         <text x="710" y="365" text-anchor="middle" font-family="'Press Start 2P', monospace" font-size="10" fill="#000">W</text>
@@ -161,7 +226,8 @@ main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; flex: 1; width: 100
 
       <g class="map-region" data-region="space">
         <rect x="600" y="40" width="240" height="120" fill="rgba(170,85,255,0.1)" stroke="#AA55FF" stroke-width="4" stroke-dasharray="8"/>
-        <rect x="600" y="40" width="240" height="120" fill="rgba(0,0,0,0.7)"/> <text x="720" y="100" text-anchor="middle" font-family="'Press Start 2P', monospace" font-size="10" fill="#AA55FF">DEEP SPACE</text>
+        <rect x="600" y="40" width="240" height="120" fill="rgba(0,0,0,0.7)"/> 
+        <text x="720" y="100" text-anchor="middle" font-family="'Press Start 2P', monospace" font-size="10" fill="#AA55FF">DEEP SPACE</text>
         <text x="720" y="120" text-anchor="middle" font-family="'VT323', monospace" font-size="16" fill="#8866AA">ACT II: ICE</text>
       </g>
 
@@ -194,19 +260,32 @@ main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; flex: 1; width: 100
     <div class="legend-item"><div class="legend-dot" style="background:#5555FF"></div>LOCKED/FOGGED</div>
   </div>
 
-  <div class="region-panel" id="regionPanel" style="margin-top: 2rem;">
+  <div class="region-panel" id="regionPanel" style="margin-top: 3rem;">
     <div class="rp-default">AWAITING SELECTION...</div>
   </div>
 </main>
 
-<div class="hud">
-  <div class="hud-stat">GOLD: <span class="hud-val" id="dgGold">0</span></div>
-  <div class="hud-stat">LORE: <span class="hud-val" id="dgLore">0</span></div>
-  <a href="lorevault.html" class="hud-link">VAULT</a>
-  <a href="lantern.html" class="hud-link">LANTERN</a>
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 VAULT</a>
 </div>
 
 <script>
+// Glow Cursor Tracking
+document.addEventListener('mousemove', function(e){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
+});
+document.addEventListener('mousedown', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '180px'; r.style.height = '180px'; r.style.background = 'radial-gradient(circle,rgba(232,184,75,.4) 0%,transparent 70%)'; }
+});
+document.addEventListener('mouseup', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '140px'; r.style.height = '140px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.25) 0%,transparent 70%)'; }
+});
+
 const REGIONS = {
   mine: {
     eyebrow:'SECTOR 1: ACTIVE',
@@ -230,7 +309,7 @@ const REGIONS = {
     titleEm:'ACT II',
     status:'locked', statusText:'[ ENCRYPTED / FOGGED ]',
     desc:'An adventure that begins where the mine\'s shore ends — a voyage into open water with a crew that shouldn\'t be together and a destination that shouldn\'t exist. The ocean is patient. Access will be granted upon completion.',
-    ctaLink: 'patreon.html', ctaText: 'FUND EXPANSION'
+    ctaLink: 'https://patreon.com/lordoro', ctaText: 'FUND EXPANSION'
   },
   space: {
     eyebrow:'SECTOR 4: LOCKED',
@@ -238,7 +317,7 @@ const REGIONS = {
     titleEm:'DEEP SPACE',
     status:'locked', statusText:'[ ENCRYPTED / FOGGED ]',
     desc:'Lord Oro\'s take on the cosmos — personal, mythological, and stranger than most sci-fi dares to be. The world is cold and vast and contains something that has been waiting a very long time. This is the furthest region. It will open last.',
-    ctaLink: 'patreon.html', ctaText: 'FUND EXPANSION'
+    ctaLink: 'https://patreon.com/lordoro', ctaText: 'FUND EXPANSION'
   },
   brooklyn: {
     eyebrow:'ORIGIN POINT',
@@ -246,7 +325,7 @@ const REGIONS = {
     titleEm:'THE REAL WORLD',
     status:'active', statusText:'[ CONSTANT ]',
     desc:'Brooklyn is not a fictional region. It is the real place where Lord Oro was built. Where Elizabeth Rose was written at twelve. Where the mine was discovered inside a person before it had a name. Brooklyn appears in the texture of everything: the cadence of the sentences, the instinct to build something out of nothing.',
-    ctaLink: 'patreon.html', ctaText: 'SUPPORT THE ARCHITECT'
+    ctaLink: 'https://gofund.me/e643a8283', ctaText: 'SUPPORT THE ARCHITECT'
   },
   city: {
     eyebrow:'FUTURE REGION',
@@ -254,11 +333,13 @@ const REGIONS = {
     titleEm:'SOMEDAY',
     status:'locked', statusText:'[ PLANNED ]',
     desc:'The goldmine isn\'t enough — you build the city above it. This region represents everything that comes after the mine is fully excavated: the publishing house, the label, the studio. The city above the mine is the endgame.',
-    ctaLink: 'patreon.html', ctaText: 'SUPPORT THE ARCHITECT'
+    ctaLink: 'https://patreon.com/lordoro', ctaText: 'SUPPORT THE ARCHITECT'
   },
 };
 
 let typeTimer = null;
+let mappedRegions = new Set(); // Track mapped regions for vault reward
+
 function typeText(elId, text, speed=15, onComplete) {
   const el = document.getElementById(elId);
   el.textContent = "";
@@ -279,46 +360,50 @@ document.querySelectorAll('.map-region').forEach(region => {
     const data = REGIONS[key];
     if (!data) return;
     
+    // Track for reward
+    mappedRegions.add(key);
+    
     const panel = document.getElementById('regionPanel');
     panel.innerHTML = `
       <div class="rp-eyebrow">${data.eyebrow}</div>
       <div class="rp-title">${data.title} — <em>${data.titleEm}</em></div>
       <div class="rp-status ${data.status}">${data.statusText}</div>
       <div class="rp-desc" id="typewriter-desc"></div>
-      <a href="${data.ctaLink}" class="rp-cta" id="regionCta">${data.ctaText} →</a>`;
+      <a href="${data.ctaLink}" target="${data.ctaLink.includes('http') ? '_blank' : '_self'}" class="rp-cta" id="regionCta">${data.ctaText} →</a>`;
       
     typeText('typewriter-desc', data.desc, 15, () => {
         document.getElementById('regionCta').classList.add('visible');
+        
+        // Give a lore fragment if they map all 6 regions
+        if(mappedRegions.size === 6) {
+            try {
+              if(typeof NMNWallet !== 'undefined') {
+                  const v = JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]');
+                  // Check if already awarded
+                  if(!v.some(item => item.source === "The Cartographer's Table")) {
+                      v.push({text:`You have witnessed the full scope of the network. The map is drawn. The work begins.`, source:"The Cartographer's Table", date:new Date().toLocaleDateString()});
+                      localStorage.setItem('nmn_lore_vault', JSON.stringify(v));
+                      NMNWallet.addGold(50); // Small bonus
+                      document.getElementById('typewriter-desc').innerHTML += `<br><br><span style="color:var(--gold); font-family:var(--font-pixel); font-size: 0.5rem;">[ LORE FRAGMENT UNLOCKED. +50 GOLD ]</span>`;
+                  }
+              }
+            } catch(e){}
+        }
     });
-    panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    panel.scrollIntoView({ behavior:'smooth', block:'center' });
   });
 });
 
 // ── LOCAL STORAGE HUD ──
 (function(){
   try{
-    document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
-    document.getElementById('dgGold').textContent=localStorage.getItem('nmn_total_gold')||'0';
+    if(typeof NMNWallet !== 'undefined') {
+        document.getElementById('dgGold').textContent = NMNWallet.get().gold.toLocaleString();
+    }
   }catch(e){}
 })();
 
 </script>
 
-
-<div class="nmn-global-cta" style="border-top:2px solid rgba(255,215,0,.2);background:rgba(5,3,8,.98);padding:2rem 1.5rem;text-align:center;margin-top:3rem;">
-  <p style="font-family:'Press Start 2P',cursive;font-size:.4rem;color:#8B6914;letter-spacing:.2em;margin-bottom:1.2rem;">⬡ MINE YOUR COPY ⬡</p>
-  <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:1.2rem;">
-    <a href="https://books2read.com/u/3LPyjw" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE WANDERER $2.99</a>
-    <a href="https://books2read.com/u/3ndXGR" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE SWIMMER $2.99</a>
-    <a href="https://books2read.com/u/4EOxZ0" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">JUNI $9.99</a>
-    <a href="https://books2read.com/u/31NrLw" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">OUTBREAK $9.99</a>
-  </div>
-  <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;">
-    <a href="brawler/index.html" style="padding:.55rem 1rem;background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.3);color:#e8b84b;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⚔️ PLAY FREE</a>
-    <a href="https://gofund.me/e643a8283" target="_blank" style="padding:.55rem 1rem;background:rgba(0,169,92,.1);border:1px solid #02a95c;color:#02a95c;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⛏ SUPPORT NMN</a>
-    <a href="https://patreon.com/Lordminadeoro" target="_blank" style="padding:.55rem 1rem;background:rgba(197,146,0,.1);border:1px solid #C59200;color:#C59200;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">🏮 PATREON</a>
-    <a href="index.html" style="padding:.55rem 1rem;background:transparent;border:1px solid rgba(255,215,0,.15);color:#8B6914;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">← HUB</a>
-  </div>
-</div>
 </body>
 </html>
