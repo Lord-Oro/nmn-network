@@ -7,7 +7,6 @@
 
 <link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
 <link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
-<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
 
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
@@ -16,120 +15,187 @@
 :root {
   --gold: #FFD700;
   --gb: #e8b84b;
-  --gd: #AA7700;
-  --bg-color: #000000;
-  --panel-bg: #111111;
+  --gd: #8B6914;
+  --bg-color: #050308;
+  --panel-bg: #0a0806;
   --cream: #f0e6cc;
-  --muted: #aaaaaa;
+  --muted: #8a7654;
   --lg: #55FF55; 
   --red: #FF5555;
   --blue: #5555FF;
+  --pu: #AA55FF;
   --font-pixel: 'Press Start 2P', monospace;
   --font-text: 'VT323', monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; }
+html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; scroll-behavior: smooth;}
 
 body {
-  font-family: var(--font-text);
+  font-family: var(--font-pixel);
   color: var(--cream);
-  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
-  padding-bottom: 60px;
-  font-size: 1.2rem;
+  background-image: 
+    radial-gradient(2px 2px at 40px 60px, #FFD700 30%, transparent 100%),
+    linear-gradient(rgba(10, 8, 12, 0.8) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(10, 8, 12, 0.8) 2px, transparent 2px);
+  background-size: 200px 200px, 32px 32px, 32px 32px;
+  padding-bottom: 100px;
+  line-height: 1.8;
+}
+
+h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
+
+/* ─── CUSTOM CURSOR & GLOW ─── */
+body, a, button, .note-btn { 
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; 
+}
+#pickaxe-glow {
+    position: fixed; width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, transparent 70%);
+    pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
+}
+
+/* CRT EFFECTS */
+body::after{
+  content:""; position:fixed; inset:0;
+  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.1) 50%);
+  background-size:100% 4px; pointer-events:none; z-index:10000; opacity:0.4;
 }
 
 /* 16-BIT UI BORDER HELPER */
 .retro-box {
   background: var(--panel-bg);
-  border: 4px solid #FFF;
-  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
+  border: 4px solid var(--gd);
+  box-shadow: 6px 6px 0 #000;
 }
 
 /* HEADER */
 header {
-  padding: 1rem 2rem; border-bottom: 4px solid var(--lg);
+  padding: 1rem 2rem; border-bottom: 4px solid var(--gd);
   display: flex; justify-content: space-between; align-items: center;
-  background: #000; z-index: 1000; position: sticky; top: 0;
+  background: rgba(5,3,2,.98); z-index: 999; position: sticky; top: 70px;
 }
-.logo { font-family: var(--font-pixel); color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
-.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.logo { font-size: 0.8rem; color: var(--gold); text-decoration: none; text-shadow: 2px 2px 0 #553300; }
+.back { font-size: 0.5rem; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: 0.2s;}
 .back:hover { color: var(--gold); }
 
-main { max-width: 600px; margin: 0 auto; padding: 2rem 1rem; flex: 1; display: flex; flex-direction: column;}
+main { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; flex: 1; display: flex; flex-direction: column; position: relative; z-index: 10;}
 
 /* HERO */
-.canary-hero { text-align: center; margin-bottom: 1.5rem; background: #000; padding: 1.5rem; border: 4px solid #444; }
-.canary-title { font-family: var(--font-pixel); font-size: 1.2rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 3px 3px 0 #553300;}
+.canary-hero { text-align: center; margin-bottom: 2rem; background: #000; padding: 2.5rem; border: 4px solid #333; box-shadow: inset 0 0 20px #000;}
+.canary-title { font-size: 1.8rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 4px 4px 0 #553300; line-height: 1.4;}
 .canary-title em { color: var(--gold); font-style: normal; }
-.canary-sub { font-size: 1.2rem; color: var(--muted); line-height: 1.5; }
+.canary-sub { font-size: 0.6rem; color: var(--muted); line-height: 1.8; font-family: var(--font-text)!important;}
 
 /* MILESTONE BANNER */
-.milestone-banner { background: rgba(85, 255, 85, 0.1); border: 2px dashed var(--lg); padding: 1.5rem; margin-bottom: 1.5rem; text-align: center; display: none; }
+.milestone-banner { background: rgba(85, 255, 85, 0.05); border: 2px dashed var(--lg); padding: 1.5rem; margin-bottom: 2rem; text-align: center; display: none; }
 .milestone-banner.active { display: block; animation: flashIn 0.5s; }
-.milestone-title { font-family: var(--font-pixel); color: var(--lg); font-size: 0.6rem; margin-bottom: 1rem; letter-spacing: 0.1em; text-shadow: 2px 2px 0 #000;}
-.milestone-text { font-size: 1.2rem; color: var(--cream); line-height: 1.5; margin-bottom: 1.5rem; font-style: italic; border-left: 3px solid var(--lg); padding-left: 1rem; text-align: left;}
-.cta-link { color: #000; background: var(--gold); padding: 0.8rem 1.5rem; font-family: var(--font-pixel); text-decoration: none; font-size: 0.6rem; display: inline-block; transition: transform 0.2s; border: 2px solid #FFF;}
-.cta-link:hover { transform: scale(1.05); background: #FFF; }
+.milestone-title { color: var(--lg); font-size: 0.6rem; margin-bottom: 1rem; letter-spacing: 0.1em; text-shadow: 2px 2px 0 #000;}
+.milestone-text { font-size: 0.6rem; color: var(--cream); line-height: 2; margin-bottom: 1.5rem; font-style: italic; border-left: 4px solid var(--lg); padding-left: 1rem; text-align: left; font-family: var(--font-text)!important;}
+.cta-link { color: #000; background: var(--gold); padding: 1rem 1.5rem; text-decoration: none; font-size: 0.5rem; display: inline-block; transition: 0.2s; border: 4px solid #FFF;}
+.cta-link:hover { transform: translateY(-3px); background: #FFF; box-shadow: 4px 4px 0 var(--gd);}
 
 @keyframes flashIn { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } }
 
 /* DIALOGUE / SCORE */
-.dialogue-box { background: #000; border: 4px solid var(--gd); padding: 1.5rem; margin-bottom: 1.5rem; text-align: left; position: relative; box-shadow: inset 0 0 0 4px #000, 4px 4px 0 #000; min-height: 100px;}
-.dialogue-name { position: absolute; top: -0.8rem; left: 1rem; background: var(--gd); color: #000; font-family: var(--font-pixel); font-size: 0.5rem; padding: 0.3rem 0.6rem; border: 2px solid #FFF;}
-.dialogue-text { font-size: 1.4rem; color: var(--cream); line-height: 1.5; }
-.dialogue-text::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 1rem; color: var(--gold);}
+.dialogue-box { background: #0a0806; border: 4px solid var(--gd); padding: 2rem 1.5rem; margin-bottom: 2rem; text-align: left; position: relative; box-shadow: inset 0 0 20px #000, 6px 6px 0 #000; min-height: 100px;}
+.dialogue-name { position: absolute; top: -0.8rem; left: 1rem; background: var(--gd); color: #000; font-size: 0.5rem; padding: 0.5rem 1rem; border: 2px solid #FFF;}
+.dialogue-text { font-size: 0.6rem; color: var(--cream); line-height: 2; font-family: var(--font-text)!important;}
+.dialogue-text::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 0.8rem; color: var(--gold);}
 @keyframes blink { 0%, 50%, 100% { opacity: 1; } 25%, 75% { opacity: 0; } }
 
-.score-hud { display: flex; justify-content: space-between; font-family: var(--font-pixel); font-size: 0.7rem; color: var(--gold); margin-bottom: 1.5rem; background: #111; padding: 1rem; border: 4px solid #333; text-shadow: 2px 2px 0 #000; }
+.score-hud { display: flex; justify-content: space-between; font-size: 0.6rem; color: var(--gold); margin-bottom: 2rem; background: #000; padding: 1.5rem; border: 4px solid #333; text-shadow: 2px 2px 0 #000; box-shadow: 4px 4px 0 #000;}
+
+/* DIFFICULTY SELECTOR */
+.diff-select { margin-bottom: 2rem; text-align: center; }
+.diff-label { font-size: 0.5rem; color: var(--gd); margin-bottom: 1rem; letter-spacing: 1px;}
+.diff-btns { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;}
+.diff-btn { background: #000; border: 4px solid #333; color: var(--muted); padding: 1rem 1.5rem; font-size: 0.5rem; cursor: pointer; transition: 0.2s; box-shadow: 4px 4px 0 #000;}
+.diff-btn.active { border-color: var(--gold); color: var(--gold); background: #1a1208; }
+.diff-btn:hover:not(.active) { border-color: var(--cream); color: var(--cream); transform: translateY(-2px);}
+.diff-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* GAME BOARD */
-.game-board { background: #000; padding: 1.5rem; }
-.notes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+.game-board { background: #000; padding: 2rem; border: 4px solid var(--gd); box-shadow: 8px 8px 0 #000;}
+.notes-grid { display: grid; gap: 15px; margin-bottom: 2rem; transition: 0.3s;}
 
-.note-btn { background: #111; border: 4px solid #444; padding: 1.5rem 0.5rem; cursor: pointer; transition: all 0.1s; display: flex; flex-direction: column; align-items: center; gap: 1rem; box-shadow: 4px 4px 0 #000; }
+/* Dynamic Grid Classes */
+.grid-4 { grid-template-columns: repeat(2, 1fr); }
+.grid-6 { grid-template-columns: repeat(3, 1fr); }
+.grid-9 { grid-template-columns: repeat(3, 1fr); }
+@media(max-width: 500px) {
+    .grid-6 { grid-template-columns: repeat(2, 1fr); }
+    .grid-9 { grid-template-columns: repeat(3, 1fr); gap: 10px;}
+}
+
+.note-btn { background: #0a0806; border: 4px solid #333; padding: 1.5rem 0.5rem; cursor: pointer; transition: 0.1s; display: none; flex-direction: column; align-items: center; gap: 1rem; box-shadow: 4px 4px 0 #000; }
+.note-btn.active-note { display: flex; }
 .note-btn:active { transform: translate(4px, 4px); box-shadow: 0 0 0 #000; }
 
-/* Dynamic States */
-.note-btn.lit-0 { border-color: var(--gd); background: rgba(170, 119, 0, 0.2); box-shadow: inset 0 0 20px var(--gd), 4px 4px 0 #000; }
-.note-btn.lit-1 { border-color: var(--blue); background: rgba(85, 85, 255, 0.2); box-shadow: inset 0 0 20px var(--blue), 4px 4px 0 #000; }
-.note-btn.lit-2 { border-color: var(--muted); background: rgba(170, 170, 170, 0.2); box-shadow: inset 0 0 20px var(--muted), 4px 4px 0 #000; }
-.note-btn.lit-3 { border-color: var(--lg); background: rgba(85, 255, 85, 0.2); box-shadow: inset 0 0 20px var(--lg), 4px 4px 0 #000; }
+/* Dynamic Glow States */
+.note-btn.lit-0 { border-color: #AA7700; background: rgba(170, 119, 0, 0.2); box-shadow: inset 0 0 20px #AA7700, 4px 4px 0 #000; }
+.note-btn.lit-1 { border-color: #5555FF; background: rgba(85, 85, 255, 0.2); box-shadow: inset 0 0 20px #5555FF, 4px 4px 0 #000; }
+.note-btn.lit-2 { border-color: #AAAAAA; background: rgba(170, 170, 170, 0.2); box-shadow: inset 0 0 20px #AAAAAA, 4px 4px 0 #000; }
+.note-btn.lit-3 { border-color: #55FF55; background: rgba(85, 255, 85, 0.2); box-shadow: inset 0 0 20px #55FF55, 4px 4px 0 #000; }
+.note-btn.lit-4 { border-color: #FF55FF; background: rgba(255, 85, 255, 0.2); box-shadow: inset 0 0 20px #FF55FF, 4px 4px 0 #000; }
+.note-btn.lit-5 { border-color: #FFaa00; background: rgba(255, 170, 0, 0.2); box-shadow: inset 0 0 20px #FFaa00, 4px 4px 0 #000; }
+.note-btn.lit-6 { border-color: #AA00AA; background: rgba(170, 0, 170, 0.2); box-shadow: inset 0 0 20px #AA00AA, 4px 4px 0 #000; }
+.note-btn.lit-7 { border-color: #FFFF55; background: rgba(255, 255, 85, 0.2); box-shadow: inset 0 0 20px #FFFF55, 4px 4px 0 #000; }
+.note-btn.lit-8 { border-color: #8B4513; background: rgba(139, 69, 19, 0.2); box-shadow: inset 0 0 20px #8B4513, 4px 4px 0 #000; }
 
 .note-btn.wrong { border-color: var(--red) !important; background: rgba(255, 85, 85, 0.3) !important; box-shadow: inset 0 0 30px var(--red) !important; animation: shake 0.3s; }
 
 @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
 
-.note-canvas { width: 64px; height: 64px; image-rendering: pixelated; filter: drop-shadow(4px 4px 0 #000); pointer-events: none;}
-.note-label { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--cream); text-transform: uppercase; pointer-events: none;}
+.note-canvas { width: 48px; height: 48px; image-rendering: pixelated; filter: drop-shadow(4px 4px 0 #000); pointer-events: none;}
+.note-label { font-size: 0.45rem; color: var(--cream); text-transform: uppercase; pointer-events: none;}
 
-.start-btn { display: block; width: 100%; padding: 1.5rem; background: var(--gd); border: 4px solid #FFF; color: var(--cream); font-family: var(--font-pixel); font-size: 0.8rem; text-transform: uppercase; cursor: pointer; transition: transform 0.1s; box-shadow: 4px 4px 0 #000; margin-top: 1rem;}
-.start-btn:hover { background: var(--gold); color: #000; transform: translateY(-4px); }
+.start-btn { display: block; width: 100%; padding: 1.5rem; background: #000; border: 4px solid var(--gd); color: var(--gold); font-size: 0.6rem; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 6px 6px 0 #000; margin-top: 1rem;}
+.start-btn:hover { background: var(--gd); color: #000; border-color: #FFF; transform: translateY(-4px); box-shadow: 8px 8px 0 #000;}
 
-/* ARCADE HUD (BOTTOM) */
-.hud { display: flex; justify-content: center; align-items: center; padding: 1rem 2rem; background: #000; border-top: 4px solid #333; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; flex-wrap: wrap; gap: 20px; }
-.hud-stat { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; }
-.hud-val { color: var(--gold); font-size: 1rem; text-shadow: 2px 2px 0 #553300; }
-.hud-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
-.hud-link:hover { color: #000; background: var(--gd); }
+/* ROUND OVERLAY */
+.round-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+    color: var(--gold); font-size: 3rem; text-shadow: 6px 6px 0 #553300;
+    display: flex; justify-content: center; align-items: center;
+    z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.round-overlay.show { opacity: 1; pointer-events: all;}
+
+/* DEPTH GAUGE (BOTTOM HUD) */
+.depth-gauge {
+  position:fixed!important; bottom:15px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:95%!important; height:46px!important; background:#000!important;
+  border:4px solid var(--gd)!important; padding:0 20px!important;
+  z-index:9999!important; display:flex!important; align-items:center!important;
+  justify-content:center!important; gap:1.5rem!important; box-shadow: 4px 4px 0 #000!important;
+}
+.dg-stat { font-size: 10px; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
+.dg-val { color: var(--gold); font-size: 14px; }
+.dg-link { font-size: 10px; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: 0.3s; pointer-events: auto!important;}
+.dg-link:hover { color: var(--gold); }
 </style>
 
-<style id="nmn-cursor-global">body,*{cursor:none!important}</style>
-<style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
 </head>
 <body>
 
 <script src="nmn-nav.js"></script>
+<script src="nmn-wallet.js"></script>
 
 <header>
-  <a href="oracle.html" class="logo">NMN ORACLE</a>
+  <a href="oracle.html" class="logo">⛏ NMN ORACLE</a>
   <a href="oracle.html" class="back">← RETURN TO CHAMBER</a>
 </header>
+
+<div id="pickaxe-glow"></div>
+
+<div id="roundOverlay" class="round-overlay">ROUND 1</div>
 
 <main>
   <div class="canary-hero retro-box">
     <h1 class="canary-title">THE CANARY'S <em>SONG</em></h1>
-    <p class="canary-sub">The mine speaks in four frequencies. Listen. Repeat. Survive.</p>
+    <p class="canary-sub">The mine speaks in frequencies. Listen. Repeat. Survive.</p>
   </div>
 
   <div id="milestoneBanner" class="milestone-banner">
@@ -137,7 +203,7 @@ main { max-width: 600px; margin: 0 auto; padding: 2rem 1rem; flex: 1; display: f
     <div class="milestone-text">
       "The Canary wasn't a bird. It was a machine. And in Sector 4, it didn't stop singing when the air went bad... it started translating."
     </div>
-    <a href="https://www.amazon.com/dp/B0DX6N7QKM?tag=lordoro0c25-20" class="cta-link" target="_blank">INVESTIGATE SECTOR 4 OUTBREAK</a>
+    <a href="https://amzn.to/3NIeQ08" class="cta-link" target="_blank">INVESTIGATE SECTOR 4 OUTBREAK</a>
   </div>
 
   <div class="dialogue-box">
@@ -150,36 +216,79 @@ main { max-width: 600px; margin: 0 auto; padding: 2rem 1rem; flex: 1; display: f
     <div>BEST: <span id="valBest" style="color:var(--lg);">0</span></div>
   </div>
 
+  <div class="diff-select" id="diffSelect">
+    <div class="diff-label">SELECT FREQUENCY DEPTH:</div>
+    <div class="diff-btns">
+      <button class="diff-btn active" id="diff4" onclick="setDiff(4)">EASY (4)</button>
+      <button class="diff-btn" id="diff6" onclick="setDiff(6)">MID (6)</button>
+      <button class="diff-btn" id="diff9" onclick="setDiff(9)">HARD (9)</button>
+    </div>
+  </div>
+
   <div class="game-board retro-box">
-    <div class="notes-grid">
-      <div class="note-btn" id="btn0" onclick="playerNote(0)">
+    <div class="notes-grid grid-4" id="notesGrid">
+      <div class="note-btn active-note" id="btn0" onclick="playerNote(0)">
         <canvas id="canv0" class="note-canvas" width="12" height="12"></canvas>
         <span class="note-label">STRIKE</span>
       </div>
-      <div class="note-btn" id="btn1" onclick="playerNote(1)">
+      <div class="note-btn active-note" id="btn1" onclick="playerNote(1)">
         <canvas id="canv1" class="note-canvas" width="12" height="12"></canvas>
         <span class="note-label">DRIP</span>
       </div>
-      <div class="note-btn" id="btn2" onclick="playerNote(2)">
+      <div class="note-btn active-note" id="btn2" onclick="playerNote(2)">
         <canvas id="canv2" class="note-canvas" width="12" height="12"></canvas>
         <span class="note-label">WIND</span>
       </div>
-      <div class="note-btn" id="btn3" onclick="playerNote(3)">
+      <div class="note-btn active-note" id="btn3" onclick="playerNote(3)">
         <canvas id="canv3" class="note-canvas" width="12" height="12"></canvas>
         <span class="note-label">SHIMMER</span>
+      </div>
+      <div class="note-btn" id="btn4" onclick="playerNote(4)">
+        <canvas id="canv4" class="note-canvas" width="12" height="12"></canvas>
+        <span class="note-label">ECHO</span>
+      </div>
+      <div class="note-btn" id="btn5" onclick="playerNote(5)">
+        <canvas id="canv5" class="note-canvas" width="12" height="12"></canvas>
+        <span class="note-label">EMBER</span>
+      </div>
+      <div class="note-btn" id="btn6" onclick="playerNote(6)">
+        <canvas id="canv6" class="note-canvas" width="12" height="12"></canvas>
+        <span class="note-label">VOID</span>
+      </div>
+      <div class="note-btn" id="btn7" onclick="playerNote(7)">
+        <canvas id="canv7" class="note-canvas" width="12" height="12"></canvas>
+        <span class="note-label">SPARK</span>
+      </div>
+      <div class="note-btn" id="btn8" onclick="playerNote(8)">
+        <canvas id="canv8" class="note-canvas" width="12" height="12"></canvas>
+        <span class="note-label">TREMOR</span>
       </div>
     </div>
     <button class="start-btn" id="startBtn" onclick="startGame()">INITIALIZE SEQUENCE</button>
   </div>
 </main>
 
-<div class="hud">
-  <div class="hud-stat">GOLD: <span class="hud-val" id="dgGold">0</span></div>
-  <a href="index.html" class="hud-link">MINE</a>
-  <a href="oracle.html" class="hud-link">ORACLE</a>
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <a href="index.html" class="dg-link">MAIN HUB</a>
 </div>
 
 <script>
+// Glow Cursor Tracking
+document.addEventListener('mousemove', function(e){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
+});
+document.addEventListener('mousedown', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '180px'; r.style.height = '180px'; r.style.background = 'radial-gradient(circle,rgba(232,184,75,.4) 0%,transparent 70%)'; }
+});
+document.addEventListener('mouseup', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '140px'; r.style.height = '140px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.25) 0%,transparent 70%)'; }
+});
+
 // ── PROCEDURAL ICON GENERATOR ──
 function drawIcon(canvasId, seedStr, colorHex) {
   const canvas = document.getElementById(canvasId);
@@ -206,13 +315,18 @@ function drawIcon(canvasId, seedStr, colorHex) {
   ctx.shadowBlur = 0;
 }
 
-// Generate the 4 node icons
 window.addEventListener('DOMContentLoaded', () => {
   drawIcon('canv0', 'PickaxeRockStrike', '#AA7700'); 
   drawIcon('canv1', 'WaterCavernDrip', '#5555FF');   
   drawIcon('canv2', 'AirCurrentWind', '#AAAAAA');    
   drawIcon('canv3', 'CrystalShineGleam', '#55FF55'); 
-  typeText("SYSTEM STANDBY. AWAITING INITIALIZATION.");
+  drawIcon('canv4', 'EchoBatSonar', '#FF55FF'); 
+  drawIcon('canv5', 'FireEmberSpark', '#FFaa00'); 
+  drawIcon('canv6', 'VoidDarkHole', '#AA00AA'); 
+  drawIcon('canv7', 'LightningSpark', '#FFFF55'); 
+  drawIcon('canv8', 'EarthquakeTremor', '#8B4513'); 
+
+  typeText("SYSTEM STANDBY. SELECT DEPTH AND INITIALIZE.");
   updateGlobalHUD();
 });
 
@@ -230,18 +344,40 @@ function typeText(text) {
 }
 
 // ── AUDIO & GAME LOGIC ──
-const FREQS = [180, 280, 380, 520]; 
-const TYPES = ['square', 'sine', 'triangle', 'sawtooth'];
+const FREQS = [180, 280, 380, 520, 660, 880, 110, 1000, 1200]; 
+const TYPES = ['square', 'sine', 'triangle', 'sawtooth', 'sine', 'triangle', 'sawtooth', 'square', 'sine'];
 const MESSAGES = [
-  ["Listen to the air...", "The stone remembers...", "Four notes. Four truths."],
+  ["Listen to the air...", "The stone remembers...", "The frequencies match."],
   ["The mine is testing you.", "Repeat what you heard.", "The canary is watching."],
   ["Your memory runs deep.", "The gold approves.", "Lord Oro nods from the doorway."],
   ["Few miners reach this depth.", "The silence trusts you.", "The Canary sings for you now."]
 ];
 
 let ctx = null, seq = [], playerSeq = [], round = 0, best = 0;
-let listening = false, playing = false;
-let milestoneHit = false;
+let listening = false, playing = false, milestoneHit = false;
+let activeNotes = 4; // Difficulty Tracker
+
+function setDiff(notes) {
+    if(playing || listening) return; // Prevent changing mid-game
+    activeNotes = notes;
+    
+    // Update UI Buttons
+    document.getElementById('diff4').classList.remove('active');
+    document.getElementById('diff6').classList.remove('active');
+    document.getElementById('diff9').classList.remove('active');
+    document.getElementById('diff' + notes).classList.add('active');
+    
+    // Update Grid
+    const grid = document.getElementById('notesGrid');
+    grid.className = 'notes-grid grid-' + notes;
+    
+    // Show/Hide Nodes
+    for(let i=0; i<9; i++) {
+        const btn = document.getElementById('btn' + i);
+        if(i < notes) btn.classList.add('active-note');
+        else btn.classList.remove('active-note');
+    }
+}
 
 function getCtx(){ if(!ctx) ctx = new(window.AudioContext || window.webkitAudioContext)(); return ctx; }
 
@@ -269,13 +405,13 @@ async function playSequence() {
   document.querySelectorAll('.note-btn').forEach(b => b.style.pointerEvents = 'none');
   typeText("TRANSMITTING FREQUENCIES...");
   
-  await sleep(600);
+  await sleep(400);
   
-  let speed = Math.max(300, 700 - (round * 25)); 
+  let speed = Math.max(250, 700 - (round * 30)); 
   
   for(let i=0; i<seq.length; i++) {
     playNote(seq[i], speed / 1000);
-    await sleep(speed + 100);
+    await sleep(speed + 150);
   }
   
   document.querySelectorAll('.note-btn').forEach(b => b.style.pointerEvents = 'auto');
@@ -291,17 +427,28 @@ function startGame() {
   milestoneHit = false;
   document.getElementById('startBtn').style.display = 'none';
   document.getElementById('milestoneBanner').classList.remove('active');
+  
+  // Disable difficulty selector during play
+  document.querySelectorAll('.diff-btn').forEach(b => b.disabled = true);
+  
   nextRound();
 }
 
 async function nextRound() {
   round++;
-  seq.push(Math.floor(Math.random() * 4));
+  seq.push(Math.floor(Math.random() * activeNotes));
   
   document.getElementById('valRound').textContent = round;
   document.getElementById('valBest').textContent = best;
   
+  // The Screen Flash Override
+  const ov = document.getElementById('roundOverlay');
+  ov.textContent = "ROUND " + round;
+  ov.classList.add('show');
+  await sleep(1000);
+  ov.classList.remove('show');
   await sleep(500);
+
   playSequence();
 }
 
@@ -322,23 +469,24 @@ function playerNote(idx) {
     document.getElementById('valRound').textContent = round;
     document.getElementById('valBest').textContent = best;
     
-    let goldReward = round * 2;
+    // Multiplier for difficulty
+    let multi = activeNotes === 4 ? 1 : activeNotes === 6 ? 2 : 3;
+    let goldReward = (round * 2) * multi;
     rewardGold(goldReward);
     
-    // The Resonance Milestone Logic
     if (round === 7 && !milestoneHit) {
         milestoneHit = true;
         document.getElementById('milestoneBanner').classList.add('active');
         typeText(`RESONANCE REACHED. +${goldReward} GOLD. DECRYPTING...`);
         
         try {
-          const v = JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]');
-          v.push({text:`The Canary wasn't a bird. It was a machine. And in Sector 4, it didn't stop singing when the air went bad... it started translating.`, source:"The Canary's Song", date:new Date().toLocaleDateString()});
-          localStorage.setItem('nmn_lore_vault', JSON.stringify(v));
-          updateGlobalHUD();
+          if(typeof NMNWallet !== 'undefined') {
+              const v = JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]');
+              v.push({text:`The Canary wasn't a bird. It was a machine. And in Sector 4, it didn't stop singing when the air went bad... it started translating.`, source:"The Canary's Song", date:new Date().toLocaleDateString()});
+              localStorage.setItem('nmn_lore_vault', JSON.stringify(v));
+          }
         } catch(e){}
         
-        // Give them time to read the banner before next sequence
         setTimeout(nextRound, 4500); 
     } else {
         typeText(`SEQUENCE VERIFIED. +${goldReward} GOLD AWARDED.`);
@@ -357,7 +505,7 @@ function wrong() {
   osc.connect(g).connect(c.destination);
   osc.start(); osc.stop(c.currentTime + 0.5);
 
-  document.querySelectorAll('.note-btn').forEach(b => {
+  document.querySelectorAll('.note-btn.active-note').forEach(b => {
     b.classList.add('wrong');
     setTimeout(() => b.classList.remove('wrong'), 600);
   });
@@ -370,7 +518,8 @@ function wrong() {
   setTimeout(() => {
     seq = []; round = 0;
     document.getElementById('startBtn').style.display = 'block';
-    typeText("SYSTEM RESET. READY FOR NEW SEQUENCE.");
+    document.querySelectorAll('.diff-btn').forEach(b => b.disabled = false); // Re-enable difficulty
+    typeText("SYSTEM RESET. AWAITING INITIALIZATION.");
   }, 2500);
 }
 
@@ -378,34 +527,21 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 function rewardGold(amount) {
   try {
-    let currentGold = parseInt(localStorage.getItem('nmn_total_gold') || '0');
-    localStorage.setItem('nmn_total_gold', currentGold + amount);
-    updateGlobalHUD();
+    if(typeof NMNWallet !== 'undefined') {
+        NMNWallet.addGold(amount);
+        updateGlobalHUD();
+    }
   } catch(e) {}
 }
 
 function updateGlobalHUD() {
   try {
-    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold') || '0';
+    if(typeof NMNWallet !== 'undefined') {
+        document.getElementById('dgGold').textContent = NMNWallet.get().gold.toLocaleString();
+    }
   } catch(e) {}
 }
 </script>
 
-
-<div class="nmn-global-cta" style="border-top:2px solid rgba(255,215,0,.2);background:rgba(5,3,8,.98);padding:2rem 1.5rem;text-align:center;margin-top:3rem;">
-  <p style="font-family:'Press Start 2P',cursive;font-size:.4rem;color:#8B6914;letter-spacing:.2em;margin-bottom:1.2rem;">⬡ MINE YOUR COPY ⬡</p>
-  <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:1.2rem;">
-    <a href="https://books2read.com/u/3LPyjw" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE WANDERER $2.99</a>
-    <a href="https://books2read.com/u/3ndXGR" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE SWIMMER $2.99</a>
-    <a href="https://books2read.com/u/4EOxZ0" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">JUNI $9.99</a>
-    <a href="https://books2read.com/u/31NrLw" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">OUTBREAK $9.99</a>
-  </div>
-  <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;">
-    <a href="brawler/index.html" style="padding:.55rem 1rem;background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.3);color:#e8b84b;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⚔️ PLAY FREE</a>
-    <a href="https://gofund.me/e643a8283" target="_blank" style="padding:.55rem 1rem;background:rgba(0,169,92,.1);border:1px solid #02a95c;color:#02a95c;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⛏ SUPPORT NMN</a>
-    <a href="https://patreon.com/Lordminadeoro" target="_blank" style="padding:.55rem 1rem;background:rgba(197,146,0,.1);border:1px solid #C59200;color:#C59200;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">🏮 PATREON</a>
-    <a href="index.html" style="padding:.55rem 1rem;background:transparent;border:1px solid rgba(255,215,0,.15);color:#8B6914;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">← HUB</a>
-  </div>
-</div>
 </body>
 </html>
