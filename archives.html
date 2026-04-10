@@ -7,7 +7,6 @@
 
 <link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
 <link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
-<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
 
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
@@ -16,139 +15,169 @@
 :root {
   --gold: #FFD700;
   --gb: #e8b84b;
-  --gd: #AA7700;
-  --bg-color: #000000;
-  --panel-bg: #111111;
+  --gd: #8B6914;
+  --bg-color: #050308;
+  --panel-bg: #0a0806;
   --cream: #f0e6cc;
-  --muted: #aaaaaa;
+  --muted: #8a7654;
   --lg: #55FF55; 
+  --pu: #AA55FF;
   --font-pixel: 'Press Start 2P', monospace;
   --font-text: 'VT323', monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { min-height: 100vh; background: var(--bg-color); }
+html, body { min-height: 100vh; background: var(--bg-color); scroll-behavior: smooth;}
 
 body {
-  font-family: var(--font-text);
+  font-family: var(--font-pixel);
   color: var(--cream);
-  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
-  padding-bottom: 60px;
-  font-size: 1.2rem;
+  background-image: 
+    radial-gradient(2px 2px at 40px 60px, #FFD700 30%, transparent 100%),
+    linear-gradient(rgba(10, 8, 12, 0.8) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(10, 8, 12, 0.8) 2px, transparent 2px);
+  background-size: 200px 200px, 32px 32px, 32px 32px;
+  padding-bottom: 100px;
+  line-height: 1.8;
+}
+
+h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
+
+/* ─── CUSTOM CURSOR & GLOW ─── */
+body, a, button, .book-card { 
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; 
+}
+#pickaxe-glow {
+    position: fixed; width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, transparent 70%);
+    pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
+}
+
+/* CRT EFFECTS */
+body::after{
+  content:""; position:fixed; inset:0;
+  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.1) 50%);
+  background-size:100% 4px; pointer-events:none; z-index:10000; opacity:0.4;
 }
 
 /* 16-BIT UI BORDER HELPER */
 .retro-box {
   background: var(--panel-bg);
-  border: 4px solid #FFF;
-  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
+  border: 4px solid var(--gd);
+  box-shadow: 6px 6px 0 #000;
 }
 
 /* HEADER */
 header {
-  padding: 1rem 2rem; border-bottom: 4px solid var(--lg);
+  padding: 1rem 2rem; border-bottom: 4px solid var(--gd);
   display: flex; justify-content: space-between; align-items: center;
-  background: #000; z-index: 1000; position: sticky; top: 0;
+  background: rgba(5,3,2,.98); z-index: 999; position: sticky; top: 70px;
 }
-.logo { font-family: var(--font-pixel); color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
-.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.logo { color: var(--gold); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #553300; }
+.back { font-size: 0.5rem; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: 0.2s;}
 .back:hover { color: var(--gold); }
 
-main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem 1rem; }
+main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem 1.5rem; position: relative; z-index: 10;}
 
 /* ANNOUNCEMENT BANNER */
-.update-banner { background: rgba(255, 215, 0, 0.1); border: 2px dashed var(--gold); padding: 1rem; margin-bottom: 2rem; text-align: center; position: relative; animation: pulseBorder 3s infinite;}
+.update-banner { background: rgba(255, 215, 0, 0.05); border: 2px dashed var(--gold); padding: 1.5rem; margin-bottom: 3rem; text-align: center; animation: pulseBorder 3s infinite;}
 @keyframes pulseBorder { 0%, 100% { border-color: var(--gd); } 50% { border-color: var(--gold); } }
-.update-title { font-family: var(--font-pixel); color: var(--gold); font-size: 0.6rem; margin-bottom: 0.5rem; letter-spacing: 0.1em; }
-.update-text { color: var(--cream); font-size: 1.1rem; line-height: 1.4; }
-.update-text em { color: var(--lg); font-style: normal; }
+.update-title { color: var(--gold); font-size: 0.6rem; margin-bottom: 1rem; letter-spacing: 0.1em; }
+.update-text { color: var(--cream); font-size: 0.6rem; line-height: 2; font-family: var(--font-text)!important;}
+.update-text em { color: var(--lg); font-style: normal; font-family: var(--font-pixel)!important;}
+.update-text strong { color: var(--gold); font-family: var(--font-pixel)!important;}
 
 /* HERO */
-.arch-hero { text-align: center; margin-bottom: 2rem; background: #000; padding: 2rem; border: 4px solid #444; }
-.arch-eyebrow { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); margin-bottom: 1rem; text-shadow: 2px 2px 0 #000; }
-.arch-title { font-family: var(--font-pixel); font-size: 1.5rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 3px 3px 0 #553300;}
+.arch-hero { text-align: center; margin-bottom: 3rem; background: #000; padding: 3rem 2rem; border: 4px solid #333; box-shadow: inset 0 0 20px #000;}
+.arch-eyebrow { font-size: 0.5rem; color: var(--gd); margin-bottom: 1rem; text-shadow: 2px 2px 0 #000; letter-spacing: 2px;}
+.arch-title { font-size: 2rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 4px 4px 0 #553300; line-height: 1.4;}
 .arch-title em { color: var(--gold); font-style: normal; }
-.arch-sub { font-size: 1.4rem; color: var(--muted); line-height: 1.5; max-width: 600px; margin: 0 auto; }
+.arch-sub { font-size: 0.6rem; color: var(--muted); line-height: 2; max-width: 700px; margin: 0 auto; font-family: var(--font-text)!important;}
 
 /* DAILY QUOTE */
-.daily-quote-box { border: 4px solid var(--gd); background: #000; padding: 1.5rem; margin-bottom: 2rem; text-align: left; position: relative; box-shadow: inset 0 0 0 4px #000, 4px 4px 0 #000;}
-.dq-label { position: absolute; top: -0.8rem; left: 1rem; background: var(--gd); color: #000; font-family: var(--font-pixel); font-size: 0.5rem; padding: 0.3rem 0.6rem; border: 2px solid #FFF; }
-.dq-text { font-size: 1.4rem; color: var(--cream); line-height: 1.6; margin-bottom: 1rem; min-height: 60px;}
-.dq-sig { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-align: right; }
-.dq-text::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 1rem; color: var(--gold);}
+.daily-quote-box { border: 4px solid var(--gd); background: #0a0806; padding: 2rem 1.5rem; margin-bottom: 4rem; text-align: left; position: relative; box-shadow: inset 0 0 20px #000, 6px 6px 0 #000;}
+.dq-label { position: absolute; top: -0.8rem; left: 1rem; background: var(--gd); color: #000; font-size: 0.5rem; padding: 0.5rem 1rem; border: 2px solid #FFF; }
+.dq-text { font-size: 0.6rem; color: var(--cream); line-height: 2; margin-bottom: 1rem; min-height: 60px; font-family: var(--font-text)!important;}
+.dq-sig { font-size: 0.5rem; color: var(--muted); text-align: right; }
+.dq-text::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 0.8rem; color: var(--gold);}
 @keyframes blink { 0%, 50%, 100% { opacity: 1; } 25%, 75% { opacity: 0; } }
 
 /* SECTION TAGS */
-.section-tag { font-family: var(--font-pixel); font-size: 0.8rem; color: var(--gold); margin: 3rem 0 1.5rem 0; border-bottom: 4px solid #333; padding-bottom: 0.5rem; text-shadow: 2px 2px 0 #000; }
+.section-tag { font-size: 1rem; color: var(--gold); margin: 4rem 0 2rem 0; border-bottom: 4px solid #333; padding-bottom: 1rem; text-shadow: 3px 3px 0 #553300; text-align: center; }
 
-/* BOOK GRID */
-.book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+/* BOOK GRID (WITH COVERS) */
+.book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; margin-bottom: 4rem;}
 
-.book-card { background: #000; border: 4px solid #444; padding: 1.5rem; display: flex; flex-direction: column; transition: transform 0.1s; position: relative;}
-.book-card:hover { transform: translateY(-4px); box-shadow: 4px 4px 0 #000; border-color: var(--cream); background: #111;}
+.book-card { background: #000; border: 4px solid #333; display: flex; flex-direction: column; transition: 0.2s; position: relative; box-shadow: 6px 6px 0 #000;}
+.book-card:hover { transform: translateY(-5px); box-shadow: 8px 8px 0 var(--gold); border-color: var(--gold); background: #0a0806;}
 
-.book-card.published { border-color: var(--gold); }
-.book-card.progress { border-color: var(--gd); }
-.book-card.soon { border-color: var(--muted); border-style: dashed; }
+.book-cover { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-bottom: 4px solid var(--gd); filter: brightness(0.8); transition: 0.3s; image-rendering: pixelated;}
+.book-card:hover .book-cover { filter: brightness(1.05); }
 
-.book-icon-canvas { width: 64px; height: 64px; image-rendering: pixelated; margin-bottom: 1rem; filter: drop-shadow(4px 4px 0 #000); }
-
-.book-status { font-family: var(--font-pixel); font-size: 0.5rem; margin-bottom: 1rem; padding: 0.3rem; border: 2px solid; display: inline-block;}
+.book-content { padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1; }
+.book-status { font-size: 0.4rem; margin-bottom: 1rem; padding: 0.5rem; border: 2px solid; display: inline-block; text-align: center;}
 .book-status.pub { color: #000; background: var(--gold); border-color: #FFF; }
 .book-status.wip { color: var(--cream); background: var(--gd); border-color: #000; }
 .book-status.cs { color: var(--muted); background: #222; border-color: #444; }
+.book-status.obs { color: #000; background: var(--pu); border-color: #FFF; }
 
-.book-title { font-family: var(--font-pixel); font-size: 1rem; color: var(--cream); margin-bottom: 0.8rem; line-height: 1.4; text-shadow: 2px 2px 0 #000;}
+.book-title { font-size: 0.8rem; color: var(--cream); margin-bottom: 0.8rem; line-height: 1.4; text-shadow: 2px 2px 0 #000;}
 .book-title em { color: var(--gold); font-style: normal; }
-.book-desc { font-size: 1.2rem; color: var(--muted); line-height: 1.5; margin-bottom: 1rem; flex-grow: 1; }
+.book-desc { font-size: 0.5rem; color: var(--muted); line-height: 1.8; margin-bottom: 1.5rem; flex-grow: 1; font-family: var(--font-text)!important;}
 
-.book-excerpt { font-style: italic; font-size: 1.2rem; color: var(--lg); padding: 1rem; border-left: 4px solid var(--lg); background: rgba(0,255,136,0.05); margin-bottom: 1rem; line-height: 1.5; }
+.book-link { display: block; padding: 1rem; background: #111; border: 4px solid #444; color: #888; font-size: 0.5rem; text-decoration: none; text-align: center; text-transform: uppercase; transition: 0.2s; margin-top: 0.5rem;}
+.book-link.available { border-color: var(--gold); color: var(--gold); background: rgba(255,215,0,0.05); }
+.book-link.available:hover { background: var(--gold); color: #000; border-color: #FFF;}
 
-.book-link { display: block; padding: 1rem; background: transparent; border: 4px solid var(--gold); color: var(--gold); font-family: var(--font-pixel); font-size: 0.6rem; text-decoration: none; text-align: center; text-transform: uppercase; transition: all 0.1s;}
-.book-link:hover { background: var(--gold); color: #000; }
-
-.ch1-link { background: #111; color: var(--lg); border-color: var(--lg); margin-top: 0.5rem; }
-.ch1-link:hover { background: var(--lg); color: #000; }
-.ch1-locked { background: #111; color: var(--muted); border-color: var(--muted); cursor: not-allowed; margin-top: 0.5rem;}
-.ch1-locked:hover { background: #111; color: var(--muted); }
+.book-link.obsidian-btn { border-color: var(--pu); color: var(--pu); background: rgba(170,85,255,0.05); }
+.book-link.obsidian-btn:hover { background: var(--pu); color: #000; border-color: #FFF;}
 
 /* PROGRESS BAR */
-.progress-bar { background: #000; border: 4px solid #444; height: 20px; margin-bottom: 0.5rem; width: 100%; }
-.progress-fill { height: 100%; background: var(--gold); transition: width 0.5s; }
-.progress-label { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--muted); text-align: right; }
+.progress-bar { background: #000; border: 2px solid #444; height: 16px; margin-bottom: 0.5rem; width: 100%; padding: 2px;}
+.progress-fill { height: 100%; background: var(--gd); transition: width 0.5s; }
+.progress-label { font-size: 0.4rem; color: var(--muted); text-align: right; margin-bottom: 1rem; }
 
 /* BOTTOM MENUS */
-.feature-box { margin-top: 2rem; border: 4px solid #444; padding: 1.5rem; background: #000; text-align: center; }
-.feature-title { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); margin-bottom: 1rem; text-shadow: 2px 2px 0 #000;}
-.feature-link { font-family: var(--font-pixel); font-size: 1rem; color: var(--gold); text-decoration: none; display: block; margin-bottom: 0.8rem; transition: transform 0.1s;}
-.feature-link:hover { transform: scale(1.05); color: #FFF; }
-.feature-desc { font-size: 1.1rem; color: var(--muted); }
+.feature-box { margin-top: 2rem; border: 4px solid var(--gd); padding: 2rem; background: #000; text-align: center; box-shadow: 6px 6px 0 #000;}
+.feature-title { font-size: 0.8rem; color: var(--gold); margin-bottom: 1.5rem; text-shadow: 2px 2px 0 #553300;}
+.feature-link { font-size: 0.6rem; color: var(--cream); text-decoration: none; display: block; margin-bottom: 1rem; transition: 0.2s; background: #111; border: 2px solid #333; padding: 1rem;}
+.feature-link:hover { transform: translateY(-3px); color: #000; background: var(--gold); border-color: #FFF;}
+.feature-desc { font-size: 0.5rem; color: var(--muted); font-family: var(--font-text)!important; line-height: 1.8;}
 
-.oracle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem;}
-@media(max-width: 600px) { .oracle-grid { grid-template-columns: 1fr; } }
-.oracle-btn { border: 4px solid #444; padding: 1rem; text-decoration: none; text-align: center; background: #111; transition: transform 0.1s; display: flex; flex-direction: column; align-items: center;}
-.oracle-btn:hover { border-color: var(--lg); transform: translateY(-4px); background: #222; }
-.oracle-icon { font-size: 2rem; margin-bottom: 0.5rem; filter: drop-shadow(2px 2px 0 #000);}
-.oracle-name { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--cream); margin-bottom: 0.3rem;}
-.oracle-sub { font-size: 1rem; color: var(--muted); }
+.oracle-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;}
+.oracle-btn { border: 4px solid #333; padding: 1.5rem; text-decoration: none; text-align: center; background: #0a0806; transition: 0.2s; display: flex; flex-direction: column; align-items: center;}
+.oracle-btn:hover { border-color: var(--lg); transform: translateY(-4px); background: #111; box-shadow: 0 4px 15px rgba(85,255,85,0.2);}
+.oracle-icon { font-size: 2rem; margin-bottom: 1rem; filter: drop-shadow(2px 2px 0 #000);}
+.oracle-name { font-size: 0.6rem; color: var(--cream); margin-bottom: 0.5rem;}
+.oracle-sub { font-size: 0.45rem; color: var(--muted); font-family: var(--font-text)!important; }
 
-/* ARCADE HUD (BOTTOM) */
-.hud { display: flex; justify-content: center; align-items: center; padding: 1rem 2rem; background: #000; border-top: 4px solid #333; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; flex-wrap: wrap; gap: 20px; }
-.hud-stat { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; }
-.hud-val { color: var(--gold); font-size: 1rem; text-shadow: 2px 2px 0 #553300; }
-.hud-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
-.hud-link:hover { color: #000; background: var(--gd); }
+/* DEPTH GAUGE (BOTTOM HUD) */
+.depth-gauge {
+  position:fixed!important; bottom:15px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:95%!important; height:46px!important; background:#000!important;
+  border:4px solid var(--gd)!important; padding:0 20px!important;
+  z-index:9999!important; display:flex!important; align-items:center!important;
+  justify-content:center!important; gap:1.5rem!important; box-shadow: 4px 4px 0 #000!important;
+}
+.dg-stat { font-size: 10px; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
+.dg-val { color: var(--gold); font-size: 14px; }
+.dg-link { font-size: 10px; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: 0.3s; pointer-events: auto!important;}
+.dg-link:hover { color: var(--gold); }
 </style>
 
 </head>
 <body>
 
 <script src="nmn-nav.js"></script>
+<script src="nmn-wallet.js"></script>
 
 <header>
-  <a href="index.html" class="logo">NMN ARCHIVES</a>
+  <a href="index.html" class="logo">⛏ NMN ARCHIVES</a>
   <a href="index.html" class="back">← RETURN TO MINE</a>
 </header>
+
+<div id="pickaxe-glow"></div>
 
 <main>
   <div class="update-banner">
@@ -170,95 +199,258 @@ main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem 1rem; }
     <div class="dq-sig">— LORD ORO, NMN</div>
   </div>
 
-  <div class="section-tag">PUBLISHED — AVAILABLE NOW</div>
+  <div class="section-tag">THE GOLDMINE COLLECTION</div>
   <div class="book-grid">
-    <div class="book-card published">
-      <canvas id="icon-tabby" class="book-icon-canvas" width="16" height="16"></canvas>
-      <div class="book-status pub">★ ON AMAZON KDP</div>
-      <div class="book-title">All Tabbies Have a <em>Place Too</em></div>
-      <div class="book-desc">A story about belonging, identity, and the quiet power of knowing where you fit. For every tabby who ever wondered.</div>
-      <a href="https://www.amazon.com?tag=lordoro0c25-20" class="book-link" target="_blank">READ ON AMAZON</a>
-      <a href="#" class="book-link ch1-locked">DECRYPTING CH 1...</a>
-    </div>
     
-    <div class="book-card published">
-      <canvas id="icon-pyro" class="book-icon-canvas" width="16" height="16"></canvas>
-      <div class="book-status pub">★ ON AMAZON KDP</div>
-      <div class="book-title">Pyro and Helios: <em>A Journey Home</em></div>
-      <div class="book-desc">Fire and light. Two elementals searching for the one thing neither of them can create on their own. What home actually means.</div>
-      <div class="book-excerpt">"Pyro didn't know what home meant until he had one to protect."</div>
-      <a href="https://www.amazon.com/dp/B0DX6N7QKM?tag=lordoro0c25-20" class="book-link" target="_blank">READ ON AMAZON</a>
-      <a href="#" class="book-link ch1-locked">DECRYPTING CH 1...</a>
+    <div class="book-card">
+      <img src="pyro_en.jpeg" class="book-cover" alt="Pyro & Helios">
+      <div class="book-content">
+        <div class="book-status pub">★ ON AMAZON KDP</div>
+        <div class="book-title">Pyro and Helios: <em>A Journey Home</em></div>
+        <div class="book-desc">Fire and light. Two elementals searching for the one thing neither of them can create on their own. What home actually means.</div>
+        <a href="https://amzn.to/4uOpLpA" class="book-link available" target="_blank">AMAZON [LIT]</a>
+        <a href="https://books2read.com/u/meW9gA" class="book-link available" target="_blank">UNIVERSAL [LIT]</a>
+      </div>
     </div>
+
+    <div class="book-card">
+      <img src="juni_en.jpeg" class="book-cover" alt="Juni Immortal">
+      <div class="book-content">
+        <div class="book-status pub">★ ON AMAZON KDP</div>
+        <div class="book-title">Juni the <em>Immortal</em></div>
+        <div class="book-desc">She has lived long enough to forget what dying felt like. A character study across centuries about the weight of forever.</div>
+        <a href="https://amzn.to/4tfhJoc" class="book-link available" target="_blank">AMAZON [LIT]</a>
+        <a href="https://books2read.com/u/4EOxZ0" class="book-link available" target="_blank">UNIVERSAL [LIT]</a>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <img src="Outbreak_from_the_stars_cover_art_final_1.jpeg" onerror="this.src='outbreak_en.jpeg'" class="book-cover" alt="Outbreak (EN)">
+      <div class="book-content">
+        <div class="book-status pub">★ ON AMAZON KDP</div>
+        <div class="book-title">Outbreak From <em>the Stars</em></div>
+        <div class="book-desc">They didn't come to destroy. They came to replace. A sci-fi horror novella set in a world where the invasion is quiet.</div>
+        <a href="https://amzn.to/3NIeQ08" class="book-link available" target="_blank">AMAZON [LIT]</a>
+        <a href="https://books2read.com/u/31NrLw" class="book-link available" target="_blank">UNIVERSAL [LIT]</a>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <img src="outbreak_ja.jpg" class="book-cover" alt="Outbreak (JA)">
+      <div class="book-content">
+        <div class="book-status pub">★ ON AMAZON KDP</div>
+        <div class="book-title">パイロとヘリオス (JA)</div>
+        <div class="book-desc">日本語版。The primary novel of fire and identity. Translated for the Japanese network.</div>
+        <a href="https://books2read.com/u/bMLwXB" class="book-link available" target="_blank">UNIVERSAL [LIT]</a>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <img src="outbreak_es.jpeg" class="book-cover" alt="Outbreak (ES)">
+      <div class="book-content">
+        <div class="book-status pub">★ PUBLISHED</div>
+        <div class="book-title">BROTE (ES)</div>
+        <div class="book-desc">Edición en Español. El horror cósmico llega a la red.</div>
+        <a href="#" class="book-link">AMAZON [PENDING]</a>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <img src="outbreak_pt.jpeg" class="book-cover" alt="Outbreak (PT)">
+      <div class="book-content">
+        <div class="book-status pub">★ PUBLISHED</div>
+        <div class="book-title">OUTBREAK (PT)</div>
+        <div class="book-desc">Edição Portuguesa. O terror cósmico traduzido.</div>
+        <a href="#" class="book-link">AMAZON [PENDING]</a>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <img src="outbreak_ko.jpg" class="book-cover" alt="Outbreak (KO)">
+      <div class="book-content">
+        <div class="book-status pub">★ PUBLISHED</div>
+        <div class="book-title">OUTBREAK (KO)</div>
+        <div class="book-desc">한국어판. 우주적 공포가 시작됩니다.</div>
+        <a href="#" class="book-link">AMAZON [PENDING]</a>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <img src="tabbies_en.jpeg" class="book-cover" alt="All Tabbies">
+      <div class="book-content">
+        <div class="book-status pub">★ ON AMAZON KDP</div>
+        <div class="book-title">All Tabbies Have a <em>Place Too</em></div>
+        <div class="book-desc">A story about belonging, identity, and the quiet power of knowing where you fit. For every tabby who ever wondered.</div>
+        <a href="https://amzn.to/4bNAQ1y" class="book-link available" target="_blank">AMAZON [LIT]</a>
+        <a href="https://books2read.com/u/brzavW" class="book-link available" target="_blank">UNIVERSAL [LIT]</a>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <img src="tabbies_es.jpg" class="book-cover" alt="Tabbies (ES)">
+      <div class="book-content">
+        <div class="book-status pub">★ ON AMAZON KDP</div>
+        <div class="book-title">TODOS LOS GATOS (ES)</div>
+        <div class="book-desc">Edición en Español. Una historia sobre pertenecer en los lugares más improbables.</div>
+        <a href="https://amzn.to/47qbOUT" class="book-link available" target="_blank">AMAZON [LIT]</a>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <img src="tabbies_pt.jpeg" class="book-cover" alt="Tabbies (PT)">
+      <div class="book-content">
+        <div class="book-status pub">★ PUBLISHED</div>
+        <div class="book-title">TODOS OS GATOS (PT)</div>
+        <div class="book-desc">Edição Portuguesa. Available soon on major networks.</div>
+        <a href="#" class="book-link">AMAZON [PENDING]</a>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <img src="tabbies_ja.jpg" class="book-cover" alt="Tabbies (JA)">
+      <div class="book-content">
+        <div class="book-status pub">★ ON AMAZON KDP</div>
+        <div class="book-title">猫にも居場所がある (JA)</div>
+        <div class="book-desc">日本語版。Available on Amazon Japan.</div>
+        <a href="https://amzn.to/3PPrJG9" class="book-link available" target="_blank">AMAZON [LIT]</a>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <img src="tabbies_ko.jpeg" class="book-cover" alt="Tabbies (KO)">
+      <div class="book-content">
+        <div class="book-status pub">★ PUBLISHED</div>
+        <div class="book-title">모든 고양이는... (KO)</div>
+        <div class="book-desc">한국어판. Extraction complete. Currently hosted on Google Play.</div>
+        <a href="#" class="book-link available">GOOGLE PLAY [LIT]</a>
+      </div>
+    </div>
+
   </div>
 
-  <div class="section-tag">IN PROGRESS — THE CATALOG</div>
+  <div class="section-tag" style="color: var(--pu);">THE OBSIDIAN EXTRACTIONS</div>
   <div class="book-grid">
-    <div class="book-card progress">
-      <canvas id="icon-outbreak" class="book-icon-canvas" width="16" height="16"></canvas>
-      <div class="book-status wip">⛏ COMPLETING (25K+ WORDS)</div>
-      <div class="book-title">Outbreak From <em>the Stars</em></div>
-      <div class="book-desc">They didn't come to destroy. They came to replace. A sci-fi horror novella set in a world where the invasion is quiet.</div>
-      <div class="book-excerpt">"The first sign wasn't fire. It was silence where sound had been."</div>
-      <div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div>
-      <div class="progress-label">85% — FORMATTING</div>
-      <a href="outbreak-from-the-stars.html" class="book-link ch1-link">READ CHAPTER 1</a>
-    </div>
     
-    <div class="book-card progress">
-      <canvas id="icon-juni" class="book-icon-canvas" width="16" height="16"></canvas>
-      <div class="book-status wip">⛏ NEAR COMPLETE (21K+ WORDS)</div>
-      <div class="book-title">Juni the <em>Immortal</em></div>
-      <div class="book-desc">She has lived long enough to forget what dying felt like. A character study across centuries about the weight of forever.</div>
-      <div class="book-excerpt">"Every century she tried to remember the first person who loved her. Every century the face got slightly less clear."</div>
-      <div class="progress-bar"><div class="progress-fill" style="width:78%"></div></div>
-      <div class="progress-label">78% — FINAL CHAPTERS</div>
-      <a href="juni-the-immortal.html" class="book-link ch1-link">READ CHAPTER 1</a>
+    <div class="book-card" style="border-color:#FF4444;">
+      <img src="minewars_cover.jpg" class="book-cover" style="border-color:#FF4444;">
+      <div class="book-content">
+        <div class="book-status obs" style="background:#FF4444; color:#FFF;">■ DECLASSIFIED</div>
+        <div class="book-title" style="color:#FF4444;">THE MINE WARS</div>
+        <div class="book-desc">Full Manuscript declassified. The internal battle for the soul of the network.</div>
+        <a href="minewars.html" class="book-link available" style="border-color:#FF4444; color:#FF4444; background:rgba(255,0,0,0.1);">DECRYPT ARCHIVE</a>
+      </div>
     </div>
-    
-    <div class="book-card progress">
-      <canvas id="icon-nela" class="book-icon-canvas" width="16" height="16"></canvas>
-      <div class="book-status wip">⛏ RESTARTING LORE</div>
-      <div class="book-title">Nela the Lioness and Felik</div>
-      <div class="book-desc">The original story. A girl enters a fantasy world where imaginary friends become real. Lord Oro's oldest tale.</div>
-      <div class="book-excerpt">"She stepped through and the world didn't change — she did."</div>
-      <div class="progress-bar"><div class="progress-fill" style="width:25%"></div></div>
-      <div class="progress-label">25% — REWRITING BONES</div>
+
+    <div class="book-card" style="border-color:var(--pu);">
+      <img src="wanderer_cover.jpg" class="book-cover" style="border-color:var(--pu);">
+      <div class="book-content">
+        <div class="book-status obs">■ OBSIDIAN LOG</div>
+        <div class="book-title" style="color:var(--pu);">THE WANDERER (EN)</div>
+        <div class="book-desc">A cosmic walkabout. Live Extraction.</div>
+        <a href="#" class="book-link">AMAZON [PENDING]</a>
+      </div>
     </div>
-    
-    <div class="book-card progress">
-      <canvas id="icon-shorts" class="book-icon-canvas" width="16" height="16"></canvas>
-      <div class="book-status wip">⛏ ASSEMBLING</div>
-      <div class="book-title">25 Short Stories <em>Vol. 1</em></div>
-      <div class="book-desc">The first collection. Twenty-five stories from the NMN universe. Not all have names. All of them are real.</div>
-      <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
-      <div class="progress-label">60% — ASSEMBLING</div>
+
+    <div class="book-card" style="border-color:var(--pu);">
+      <img src="wanderer_DE.jpg" class="book-cover" style="border-color:var(--pu);">
+      <div class="book-content">
+        <div class="book-status obs">■ OBSIDIAN LOG</div>
+        <div class="book-title" style="color:var(--pu);">DER WANDERER (DE)</div>
+        <div class="book-desc">Deutsche Ausgabe. (German Edition).</div>
+        <a href="#" class="book-link">AMAZON [PENDING]</a>
+      </div>
     </div>
+
+    <div class="book-card" style="border-color:var(--pu);">
+      <img src="wanderer_fr.jpg" class="book-cover" style="border-color:var(--pu);">
+      <div class="book-content">
+        <div class="book-status obs">■ OBSIDIAN LOG</div>
+        <div class="book-title" style="color:var(--pu);">LE VOYAGEUR (FR)</div>
+        <div class="book-desc">Édition Française. (French Edition).</div>
+        <a href="#" class="book-link">AMAZON [PENDING]</a>
+      </div>
+    </div>
+
+    <div class="book-card" style="border-color:var(--neon-green);">
+      <img src="swimmer_en.jpg" class="book-cover" style="border-color:var(--neon-green);">
+      <div class="book-content">
+        <div class="book-status obs" style="background:var(--neon-green);">■ OBSIDIAN LOG</div>
+        <div class="book-title" style="color:var(--neon-green);">THE SWIMMER (EN)</div>
+        <div class="book-desc">Abigail's Log. A deep-water Lore Fragment extracted from the vault.</div>
+        <a href="https://books2read.com/u/3ndXGR" target="_blank" class="book-link available" style="border-color:var(--neon-green); color:var(--neon-green); background:rgba(0,255,136,0.1);">UNIVERSAL [LIT]</a>
+      </div>
+    </div>
+
+    <div class="book-card" style="border-color:var(--neon-green);">
+      <img src="swimmer_de.jpg" class="book-cover" style="border-color:var(--neon-green);">
+      <div class="book-content">
+        <div class="book-status obs" style="background:var(--neon-green);">■ OBSIDIAN LOG</div>
+        <div class="book-title" style="color:var(--neon-green);">DER SCHWIMMER (DE)</div>
+        <div class="book-desc">Abigails Logbuch. Lore-Fragment.</div>
+        <a href="#" class="book-link">UNIVERSAL [PENDING]</a>
+      </div>
+    </div>
+
+    <div class="book-card" style="border-color:var(--neon-green);">
+      <img src="swimmer_fr.jpg" class="book-cover" style="border-color:var(--neon-green);">
+      <div class="book-content">
+        <div class="book-status obs" style="background:var(--neon-green);">■ OBSIDIAN LOG</div>
+        <div class="book-title" style="color:var(--neon-green);">LE NAGEUR (FR)</div>
+        <div class="book-desc">Le journal d'Abigail. Fragment d'histoire.</div>
+        <a href="#" class="book-link">UNIVERSAL [PENDING]</a>
+      </div>
+    </div>
+
   </div>
 
-  <div class="section-tag">COMING — EXTENDED UNIVERSE</div>
+  <div class="section-tag" style="color: var(--muted); border-color: #222;">IN PROGRESS — THE FORGE</div>
   <div class="book-grid">
-    <div class="book-card soon">
-      <canvas id="icon-ice" class="book-icon-canvas" width="16" height="16"></canvas>
-      <div class="book-status cs">COMING SOON</div>
-      <div class="book-title"><em>Ice</em></div>
-      <div class="book-desc">A space story. Lord Oro's take on the cosmos — personal, mythological, and stranger than most sci-fi dares to be.</div>
+    
+    <div class="book-card progress">
+      <div class="book-content">
+        <div class="book-status wip">⛏ RESTARTING LORE</div>
+        <div class="book-title">Nela the Lioness and Felik</div>
+        <div class="book-desc">The original story. A girl enters a fantasy world where imaginary friends become real. Lord Oro's oldest tale.</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:25%"></div></div>
+        <div class="progress-label">25% — REWRITING BONES</div>
+      </div>
     </div>
     
-    <div class="book-card soon">
-      <canvas id="icon-memoir" class="book-icon-canvas" width="16" height="16"></canvas>
-      <div class="book-status cs">COMING SOON</div>
-      <div class="book-title">Recounts from <em>a Madman</em></div>
-      <div class="book-desc">The backstory of Lord Oro as a persona. The autobiography that isn't quite an autobiography.</div>
+    <div class="book-card progress">
+      <div class="book-content">
+        <div class="book-status wip">⛏ ASSEMBLING</div>
+        <div class="book-title">25 Short Stories <em>Vol. 1</em></div>
+        <div class="book-desc">The first collection. Twenty-five stories from the NMN universe. Not all have names. All of them are real.</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
+        <div class="progress-label">60% — CURATION</div>
+      </div>
+    </div>
+
+    <div class="book-card" style="border-color: #333; border-style: dashed;">
+      <div class="book-content">
+        <div class="book-status cs">COMING SOON</div>
+        <div class="book-title"><em>Ice</em></div>
+        <div class="book-desc">A space story. Lord Oro's take on the cosmos — personal, mythological, and stranger than most sci-fi dares to be.</div>
+      </div>
     </div>
     
-    <div class="book-card soon">
-      <canvas id="icon-serial" class="book-icon-canvas" width="16" height="16"></canvas>
-      <div class="book-status cs">WEB SERIAL</div>
-      <div class="book-title">Royal Road <em>Serial</em></div>
-      <div class="book-desc">Chapter 1 is live. Follow Lord Oro on Royal Road for live updates as the story is forged.</div>
-      <a href="https://royalroad.com" class="book-link" target="_blank" style="margin-top: 1rem;">ROYAL ROAD</a>
+    <div class="book-card" style="border-color: #333; border-style: dashed;">
+      <div class="book-content">
+        <div class="book-status cs">COMING SOON</div>
+        <div class="book-title">Recounts from <em>a Madman</em></div>
+        <div class="book-desc">The backstory of Lord Oro as a persona. The autobiography that isn't quite an autobiography.</div>
+      </div>
     </div>
+    
+    <div class="book-card" style="border-color: var(--lg);">
+      <div class="book-content">
+        <div class="book-status pub" style="background: var(--lg);">★ WEB SERIAL</div>
+        <div class="book-title">Royal Road <em>Serial</em></div>
+        <div class="book-desc">Chapter 1 is live. Follow Lord Oro on Royal Road for live updates as the story is forged.</div>
+        <a href="https://royalroad.com" class="book-link available" target="_blank" style="border-color: var(--lg); color: var(--lg); background: rgba(85,255,85,0.1); margin-top: auto;">READ ON ROYAL ROAD</a>
+      </div>
+    </div>
+
   </div>
 
   <div class="feature-box">
@@ -268,73 +460,48 @@ main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem 1rem; }
   </div>
 
   <div class="feature-box" style="margin-bottom: 2rem;">
-    <div class="feature-title">NEW IN THE ORACLE's CHAMBER</div>
+    <div class="feature-title">NEW IN THE ORACLE'S CHAMBER</div>
     <div class="oracle-grid">
       <a href="reliquary.html" class="oracle-btn">
         <div class="oracle-icon">⚔️</div>
         <div class="oracle-name">RELIQUARY</div>
         <div class="oracle-sub">3D Artifacts</div>
       </a>
-      <a href="canary.html" class="oracle-btn">
-        <div class="oracle-icon">🐦</div>
-        <div class="oracle-name">THE CANARY</div>
-        <div class="oracle-sub">Audio Memory</div>
+      <a href="apothecary.html" class="oracle-btn">
+        <div class="oracle-icon">🧪</div>
+        <div class="oracle-name">APOTHECARY</div>
+        <div class="oracle-sub">Ivy's Remedies</div>
       </a>
-      <a href="loom.html" class="oracle-btn">
-        <div class="oracle-icon">🧵</div>
-        <div class="oracle-name">THE LOOM</div>
-        <div class="oracle-sub">Star Lore</div>
+      <a href="starmap.html" class="oracle-btn">
+        <div class="oracle-icon">✨</div>
+        <div class="oracle-name">STAR MAP</div>
+        <div class="oracle-sub">Claim a Star</div>
       </a>
     </div>
   </div>
 </main>
 
-<div class="hud">
-  <div class="hud-stat">GOLD: <span class="hud-val" id="dgGold">0</span></div>
-  <div class="hud-stat">LORE: <span class="hud-val" id="dgLore">0</span></div>
-  <a href="lorevault.html" class="hud-link">VAULT</a>
-  <a href="lantern.html" class="hud-link">LANTERN</a>
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> LORE</div>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 VAULT</a>
 </div>
 
 <script>
-// ── PROCEDURAL BOOK ICONS ──
-function drawIcon(canvasId, seedStr, colorHex) {
-  const canvas = document.getElementById(canvasId);
-  if(!canvas) return;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, 16, 16);
-  
-  let seed = 0;
-  for(let i=0; i<seedStr.length; i++) { seed = seed * 31 + seedStr.charCodeAt(i); }
-  const random = () => { let x = Math.sin(seed++) * 10000; return x - Math.floor(x); };
-
-  ctx.fillStyle = colorHex;
-  ctx.shadowColor = colorHex;
-  ctx.shadowBlur = 5;
-  
-  // 8x16 mirrored sprite
-  for(let x=0; x<8; x++) {
-    for(let y=0; y<16; y++) {
-      if(random() > 0.4) {
-        ctx.fillRect(x, y, 1, 1); 
-        ctx.fillRect(16 - x - 1, y, 1, 1); 
-      }
-    }
-  }
-  ctx.shadowBlur = 0;
-}
-
-// Generate the icons
-window.addEventListener('DOMContentLoaded', () => {
-  drawIcon('icon-tabby', 'Cat Belonging Identity', '#FFD700');
-  drawIcon('icon-pyro', 'Fire Light Home', '#FF5555');
-  drawIcon('icon-outbreak', 'SciFi Horror Stars', '#AA55FF');
-  drawIcon('icon-juni', 'Immortal Time History', '#55FFFF');
-  drawIcon('icon-nela', 'Lioness Fantasy Souls', '#e8b84b');
-  drawIcon('icon-shorts', 'Anthology Collection', '#55FF55');
-  drawIcon('icon-ice', 'Space Cosmos Cold', '#FFFFFF');
-  drawIcon('icon-memoir', 'Madman Biography', '#888888');
-  drawIcon('icon-serial', 'Web Novel Chapters', '#5555FF');
+// Glow Cursor Tracking
+document.addEventListener('mousemove', function(e){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
+});
+document.addEventListener('mousedown', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '180px'; r.style.height = '180px'; r.style.background = 'radial-gradient(circle,rgba(232,184,75,.4) 0%,transparent 70%)'; }
+});
+document.addEventListener('mouseup', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '140px'; r.style.height = '140px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.25) 0%,transparent 70%)'; }
 });
 
 // ── QUOTES ──
@@ -370,8 +537,11 @@ typeQuote();
 // ── LOCAL STORAGE HUD ──
 (function(){
   try{
-    document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
-    document.getElementById('dgGold').textContent=localStorage.getItem('nmn_total_gold')||'0';
+    if(typeof NMNWallet !== 'undefined') {
+        const w = NMNWallet.get();
+        document.getElementById('dgGold').textContent = w.gold.toLocaleString();
+        document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+    }
   }catch(e){}
 })();
 
