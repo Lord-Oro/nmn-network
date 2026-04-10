@@ -10,7 +10,698 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
+  gtag('config', 'G-P5WL9XNDY8');<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nonsense Media Network — Lord Oro</title>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
   gtag('config', 'G-P5WL9XNDY8');
+</script>
+
+<link rel="icon" type="image/jpeg" href="lord_oro_emblem.jpg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<link rel="stylesheet" href="nmn-theme.css">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #FFD700; --gb: #e8b84b; --gd: #8B6914;
+  --coal: #050308; --cream: #E8E0D0; --neon-green: #00FF88;
+  --pu: #AA55FF; --dp: #440066;
+  --font-pixel: 'Press Start 2P', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; background: var(--coal); }
+
+/* THE MINE, GOLD, OBSIDIAN & COSMIC BACKGROUND */
+body {
+  font-family: var(--font-pixel);
+  background-color: var(--coal);
+  color: var(--cream);
+  overflow-x: hidden;
+  padding-top: 100px; /* Increased to prevent nav overlap */
+  padding-bottom: 100px; 
+  background-image: 
+    /* Gold Speckles */
+    radial-gradient(2px 2px at 40px 60px, #FFD700 50%, transparent 100%),
+    radial-gradient(3px 3px at 150px 200px, #e8b84b 50%, transparent 100%),
+    /* Obsidian Speckles */
+    radial-gradient(2px 2px at 90px 120px, #AA55FF 50%, transparent 100%),
+    radial-gradient(3px 3px at 250px 300px, #440066 50%, transparent 100%),
+    /* Cosmic Stars */
+    radial-gradient(1px 1px at 180px 40px, #FFF 50%, transparent 100%),
+    radial-gradient(1px 1px at 300px 180px, #FFF 50%, transparent 100%),
+    /* Mine Shaft Scanlines */
+    linear-gradient(rgba(10, 8, 12, 0.8) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(10, 8, 12, 0.8) 2px, transparent 2px);
+  background-size: 200px 200px, 250px 250px, 150px 150px, 300px 300px, 120px 120px, 220px 220px, 32px 32px, 32px 32px;
+  line-height: 1.8;
+}
+
+h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
+a { text-decoration: none; color: inherit; }
+
+/* ─── CUSTOM CURSOR & GLOW ─── */
+body, a, button, .vessel-anchor-wrap, .work-card, .map-sector, .dir-link, .contact-link { 
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; 
+}
+#pickaxe-glow {
+    position: fixed; width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, rgba(232,184,75,0.1) 30%, transparent 70%);
+    pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
+}
+
+/* ─── CRT EFFECTS ─── */
+body::after{
+  content:""; position:fixed; inset:0;
+  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.1) 50%);
+  background-size:100% 4px; pointer-events:none; z-index:10000; opacity:0.4;
+}
+body::before{
+  content:""; position:fixed; inset:0;
+  background:radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
+  pointer-events:none; z-index:9999;
+}
+
+/* ─── FAST NAV BANNER ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10001;
+  background: rgba(5,3,2,.98); border-bottom: 4px solid var(--gd);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+}
+.nav-container {
+  display: flex; justify-content: space-between; align-items: center;
+  max-width: 1200px; margin: 0 auto; padding: 1.2rem 2rem; width: 100%;
+}
+.nav-logo { font-size: 16px; color: var(--gold); letter-spacing: 2px; text-shadow: 4px 4px 0 #553300; margin-right: 2rem;}
+.nav-links { display: flex; gap: 2rem; align-items: center; flex-wrap: wrap; }
+.nav-link { color: var(--cream); font-size: 10px; letter-spacing: 2px; transition: 0.2s; padding: 5px;}
+.nav-link:hover { color: var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+
+@media(max-width:768px){ 
+  .nav-container { flex-direction: column; padding: 15px; gap: 10px;}
+  .nav-logo { font-size: 14px; margin-right: 0;} 
+  .nav-links { justify-content: center; gap: 15px; }
+}
+
+/* ─── HERO & GOLDEN EYES ─── */
+.hall-hero {
+  text-align: center; padding: 8rem 1rem 5rem; position: relative;
+  border-bottom: 4px solid var(--gd);
+  background-image: url('oros_game_eyes.jpg'); background-size: cover; background-position: center 30%;
+  min-height: 80vh; display: flex; flex-direction: column; justify-content: flex-end;
+}
+.hall-hero::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.65); z-index: 1; }
+.hall-hero-content { position: relative; z-index: 10; width: 100%; max-width: 800px; margin: 0 auto; }
+
+.hall-eyes { display: flex; gap: 40px; justify-content: center; margin-bottom: 2rem; }
+.hall-eye { width: 28px; height: 18px; background: radial-gradient(ellipse at center, #FFD700, #FF8C00); border-radius: 50%; box-shadow: 0 0 25px rgba(255,215,0,1); animation: eyeBlink 5s infinite; position: relative; border: 2px solid #fff; }
+.hall-eye::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 8px; height: 8px; background: #000; border-radius: 50%; }
+@keyframes eyeBlink { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+
+.hero-title { font-size: clamp(24px, 6vw, 48px); line-height: 1.4; color: var(--cream); margin-bottom: 1.5rem; text-shadow: 4px 4px 0 #000; }
+.hero-title em { color: var(--gold); display: block; font-style: normal; text-shadow: 4px 4px 0 #553300; }
+.hero-tagline-box { border: 4px solid var(--gold); background: rgba(0,0,0,0.8); padding: 1.5rem; margin: 0 auto 1.5rem; max-width: 650px; box-shadow: 8px 8px 0 #553300; }
+.hero-tagline { font-size: 12px; line-height: 2; color: var(--gold); text-transform: uppercase; }
+.hero-whisper { font-size: 10px; color: var(--muted); margin-bottom: 2rem; }
+
+/* ─── STATUS WALLET BAR ─── */
+.wallet-bar {
+  display: flex; align-items: center; justify-content: center; gap: 2rem;
+  padding: 2rem 1.5rem; background: #0a0806; border-bottom: 4px solid #333;
+  flex-wrap: wrap; position: relative; z-index: 10; box-shadow: inset 0 0 20px #000;
+}
+.w-item { text-align: center; background: #000; border: 4px solid #222; padding: 1.5rem; min-width: 160px; box-shadow: 4px 4px 0 #111;}
+.w-val { font-size: 20px; color: var(--gold); text-shadow: 3px 3px 0 #553300; display: block; margin-bottom: 10px; }
+.w-lbl { font-size: 10px; color: var(--muted); }
+.gem-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; }
+.gem-pip { width: 18px; height: 18px; border: 2px solid #553300; background: #1a0a00; color: transparent; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+.gem-pip.lit { border-color: #FFF; background: var(--gold); color: #000; box-shadow: 0 0 10px var(--gold); }
+.convert-btn { background: #000; border: 4px solid var(--gd); color: var(--gold); padding: 1.2rem; font-size: 12px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+.convert-btn:hover { background: var(--gd); color: #000; border-color: #FFF; transform: translateY(-4px); box-shadow: 4px 4px 0 #000;}
+
+/* ─── GENERAL SECTIONS ─── */
+section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+.section-tag { font-size: 16px; color: var(--gold); margin-bottom: 3rem; text-shadow: 3px 3px 0 #553300; text-align: center; border-bottom: 4px solid #333; padding-bottom: 1.5rem; }
+.glitch-text { font-size: 18px; color: var(--cream); line-height: 1.6; margin-bottom: 2rem; text-align: center; min-height: 40px; text-shadow: 2px 2px 0 #000;}
+
+/* ─── DYNAMIC SIGNAL LOG ─── */
+.signal-log { border: 4px solid var(--gd); background: #000; padding: 2rem; box-shadow: 8px 8px 0 #000; display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; position: relative; overflow: hidden;}
+.signal-img-wrap { flex: 1; min-width: 250px; position: relative; }
+.signal-img { width: 100%; border: 4px solid var(--gold); image-rendering: pixelated; display: block; transition: filter 0.2s;}
+
+/* Signal Glitch Effects */
+.signal-stable .signal-img { filter: sepia(0.2) contrast(1.2); }
+.signal-stable::after { content:''; position:absolute; inset:0; background: rgba(255,215,0,0.05); pointer-events: none; animation: staticFlicker 0.1s infinite; }
+
+.signal-obsidian .signal-img { filter: hue-rotate(90deg) saturate(2) contrast(1.5) invert(0.2); border-color: var(--pu); }
+.signal-obsidian::after { content:''; position:absolute; inset:0; background: rgba(170,85,255,0.1); pointer-events: none; animation: heavyGlitch 0.2s infinite; }
+
+@keyframes staticFlicker { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.9; } }
+@keyframes heavyGlitch { 0% { transform: translate(4px, 4px); opacity: 0.8; } 25% { transform: translate(-4px, -4px); opacity: 1; } 50% { transform: translate(0px, 6px); filter: invert(1); } 100% { transform: translate(-4px, 0); opacity: 0.9; } }
+
+.signal-text-box { flex: 2; min-width: 280px; }
+.signal-title { color: var(--gold); font-size: 14px; margin-bottom: 1.5rem; text-shadow: 2px 2px 0 #553300; transition: color 0.3s;}
+.signal-obsidian .signal-title { color: var(--pu); text-shadow: 2px 2px 0 #000; }
+
+.signal-body { font-size: 11px; color: var(--neon-green); line-height: 2.2; max-height: 180px; overflow-y: auto; padding-right: 10px; transition: color 0.3s;}
+.signal-obsidian .signal-body { color: #ff4444; }
+.signal-live { margin-top: 1.5rem; color: var(--gold); font-size: 12px; animation: pulse 1s infinite; }
+
+/* ─── DUAL VESSEL LIBRARY (THE BOOKS) ─── */
+.collection-gateway { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-bottom: 4rem; }
+.vessel-anchor-wrap { flex: 1; min-width: 300px; border: 4px solid var(--gd); background: #000; cursor: pointer; transition: 0.2s; position: relative; aspect-ratio: 16/9; overflow: hidden; box-shadow: 6px 6px 0 #000; }
+.vessel-anchor-wrap:hover, .vessel-anchor-wrap.active { border-color: var(--gold); transform: translateY(-5px); box-shadow: 6px 10px 0 var(--gold); }
+.vessel-anchor-wrap img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); transition: 0.3s; image-rendering: pixelated; }
+.vessel-anchor-wrap:hover img, .vessel-anchor-wrap.active img { filter: brightness(1); }
+.vessel-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.9); padding: 1.5rem; border-top: 4px solid var(--gd); display: flex; justify-content: space-between; align-items: center; }
+.vessel-label-title { font-size: 12px; color: var(--gold); line-height: 1.4;}
+.vessel-label-sub { font-size: 9px; color: var(--muted); margin-top: 8px; }
+
+#vessel-obsidian { border-color: var(--pu); }
+#vessel-obsidian:hover, #vessel-obsidian.active { box-shadow: 6px 10px 0 var(--pu); border-color: #FFF; }
+#vessel-obsidian .vessel-label { border-color: var(--pu); }
+#vessel-obsidian .vessel-label-title { color: var(--pu); }
+
+.filter-panel { display: none; }
+.works-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
+.work-card { aspect-ratio: 2/3; background: #000; border: 4px solid var(--gd); position: relative; cursor: pointer; overflow: hidden; transition: 0.2s; box-shadow: 6px 6px 0 #000; }
+.work-card:hover { transform: translateY(-6px); border-color: var(--gold); }
+.work-img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; image-rendering: pixelated;}
+.work-card:hover .work-img { filter: brightness(0.2); }
+.work-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; text-align: center; opacity: 0; background: rgba(0,0,0,0.9); transition: 0.3s; }
+.work-card:hover .work-overlay { opacity: 1; }
+.work-title { font-size: 12px; color: var(--gold); margin-bottom: 15px; line-height: 1.4; }
+.store-link { display: block; width: 100%; padding: 12px; margin: 6px 0; font-size: 10px; text-decoration: none; border: 4px solid #444; color: #888; background: #111; transition: 0.2s; }
+.store-link.available { border-color: var(--gold); color: var(--gold); }
+.store-link.available:hover { background: var(--gold); color: #000; border-color: #FFF;}
+
+/* ─── FULL INDEX DIRECTORY (SECTOR CARDS) ─── */
+.dir-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+.dir-card { 
+    background: #000; border: 4px solid var(--gd); box-shadow: 8px 8px 0 #000;
+    position: relative; overflow: hidden; display: flex; flex-direction: column;
+    min-height: 450px; transition: transform 0.2s, border-color 0.2s;
+}
+.dir-card:hover { transform: translateY(-5px); border-color: var(--gold); box-shadow: 8px 12px 0 var(--gold);}
+.dir-bg { position: absolute; inset: 0; background-size: cover; background-position: center; image-rendering: pixelated;}
+.dir-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.95) 60%); z-index: 1; }
+
+.dir-content { position: relative; z-index: 2; padding: 2rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end;}
+.dir-header { font-size: 16px; color: var(--gold); margin-bottom: 1.5rem; text-shadow: 2px 2px 0 #000; line-height: 1.4; text-align: center;}
+.dir-links { display: flex; flex-direction: column; gap: 12px; }
+.dir-link { 
+    display: block; font-size: 10px; color: var(--cream); text-decoration: none; 
+    background: rgba(0,0,0,0.8); border: 2px solid #333; padding: 12px; 
+    transition: 0.2s; text-align: center; text-transform: uppercase;
+}
+.dir-link:hover { background: var(--gold); color: #000; border-color: #FFF; transform: scale(1.02);}
+
+/* ─── CONTACT SECTION ─── */
+.contact-section { margin: 4rem auto; max-width: 800px; background: #000; border: 4px solid #333; padding: 2rem; box-shadow: 6px 6px 0 #111; }
+.contact-link { display: flex; align-items: center; padding: 1.5rem; border-bottom: 2px solid #222; text-decoration: none; transition: 0.2s; background: #0a0806; margin-bottom: 10px; border: 2px solid transparent;}
+.contact-link:hover { border-color: var(--gd); transform: translateX(5px); background: #000; }
+.c-lbl { font-size: 10px; color: var(--gd); width: 100px; flex-shrink: 0; }
+.c-val { font-size: 12px; color: var(--cream); }
+
+/* ─── THE MANIFESTO CTA ─── */
+.manifesto-section {
+    margin: 5rem auto; border: 4px solid var(--gold); background: #000;
+    padding: 4rem 2rem; text-align: center; box-shadow: 10px 10px 0 #553300;
+}
+.manifesto-title { font-size: 24px; color: var(--gold); margin-bottom: 2rem; text-shadow: 4px 4px 0 #553300; line-height: 1.4;}
+.manifesto-text { font-size: 12px; color: var(--cream); max-width: 800px; margin: 0 auto 3rem; line-height: 2; }
+.manifesto-actions { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+
+.btn-retro {
+    padding: 1.2rem 2rem; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; 
+    text-decoration: none; display: inline-block; transition: all 0.2s; cursor: pointer; border: 4px solid;
+}
+.btn-m-primary { background: var(--gold); color: #000; border-color: #FFF; box-shadow: 6px 6px 0 #553300; }
+.btn-m-primary:hover { transform: translateY(-4px); background: #FFF; box-shadow: 6px 10px 0 #553300; }
+.btn-m-ghost { background: #111; color: var(--gold); border-color: var(--gd); box-shadow: 6px 6px 0 #000; }
+.btn-m-ghost:hover { transform: translateY(-4px); background: var(--gd); color: #000; border-color: #FFF;}
+
+.forge-status { max-width: 700px; margin: 3rem auto 0; text-align: left; background: #111; padding: 1.5rem; border: 4px solid #333;}
+.forge-label { font-size: 10px; color: var(--cream); margin-bottom: 15px; display: flex; justify-content: space-between; }
+.forge-bar { height: 24px; background: #000; border: 4px solid #555; padding: 2px;}
+.forge-fill { width: 65%; height: 100%; background: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); }
+
+/* ─── DESCENT OVERLAY ─── */
+#descent-overlay { position: fixed; inset: 0; background: #000; z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.descent-active { opacity: 1 !important; pointer-events: all !important; }
+.elevator-shaft { width: 8px; height: 100vh; background: linear-gradient(to bottom, transparent, var(--gold), transparent); animation: drop 0.5s infinite linear; }
+.descent-text { color: var(--gold); font-size: 16px; position: absolute; text-shadow: 0 0 15px var(--gold); animation: pulse 1s infinite; }
+@keyframes drop { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* ─── MOBILE HUB DOCK & GAUGE ─── */
+.depth-gauge {
+  position:fixed!important; bottom:15px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:95%!important; height:46px!important; background:#000!important;
+  border:4px solid var(--gd)!important; padding:0 20px!important;
+  z-index:9999!important; display:flex!important; align-items:center!important;
+  justify-content:center!important; gap:1.5rem!important; box-shadow: 4px 4px 0 #000!important;
+}
+.dg-stat { font-size: 10px; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
+.dg-val { color: var(--gold); font-size: 14px; }
+
+@media (max-width: 768px) {
+  .depth-gauge { bottom: 85px !important; } 
+  .mobile-hub-nav {
+      position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
+      background: #000; border-top: 4px solid var(--gd);
+      display: flex; justify-content: space-around; align-items: center;
+      z-index: 99999; padding-bottom: env(safe-area-inset-bottom);
+  }
+  .hub-tab { color: var(--muted); text-align: center; flex: 1; font-size: 8px; text-decoration: none; padding: 10px;}
+  .hub-tab.active, .hub-tab:hover { color: var(--gold); }
+  .hub-icon { font-size: 20px; display: block; margin-bottom: 5px; }
+}
+@media (min-width: 769px) { .mobile-hub-nav { display: none; } }
+
+/* FADE IN */
+.fade-in{opacity:0;transform:translateY(30px);transition:opacity 0.5s ease, transform 0.5s ease}
+.fade-in.visible{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
+
+<nav>
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">⛏ NMN HUB</a>
+    <div class="nav-links">
+      <a href="games.html" class="nav-link">FORGE</a>
+      <a href="oracle.html" class="nav-link">ORACLE</a>
+      <a href="gemshop.html" class="nav-link">GEMSHOP</a>
+      <a href="https://patreon.com/lordoro" target="_blank" class="nav-link">PATREON</a>
+    </div>
+  </div>
+</nav>
+
+<div id="pickaxe-glow"></div>
+<div id="particles"></div>
+
+<div id="descent-overlay">
+  <div class="elevator-shaft"></div>
+  <div class="descent-text" id="descent-target-text">DESCENDING...</div>
+</div>
+
+<div class="hall-hero">
+  <div class="hall-hero-content fade-in">
+    <div class="hall-eyes"><div class="hall-eye"></div><div class="hall-eye"></div></div>
+    <h1 class="hero-title">The goldmine<br><em>is within.</em></h1>
+    <div class="hero-tagline-box">
+      <p class="hero-tagline">DESCEND DEEPER. FIND GOLD. BEWARE THE OBSIDIAN.</p>
+    </div>
+    <p class="hero-whisper">...and don't put anything in your pocket on the way out.</p>
+  </div>
+</div>
+
+<div class="wallet-bar">
+  <div class="w-item"><span class="w-val" id="gold-disp">0</span><span class="w-lbl">GOLD</span></div>
+  <div class="w-item"><span class="w-val">LVL <span id="lvl-disp">1</span></span><span class="w-lbl">RANK</span></div>
+  <div class="w-item"><span class="w-val" id="xp-disp">0</span><span class="w-lbl">XP</span></div>
+  <div class="w-item">
+    <div class="gem-row">
+      <div class="gem-pip" id="gp0">◆</div><div class="gem-pip" id="gp1">◆</div>
+      <div class="gem-pip" id="gp2">◆</div><div class="gem-pip" id="gp3">◆</div>
+      <div class="gem-pip" id="gp4">◆</div>
+    </div>
+    <span class="w-lbl">GEMS</span>
+  </div>
+  <button class="convert-btn" onclick="if(typeof NMNWallet!=='undefined'){ NMNWallet.convertGems(); }">⚗ CONVERT GEMS</button>
+</div>
+
+<section>
+  <div class="section-tag">NMN BROADCAST LOG</div>
+  <div class="signal-log signal-stable fade-in" id="signalContainer">
+    <div class="signal-img-wrap">
+      <img src="goldmine_stable.jpg" id="signalImg" class="signal-img">
+    </div>
+    <div class="signal-text-box">
+        <h3 class="signal-title" id="signalTitle">[ STATUS: SIGNAL ACQUIRED ]</h3>
+        <p class="signal-body" id="signalText">
+            [04.07.2026] > THE ARCHITECT HAS TAPPED THE OBSIDIAN VEIN.<br>
+            [04.07.2026] > THE OBSIDIAN VEIN IS EXPANDING INTO 7 LANGUAGES.<br>
+            [04.05.2026] > NEW 16-BIT RENDERS ARE BEING ARCHIVED.<br>
+            [04.02.2026] > TRANSMISSIONS ARE PREPARING FOR EXTRACTION.<br>
+            [03.28.2026] > THE ARCHITECT HAS DECLASSIFIED THE MINE WARS.
+        </p>
+        <div class="signal-live">● LIVE UPDATES ACTIVE</div>
+    </div>
+  </div>
+</section>
+
+<section id="works" style="padding-top: 0;">
+  <div class="section-tag">THE LIBRARY</div>
+  <h2 class="glitch-text" data-text="12 TITLES. 5 LANGUAGES.">12 TITLES. 5 LANGUAGES.</h2>
+
+  <div class="collection-gateway fade-in">
+    <div class="vessel-anchor-wrap active" id="vessel-gold" onclick="filterVessel('gold')">
+      <img src="goldmine_anchor.jpeg" alt="The Goldmine Collection">
+      <div class="vessel-label">
+        <div>
+          <div class="vessel-label-title">GOLDMINE COLLECTION</div>
+          <div class="vessel-label-sub">Full Novels & Localizations</div>
+        </div>
+        <span style="font-size: 24px;">▶</span>
+      </div>
+    </div>
+    <div class="vessel-anchor-wrap" id="vessel-obsidian" onclick="filterVessel('obsidian')">
+      <img src="obsidian_anchor.jpeg" alt="The Obsidian Extractions" onerror="this.src='minewars_cover.jpg'">
+      <div class="vessel-label">
+        <div>
+          <div class="vessel-label-title">OBSIDIAN EXTRACTIONS</div>
+          <div class="vessel-label-sub">Shorts & Lore Fragments</div>
+        </div>
+        <span style="font-size: 24px;">▶</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-gold" class="filter-panel" style="display:block;">
+    <div class="works-grid">
+      <div class="work-card"><img src="pyro_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="work-title">PYRO & HELIOS</h3><a href="https://amzn.to/4uOpLpA" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/meW9gA" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="outbreak_ja.jpg" class="work-img"><div class="work-overlay"><h3 class="work-title">パイロとヘリオス (JA)</h3><a href="https://books2read.com/u/bMLwXB" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="juni_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="work-title">JUNI IMMORTAL</h3><a href="https://amzn.to/4tfhJoc" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/4EOxZ0" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="Outbreak_from_the_stars_cover_art_final_1.jpeg" class="work-img" onerror="this.src='outbreak_en.jpeg'"><div class="work-overlay"><h3 class="work-title">OUTBREAK (EN)</h3><a href="https://amzn.to/3NIeQ08" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/31NrLw" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="tabbies_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="work-title">ALL TABBIES</h3><a href="https://amzn.to/4bNAQ1y" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/brzavW" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="tabbies_es.jpg" class="work-img"><div class="work-overlay"><h3 class="work-title">TODOS LOS GATOS</h3><a href="https://amzn.to/47qbOUT" target="_blank" class="store-link available">AMAZON</a></div></div>
+      <div class="work-card"><img src="tabbies_ja.jpg" class="work-img"><div class="work-overlay"><h3 class="work-title">猫にも居場所がある</h3><a href="https://amzn.to/3PPrJG9" target="_blank" class="store-link available">AMAZON</a></div></div>
+      <div class="work-card"><img src="tabbies_ko.jpeg" class="work-img"><div class="work-overlay"><h3 class="work-title">모든 고양이는...</h3><div class="store-link available">GOOGLE PLAY</div></div></div>
+    </div>
+  </div>
+
+  <div id="panel-obsidian" class="filter-panel">
+    <div class="works-grid">
+      <div class="work-card" style="border-color:#FF4444;"><img src="minewars_cover.jpg" class="work-img"><div class="work-overlay" style="background:rgba(30,0,0,0.9);"><h3 class="work-title" style="color:#FF4444;">MINE WARS</h3><a href="#" onclick="interceptDescent(event, 'MINE WARS', 'minewars.html')" class="store-link available" style="border-color:#FF4444; color:#FF4444;">DECRYPT ARCHIVE</a></div></div>
+      <div class="work-card"><img src="swimmer_en.jpg" class="work-img"><div class="work-overlay"><h3 class="work-title" style="color:var(--neon-green);">THE SWIMMER</h3><a href="https://books2read.com/u/3ndXGR" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="wanderer_cover.jpg" class="work-img"><div class="work-overlay"><h3 class="work-title" style="color:var(--neon-green);">WANDERER (EN)</h3><div class="store-link">PENDING</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="sections">
+  <div class="section-tag">MASTER DIRECTORY</div>
+  <h2 class="glitch-text" data-text="Navigate the entire network.">Navigate the entire network.</h2>
+
+  <div class="dir-grid fade-in">
+      
+      <div class="dir-card">
+          <div class="dir-bg" style="background-image: url('image_0.jpg');"></div>
+          <div class="dir-overlay"></div>
+          <div class="dir-content">
+              <h2 class="dir-header">SECTOR 1: FORGE</h2>
+              <div class="dir-links">
+                  <a href="#" onclick="interceptDescent(event, 'RECREATION HALL', 'games.html')" class="dir-link">Recreation Hall Hub</a>
+                  <a href="#" onclick="interceptDescent(event, 'ORE BREAKER', 'orebreaker.html')" class="dir-link">Ore Breaker (Arcade)</a>
+                  <a href="#" onclick="interceptDescent(event, 'ORE RACER', 'oreracer.html')" class="dir-link">Ore Racer (Cup Protocol)</a>
+                  <a href="#" onclick="interceptDescent(event, 'SILVER QUILL', 'silverquill.html')" class="dir-link">The Silver Quill</a>
+                  <a href="#" onclick="interceptDescent(event, 'THE TABLET', 'tablet.html')" class="dir-link">Deciphered Tablet</a>
+              </div>
+          </div>
+      </div>
+
+      <div class="dir-card">
+          <div class="dir-bg" style="background-image: url('image_1.jpg');"></div>
+          <div class="dir-overlay"></div>
+          <div class="dir-content">
+              <h2 class="dir-header">SECTOR 2: ARCHIVES</h2>
+              <div class="dir-links">
+                  <a href="#" onclick="interceptDescent(event, 'THE ARCHIVES', 'archives.html')" class="dir-link">The Archives Hub</a>
+                  <a href="#" onclick="interceptDescent(event, 'HALL OF ORIGINS', 'origins.html')" class="dir-link">Hall of Origins</a>
+                  <a href="#" onclick="interceptDescent(event, 'SCRAP HEAP', 'scrapheap.html')" class="dir-link">The Scrap Heap</a>
+                  <a href="#" onclick="interceptDescent(event, 'SOUND SHAFT', 'soundshaft.html')" class="dir-link">The Sound Shaft</a>
+                  <a href="#" onclick="interceptDescent(event, 'TRANSMISSION', 'transmission.html')" class="dir-link">The Transmission</a>
+                  <a href="#" onclick="interceptDescent(event, 'PROJECTION ROOM', 'shorts.html')" class="dir-link">The Projection Room</a>
+              </div>
+          </div>
+      </div>
+
+      <div class="dir-card">
+          <div class="dir-bg" style="background-image: url('image_2.jpg');"></div>
+          <div class="dir-overlay"></div>
+          <div class="dir-content">
+              <h2 class="dir-header">SECTOR 3: ORACLE</h2>
+              <div class="dir-links">
+                  <a href="#" onclick="interceptDescent(event, 'THE ORACLE', 'oracle.html')" class="dir-link">Oracle's Chamber Hub</a>
+                  <a href="#" onclick="interceptDescent(event, 'TORA DOMAIN', 'toradomain.html')" class="dir-link">Tora's Domain</a>
+                  <a href="#" onclick="interceptDescent(event, 'THE CODEX', 'tora.html')" class="dir-link">Tora's Codex Reading</a>
+                  <a href="#" onclick="interceptDescent(event, 'ECHOING WELL', 'well.html')" class="dir-link">The Echoing Well</a>
+                  <a href="#" onclick="interceptDescent(event, 'STAR MAP', 'starmap.html')" class="dir-link">The Star Map</a>
+                  <a href="#" onclick="interceptDescent(event, 'RELIQUARY', 'reliquary.html')" class="dir-link">The Reliquary</a>
+              </div>
+          </div>
+      </div>
+
+      <div class="dir-card">
+          <div class="dir-bg" style="background-image: url('image_3.jpg');"></div>
+          <div class="dir-overlay" style="background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.95) 60%);"></div>
+          <div class="dir-content">
+              <h2 class="dir-header" style="color: #aaa;">NETWORK LEGAL</h2>
+              <div class="dir-links">
+                  <a href="privacy.html" class="dir-link" style="color:#aaa; border-color:#444;">Privacy Protocol</a>
+                  <a href="terms.html" class="dir-link" style="color:#aaa; border-color:#444;">Terms of Service</a>
+                  <a href="gemshop.html" class="dir-link" style="color:#aaa; border-color:#444;">The Gemshop</a>
+                  <a href="lorevault.html" class="dir-link" style="color:#aaa; border-color:#444;">Your Lore Vault</a>
+              </div>
+          </div>
+      </div>
+
+  </div>
+</section>
+
+<section class="manifesto-section fade-in">
+    <h2 class="manifesto-title">BUILD THE EMPIRE</h2>
+    <p class="manifesto-text">Every tunnel, game, and word is forged by hand. To expand the servers, build the high-fidelity Brawler engine, and keep the mine independent, we need Founding Architects. If you believe in the vision, fund the extraction.</p>
+    
+    <div class="manifesto-actions">
+        <a href="https://patreon.com/lordoro" target="_blank" class="btn-retro btn-m-primary">JOIN PATREON</a>
+        <a href="https://gofund.me/e643a8283" target="_blank" class="btn-retro btn-m-ghost">GOFUNDME FUND</a>
+    </div>
+
+    <div class="forge-status">
+        <div class="forge-label"><span>BRAWLER ENGINE V2.0</span> <span>65%</span></div>
+        <div class="forge-bar"><div class="forge-fill"></div></div>
+    </div>
+</section>
+
+<section id="contact" class="contact-section">
+  <div class="section-tag" style="justify-content: center; border:none;">CONTACT DIRECTORY</div>
+  <div class="contact-wrap fade-in">
+    <a href="mailto:doradoyoro@gmail.com" class="contact-link">
+        <span class="c-lbl">EMAIL</span>
+        <span class="c-val">doradoyoro@gmail.com</span>
+    </a>
+    <a href="https://nonsensemedianetwork.com" target="_blank" class="contact-link">
+        <span class="c-lbl">WEB</span>
+        <span class="c-val">nonsensemedianetwork.com</span>
+    </a>
+    <a href="https://twitter.com/LordOroNMN" target="_blank" class="contact-link">
+        <span class="c-lbl">TWITTER</span>
+        <span class="c-val">@LordOroNMN</span>
+    </a>
+    <a href="https://www.tiktok.com/@orominade" target="_blank" class="contact-link">
+        <span class="c-lbl">TIKTOK</span>
+        <span class="c-val">@orominade</span>
+    </a>
+    <a href="https://www.youtube.com/@LordOroNMN" target="_blank" class="contact-link">
+        <span class="c-lbl">YOUTUBE</span>
+        <span class="c-val">Lord Oro / NMN</span>
+    </a>
+  </div>
+</section>
+
+<div class="mobile-hub-nav">
+    <a href="#" onclick="interceptDescent(event, 'THE FORGE', 'games.html')" class="hub-tab active">
+        <span class="hub-icon">⚔️</span> FORGE
+    </a>
+    <a href="oracle.html" class="hub-tab">
+        <span class="hub-icon">🔮</span> ORACLE
+    </a>
+    <a href="#works" class="hub-tab">
+        <span class="hub-icon">📖</span> LORE
+    </a>
+    <a href="https://gofund.me/e643a8283" target="_blank" class="hub-tab">
+        <span class="hub-icon">🏮</span> FUND
+    </a>
+</div>
+
+<script>
+// Particles
+const particles = document.getElementById('particles');
+for(let i=0; i<30; i++){
+    let p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDuration = (Math.random() * 5 + 5) + 's';
+    p.style.animationDelay = (Math.random() * 5) + 's';
+    particles.appendChild(p);
+}
+
+// Wallet Sync
+function syncGauges() {
+    if(typeof NMNWallet !== 'undefined') {
+        const w = NMNWallet.get();
+        const gold = w.gold || 0;
+        
+        const hG = document.getElementById('gold-disp');
+        if(hG) hG.textContent = gold.toLocaleString();
+        const lD = document.getElementById('lvl-disp');
+        if(lD) lD.textContent = w.level || 1;
+        const xD = document.getElementById('xp-disp');
+        if(xD) xD.textContent = w.xp || 0;
+        
+        const gemCount = w.gems || 0;
+        for(let i=0; i<5; i++){
+          const p = document.getElementById('gp'+i);
+          if(p) p.classList.toggle('lit', i < gemCount);
+        }
+    }
+}
+window.addEventListener('nmn_wallet_update', syncGauges);
+window.onload = syncGauges;
+
+// Glow Cursor Tracking
+document.addEventListener('mousemove', function(e){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
+});
+document.addEventListener('mousedown', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '180px'; r.style.height = '180px'; r.style.background = 'radial-gradient(circle,rgba(232,184,75,.4) 0%,transparent 70%)'; }
+});
+document.addEventListener('mouseup', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '140px'; r.style.height = '140px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.35) 0%,rgba(232,184,75,.15) 30%,transparent 70%)'; }
+});
+
+// Glitching Signal Log Engine
+let isObsidian = false;
+setInterval(() => {
+    isObsidian = !isObsidian;
+    const container = document.getElementById('signalContainer');
+    const img = document.getElementById('signalImg');
+    const title = document.getElementById('signalTitle');
+    const text = document.getElementById('signalText');
+
+    if(isObsidian) {
+        container.classList.remove('signal-stable');
+        container.classList.add('signal-obsidian');
+        img.src = 'obsidian_glitched.jpg'; 
+        img.onerror = () => { img.src = 'goldmine_stable.jpg'; }; 
+        title.textContent = "[ WARNING: OBSIDIAN INTERFERENCE ]";
+        text.innerHTML = "ERR // CONNECTION UNSTABLE<br>ERR // THE VEIN IS BLEEDING<br>ERR // TRACE SIGNAL LOST";
+    } else {
+        container.classList.add('signal-stable');
+        container.classList.remove('signal-obsidian');
+        img.src = 'goldmine_stable.jpg';
+        title.textContent = "[ STATUS: SIGNAL ACQUIRED ]";
+        text.innerHTML = "[04.07.2026] > THE ARCHITECT HAS TAPPED THE OBSIDIAN VEIN.<br>[04.07.2026] > THE OBSIDIAN VEIN IS EXPANDING INTO 7 LANGUAGES.<br>[04.05.2026] > NEW 16-BIT RENDERS ARE BEING ARCHIVED.<br>[04.02.2026] > TRANSMISSIONS ARE PREPARING FOR EXTRACTION.<br>[03.28.2026] > THE ARCHITECT HAS DECLASSIFIED THE MINE WARS.";
+    }
+}, 8000);
+
+// Text Scrambler
+const glyphs=['로','드','오','금','광','g','u','l','v','o','r','金','鉱','夢','光','魂','炎'];
+function shuffleText(el){
+  if(el.dataset.shuffled)return;
+  el.dataset.shuffled='1';
+  const orig = el.dataset.text || el.innerText;
+  el.dataset.text = orig;
+  let iter=0;
+  const iv=setInterval(()=>{
+    el.innerText=orig.split('').map((c,i)=>{
+      if(c===' ')return c;
+      if(iter>i*1.2)return orig[i];
+      return glyphs[Math.floor(Math.random()*glyphs.length)];
+    }).join('');
+    iter++;
+    if(iter>=20){clearInterval(iv);el.innerText=orig;}
+  },50);
+}
+
+// Fade In & Scramble Observer
+const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        if(e.isIntersecting) {
+            e.target.classList.add('visible');
+            const h = e.target.querySelector('.glitch-text');
+            if(h) setTimeout(() => shuffleText(h), 100);
+        }
+    });
+}, {threshold: 0.1});
+document.querySelectorAll('.fade-in, .section-tag').forEach(el => obs.observe(el));
+
+// Vessel Filter
+window.filterVessel = function(vessel) {
+  const goldWrap = document.getElementById('vessel-gold');
+  const obsidianWrap = document.getElementById('vessel-obsidian');
+  const goldPanel = document.getElementById('panel-gold');
+  const obsidianPanel = document.getElementById('panel-obsidian');
+
+  if (!goldWrap || !obsidianWrap || !goldPanel || !obsidianPanel) return;
+
+  if (vessel === 'gold') {
+    goldWrap.classList.add('active'); 
+    obsidianWrap.classList.remove('active');
+    goldPanel.style.display = 'block'; 
+    obsidianPanel.style.display = 'none';
+  } else {
+    obsidianWrap.classList.add('active'); 
+    goldWrap.classList.remove('active');
+    obsidianPanel.style.display = 'block'; 
+    goldPanel.style.display = 'none';
+  }
+};
+
+// Descent Protocol Audio
+const NMNAudioEngine = {
+    ctx: null,
+    init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+    playDescent() {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(20, this.ctx.currentTime + 1.5);
+        gain.gain.setValueAtTime(0, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.1, this.ctx.currentTime + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 1.5);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(); osc.stop(this.ctx.currentTime + 1.5);
+    } 
+};
+
+function interceptDescent(event, locationName, targetUrl) {
+    event.preventDefault(); 
+    NMNAudioEngine.playDescent();
+    
+    const overlay = document.getElementById('descent-overlay');
+    const text = document.getElementById('descent-target-text');
+    text.innerText = `DESCENDING TO: ${locationName}...`;
+    overlay.classList.add('descent-active');
+
+    setTimeout(() => { if(targetUrl) window.location.href = targetUrl; }, 1500);
+}
+</script>
+
+</body>
+</html>
 </script>
 
 <link rel="icon" type="image/jpeg" href="lord_oro_emblem.jpg">
