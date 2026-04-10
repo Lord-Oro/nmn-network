@@ -7,6 +7,7 @@
 
 <link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
 <link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
 
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
@@ -15,43 +16,28 @@
 :root {
   --gold: #FFD700;
   --gb: #e8b84b;
-  --gd: #8B6914;
-  --bg-color: #030105; /* Deep Cosmic Void */
-  --panel-bg: rgba(10, 8, 15, 0.85); /* Translucent panels */
+  --gd: #AA7700;
+  --bg-color: #000000;
+  --panel-bg: #111111;
   --cream: #f0e6cc;
-  --muted: #8a7654;
+  --muted: #aaaaaa;
   --lg: #55FF55; 
-  --pu: #AA55FF;
   --red: #FF5555;
+  --blue: #5555FF;
   --font-pixel: 'Press Start 2P', monospace;
   --font-text: 'VT323', monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; scroll-behavior: smooth;}
+html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; }
 
-/* ─── COSMIC STARFIELD BACKGROUND ─── */
 body {
-  font-family: var(--font-pixel);
+  font-family: var(--font-text);
   color: var(--cream);
+  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
   padding-bottom: 100px;
-  line-height: 1.8;
-  position: relative;
-  overflow-x: hidden;
+  font-size: 1.2rem;
 }
-
-#starfield {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  z-index: -1; pointer-events: none; background: radial-gradient(circle at center, #0a0515 0%, #000000 100%);
-}
-
-.star {
-  position: absolute; background: #FFF; border-radius: 50%;
-  animation: twinkle infinite alternate;
-}
-@keyframes twinkle { 0% { opacity: 0.2; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 5px #FFF;} }
-
-h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
 
 /* ─── CUSTOM CURSOR & GLOW ─── */
 body, a, button, .choice { 
@@ -59,117 +45,100 @@ body, a, button, .choice {
 }
 #pickaxe-glow {
     position: fixed; width: 140px; height: 140px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(170,85,255,0.2) 0%, transparent 70%); /* Cosmic Purple Glow */
+    background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, transparent 70%);
     pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
     mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
-}
-
-/* CRT EFFECTS */
-body::after{
-  content:""; position:fixed; inset:0;
-  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.1) 50%);
-  background-size:100% 4px; pointer-events:none; z-index:10000; opacity:0.3;
 }
 
 /* 16-BIT UI BORDER HELPER */
 .retro-box {
   background: var(--panel-bg);
-  border: 4px solid var(--gd);
-  box-shadow: 6px 6px 0 #000;
-  backdrop-filter: blur(4px); /* Glassmorphism effect for the cosmos */
+  border: 4px solid #FFF;
+  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
 }
 
 /* HEADER */
 header {
-  padding: 1rem 2rem; border-bottom: 4px solid var(--pu);
+  padding: 1rem 2rem; border-bottom: 4px solid var(--lg);
   display: flex; justify-content: space-between; align-items: center;
-  background: rgba(3,1,5,.98); z-index: 999; position: sticky; top: 70px;
+  background: #000; z-index: 999; position: sticky; top: 70px; /* FIXED OVERLAP */
 }
-.logo { font-size: 0.8rem; color: var(--pu); text-decoration: none; text-shadow: 2px 2px 0 #220044; }
-.back { font-size: 0.5rem; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: 0.2s;}
+.logo { font-family: var(--font-pixel); color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
+.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
 .back:hover { color: var(--gold); }
 
-main { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; flex: 1; position: relative; z-index: 10; width: 100%;}
+main { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; flex: 1; position: relative; z-index: 10; }
 
 /* INTRO */
-.intro { text-align: center; padding: 3rem 2rem; border-color: var(--pu); margin-bottom: 3rem; box-shadow: inset 0 0 30px rgba(170,85,255,0.1), 6px 6px 0 #000;}
-.intro-eyebrow { font-size: 0.5rem; color: var(--pu); margin-bottom: 1.5rem; text-shadow: 2px 2px 0 #000; letter-spacing: 2px;}
-.intro-title { font-size: 2rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 4px 4px 0 #331155; line-height: 1.4;}
+.intro { text-align: center; background: #000; padding: 2rem; border: 4px solid #444; margin-bottom: 2rem;}
+.intro-eyebrow { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gd); margin-bottom: 1.5rem; text-shadow: 2px 2px 0 #000; }
+.intro-title { font-family: var(--font-pixel); font-size: 1.6rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 3px 3px 0 #553300;}
 .intro-title em { color: var(--gold); font-style: normal; }
-.intro-sub { font-size: 0.6rem; color: var(--muted); line-height: 2; margin-bottom: 2rem; font-family: var(--font-text)!important;}
+.intro-sub { font-size: 1.3rem; color: var(--muted); line-height: 1.5; margin-bottom: 1.5rem; }
 
-.intro-lore { font-size: 0.6rem; color: var(--gold); padding: 2rem; border: 4px solid var(--pu); background: rgba(10,5,20,0.8); margin-bottom: 2.5rem; text-align: left; font-family: var(--font-text)!important; line-height: 1.8; box-shadow: inset 0 0 15px #000;}
-.intro-lore em { color: var(--pu); font-style: normal; font-family: var(--font-pixel)!important; font-size: 0.5rem;}
+.intro-lore { font-size: 1.3rem; color: var(--gold); padding: 1.5rem; border: 4px solid var(--gd); background: #1a1500; margin-bottom: 2rem; text-align: left; font-style: italic;}
 
-.btn { display: inline-block; padding: 1.2rem 2rem; background: #000; border: 4px solid var(--pu); color: var(--pu); font-size: 0.6rem; text-transform: uppercase; cursor: pointer; transition: 0.2s; text-decoration: none; box-shadow: 6px 6px 0 #000;}
-.btn:hover { background: var(--pu); color: #000; border-color: #FFF; transform: translateY(-4px); box-shadow: 8px 8px 0 #000;}
-.btn-action { background: rgba(85,255,85,0.1); color: var(--lg); border-color: var(--lg); box-shadow: 6px 6px 0 #005500;}
-.btn-action:hover { background: var(--lg); color: #000; border-color: #FFF; box-shadow: 8px 8px 0 #005500;}
+.btn { display: inline-block; padding: 1rem 2rem; background: #000; border: 4px solid #FFF; color: var(--cream); font-family: var(--font-pixel); font-size: 0.7rem; text-transform: uppercase; cursor: pointer; transition: transform 0.1s; text-decoration: none; box-shadow: 4px 4px 0 #000;}
+.btn:hover { background: var(--gold); color: #000; transform: translateY(-4px); }
+.btn-gold { background: var(--gd); box-shadow: 4px 4px 0 #000; }
+.btn-action { background: #111; color: var(--lg); border-color: var(--lg); }
+.btn-action:hover { background: var(--lg); color: #000; }
 
 /* PROGRESS */
-.progress-hud { display: none; justify-content: space-between; font-size: 0.6rem; color: var(--pu); margin-bottom: 1.5rem; background: rgba(5,2,10,0.9); padding: 1.5rem; border: 4px solid var(--pu); text-shadow: 2px 2px 0 #000; box-shadow: 4px 4px 0 #000;}
-.progress-bar-bg { width: 100%; height: 16px; background: #000; border: 2px solid #333; margin-bottom: 3rem; display: none; padding: 2px;}
-.progress-bar-fill { height: 100%; background: var(--pu); width: 0%; transition: width 0.5s ease-out; box-shadow: 0 0 10px var(--pu); }
+.progress-hud { display: none; justify-content: space-between; font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gold); margin-bottom: 1.5rem; background: #111; padding: 1rem; border: 4px solid #333; text-shadow: 2px 2px 0 #000; }
+.progress-bar-bg { width: 100%; height: 16px; background: #000; border: 4px solid #444; margin-bottom: 2rem; display: none;}
+.progress-bar-fill { height: 100%; background: var(--gold); width: 0%; transition: width 0.3s; }
 
 /* QUESTIONS */
 .question-section { display: none; }
-.question-section.active { display: block; animation: flashIn 0.5s ease-out; }
-@keyframes flashIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+.question-section.active { display: block; animation: flashIn 0.2s steps(2); }
+@keyframes flashIn { 0% { opacity: 0; } 100% { opacity: 1; } }
 
-.q-box { background: rgba(0,0,0,0.8); border: 4px solid var(--gold); padding: 2rem 1.5rem; margin-bottom: 2rem; position: relative; box-shadow: inset 0 0 20px rgba(255,215,0,0.1), 6px 6px 0 #000; display: flex; gap: 1.5rem; align-items: flex-start;}
+.q-box { background: #000; border: 4px solid var(--gd); padding: 1.5rem; margin-bottom: 1.5rem; position: relative; box-shadow: inset 0 0 0 4px #000, 4px 4px 0 #000; display: flex; gap: 1rem; align-items: flex-start;}
 .q-avatar-canvas { width: 64px; height: 64px; image-rendering: pixelated; flex-shrink: 0; filter: drop-shadow(4px 4px 0 #000);}
 .q-text-area { flex-grow: 1; }
-.q-speaker { font-size: 0.5rem; color: var(--gold); margin-bottom: 1rem; border-bottom: 2px dashed #333; padding-bottom: 0.8rem; letter-spacing: 1px;}
-.q-text { font-size: 0.65rem; color: var(--cream); line-height: 2; min-height: 80px; font-family: var(--font-text)!important;}
+.q-speaker { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gold); margin-bottom: 0.8rem; border-bottom: 2px dashed #333; padding-bottom: 0.5rem;}
+.q-text { font-size: 1.5rem; color: var(--cream); line-height: 1.5; min-height: 80px;}
 
-.q-choices { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 3rem;}
-.choice { background: rgba(10,8,15,0.9); border: 4px solid #333; padding: 1.5rem; color: var(--muted); font-size: 0.6rem; text-align: left; cursor: pointer; transition: 0.2s; line-height: 1.8; font-family: var(--font-text)!important;}
-.choice:hover { border-color: var(--pu); color: var(--cream); background: rgba(170,85,255,0.1); transform: translateX(8px); box-shadow: 4px 4px 0 #000;}
-.choice::before { content: '▶ '; opacity: 0; color: var(--pu); font-family: var(--font-pixel); font-size: 0.5rem; transition: 0.2s;}
-.choice:hover::before { opacity: 1; margin-right: 5px;}
+.q-choices { display: flex; flex-direction: column; gap: 1rem; }
+.choice { background: #000; border: 4px solid #444; padding: 1.2rem; color: var(--muted); font-family: var(--font-text); font-size: 1.3rem; text-align: left; cursor: pointer; transition: all 0.1s; line-height: 1.4;}
+.choice:hover { border-color: var(--cream); color: var(--cream); background: #111; transform: translateX(8px); box-shadow: 4px 4px 0 #000;}
+.choice::before { content: '▶ '; opacity: 0; color: var(--gold); font-family: var(--font-pixel); font-size: 0.8rem;}
+.choice:hover::before { opacity: 1; }
 
 /* RESULT */
-.result-section { display: none; text-align: center; border-color: var(--gold); background: rgba(5,3,0,0.9);}
-.result-section.active { display: block; animation: flashIn 0.5s ease-out; }
-.r-icon-canvas { width: 120px; height: 120px; image-rendering: pixelated; margin: 0 auto 2rem auto; filter: drop-shadow(0 0 20px rgba(255,215,0,0.4)); display: block; animation: float 4s infinite ease-in-out;}
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+.result-section { display: none; text-align: center; }
+.result-section.active { display: block; animation: flashIn 0.2s steps(2); }
+.r-icon-canvas { width: 120px; height: 120px; image-rendering: pixelated; margin: 0 auto 1.5rem auto; filter: drop-shadow(6px 6px 0 #000); display: block; animation: float 3s infinite ease-in-out;}
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-.result-title { font-size: 2rem; color: var(--gold); margin-bottom: 1rem; text-shadow: 4px 4px 0 #553300;}
-.result-type { font-size: 0.6rem; color: var(--cream); margin-bottom: 2.5rem; padding: 0.8rem; border: 2px solid #444; display: inline-block; background: #000;}
-.result-desc { font-size: 0.6rem; color: var(--cream); line-height: 2; text-align: left; margin-bottom: 2.5rem; padding: 2rem; background: rgba(0,0,0,0.8); border: 4px solid #333; font-family: var(--font-text)!important; box-shadow: inset 0 0 15px #000;}
-.lore-fragment { font-size: 0.55rem; color: var(--lg); padding: 1.5rem; border-left: 4px solid var(--lg); background: rgba(0,255,136,0.05); margin-bottom: 2.5rem; text-align: left; font-style: italic; font-family: var(--font-text)!important; line-height: 1.8;}
-.result-extra { font-size: 0.55rem; color: var(--muted); text-align: left; margin-bottom: 3rem; font-family: var(--font-text)!important; line-height: 1.8;}
+.result-title { font-family: var(--font-pixel); font-size: 1.8rem; color: var(--gold); margin-bottom: 1rem; text-shadow: 4px 4px 0 #553300;}
+.result-type { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); margin-bottom: 2rem; padding: 0.5rem; border: 2px solid #444; display: inline-block;}
+.result-desc { font-size: 1.3rem; color: var(--cream); line-height: 1.6; text-align: left; margin-bottom: 2rem; padding: 1.5rem; background: #000; border: 4px solid #444;}
+.lore-fragment { font-size: 1.3rem; color: var(--lg); padding: 1.5rem; border-left: 4px solid var(--lg); background: rgba(0,255,136,0.05); margin-bottom: 2rem; text-align: left; font-style: italic;}
+.result-extra { font-size: 1.2rem; color: var(--muted); text-align: left; margin-bottom: 2rem;}
 
-.share-section { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; margin-top: 2rem;}
+.share-section { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 2rem;}
 
-/* DEPTH GAUGE (BOTTOM HUD) */
-.depth-gauge {
-  position:fixed!important; bottom:15px!important; left:50%!important; transform:translateX(-50%)!important;
-  width:auto!important; max-width:95%!important; height:46px!important; background:#000!important;
-  border:4px solid var(--gd)!important; padding:0 20px!important;
-  z-index:9999!important; display:flex!important; align-items:center!important;
-  justify-content:center!important; gap:1.5rem!important; box-shadow: 4px 4px 0 #000!important;
-}
-.dg-stat { font-size: 10px; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
-.dg-val { color: var(--gold); font-size: 14px; }
-.dg-link { font-size: 10px; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: 0.3s; pointer-events: auto!important;}
-.dg-link:hover { color: var(--gold); }
+/* ARCADE HUD (BOTTOM) */
+.hud { display: flex; justify-content: center; align-items: center; padding: 1rem 2rem; background: #000; border-top: 4px solid #333; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; flex-wrap: wrap; gap: 20px; }
+.hud-stat { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; }
+.hud-val { color: var(--gold); font-size: 1rem; text-shadow: 2px 2px 0 #553300; }
+.hud-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
+.hud-link:hover { color: #000; background: var(--gd); }
 </style>
-
+<style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
 </head>
 <body>
 
-<div id="starfield"></div>
+<div id="pickaxe-glow"></div>
 
 <script src="nmn-nav.js"></script>
-<script src="nmn-wallet.js"></script>
 
 <header>
-  <a href="oracle.html" class="logo">⛏ NMN CODEX</a>
-  <a href="oracle.html" class="back">← RETURN TO ORACLE</a>
+  <a href="index.html" class="logo">NMN CODEX</a>
+  <a href="index.html" class="back">← RETURN TO MINE</a>
 </header>
-
-<div id="pickaxe-glow"></div>
 
 <main>
   <div id="introSection" class="intro retro-box">
@@ -178,14 +147,14 @@ main { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; flex: 1; position
     <h1 class="intro-title">THE MADMAN'S <em>CODEX</em></h1>
     <p class="intro-sub">Lord Oro has 7 questions. Your answers will reveal what kind of miner lives inside you — and generate a lore fragment specifically for your soul.</p>
     <div class="intro-lore">
-      "Every person carries a mine within them. Most never dig. Some dig for themselves, searching for gold to hoard in the dark. <br><br>But the rarest miners—the ones who build empires—dig because they are not alone. They strike the stone because they are trying to carve a wide enough tunnel for the people they love to walk through."<br><br><em>— Lord Oro</em>
+      "Every person carries a mine within them. Most never dig. This is for the ones who do."<br><br>— Lord Oro
     </div>
-    <button class="btn" onclick="startCodex()">INITIATE CODEX</button>
+    <button class="btn btn-gold" onclick="startCodex()">INITIATE CODEX</button>
   </div>
 
   <div class="progress-hud" id="progressHud">
     <div>QUESTION: <span id="q-counter" style="color:#FFF">1/7</span></div>
-    <div>SIGNAL: <span style="color:var(--pu)">COSMIC</span></div>
+    <div>SIGNAL: <span style="color:var(--lg)">STRONG</span></div>
   </div>
   <div class="progress-bar-bg" id="progressBarBg">
     <div class="progress-bar-fill" id="progressBarFill"></div>
@@ -200,97 +169,30 @@ main { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; flex: 1; position
     <div class="result-desc" id="resultDesc"></div>
     <div class="lore-fragment" id="resultLore"></div>
     <div class="result-extra" id="resultExtra"></div>
-    <div class="share-section" id="shareSection"></div>
+    <div class="share-section" id="shareSection">
+      </div>
   </div>
 </main>
 
-<div class="depth-gauge" id="depthGauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
-  <span style="color:rgba(255,215,0,0.2);">⬡</span>
-  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> LORE</div>
-  <span style="color:rgba(255,215,0,0.2);">⬡</span>
-  <a href="lorevault.html" class="dg-link">📜 VAULT</a>
+<div class="hud">
+  <div class="hud-stat">GOLD: <span class="hud-val" id="dgGold">0</span></div>
+  <div class="hud-stat">LORE: <span class="hud-val" id="dgLore">0</span></div>
+  <a href="lorevault.html" class="hud-link">VAULT</a>
 </div>
 
 <script>
-// ─── COSMIC STARFIELD GENERATOR ───
-function initStars() {
-    const starfield = document.getElementById('starfield');
-    const numStars = 150;
-    for (let i = 0; i < numStars; i++) {
-        let star = document.createElement('div');
-        star.className = 'star';
-        star.style.width = Math.random() * 3 + 'px';
-        star.style.height = star.style.width;
-        star.style.left = Math.random() * 100 + 'vw';
-        star.style.top = Math.random() * 100 + 'vh';
-        star.style.animationDuration = (Math.random() * 3 + 2) + 's';
-        star.style.animationDelay = (Math.random() * 5) + 's';
-        
-        // A few purple/gold stars
-        let colorRoll = Math.random();
-        if(colorRoll > 0.9) star.style.background = '#FFD700'; // Gold
-        else if(colorRoll > 0.8) star.style.background = '#AA55FF'; // Purple
-        
-        starfield.appendChild(star);
-    }
-}
-initStars();
-
-// ─── COSMIC AUDIO ENGINE ───
-const CosmicAudio = {
-  ctx: null, running: false, masterGain: null, humSrc: null,
-  init() {
-    if (this.ctx) return;
-    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.setValueAtTime(0.4, this.ctx.currentTime);
-    this.masterGain.connect(this.ctx.destination);
-  },
-  playHum() {
-    const osc = this.ctx.createOscillator();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(55, this.ctx.currentTime); // Deep space hum
-    
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = 'lowpass'; filter.frequency.value = 200;
-    
-    const g = this.ctx.createGain();
-    g.gain.setValueAtTime(0.05, this.ctx.currentTime);
-    
-    osc.connect(filter).connect(g).connect(this.masterGain);
-    osc.start();
-    this.humSrc = osc;
-    
-    // Start sporadic twinkling
-    setInterval(() => this.playTwinkle(), 4000);
-  },
-  playTwinkle() {
-      if(Math.random() > 0.5) return;
-      const osc = this.ctx.createOscillator();
-      osc.type = 'sine';
-      // High cosmic frequencies
-      const freqs = [880, 1108, 1318, 1760]; 
-      osc.frequency.setValueAtTime(freqs[Math.floor(Math.random() * freqs.length)], this.ctx.currentTime);
-      
-      const g = this.ctx.createGain();
-      g.gain.setValueAtTime(0, this.ctx.currentTime);
-      g.gain.linearRampToValueAtTime(0.02, this.ctx.currentTime + 0.1);
-      g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 1.5);
-      
-      osc.connect(g).connect(this.masterGain);
-      osc.start(); osc.stop(this.ctx.currentTime + 1.5);
-  },
-  startAll() {
-    if (this.running) return;
-    this.init(); this.running = true; this.playHum();
-  }
-};
-
 // Glow Cursor Tracking
 document.addEventListener('mousemove', function(e){
   const r = document.getElementById('pickaxe-glow');
   if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
+});
+document.addEventListener('mousedown', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '180px'; r.style.height = '180px'; r.style.background = 'radial-gradient(circle,rgba(232,184,75,.4) 0%,transparent 70%)'; }
+});
+document.addEventListener('mouseup', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '140px'; r.style.height = '140px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.25) 0%,transparent 70%)'; }
 });
 
 // ── PROCEDURAL ICON GENERATOR ──
@@ -306,7 +208,7 @@ function drawSprite(canvasId, seedStr, colorHex) {
 
   ctx.fillStyle = colorHex;
   ctx.shadowColor = colorHex;
-  ctx.shadowBlur = 8;
+  ctx.shadowBlur = 5;
   
   for(let x=0; x<8; x++) {
     for(let y=0; y<16; y++) {
@@ -320,11 +222,11 @@ function drawSprite(canvasId, seedStr, colorHex) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  drawSprite('oro-avatar-main', 'LordOroEyeGold', '#AA55FF');
+  drawSprite('oro-avatar-main', 'LordOroEyeGold', '#FFD700');
   updateGlobalHUD();
 });
 
-// ── QUESTIONS ──
+// ── QUESTIONS (Expanded to 6 Choices) ──
 const questions = [
   {
     num: 1, speaker: 'LORD ORO', color: '#FFD700',
@@ -369,7 +271,7 @@ const questions = [
       { text: 'Power. With enough of it, nothing can stop me.', type: 'Breaker' },
       { text: 'Freedom. The ability to choose what happens next.', type: 'Wanderer' },
       { text: 'Proof. That I was here. That I mattered.', type: 'Seeker' },
-      { text: 'Foundation. Something to build a world on for my family.', type: 'Builder' },
+      { text: 'Foundation. Something to build a world on.', type: 'Builder' },
       { text: 'A message from the deep earth.', type: 'Oracle' },
       { text: 'An ingredient for something greater.', type: 'Alchemist' }
     ]
@@ -405,14 +307,14 @@ const questions = [
       { text: 'Something to prove. To myself, mostly.', type: 'Breaker' },
       { text: 'Something to understand. The truth of what I am.', type: 'Seeker' },
       { text: 'Something I haven\'t found yet. I\'ll know when I see it.', type: 'Wanderer' },
-      { text: 'A wide tunnel, safe enough for the people I love to walk down.', type: 'Builder' },
+      { text: 'Something to leave behind. A legacy.', type: 'Builder' },
       { text: 'The voice at the center of the world.', type: 'Oracle' },
       { text: 'The pieces needed to make myself whole.', type: 'Alchemist' }
     ]
   }
 ];
 
-// ── TYPES ──
+// ── TYPES (Expanded to 6) ──
 const minerTypes = {
   Breaker: {
     color: '#FF5555', title: 'THE ORE BREAKER', sub: 'METAL TYPE — FORCE THROUGH',
@@ -437,10 +339,10 @@ const minerTypes = {
   },
   Builder: {
     color: '#55FF55', title: 'THE MINE BUILDER', sub: 'EARTH TYPE — FOUNDATION FIRST',
-    desc: 'You think before you dig. You shore up the walls before you go deeper. You leave maps for the people who come after you. The gold matters — but the infrastructure matters more. You aren\'t just digging for yourself; you are carving out a space for your family to be safe.',
-    lore: '"Lord Oro is many things. But his first love was always the architecture of the thing — not the treasure at the end, but building the system that made reaching it possible for the people he loved."',
-    extra: 'KIN CREATURE: Pip the Bot. Built to last. Built to support. Built to protect.',
-    ctaUrl: 'https://books2read.com/u/meW9gA', ctaText: 'ACQUIRE PYRO & HELIOS'
+    desc: 'You think before you dig. You shore up the walls before you go deeper. You leave maps for the people who come after you. The gold matters — but the infrastructure matters more. Without builders, every mine collapses.',
+    lore: '"Lord Oro is many things. But his first love was always the architecture of the thing — not the treasure at the end, but the system that made reaching it possible."',
+    extra: 'KIN CREATURE: Pip the Bot. Built to last. Built to support. Built to outlive everything else.',
+    ctaUrl: 'https://a.co/d/036X5lJP', ctaText: 'ACQUIRE PYRO & HELIOS'
   },
   Oracle: {
     color: '#FF00FF', title: 'THE DEEP ORACLE', sub: 'MYSTIC TYPE — THE LISTENER',
@@ -462,7 +364,7 @@ let answers = [];
 let currentQ = 0;
 let typeTimer = null;
 
-function typeText(elId, text, speed=20) {
+function typeText(elId, text, speed=25) {
   const el = document.getElementById(elId);
   el.textContent = "";
   if(typeTimer) clearInterval(typeTimer);
@@ -474,7 +376,6 @@ function typeText(elId, text, speed=20) {
 }
 
 function startCodex() {
-  CosmicAudio.startAll(); // Trigger the space ambient audio
   document.getElementById('introSection').style.display = 'none';
   document.getElementById('progressHud').style.display = 'flex';
   document.getElementById('progressBarBg').style.display = 'block';
@@ -509,7 +410,7 @@ function renderQuestion(idx) {
 
   setTimeout(() => {
     drawSprite(`q-avatar-${idx}`, `LordOroQuestion${idx}`, q.color);
-    typeText(`qText-${idx}`, q.text, 15);
+    typeText(`qText-${idx}`, q.text, 20);
   }, 50);
 }
 
@@ -529,6 +430,7 @@ function showResult() {
   document.getElementById('progressHud').style.display = 'none';
   document.getElementById('progressBarBg').style.display = 'none';
   
+  // Calculate dominant type
   const counts = {};
   let maxCount = 0;
   let dominantType = answers[0];
@@ -561,21 +463,15 @@ function showResult() {
   drawSprite('resultCanvas', result.title + 'Final', result.color);
   window.scrollTo({ top: 0, behavior: 'smooth' });
   
-  // Reward Gold & Save to Lore Vault
+  // Save to Lore Vault
   try {
-    if(typeof NMNWallet !== 'undefined') {
-        NMNWallet.addGold(100); // 100 Gold for completing the profile
-        
-        const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
-        if(!vault.some(v => v.text.includes('Codex Evaluation'))) {
-            vault.push({ 
-              text: `Codex Evaluation Complete. Alignment: ${result.title}. ${result.lore}`, 
-              source: "The Madman's Codex", 
-              date: new Date().toLocaleDateString() 
-            });
-            localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
-        }
-    }
+    const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
+    vault.push({ 
+      text: `Codex Evaluation Complete. Alignment: ${result.title}. ${result.lore}`, 
+      source: "The Madman's Codex", 
+      date: new Date().toLocaleDateString() 
+    });
+    localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
     updateGlobalHUD();
   } catch(e) {}
 }
@@ -590,13 +486,26 @@ function resetCodex() {
 
 function updateGlobalHUD() {
   try {
-    if(typeof NMNWallet !== 'undefined') {
-        document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]').length;
-        document.getElementById('dgGold').textContent = NMNWallet.get().gold.toLocaleString();
-    }
+    document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]').length;
+    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold') || '0';
   } catch(e) {}
 }
 </script>
 
+<div class="nmn-global-cta" style="border-top:2px solid rgba(255,215,0,.2);background:rgba(5,3,8,.98);padding:2rem 1.5rem;text-align:center;margin-top:3rem;">
+  <p style="font-family:'Press Start 2P',cursive;font-size:.4rem;color:#8B6914;letter-spacing:.2em;margin-bottom:1.2rem;">⬡ MINE YOUR COPY ⬡</p>
+  <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:1.2rem;">
+    <a href="https://books2read.com/u/3LPyjw" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE WANDERER $2.99</a>
+    <a href="https://books2read.com/u/3ndXGR" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE SWIMMER $2.99</a>
+    <a href="https://books2read.com/u/4EOxZ0" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">JUNI $9.99</a>
+    <a href="https://books2read.com/u/31NrLw" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">OUTBREAK $9.99</a>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;">
+    <a href="brawler/index.html" style="padding:.55rem 1rem;background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.3);color:#e8b84b;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⚔️ PLAY FREE</a>
+    <a href="https://gofund.me/e643a8283" target="_blank" style="padding:.55rem 1rem;background:rgba(0,169,92,.1);border:1px solid #02a95c;color:#02a95c;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⛏ SUPPORT NMN</a>
+    <a href="https://patreon.com/Lordminadeoro" target="_blank" style="padding:.55rem 1rem;background:rgba(197,146,0,.1);border:1px solid #C59200;color:#C59200;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">🏮 PATREON</a>
+    <a href="index.html" style="padding:.55rem 1rem;background:transparent;border:1px solid rgba(255,215,0,.15);color:#8B6914;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">← HUB</a>
+  </div>
+</div>
 </body>
 </html>
