@@ -5,184 +5,277 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nonsense Media Network — Lord Oro</title>
 
-<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
-<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
-<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P5WL9XNDY8');
+</script>
 
+<link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <link rel="stylesheet" href="nmn-theme.css">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 
 <style>
 :root {
   --gold: #FFD700; --gb: #e8b84b; --gd: #8B6914;
-  --coal: #050302; --panel-bg: #0a0806; --cream: #f0e6cc;
-  --muted: #8a7654; --faint: #4a3c28; --pu: #AA55FF;
+  --coal: #050308; --shaft: #08060A; --rock: #0A080C;
+  --cream: #E8E0D0; --neon-green: #00FF88;
   --font-pixel: 'Press Start 2P', monospace;
-  --font-ancient: 'Cormorant Garamond', serif;
+  --font-text: 'VT323', monospace;
+  
+  /* Map Variables */
+  --sector-border: 1px solid rgba(255, 215, 0, 0.25);
+  --sector-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
 }
-
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; background: var(--coal); }
 
 body {
-  font-family: var(--font-ancient);
+  font-family: var(--font-pixel);
   background-color: var(--coal);
   color: var(--cream);
   overflow-x: hidden;
   padding-top: 70px; 
-  padding-bottom: 80px !important; 
-  background-image: radial-gradient(circle at 50% 0%, rgba(139, 105, 20, 0.1) 0%, transparent 60%), linear-gradient(45deg, #080605 25%, #0a0806 25%, #0a0806 50%, #080605 50%, #080605 75%, #0a0806 75%, #0a0806 100%);
-  background-size: 100% 100%, 4px 4px;
+  padding-bottom: 80px; 
+  background-image: 
+    radial-gradient(2px 2px at 40px 60px, #FFD700 50%, transparent 100%),
+    radial-gradient(2px 2px at 120px 180px, #e8b84b 50%, transparent 100%),
+    radial-gradient(1px 1px at 180px 40px, #FFF 50%, transparent 100%),
+    linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
+  background-size: 200px 200px, 200px 200px, 200px 200px, 32px 32px, 32px 32px;
   line-height: 1.8;
 }
 
-/* NAV */
+h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
+a { text-decoration: none; color: inherit; }
+
+/* ─── GLASS MONITOR / CRT SCANLINES ─── */
+body::after{
+  content:""; position:fixed; top:0;left:0; width:100vw;height:100vh;
+  background:
+    linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.08) 50%),
+    linear-gradient(90deg,rgba(232,184,75,0.015),rgba(197,146,0,0.008),rgba(255,215,0,0.015));
+  background-size:100% 3px,3px 100%; pointer-events:none; z-index:10000; opacity:0.18;
+}
+body::before{
+  content:""; position:fixed; top:0;left:0; width:100vw;height:100vh;
+  background:radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.55) 100%);
+  pointer-events:none; z-index:9999;
+}
+
+/* ─── CUSTOM CURSOR & GLOW ─── */
+body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; }
+#pickaxe-glow {
+    position: fixed; width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,215,0,0.35) 0%, rgba(232,184,75,0.15) 30%, transparent 70%);
+    pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
+}
+
+/* ─── NAV ─── */
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 10001;
-  background: rgba(5,3,2,.98); border-bottom: 1px solid rgba(255,215,0,.15);
+  background: rgba(7,6,5,.98);
+  border-bottom: 2px solid var(--gd);
   backdrop-filter: blur(10px);
 }
-.nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 1rem 2rem; width: 100%; }
-.nav-logo { font-family: var(--font-pixel); font-size: 0.85rem; color: var(--gold); letter-spacing: 2px; text-shadow: 0 0 15px rgba(255,215,0,0.4); text-decoration: none;}
-.nav-links { display: flex; gap: 2.5rem; align-items: center; }
-.nav-link { font-family: var(--font-pixel); color: var(--muted); font-size: 0.5rem; letter-spacing: .15em; text-transform: uppercase; transition: color .3s; text-decoration: none;}
+.nav-container {
+  display: flex; justify-content: space-between; align-items: center;
+  max-width: 1200px; margin: 0 auto; padding: 1rem 2rem; width: 100%;
+}
+.nav-logo { font-size: 0.85rem; color: var(--gold); flex-shrink: 0; letter-spacing: 2px; text-shadow: 0 0 15px rgba(255,215,0,0.4); }
+.nav-links { display: flex; gap: 2.5rem; align-items: center; justify-content: flex-end; flex-grow: 1; }
+.nav-link { color: var(--cream); font-size: 0.5rem; letter-spacing: .15em; text-transform: uppercase; transition: color .3s; }
 .nav-link:hover { color: var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.4); }
 
 @media(max-width:768px){ 
   .nav-container { padding: 1rem; justify-content: center; }
   .nav-links { display:none; } 
+  .nav-logo { font-size: 0.75rem; } 
 }
 
-/* HERO */
+/* ─── HERO & EYES ─── */
 .hall-hero {
-  text-align: center; padding: 5rem 2rem 4rem; position: relative; overflow: hidden;
-  border-bottom: 1px solid rgba(255,215,0,.15);
-  background-image: url('oros_game_eyes.jpg'); background-size: cover; background-position: center 20%;
-  min-height: 85vh; display: flex; flex-direction: column; justify-content: flex-end;
+  text-align: center; padding: 5rem 2rem 3rem;
+  position: relative; overflow: hidden;
+  border-bottom: 2px solid var(--gd);
+  background-image: url('oros_game_eyes.jpg');
+  background-size: cover; background-position: center 20%;
+  min-height: 80vh; display: flex; flex-direction: column; justify-content: flex-end;
 }
-.hall-hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, #050302 5%, rgba(0,0,0,0.5) 100%); z-index: 1; }
-.hall-hero-content { position: relative; z-index: 10; width: 100%; max-width: 900px; margin: 0 auto; }
+.hall-hero::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.7); z-index: 1; }
+.hall-hero-content { position: relative; z-index: 10; width: 100%; max-width: 800px; margin: 0 auto; }
 
-.hero-title { font-family: var(--font-ancient); font-size: clamp(3rem, 8vw, 6.5rem); line-height: 1; font-weight: 700; color: var(--cream); margin-bottom: 1rem; text-shadow: 0 0 40px rgba(255,215,0,0.3); }
-.hero-title em { font-style: italic; color: var(--gold); display: block; }
-.hero-tagline { font-family: var(--font-pixel); font-size: 0.45rem; letter-spacing: 3px; line-height: 2; color: var(--gd); margin-bottom: 2rem; text-transform: uppercase; }
+.hall-eyes{display:flex;gap:44px;justify-content:center;margin-bottom:1.5rem}
+.hall-eye{width:20px;height:14px;background:radial-gradient(ellipse at 40% 40%,#FFD700,#FF8C00);border-radius:50%;box-shadow:0 0 18px rgba(255,215,0,.8);animation:eyeBlink 5s infinite;position:relative}
+.hall-eye::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6px;height:6px;background:#000;border-radius:50%}
+@keyframes eyeBlink{0%,85%,100%{transform:scaleY(1)}90%{transform:scaleY(.05)}}
 
-/* THE ULTIMATE CTA - ARCHITECT'S MANIFESTO */
-.manifesto-section {
-    background: radial-gradient(circle at center, #1a1208 0%, #050403 100%);
-    border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold);
-    padding: 6rem 2rem; text-align: center; position: relative;
-    box-shadow: inset 0 0 50px rgba(0,0,0,0.9), 0 0 30px rgba(255,215,0,0.1);
+.hero-title{ font-size:clamp(2rem,6vw,4rem); line-height:1.2; color:var(--cream); margin-bottom:1.5rem; text-shadow:4px 4px 0 #000; letter-spacing:2px; }
+.hero-title em{ color:var(--gold); display:block; text-shadow:4px 4px 0 #553300; font-style: normal;}
+.hero-tagline-box { border: 2px solid var(--gold); background: rgba(0,0,0,0.8); padding: 1rem; margin: 0 auto 0.5rem; max-width: 650px; box-shadow: 4px 4px 0 #000; }
+.hero-tagline { font-size:.5rem; letter-spacing:.05em; line-height:2.2; color:var(--gold); }
+.hero-whisper-box { border: 1px solid var(--gd); background: rgba(0,0,0,0.7); padding: 0.5rem; margin: 0 auto 2rem; max-width: 500px; }
+.hero-whisper { font-size: 0.4rem; color: var(--muted); letter-spacing: 0.1em; }
+.hero-quote-box { border: 2px dashed var(--gold); background: var(--coal); padding: 1.5rem; max-width: 600px; margin: 0 auto 2.5rem; }
+.hero-quote-box p { font-size: 0.5rem; color: var(--cream); line-height: 2; }
+
+/* ─── WALLET BAR ─── */
+.wallet-bar{
+  display:flex;align-items:center;justify-content:center;gap:1.5rem;
+  padding:.65rem 2rem;background:rgba(0,0,0,.8);
+  border-bottom:2px solid var(--gd);flex-wrap:wrap; position: relative; z-index: 10;
 }
-.manifesto-title { font-family: var(--font-ancient); font-size: 3.5rem; color: var(--gold); font-weight: 700; margin-bottom: 1.5rem; line-height: 1.1; }
-.manifesto-text { font-size: 1.5rem; color: var(--cream); max-width: 800px; margin: 0 auto 3rem; line-height: 1.6; font-style: italic; }
-.manifesto-actions { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+.w-item{text-align:center}
+.w-val{font-size:.6rem;color:var(--gold);text-shadow:2px 2px 0 #553300;display:block}
+.w-lbl{font-size:.3rem;color:var(--muted);letter-spacing:.1em}
+.gem-row{display:flex;gap:4px}
+.gem-pip{width:14px;height:14px;border:1px solid rgba(255,215,0,.25);background:#1a1500;font-size:7px;display:flex;align-items:center;justify-content:center;color:transparent;}
+.gem-pip.lit{border-color:var(--gold);background:var(--gold);color:#000;box-shadow:0 0 5px var(--gold)}
 
-.btn-manifesto {
-    padding: 1.2rem 2.5rem; font-family: var(--font-pixel); font-size: 0.6rem; letter-spacing: 2px;
-    text-transform: uppercase; text-decoration: none; transition: all 0.3s;
-    border: 2px solid var(--gold);
-}
-.btn-gold { background: var(--gold); color: #000; box-shadow: 0 0 20px rgba(255,215,0,0.3); }
-.btn-gold:hover { background: #fff; border-color: #fff; transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255,215,0,0.6); }
-.btn-ghost { background: rgba(0,0,0,0.6); color: var(--gold); }
-.btn-ghost:hover { background: var(--gold); color: #000; transform: translateY(-3px); }
+/* ─── DUAL VESSEL COLLECTION SYSTEM (BOOKS) ─── */
+section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin: 0 auto;}
+.section-tag{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:2rem;display:flex;align-items:center;gap:1rem; text-shadow: 2px 2px 0 #000;}
+.section-tag::after{content:'';height:2px;flex: 1;background:linear-gradient(to right,var(--gd),transparent)}
 
-.forge-status { max-width: 600px; margin: 3rem auto 0; text-align: left; }
-.forge-label { font-family: var(--font-pixel); font-size: 0.4rem; color: var(--gd); margin-bottom: 10px; display: flex; justify-content: space-between; }
-.forge-bar { height: 6px; background: #222; border-radius: 3px; overflow: hidden; border: 1px solid #444; }
-.forge-fill { width: 65%; height: 100%; background: var(--gold); box-shadow: 0 0 15px var(--gold); animation: pulseBar 2s infinite alternate; }
-@keyframes pulseBar { 0% { opacity: 0.8; } 100% { opacity: 1; } }
+.collection-gateway { display: flex; gap: 2rem; justify-content: center; align-items: stretch; margin-bottom: 3rem; flex-wrap: wrap; }
+.vessel-anchor-wrap { flex: 1; min-width: 280px; max-width: 100%; width: 100%; cursor: pointer; position: relative; border: 4px solid var(--gd); overflow: hidden; transition: all .3s; background: #0a0806; aspect-ratio: 16 / 9; box-shadow: 6px 6px 0 #000;}
+.vessel-anchor-wrap:hover, .vessel-anchor-wrap:active { border-color: var(--gold); transform: translateY(-4px); box-shadow: 6px 10px 0 #000;}
+.vessel-anchor-wrap.active { border-color: var(--gold); box-shadow: 0 0 20px rgba(255,215,0,.5); }
+.vessel-anchor-wrap img { display: block; width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; filter: brightness(.7) contrast(1.2); transition: filter .3s; }
+.vessel-anchor-wrap:hover img, .vessel-anchor-wrap.active img { filter: brightness(1) contrast(1.1); }
+.vessel-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); padding: 1rem; font-size: 0.5rem; letter-spacing: 0.1em; color: var(--gold); display: flex; justify-content: space-between; align-items: flex-end; border-top: 2px solid var(--gd);}
+.vessel-sublabel { font-size: .35rem; color: var(--muted); margin-top: 5px; }
 
-/* WALLET BAR */
-.wallet-bar { display: flex; align-items: center; justify-content: center; gap: 2.5rem; padding: 1.5rem 2rem; background: #0a0806; border-bottom: 1px solid #222; flex-wrap: wrap; }
-.w-item { text-align: center; }
-.w-val { font-family: var(--font-pixel); font-size: 1rem; color: var(--gold); display: block; margin-bottom: 5px; }
-.w-lbl { font-family: var(--font-pixel); font-size: 0.4rem; color: var(--muted); letter-spacing: 1px; }
+.filter-panel { display: none; animation: slideDown .3s ease; }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-12px) } to { opacity: 1; transform: translateY(0) } }
 
-/* BRAWLER CTA */
-.brawler-hero { margin: 6rem auto; max-width: 1000px; border: 1px solid var(--gold); padding: 10px; background: #000; box-shadow: 0 0 40px rgba(255,215,0,0.2); transition: transform 0.3s; cursor: pointer; display: block; text-decoration: none;}
-.brawler-hero:hover { transform: scale(1.02); box-shadow: 0 0 60px rgba(255,215,0,0.4); border-color: #fff; }
-.brawler-img { width: 100%; aspect-ratio: 21/9; object-fit: cover; border: 1px solid #333; filter: brightness(0.9); transition: filter 0.3s; }
-.brawler-hero:hover .brawler-img { filter: brightness(1.1); }
-.brawler-text { padding: 1.5rem; text-align: center; }
-.brawler-title { font-family: var(--font-ancient); font-size: 2rem; color: var(--gold); font-weight: 700; margin-bottom: 5px; }
-.brawler-sub { font-family: var(--font-pixel); font-size: 0.4rem; color: var(--muted); letter-spacing: 2px; }
+#vessel-obsidian { border-color: #440066; }
+#vessel-obsidian:hover, #vessel-obsidian.active { border-color: #AA55FF; }
+#vessel-obsidian .vessel-label { color: #AA55FF; border-color: #440066;}
 
-/* DUAL VESSEL LIBRARY */
-.library-section { max-width: 1200px; margin: 6rem auto; padding: 0 2rem; }
-.section-header { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--pu); letter-spacing: 3px; border-bottom: 1px solid var(--dp); padding-bottom: 1rem; margin-bottom: 3rem; text-align: center; }
-
-.vessel-toggles { display: flex; justify-content: center; gap: 2rem; margin-bottom: 4rem; flex-wrap: wrap; }
-.vessel-btn { background: #0a0806; border: 1px solid #333; padding: 1.5rem 3rem; font-family: var(--font-ancient); font-size: 1.5rem; color: var(--muted); cursor: pointer; transition: 0.3s; box-shadow: inset 0 0 20px #000; }
-.vessel-btn.active { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 20px rgba(255,215,0,0.1), inset 0 0 20px #000; }
-.vessel-btn:hover { color: var(--cream); border-color: var(--gd); }
-
-.works-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 2rem; }
-.work-card { position: relative; aspect-ratio: 2/3; background: #000; border: 1px solid #222; overflow: hidden; transition: 0.3s; cursor: pointer; }
-.work-card:hover { transform: translateY(-10px); border-color: var(--gold); box-shadow: 0 15px 30px rgba(0,0,0,0.8); }
-.work-img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
-.work-card:hover .work-img { filter: brightness(0.2) blur(2px); }
-.work-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; text-align: center; opacity: 0; transition: 0.3s; }
+.works-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+.work-card { position: relative; aspect-ratio: 2/3; background: #000; border: 4px solid var(--gd); overflow: hidden; transition: transform 0.3s ease; cursor: pointer; box-shadow: 4px 4px 0 #000;}
+.work-card:hover, .work-card:active { transform: translateY(-6px); border-color: var(--gold); }
+.work-img { width: 100%; height: 100%; object-fit: cover; transition: filter 0.3s ease; image-rendering: pixelated;}
+.work-card:hover .work-img { filter: brightness(0.2); }
+.work-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; opacity: 0; transition: opacity 0.3s ease; background: rgba(0,0,0,0.9); }
 .work-card:hover .work-overlay { opacity: 1; }
-.work-title { font-family: var(--font-ancient); font-size: 1.5rem; color: var(--gold); margin-bottom: 1rem; font-weight: 700; line-height: 1.1; }
-.store-link { display: block; width: 100%; padding: 0.8rem; margin: 4px 0; font-family: var(--font-pixel); font-size: 0.4rem; text-decoration: none; border: 1px solid #444; color: #888; transition: 0.3s; }
-.store-link.available { border-color: var(--gold); color: var(--gold); background: rgba(255,215,0,0.05); }
+.store-link { display: block; width: 90%; padding: 10px; margin: 4px 0; font-size: 0.4rem; text-decoration: none; border: 2px solid #444; color: #888; transition: 0.2s;}
+.store-link.available { border-color: var(--gold); color: var(--gold); background: #111; }
 .store-link.available:hover { background: var(--gold); color: #000; }
 
-/* MAP SECTORS */
-.map-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto 6rem; padding: 0 2rem; }
-.map-sector { position: relative; border: 1px solid #333; border-radius: 4px; background: #0a0806; display: flex; flex-direction: column; transition: 0.3s; min-height: 350px; overflow: hidden; }
-.map-sector:hover { border-color: var(--gold); transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.8); }
-.sector-bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0.3; transition: 0.3s; filter: grayscale(0.5); }
-.map-sector:hover .sector-bg { opacity: 0.5; filter: grayscale(0); }
-.sector-body { position: relative; z-index: 2; padding: 3rem 2rem; display: flex; flex-direction: column; height: 100%; background: linear-gradient(0deg, #050302 20%, transparent 100%); }
-.sector-label { font-family: var(--font-pixel); font-size: 0.4rem; color: var(--gd); letter-spacing: 2px; margin-bottom: 1rem; }
-.sector-title { font-family: var(--font-ancient); font-size: 2.2rem; color: var(--cream); margin-bottom: 1rem; font-weight: 700; }
-.sector-desc { font-size: 1.2rem; color: #ccc; line-height: 1.6; margin-bottom: 2rem; font-style: italic; }
-.map-link { font-family: var(--font-pixel); font-size: 0.45rem; color: var(--gold); text-decoration: none; border: 1px solid var(--gd); padding: 1rem; margin-top: auto; display: flex; justify-content: space-between; transition: 0.3s; background: rgba(0,0,0,0.6); }
+/* ─── MAP GRID (PIXEL RETRO) ─── */
+.map-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+.map-sector {
+  position: relative; border: 4px solid var(--gd); box-shadow: 6px 6px 0 #000; 
+  border-radius: 0; background-color: var(--coal); background-size: cover; 
+  background-position: center; display: flex; flex-direction: column;
+  transition: all 0.3s; min-height: 350px; overflow: hidden; image-rendering: pixelated;
+}
+.map-sector:hover, .map-sector:active { border-color: var(--gold); transform: translateY(-4px); }
+.sector-overlay { position: absolute; inset: 0; background: rgba(0,0,0, 0.8); z-index: 1; transition: background 0.3s; }
+.map-sector:hover .sector-overlay { background: rgba(0,0,0, 0.5); }
+.sector-body { position: relative; z-index: 2; padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
+.sector-label { font-size: 0.4rem; color: var(--gold); margin-bottom: 0.5rem; }
+.sector-title { font-size: 1.2rem; color: #FFF; margin-bottom: 0.8rem; text-shadow: 2px 2px 0 #000; line-height: 1.4; }
+.sector-desc { font-size: 0.5rem; color: var(--muted); line-height: 1.8; margin-bottom: 1.5rem; }
+.map-link {
+  font-size: 0.45rem; color: var(--gold); text-decoration: none; text-transform: uppercase;
+  background: #000; border: 2px solid var(--gd); padding: 12px; margin-top: auto;
+  display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;
+}
 .map-link:hover { background: var(--gold); color: #000; }
 
-/* DESCENT OVERLAY */
-#descent-overlay { position: fixed; inset: 0; background: #000; z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
-#descent-overlay.descent-active { opacity: 1; pointer-events: all; }
-.elevator-shaft { width: 2px; height: 100vh; background: linear-gradient(to bottom, transparent, var(--gold), transparent); animation: drop 0.5s infinite linear; }
-.descent-text { color: var(--gold); font-family: var(--font-pixel); font-size: 0.6rem; position: absolute; letter-spacing: 3px; animation: pulse 1s infinite; }
-@keyframes drop { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+/* ─── THE NEW PIXEL CTA (MANIFESTO) ─── */
+.manifesto-section {
+    margin: 4rem 2rem; border: 4px solid var(--gold); background: #000;
+    padding: 3rem 2rem; text-align: center; box-shadow: 8px 8px 0 #553300;
+    position: relative;
+}
+.manifesto-title { font-size: 1.5rem; color: var(--gold); margin-bottom: 1.5rem; text-shadow: 3px 3px 0 #553300; line-height: 1.4;}
+.manifesto-text { font-size: 0.6rem; color: var(--cream); max-width: 800px; margin: 0 auto 2rem; line-height: 2; }
+.manifesto-actions { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
 
-/* DEPTH GAUGE */
+.btn-retro {
+    padding: 1rem 1.5rem; font-size: 0.5rem; letter-spacing: 1px; text-transform: uppercase; 
+    text-decoration: none; display: inline-block; transition: all 0.2s; cursor: pointer; border: 4px solid;
+}
+.btn-primary { background: var(--gold); color: #000; border-color: #FFF; box-shadow: 4px 4px 0 #553300; }
+.btn-primary:hover { transform: translateY(-4px); box-shadow: 8px 8px 0 #553300; background: #FFF; }
+.btn-ghost { background: #111; color: var(--gold); border-color: var(--gd); box-shadow: 4px 4px 0 #000; }
+.btn-ghost:hover { background: var(--gd); color: #000; border-color: var(--gold); transform: translateY(-4px); }
+
+/* Arcade Health Bar for Funding */
+.forge-status { max-width: 600px; margin: 3rem auto 0; text-align: left; background: #111; padding: 1rem; border: 2px solid #333;}
+.forge-label { font-size: 0.4rem; color: var(--cream); margin-bottom: 10px; display: flex; justify-content: space-between; }
+.forge-bar { height: 16px; background: #000; border: 2px solid #555; padding: 2px;}
+.forge-fill { width: 65%; height: 100%; background: var(--lg); box-shadow: 0 0 10px var(--lg); }
+
+/* ─── DESCENT OVERLAY ─── */
+#descent-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000;
+    z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.descent-active { opacity: 1 !important; pointer-events: all !important; }
+.elevator-shaft { width: 8px; height: 100vh; background: linear-gradient(to bottom, transparent, var(--gold), transparent); animation: drop 0.5s infinite linear; }
+.descent-text { color: var(--gold); font-size: 0.8rem; position: absolute; text-shadow: 0 0 10px var(--gold); animation: pulse 1s infinite; }
+@keyframes drop { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+/* ─── MOBILE HUB DOCK & GAUGE ─── */
 .depth-gauge {
   position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
-  width:auto!important; max-width:95%!important; height:46px!important; background:rgba(5,4,3,.95)!important;
-  border:1px solid rgba(255,215,0,.3)!important; border-radius:2px!important; padding:0 20px!important;
-  z-index:9999!important; display:flex!important; align-items:center!important; justify-content:center!important;
-  gap:1.5rem!important; flex-wrap:nowrap!important; box-shadow: 0 5px 20px rgba(0,0,0,0.9)!important;
+  width:auto!important; max-width:92%!important; height:42px!important; background:#000!important;
+  border:4px solid var(--gd)!important; padding:0 18px!important;
+  z-index:9999!important; display:flex!important; align-items:center!important;
+  justify-content:center!important; gap:1.2rem!important; box-shadow: 4px 4px 0 #000!important;
 }
-.dg-stat { display:flex; align-items:center; gap:0.5rem; font-family:var(--font-pixel); font-size:0.45rem; color:var(--muted); text-transform:uppercase;}
-.dg-val { font-family:var(--font-text); font-size:1.1rem; color:var(--gold); }
-.dg-link { font-family:var(--font-pixel); font-size:0.45rem; color:var(--gd); text-decoration:none; text-transform:uppercase; transition:color 0.3s; pointer-events: auto!important;}
-.dg-link:hover { color:var(--gold); }
+.dg-stat { font-size: 0.4rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
+.dg-val { color: var(--gold); font-size: 0.6rem; }
+.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+.dg-link:hover { color: var(--gold); }
+
+@media (max-width: 768px) {
+  .depth-gauge { bottom: 75px !important; } /* Push up above mobile dock */
+  .mobile-hub-nav {
+      position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
+      background: #000; border-top: 4px solid var(--gd);
+      display: flex; justify-content: space-around; align-items: center;
+      z-index: 99999; padding-bottom: env(safe-area-inset-bottom);
+  }
+  .hub-tab { color: var(--muted); text-align: center; flex: 1; font-size: 0.4rem; text-decoration: none; }
+  .hub-tab.active, .hub-tab:hover { color: var(--gold); }
+  .hub-icon { font-size: 1rem; display: block; margin-bottom: 5px; }
+}
+@media (min-width: 769px) { .mobile-hub-nav { display: none; } }
 </style>
+
 </head>
 <body>
 
 <script src="nmn-wallet.js"></script>
-<script src="nmn-nav.js"></script>
 
 <nav>
   <div class="nav-container">
-    <a href="index.html" class="nav-logo">NMN</a>
+    <a href="index.html" class="nav-logo">⛏ NMN</a>
     <div class="nav-links">
-      <a href="games.html" class="nav-link">RECREATION HALL</a>
-      <a href="oracle.html" class="nav-link">ORACLE'S CHAMBER</a>
+      <a href="games.html" class="nav-link">GAMES</a>
+      <a href="oracle.html" class="nav-link">ORACLE</a>
       <a href="gemshop.html" class="nav-link">GEMSHOP</a>
+      <a href="https://patreon.com/lordoro" target="_blank" class="nav-link">PATREON</a>
     </div>
   </div>
 </nav>
+
+<div id="pickaxe-glow"></div>
 
 <div id="descent-overlay">
   <div class="elevator-shaft"></div>
@@ -191,173 +284,293 @@ nav {
 
 <div class="hall-hero">
   <div class="hall-hero-content">
-    <h1 class="hero-title">The goldmine <em>is within.</em></h1>
-    <p class="hero-tagline">DESCEND DEEPER INTO MADNESS. FIND THE GOLD. BEWARE THE OBSIDIAN.</p>
+    <div class="hall-eyes"><div class="hall-eye"></div><div class="hall-eye"></div></div>
+    <h1 class="hero-title">The goldmine<br><em>is within.</em></h1>
+    
+    <div class="hero-tagline-box">
+      <p class="hero-tagline">DESCEND DEEPER. FIND GOLD. BEWARE THE OBSIDIAN.</p>
+    </div>
+    
+    <div class="hero-whisper-box">
+      <p class="hero-whisper">...and don't put anything in your pocket on the way out.</p>
+    </div>
+    
+    <div class="hero-quote-box">
+      <p>"My sword is my pen, the world is my playground."</p>
+      <span style="font-size: 0.4rem; color: var(--gd); display:block; margin-top: 10px;">— Lord Oro</span>
+    </div>
   </div>
 </div>
 
 <div class="wallet-bar">
   <div class="w-item"><span class="w-val" id="gold-disp">0</span><span class="w-lbl">GOLD</span></div>
-  <div class="w-item"><span class="w-val" id="lvl-disp">1</span><span class="w-lbl">EMPIRE RANK</span></div>
+  <div class="w-item"><span class="w-val">LVL <span id="lvl-disp">1</span></span><span class="w-lbl">RANK</span></div>
   <div class="w-item"><span class="w-val" id="xp-disp">0</span><span class="w-lbl">XP</span></div>
+  <div class="w-item">
+    <div class="gem-row">
+      <div class="gem-pip" id="gp0">◆</div><div class="gem-pip" id="gp1">◆</div>
+      <div class="gem-pip" id="gp2">◆</div><div class="gem-pip" id="gp3">◆</div>
+      <div class="gem-pip" id="gp4">◆</div>
+    </div>
+    <span class="w-lbl">GEMS</span>
+  </div>
+  <button class="convert-btn" onclick="if(typeof NMNWallet!=='undefined'){ NMNWallet.convertGems(); }">⚗ CONVERT</button>
 </div>
 
 <section class="manifesto-section">
-    <h2 class="manifesto-title">WE ARE BUILDING AN EMPIRE IN THE DARK.</h2>
-    <p class="manifesto-text">Every tunnel, every game, every word on this network is forged by hand. To build the high-fidelity 2D brawler engine, to expand the servers, and to keep the mine free of corporate influence, we need <strong>Founding Architects</strong>. If you believe in the vision, fund the extraction.</p>
+    <h2 class="manifesto-title">BUILD THE EMPIRE</h2>
+    <p class="manifesto-text">Every tunnel, game, and word is forged by hand. To expand the servers, build the high-fidelity Brawler engine, and keep the mine independent, we need Founding Architects. If you believe in the vision, fund the extraction.</p>
     
     <div class="manifesto-actions">
-        <a href="https://patreon.com" target="_blank" class="btn-manifesto btn-gold">JOIN THE PATREON</a>
-        <a href="https://gofund.me/e643a8283" target="_blank" class="btn-manifesto btn-ghost">GOFUNDME EXPANSION</a>
+        <a href="https://patreon.com/lordoro" target="_blank" class="btn-retro btn-primary">JOIN PATREON</a>
+        <a href="https://gofund.me/e643a8283" target="_blank" class="btn-retro btn-ghost">GOFUNDME FUND</a>
     </div>
 
     <div class="forge-status">
-        <div class="forge-label"><span>BRAWLER ENGINE V2.0 FUNDING</span> <span>65%</span></div>
+        <div class="forge-label"><span>BRAWLER ENGINE V2.0</span> <span>65%</span></div>
         <div class="forge-bar"><div class="forge-fill"></div></div>
     </div>
 </section>
 
-<a href="#" onclick="interceptDescent(event, 'THE FORGE', 'brawler/index.html')" class="brawler-hero">
-    <img src="brawler_promo.jpg" alt="Nonsensical Brawlers" class="brawler-img">
-    <div class="brawler-text">
-        <div class="brawler-title">NONSENSICAL BRAWLERS</div>
-        <div class="brawler-sub">SECTOR 1: THE FORGE — PLAYABLE BETA PROTOCOL</div>
-    </div>
-</a>
+<section id="works">
+  <div class="section-tag">THE LIBRARY</div>
+  <p style="font-size:.5rem;color:var(--muted);text-align:center;margin-bottom:2rem;line-height:2;">SELECT YOUR COLLECTION — 12 TITLES — 5 LANGUAGES</p>
 
-<section class="library-section">
-  <div class="section-header">THE ARCHIVES</div>
-  
-  <div class="vessel-toggles">
-    <button class="vessel-btn active" onclick="filterVessel('gold', this)">The Goldmine Collection</button>
-    <button class="vessel-btn" onclick="filterVessel('obsidian', this)">The Obsidian Extractions</button>
-  </div>
-
-  <div id="panel-gold" class="works-grid">
-    <div class="work-card">
-      <img src="pyro_en.jpeg" class="work-img">
-      <div class="work-overlay">
-        <h3 class="work-title">PYRO & HELIOS</h3>
-        <a href="https://amzn.to/4uOpLpA" target="_blank" class="store-link available">AMAZON [LIT]</a>
-        <a href="https://books2read.com/u/meW9gA" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
+  <div class="collection-gateway">
+    <div class="vessel-anchor-wrap active" id="vessel-gold" onclick="filterVessel('gold')" role="button" tabindex="0">
+      <img src="goldmine_anchor.jpeg" alt="The Goldmine Collection">
+      <div class="vessel-label">
+        <div>
+          <div>The Goldmine Collection</div>
+          <div class="vessel-sublabel">Full Novels &amp; Pillars</div>
+        </div>
+        <span class="vessel-chevron" style="font-size: 1rem;">▶</span>
       </div>
     </div>
-    <div class="work-card">
-      <img src="juni_en.jpeg" class="work-img">
-      <div class="work-overlay">
-        <h3 class="work-title">JUNI THE IMMORTAL</h3>
-        <a href="https://amzn.to/4tfhJoc" target="_blank" class="store-link available">AMAZON [LIT]</a>
-        <a href="https://books2read.com/u/4EOxZ0" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
-      </div>
-    </div>
-    <div class="work-card">
-      <img src="tabbies_en.jpeg" class="work-img">
-      <div class="work-overlay">
-        <h3 class="work-title">ALL TABBIES</h3>
-        <a href="https://amzn.to/4bNAQ1y" target="_blank" class="store-link available">AMAZON [LIT]</a>
-        <a href="https://books2read.com/u/brzavW" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
-      </div>
-    </div>
-    <div class="work-card">
-      <img src="outbreak_en.jpeg" class="work-img">
-      <div class="work-overlay">
-        <h3 class="work-title">OUTBREAK</h3>
-        <a href="https://amzn.to/3NIeQ08" target="_blank" class="store-link available">AMAZON [LIT]</a>
-        <a href="https://books2read.com/u/31NrLw" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
+    <div class="vessel-anchor-wrap" id="vessel-obsidian" onclick="filterVessel('obsidian')" role="button" tabindex="0">
+      <img src="obsidian_anchor.jpeg" alt="The Obsidian Extractions">
+      <div class="vessel-label">
+        <div>
+          <div>The Obsidian Extractions</div>
+          <div class="vessel-sublabel">Shorts &amp; Fragments</div>
+        </div>
+        <span class="vessel-chevron" style="font-size: 1rem;">▶</span>
       </div>
     </div>
   </div>
 
-  <div id="panel-obsidian" class="works-grid" style="display:none;">
-    <div class="work-card" style="border-color:#FF4444;">
-      <img src="minewars_cover.jpg" class="work-img">
-      <div class="work-overlay" style="background:rgba(30,0,0,0.9);">
-        <h3 class="work-title" style="color:#FF4444;">THE MINE WARS</h3>
-        <a href="#" onclick="interceptDescent(event, 'MINE WARS', 'minewars.html')" class="store-link available" style="border-color:#FF4444; color:#FF4444;">DECRYPT ARCHIVE</a>
+  <div id="panel-gold" class="filter-panel" style="display:block;">
+    <div class="works-grid">
+      <div class="work-card">
+        <img src="pyro_en.jpeg" class="work-img">
+        <div class="work-overlay">
+          <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">PYRO & HELIOS</h3>
+          <a href="https://amzn.to/4uOpLpA" target="_blank" class="store-link available">AMAZON [LIT]</a>
+          <a href="https://books2read.com/u/meW9gA" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <img src="juni_en.jpeg" class="work-img">
+        <div class="work-overlay">
+          <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">JUNI IMMORTAL</h3>
+          <a href="https://amzn.to/4tfhJoc" target="_blank" class="store-link available">AMAZON [LIT]</a>
+          <a href="https://books2read.com/u/4EOxZ0" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <img src="outbreak_en.jpeg" class="work-img">
+        <div class="work-overlay">
+          <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">OUTBREAK (EN)</h3>
+          <a href="https://amzn.to/3NIeQ08" target="_blank" class="store-link available">AMAZON [LIT]</a>
+          <a href="https://books2read.com/u/31NrLw" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <img src="tabbies_en.jpeg" class="work-img">
+        <div class="work-overlay">
+          <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">ALL TABBIES</h3>
+          <a href="https://amzn.to/4bNAQ1y" target="_blank" class="store-link available">AMAZON [LIT]</a>
+          <a href="https://books2read.com/u/brzavW" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
+        </div>
       </div>
     </div>
-    <div class="work-card">
-      <img src="swimmer_en.jpg" class="work-img">
-      <div class="work-overlay">
-        <h3 class="work-title">THE SWIMMER</h3>
-        <a href="https://books2read.com/u/3ndXGR" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
+  </div>
+
+  <div id="panel-obsidian" class="filter-panel">
+    <div class="works-grid">
+      <div class="work-card" style="border-color:#FF4444;">
+        <img src="minewars_cover.jpg" class="work-img">
+        <div class="work-overlay" style="background:rgba(30,0,0,0.9);">
+          <h3 style="color:#FF4444; font-size:0.6rem; margin-bottom:10px;">THE MINE WARS</h3>
+          <a href="#" onclick="interceptDescent(event, 'MINE WARS', 'minewars.html')" class="store-link available" style="border-color:#FF4444; color:#FF4444;">DECRYPT ARCHIVE</a>
+        </div>
+      </div>
+      <div class="work-card" style="border-color:var(--neon-green);">
+        <img src="swimmer_en.jpg" class="work-img">
+        <div class="work-overlay" style="background:rgba(0,30,0,0.9);">
+          <h3 style="color:var(--neon-green); font-size:0.6rem; margin-bottom:10px;">THE SWIMMER</h3>
+          <a href="https://books2read.com/u/3ndXGR" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<div class="section-header" style="max-width: 1200px; margin: 0 auto 3rem;">NAVIGATE THE MINE</div>
-<div class="map-grid">
-  
-  <div class="map-sector">
-    <div class="sector-bg" style="background-image: url('image_0.jpg');"></div>
-    <div class="sector-body">
-      <span class="sector-label">SECTOR 1</span>
-      <h2 class="sector-title">RECREATION HALL</h2>
-      <p class="sector-desc">The initial vein. High speed, high reaction testing. Digger protocols and the Brawler engine are active here.</p>
-      <a href="#" onclick="interceptDescent(event, 'RECREATION HALL', 'games.html')" class="map-link">ENTER HALL</a>
-    </div>
-  </div>
+<section id="sections">
+  <div class="section-tag">NAVIGATE THE MINE</div>
 
-  <div class="map-sector">
-    <div class="sector-bg" style="background-image: url('image_2.jpg');"></div>
-    <div class="sector-body">
-      <span class="sector-label">SECTOR 3</span>
-      <h2 class="sector-title">THE ORACLE'S CHAMBER</h2>
-      <p class="sector-desc">The path grows harder. Tora's Chamber is open to those who trust the Tarot and seek the deep lore.</p>
-      <a href="#" onclick="interceptDescent(event, 'THE ORACLE', 'oracle.html')" class="map-link">SEEK ORACLE</a>
+  <div class="map-grid">
+    <div class="map-sector">
+      <div class="sector-bg" style="background-image: url('image_0.jpg'); position:absolute; inset:0; opacity:0.3; filter:grayscale(0.8); background-size:cover;"></div>
+      <div class="sector-overlay"></div>
+      <div class="sector-body">
+        <span class="sector-label">SECTOR 1</span>
+        <h2 class="sector-title">RECREATION HALL</h2>
+        <p class="sector-desc">The initial vein. High speed, high reaction testing. Digger protocols and the Brawler engine are active here.</p>
+        <a href="#" onclick="interceptDescent(event, 'RECREATION HALL', 'games.html')" class="map-link">ENTER HALL</a>
+      </div>
     </div>
-  </div>
 
-</div>
-
-<div style="text-align:center; padding: 4rem 0; border-top: 1px solid #222; background: #000;">
-    <p style="font-family:var(--font-pixel); font-size:0.4rem; color:#555; margin-bottom: 1rem;">⛏ NONSENSE MEDIA NETWORK · LORD ORO ⛏</p>
-    <div style="display:flex; justify-content:center; gap:1rem;">
-        <a href="privacy.html" style="font-family:var(--font-pixel); font-size:0.4rem; color:var(--muted); text-decoration:none;">PRIVACY</a>
-        <a href="terms.html" style="font-family:var(--font-pixel); font-size:0.4rem; color:var(--muted); text-decoration:none;">TERMS</a>
+    <div class="map-sector">
+      <div class="sector-bg" style="background-image: url('image_2.jpg'); position:absolute; inset:0; opacity:0.3; filter:grayscale(0.8); background-size:cover;"></div>
+      <div class="sector-overlay"></div>
+      <div class="sector-body">
+        <span class="sector-label">SECTOR 3</span>
+        <h2 class="sector-title">THE ORACLE'S CHAMBER</h2>
+        <p class="sector-desc">The path grows harder. Tora's Chamber is open to those who trust the Tarot and seek the deep lore.</p>
+        <a href="#" onclick="interceptDescent(event, 'THE ORACLE', 'oracle.html')" class="map-link">SEEK ORACLE</a>
+      </div>
     </div>
+  </div> 
+</section>
+
+<div class="mobile-hub-nav">
+    <a href="#" onclick="interceptDescent(event, 'THE FORGE', 'games.html')" class="hub-tab active">
+        <span class="hub-icon">⚔️</span> FORGE
+    </a>
+    <a href="oracle.html" class="hub-tab">
+        <span class="hub-icon">🔮</span> ORACLE
+    </a>
+    <a href="#works" class="hub-tab">
+        <span class="hub-icon">📖</span> LORE
+    </a>
+    <a href="https://gofund.me/e643a8283" target="_blank" class="hub-tab">
+        <span class="hub-icon">🏮</span> FUND
+    </a>
 </div>
 
 <div class="depth-gauge" id="depthGauge">
   <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
-  <span style="color:rgba(255,215,0,0.2);">⬡</span>
-  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> LORE</div>
-  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <span class="dg-sep" style="color:var(--faint);">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 VAULT</a>
   <a href="origins.html" class="dg-link">📖 ORIGINS</a>
 </div>
 
 <script>
 // Wallet Sync
-function syncWallet() {
-  if(typeof NMNWallet !== 'undefined') {
-    const w = NMNWallet.get();
-    document.getElementById('gold-disp').textContent = w.gold.toLocaleString();
-    document.getElementById('dgGold').textContent = w.gold.toLocaleString();
-    document.getElementById('lvl-disp').textContent = w.level;
-    document.getElementById('xp-disp').textContent = w.xp;
-    document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]').length;
-  }
+function syncGauges() {
+    if(typeof NMNWallet !== 'undefined') {
+        const w = NMNWallet.get();
+        const gold = w.gold || 0;
+        const dG = document.getElementById('dgGold');
+        if(dG) dG.textContent = gold;
+        
+        const hG = document.getElementById('gold-disp');
+        if(hG) hG.textContent = gold;
+        const lD = document.getElementById('lvl-disp');
+        if(lD) lD.textContent = w.level || 1;
+        const xD = document.getElementById('xp-disp');
+        if(xD) xD.textContent = w.xp || 0;
+        
+        const gemCount = w.gems || 0;
+        for(let i=0; i<5; i++){
+          const p = document.getElementById('gp'+i);
+          if(p) p.classList.toggle('lit', i < gemCount);
+        }
+    }
 }
-window.addEventListener('nmn_wallet_update', syncWallet);
-window.onload = syncWallet;
+window.addEventListener('nmn_wallet_update', syncGauges);
+window.onload = syncGauges;
+
+// Glow Cursor
+document.addEventListener('mousemove', function(e){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
+});
+document.addEventListener('mousedown', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '150px'; r.style.height = '150px'; r.style.background = 'radial-gradient(circle,rgba(232,184,75,.4) 0%,transparent 70%)'; }
+});
+document.addEventListener('mouseup', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '140px'; r.style.height = '140px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.35) 0%,rgba(232,184,75,.15) 30%,transparent 70%)'; }
+});
 
 // Vessel Filter
-function filterVessel(vessel, btn) {
-    document.querySelectorAll('.filter-panel').forEach(p => p.style.display = 'none');
-    document.getElementById('panel-' + vessel).style.display = 'grid';
-    document.querySelectorAll('.vessel-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-}
+window.filterVessel = function(vessel) {
+  const goldWrap = document.getElementById('vessel-gold');
+  const obsidianWrap = document.getElementById('vessel-obsidian');
+  const goldPanel = document.getElementById('panel-gold');
+  const obsidianPanel = document.getElementById('panel-obsidian');
+
+  if (!goldWrap || !obsidianWrap || !goldPanel || !obsidianPanel) return;
+
+  if (vessel === 'gold') {
+    goldWrap.classList.add('active'); 
+    obsidianWrap.classList.remove('active');
+    goldPanel.style.display = 'block'; 
+    obsidianPanel.style.display = 'none';
+  } else {
+    obsidianWrap.classList.add('active'); 
+    goldWrap.classList.remove('active');
+    obsidianPanel.style.display = 'block'; 
+    goldPanel.style.display = 'none';
+  }
+};
+
+// Descent Protocol Audio
+const NMNAudioEngine = {
+    ctx: null,
+    init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+    playTone(freq1, freq2, duration) {
+        this.init();
+        const osc1 = this.ctx.createOscillator();
+        const osc2 = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        
+        osc1.type = 'square'; osc1.frequency.value = freq1;
+        osc2.type = 'triangle'; osc2.frequency.value = freq2;
+        
+        gain.gain.setValueAtTime(0, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.15, this.ctx.currentTime + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+        
+        osc1.connect(gain); osc2.connect(gain);
+        gain.connect(this.ctx.destination);
+        
+        osc1.start(); osc2.start();
+        osc1.stop(this.ctx.currentTime + duration);
+        osc2.stop(this.ctx.currentTime + duration);
+    },
+    playDescent() { this.playTone(82.41, 123.47, 2.0); } 
+};
 
 // Descent Protocol
 function interceptDescent(event, locationName, targetUrl) {
     event.preventDefault(); 
+    NMNAudioEngine.playDescent();
+    
     const overlay = document.getElementById('descent-overlay');
     const text = document.getElementById('descent-target-text');
     text.innerText = `DESCENDING TO: ${locationName}...`;
     overlay.classList.add('descent-active');
-    setTimeout(() => { if(targetUrl) window.location.href = targetUrl; }, 1200);
+
+    setTimeout(() => {
+        if(targetUrl) window.location.href = targetUrl;
+    }, 1600);
 }
 </script>
 
