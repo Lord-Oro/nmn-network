@@ -3,117 +3,249 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Terms of Service — Nonsense Media Network</title>
+<title>Terms of Service — NMN</title>
+
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
+
 <link rel="stylesheet" href="nmn-theme.css">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=VT323&display=swap" rel="stylesheet">
+
 <style>
-body{padding-top:56px;max-width:860px;margin:0 auto}
-.legal-wrap{padding:4rem 2rem}
-.legal-title{font-family:var(--font-display);font-size:clamp(1.6rem,4vw,2.8rem);color:var(--gold);margin-bottom:.5rem}
-.legal-sub{font-family:var(--font-pixel);font-size:.38rem;color:var(--gd);letter-spacing:.2em;margin-bottom:3rem}
-.legal-section{margin-bottom:2.5rem}
-.legal-section h2{font-family:var(--font-pixel);font-size:.48rem;color:var(--gold);letter-spacing:.2em;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid rgba(255,215,0,.1)}
-.legal-section p{font-size:.72rem;color:var(--muted);line-height:2;margin-bottom:1rem}
-.legal-section ul{list-style:none;padding:0}
-.legal-section ul li{font-size:.72rem;color:var(--muted);line-height:2;padding-left:1rem}
-.legal-section ul li::before{content:'⛏ ';color:var(--gd)}
-.back-link{display:inline-block;font-family:var(--font-pixel);font-size:.42rem;color:var(--gold);border:1px solid rgba(255,215,0,.3);padding:.5rem 1rem;text-decoration:none;margin-top:2rem;transition:all .2s}
-.back-link:hover{background:rgba(255,215,0,.06);border-color:var(--gold)}
+:root {
+  --gold: #FFD700;
+  --gd: #8B6914;
+  --coal: #050302;
+  --cream: #f0e6cc;
+  --muted: #8a7654;
+  --faint: #4a3c28;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-ancient: 'Cormorant Garamond', serif;
+}
+
+body {
+    padding-top: 56px;
+    background: var(--coal);
+    color: var(--cream);
+    min-height: 100vh;
+    font-family: var(--font-ancient);
+    background-image: radial-gradient(ellipse at 50% 0%, rgba(139, 105, 20, 0.05) 0%, transparent 70%);
+}
+
+.legal-wrap {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 6rem;
+}
+
+.legal-header {
+    text-align: center;
+    margin-bottom: 4rem;
+    border-bottom: 1px solid var(--faint);
+    padding-bottom: 2rem;
+}
+
+.legal-title {
+    font-family: var(--font-ancient);
+    font-size: clamp(2.5rem, 6vw, 3.5rem);
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.legal-sub {
+    font-family: var(--font-pixel);
+    font-size: 0.4rem;
+    color: var(--gd);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.legal-section {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid #1a1a1a;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    box-shadow: inset 0 0 20px #000;
+}
+
+.legal-section h2 {
+    font-family: var(--font-pixel);
+    font-size: 0.5rem;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.legal-section h2::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--faint), transparent);
+}
+
+.legal-section p {
+    font-size: 1.2rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+}
+
+.legal-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.legal-section ul li {
+    font-size: 1.1rem;
+    color: var(--muted);
+    line-height: 1.8;
+    padding-left: 1.5rem;
+    position: relative;
+    margin-bottom: 0.8rem;
+}
+
+.legal-section ul li::before {
+    content: '⬡';
+    position: absolute;
+    left: 0;
+    color: var(--gd);
+    font-size: 0.8rem;
+}
+
+.back-link {
+    display: inline-block;
+    font-family: var(--font-pixel);
+    font-size: 0.45rem;
+    color: var(--gb);
+    border: 1px solid var(--gd);
+    padding: 1rem 1.5rem;
+    text-decoration: none;
+    margin-top: 3rem;
+    transition: all 0.3s ease;
+    background: rgba(0,0,0,0.5);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.back-link:hover {
+    background: var(--gold);
+    color: #000;
+    border-color: #fff;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+    transform: translateY(-3px);
+}
+
+/* FOOTER */
+.legal-footer {
+    text-align: center;
+    padding: 2rem;
+    font-family: var(--font-pixel);
+    font-size: 0.3rem;
+    color: var(--faint);
+    border-top: 1px dashed var(--faint);
+    margin-top: 4rem;
+}
+
+/* HUD GAUGE */
+.depth-gauge {
+  position:fixed!important; bottom:15px!important; left:50%!important;
+  transform:translateX(-50%)!important; width:auto!important; max-width:95%!important;
+  height:46px!important; background:rgba(5,4,3,.95)!important;
+  border:1px solid rgba(255,215,0,.3)!important; border-radius:2px!important;
+  padding:0 20px!important; z-index:9999!important;
+  display:flex!important; align-items:center!important; justify-content:center!important;
+  gap:1.5rem!important; flex-wrap:nowrap!important;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.9)!important;
+}
+.dg-stat { display:flex; align-items:center; gap:0.5rem; font-family:var(--font-pixel); font-size:0.45rem; color:var(--muted); text-transform:uppercase; letter-spacing: 1px;}
+.dg-val { font-family:var(--font-text); font-size:1.1rem; color:var(--gold); }
+.dg-link { font-family:var(--font-pixel); font-size:0.45rem; color:var(--gd); text-decoration:none; text-transform:uppercase; transition:color 0.3s; letter-spacing: 1px;}
+.dg-link:hover { color:var(--gold); }
 </style>
-
-<style id="nmn-cursor">
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-#pickaxe-glow{box-shadow:0 0 20px 10px rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.05)}
-</style>
-
-<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
-
 </head>
 <body>
+
+<script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
+
 <div class="legal-wrap">
-  <p class="legal-title">Terms of Service</p>
-  <p class="legal-sub">⛏ EXCAVATION TERMS — LAST UPDATED APRIL 2026 ⛏</p>
+    <div class="legal-header">
+        <h1 class="legal-title">Terms of Service</h1>
+        <p class="legal-sub">⛏ THE EXCAVATION COVENANT — v2.6 — APRIL 2026 ⛏</p>
+    </div>
 
-  <div class="legal-section">
-    <h2>ACCEPTANCE OF TERMS</h2>
-    <p>By accessing or using Nonsense Media Network ("NMN") at nonsensemedianetwork.com, you agree to be bound by these Terms of Service. If you do not agree, do not use this site.</p>
-  </div>
+    <div class="legal-section">
+        <h2>ACCEPTANCE</h2>
+        <p>By crossing the threshold of the Nonsense Media Network (NMN) at nonsensemedianetwork.com, you agree to be bound by these legal fragments. If you do not accept the conditions of the mine, you must depart the network immediately.</p>
+    </div>
 
-  <div class="legal-section">
-    <h2>INTELLECTUAL PROPERTY</h2>
-    <p>All content on this site — including but not limited to books, characters, games, music, artwork, lore, and brand assets — is the intellectual property of Nonsense Media Network LLC and Lord Oro (Jose Torres).</p>
-    <p>This includes all named characters and properties:</p>
-    <ul>
-      <li>Lord Oro and the NMN brand identity</li>
-      <li>Nayla the Lioness & Felik: The Man with Two Souls</li>
-      <li>Juni the Immortal, Pyro & Helios, All Tabbies Have a Place Too</li>
-      <li>Outbreak From the Stars, 25 Short Stories Vol. 1</li>
-      <li>Tora, Ivy Martin, and all NMN original characters</li>
-      <li>All game titles, mechanics, and visual assets</li>
-    </ul>
-    <p>Unauthorized reproduction, distribution, or commercial use of any NMN asset is strictly prohibited.</p>
-  </div>
+    <div class="legal-section">
+        <h2>INTELLECTUAL SOVEREIGNTY</h2>
+        <p>All artifacts within this network—including books, characters, mechanical systems, music, and lore—are the exclusive intellectual property of Nonsense Media Network LLC and Lord Oro (Jose Torres).</p>
+        <p>This protection covers the following properties and their variants:</p>
+        <ul>
+            <li><strong>Lord Oro</strong> and the NMN Brand Hierarchy.</li>
+            <li><strong>Nayla the Lioness</strong> & <strong>Felik: The Man with Two Souls</strong>.</li>
+            <li><strong>Juni the Immortal</strong>, <strong>Pyro & Helios</strong>, <strong>All Tabbies Have a Place Too</strong>.</li>
+            <li><strong>Outbreak From the Stars</strong>, <strong>25 Short Stories Vol. 1</strong>.</li>
+            <li><strong>Tora</strong>, <strong>Ivy Martin</strong>, and all named citizens of Sector 4.</li>
+            <li>The <strong>Ore Racer</strong> engine, <strong>Ore Breaker</strong> mechanics, and all Recreation Hall code.</li>
+        </ul>
+        <p>Unauthorized extraction, cloning, or commercial redistribution of these assets is a breach of the covenant.</p>
+    </div>
 
-  <div class="legal-section">
-    <h2>GAME VIRTUAL CURRENCY</h2>
-    <p>Gold, XP, Gems, and other in-game currencies earned on this site have no real-world monetary value. They cannot be exchanged, transferred, or redeemed for cash. Virtual currency is stored locally in your browser and may be lost if browser data is cleared.</p>
-  </div>
+    <div class="legal-section">
+        <h2>VIRTUAL EXTRACTIONS</h2>
+        <p>Currency units (Gold, XP, Gems) earned within NMN have no real-world monetary value. They are fictional metrics of your journey through the mine. They cannot be traded for currency, transferred between miners, or redeemed for physical goods.</p>
+    </div>
 
-  <div class="legal-section">
-    <h2>PATREON MEMBERSHIP TIERS</h2>
-    <p>Patreon memberships ($5 Copper / $10 Silver / $25 Gold per month) provide access to exclusive digital content. Benefits are described on our Patreon page. NMN reserves the right to modify tier benefits with reasonable notice to members.</p>
-  </div>
+    <div class="legal-section">
+        <h2>SUPPORT TIERS</h2>
+        <p>Patreon membership levels ($5 Copper / $10 Silver / $25 Gold) grant specific digital access and roles within the community. The Architect reserves the right to modify these benefits as the mine expands, providing reasonable notice via the Registry (Newsletter).</p>
+    </div>
 
-  <div class="legal-section">
-    <h2>THIRD-PARTY LINKS & ADVERTISING</h2>
-    <p>This site displays advertisements served by Monetag. We are also an Amazon Associates affiliate. NMN is not responsible for the content or privacy practices of third-party sites. Clicking ads or affiliate links is voluntary.</p>
-  </div>
+    <div class="legal-section">
+        <h2>GOVERNING LAW</h2>
+        <p>The rules of this mine are governed by the laws of the State of New Jersey, USA. Any conflict requiring judicial intervention shall be resolved within the courts of New Jersey.</p>
+    </div>
 
-  <div class="legal-section">
-    <h2>DISCLAIMER</h2>
-    <p>This site is provided "as is" without warranties of any kind. NMN makes no guarantees regarding uptime, content accuracy, or uninterrupted access to games and experiences.</p>
-  </div>
+    <div style="text-align: center;">
+        <a href="index.html" class="back-link">⛏ RETURN TO SURFACE</a>
+    </div>
 
-  <div class="legal-section">
-    <h2>GOVERNING LAW</h2>
-    <p>These terms are governed by the laws of the State of New Jersey, USA. Any disputes shall be resolved in the courts of New Jersey.</p>
-  </div>
-
-  <div class="legal-section">
-    <h2>CONTACT</h2>
-    <p>For legal inquiries: doradoyoro@gmail.com — Nonsense Media Network LLC, Est. 2026</p>
-  </div>
-
-  <a href="index.html" class="back-link">⛏ RETURN TO THE MINE</a>
+    <div class="legal-footer">
+        NONSENSE MEDIA NETWORK — THE ARCHITECT'S WORD IS LAW
+    </div>
 </div>
 
-<script id="nmn-glow">
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> LORE</div>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <a href="privacy.html" class="dg-link">🛡️ PRIVACY</a>
+</div>
+
+<script>
 (function(){
-  var r=document.createElement('div');
-  r.id='pickaxe-glow';
-  r.style.cssText='position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;left:-200px;top:-200px;transition:width .1s,height .1s,background .1s';
-  document.body.appendChild(r);
-  document.addEventListener('mousemove',function(e){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px'});
-  document.addEventListener('mousedown',function(){r.style.width='80px';r.style.height='80px';r.style.background='radial-gradient(circle,rgba(232,184,75,.6) 0%,rgba(255,215,0,.25) 55%,transparent 78%)'});
-  document.addEventListener('mouseup',function(){r.style.width='56px';r.style.height='56px';r.style.background='radial-gradient(circle,rgba(232,184,75,.22) 0%,rgba(255,215,0,.1) 55%,transparent 75%)'});
+  try {
+    const loreCount = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]').length;
+    let gold = 0;
+    if(typeof NMNWallet !== 'undefined') gold = NMNWallet.get().gold;
+    else gold = parseInt(localStorage.getItem('nmn_total_gold') || '0');
+    
+    document.getElementById('dgGold').textContent = gold.toLocaleString();
+    document.getElementById('dgLore').textContent = loreCount;
+  } catch(e) {}
 })();
 </script>
 
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(function(registration) {
-      console.log('NMN SW registered with scope:', registration.scope);
-    })
-    .catch(function(err){
-      console.log('NMN SW error:', err);
-    });
-}
-</script>
-<div style="text-align:center;padding:.5rem;font-family:'Press Start 2P',monospace;font-size:.28rem;color:#4a3c28;margin-bottom: 2rem;">
-  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
-  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
-  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
-</div>
 </body>
 </html>
