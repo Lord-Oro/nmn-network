@@ -3,172 +3,186 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tora's Domain — NMN Retro</title>
+<title>Tora's Domain — NMN</title>
 
-<link rel="icon" href="logo.jpg" type="image/jpeg">
-<link rel="shortcut icon" href="logo.jpg" type="image/jpeg">
-<link rel="apple-touch-icon" href="logo.jpg">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
 
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
 
 <style>
 :root {
-  --gold: #FFD700;
-  --gb: #e8b84b;
-  --gd: #AA7700;
-  --bg-color: #000000;
-  --panel-bg: #111111;
-  --cream: #f0e6cc;
-  --muted: #aaaaaa;
-  --lg: #55FF55; 
-  --pu: #AA55FF; /* Tora Purple */
-  --dp: #440066; /* Deep Purple */
+  --gold: #FFD700; --gb: #e8b84b; --gd: #AA7700;
+  --bg-color: #050302; --panel-bg: #0a0806; --cream: #f0e6cc;
+  --muted: #8a7654; --faint: #4a3c28;
+  --pu: #AA55FF; --dp: #440066;
   --font-pixel: 'Press Start 2P', monospace;
-  --font-text: 'VT323', monospace;
+  --font-ancient: 'Cormorant Garamond', serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; }
 
 body {
-  font-family: var(--font-text);
+  font-family: var(--font-ancient);
   color: var(--cream);
-  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
-  padding-bottom: 60px;
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(170, 85, 255, 0.1) 0%, transparent 60%), linear-gradient(45deg, #080605 25%, #0a0806 25%, #0a0806 50%, #080605 50%, #080605 75%, #0a0806 75%, #0a0806 100%);
+  background-size: 100% 100%, 4px 4px;
+  padding-bottom: 80px !important;
   font-size: 1.2rem;
 }
 
-/* 16-BIT UI BORDER HELPER */
-.retro-box {
-  background: var(--panel-bg);
-  border: 4px solid #FFF;
-  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
-}
-
-/* HEADER */
 header {
-  padding: 1rem 2rem; border-bottom: 4px solid var(--pu);
+  padding: 1rem 2rem; border-bottom: 1px solid rgba(170,85,255,0.3);
   display: flex; justify-content: space-between; align-items: center;
-  background: #000; z-index: 1000; position: sticky; top: 0;
+  background: rgba(5,3,2,0.95); z-index: 1000; position: sticky; top: 0;
+  backdrop-filter: blur(5px);
 }
-.logo { font-family: var(--font-pixel); color: var(--pu); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
-.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.logo { font-family: var(--font-pixel); color: var(--pu); font-size: 0.7rem; text-decoration: none; text-shadow: 0 0 10px rgba(170,85,255,0.4); letter-spacing: 2px;}
+.back { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: color 0.3s; letter-spacing: 1px;}
 .back:hover { color: var(--gold); }
 
-main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem 1rem; flex: 1; width: 100%;}
+main { max-width: 1000px; margin: 0 auto; padding: 4rem 1.5rem 6rem; width: 100%;}
 
 /* ENTRANCE HERO */
-.entrance { text-align: center; background: #000; padding: 2rem; border: 4px solid var(--pu); margin-bottom: 2rem; position: relative; box-shadow: inset 0 0 0 4px #000, 4px 4px 0 #000;}
-.moon-canvas { width: 64px; height: 64px; image-rendering: pixelated; margin: 0 auto 1rem auto; display: block; filter: drop-shadow(4px 4px 0 #000); animation: float 4s ease-in-out infinite; }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.entrance { 
+    text-align: center; background: linear-gradient(180deg, #0a0806, #050403); 
+    padding: 4rem 2rem; border: 1px solid var(--pu); margin-bottom: 4rem; 
+    position: relative; box-shadow: inset 0 0 30px #000, 0 15px 40px rgba(0,0,0,0.8);
+}
+.moon-canvas { width: 90px; height: 90px; image-rendering: pixelated; margin: 0 auto 2rem auto; display: block; filter: drop-shadow(0 0 15px var(--pu)); animation: float 6s ease-in-out infinite; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-.entrance-eyebrow { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--pu); margin-bottom: 1rem; text-shadow: 2px 2px 0 #000; }
-.entrance-title { font-family: var(--font-pixel); font-size: 1.8rem; color: var(--cream); margin-bottom: 1rem; line-height: 1.4; text-shadow: 3px 3px 0 var(--dp);}
-.entrance-title em { color: var(--pu); font-style: normal; }
-.entrance-sub { font-size: 1.3rem; color: var(--muted); line-height: 1.5; max-width: 600px; margin: 0 auto 1rem auto; }
-.entrance-warning { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gold); margin-top: 1.5rem; text-transform: uppercase; line-height: 1.6;}
+.entrance-eyebrow { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--pu); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 3px; }
+.entrance-title { font-family: var(--font-ancient); font-size: clamp(3rem, 7vw, 4.5rem); color: var(--cream); font-weight: 600; margin-bottom: 1rem; line-height: 1.2; text-shadow: 0 0 20px rgba(170,85,255,0.2);}
+.entrance-title em { color: var(--pu); font-style: italic; }
+.entrance-sub { font-size: 1.4rem; color: var(--muted); line-height: 1.6; max-width: 600px; margin: 0 auto 2rem; font-style: italic; }
+.entrance-warning { font-family: var(--font-pixel); font-size: 0.45rem; color: var(--gold); margin-top: 2rem; text-transform: uppercase; line-height: 1.6; letter-spacing: 1px; opacity: 0.8;}
 
 /* SECTION TAGS */
-.domain-tag { font-family: var(--font-pixel); font-size: 0.8rem; color: var(--pu); margin: 3rem 0 1.5rem 0; border-bottom: 4px solid #333; padding-bottom: 0.5rem; text-shadow: 2px 2px 0 #000; text-transform: uppercase;}
+.domain-tag { 
+    font-family: var(--font-pixel); font-size: 0.5rem; color: var(--pu); 
+    margin: 5rem 0 2rem 0; border-bottom: 1px solid var(--dp); padding-bottom: 1rem; 
+    text-transform: uppercase; letter-spacing: 3px;
+    display: flex; align-items: center; gap: 1.5rem;
+}
+.domain-tag::after { content: ''; flex: 1; height: 1px; background: linear-gradient(to right, var(--dp), transparent); }
 
 /* GRID */
-.domain-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+.domain-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
 
-.domain-card { background: #000; border: 4px solid #444; padding: 1.5rem; display: flex; flex-direction: column; transition: transform 0.1s; position: relative; text-decoration: none;}
-.domain-card:hover { transform: translateY(-4px); box-shadow: 4px 4px 0 #000; border-color: var(--pu); background: #111;}
+.domain-card { 
+    background: linear-gradient(180deg, #0a0806, #050403); 
+    border: 1px solid #222; padding: 2.5rem 2rem; display: flex; flex-direction: column; 
+    transition: all 0.4s; position: relative; text-decoration: none;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 5px 15px rgba(0,0,0,0.5);
+}
+.domain-card:hover { transform: translateY(-8px); border-color: var(--pu); box-shadow: inset 0 0 15px rgba(170,85,255,0.05), 0 15px 30px rgba(0,0,0,0.8); }
 
-.domain-card.coming-soon { border-color: #333; border-style: dashed; opacity: 0.8; pointer-events: none;}
-.domain-card.coming-soon:hover { transform: none; box-shadow: none; background: #000; border-color: #333;}
+.domain-card.coming-soon { border-color: #222; border-style: dashed; opacity: 0.6; pointer-events: none;}
 
-.card-icon-canvas { width: 64px; height: 64px; image-rendering: pixelated; margin-bottom: 1rem; filter: drop-shadow(4px 4px 0 #000); }
+.card-icon-canvas { width: 64px; height: 64px; image-rendering: pixelated; margin-bottom: 1.5rem; filter: drop-shadow(0 0 5px var(--pu)); opacity: 0.8; transition: all 0.3s; }
+.domain-card:hover .card-icon-canvas { opacity: 1; filter: drop-shadow(0 0 12px var(--pu)); }
 
-.card-type { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--muted); margin-bottom: 0.8rem; text-transform: uppercase;}
-.card-name { font-family: var(--font-pixel); font-size: 1.1rem; color: var(--cream); margin-bottom: 0.8rem; line-height: 1.4; text-shadow: 2px 2px 0 #000;}
-.card-name em { color: var(--pu); font-style: normal; }
-.card-desc { font-size: 1.2rem; color: var(--muted); line-height: 1.5; margin-bottom: 1rem; flex-grow: 1; }
+.card-type { font-family: var(--font-pixel); font-size: 0.35rem; color: var(--muted); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;}
+.card-name { font-family: var(--font-ancient); font-size: 1.8rem; color: var(--cream); margin-bottom: 1rem; font-weight: 600; line-height: 1.2;}
+.card-name em { color: var(--pu); font-style: italic; }
+.card-desc { font-size: 1.2rem; color: var(--muted); line-height: 1.6; margin-bottom: 2rem; flex-grow: 1; font-style: italic; }
 
-.card-status { font-family: var(--font-pixel); font-size: 0.5rem; display: inline-block; padding: 0.4rem; border: 2px solid; text-transform: uppercase; text-align: center;}
-.status-live { color: #000; background: var(--pu); border-color: #FFF; }
-.status-soon { color: var(--muted); background: #222; border-color: #444; }
+.card-status { font-family: var(--font-pixel); font-size: 0.4rem; display: inline-block; padding: 0.6rem; border: 1px solid; text-transform: uppercase; text-align: center; letter-spacing: 1px;}
+.status-live { color: #000; background: var(--pu); border-color: var(--pu); font-weight: bold;}
+.status-soon { color: var(--muted); background: transparent; border-color: #444; }
 
-/* TORA QUOTE / JRPG BOX */
-.tora-close { background: #000; border: 4px solid var(--pu); padding: 1.5rem; margin-top: 3rem; position: relative; box-shadow: inset 0 0 0 4px #000, 4px 4px 0 #000; text-align: left; }
-.tora-name { position: absolute; top: -0.8rem; left: 1rem; background: var(--pu); color: #000; font-family: var(--font-pixel); font-size: 0.6rem; padding: 0.4rem 0.8rem; border: 2px solid #FFF;}
-.tora-text { font-size: 1.5rem; color: var(--cream); line-height: 1.6; }
-.tora-text::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 1rem; color: var(--gold);}
+/* TORA QUOTE BOX */
+.tora-close { 
+    background: #0a0806; border: 1px solid var(--pu); padding: 3rem 2rem; 
+    margin-top: 5rem; position: relative; box-shadow: inset 0 0 30px #000, 0 10px 30px rgba(0,0,0,0.5); 
+    text-align: center; 
+}
+.tora-name { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--coal); color: var(--pu); font-family: var(--font-pixel); font-size: 0.5rem; padding: 0 15px; letter-spacing: 2px;}
+.tora-text { font-family: var(--font-ancient); font-size: 1.8rem; color: var(--gold); line-height: 1.6; font-style: italic; font-weight: 600;}
+.tora-text::after { content: '✦'; display: inline-block; animation: blink 1.5s infinite; margin-left: 15px; color: var(--pu);}
+@keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-/* HUD (BOTTOM) */
-.hud { display: flex; justify-content: center; align-items: center; padding: 1rem 2rem; background: #000; border-top: 4px solid #333; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; flex-wrap: wrap; gap: 20px; }
-.hud-stat { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; }
-.hud-val { color: var(--pu); font-size: 1rem; text-shadow: 2px 2px 0 var(--dp); }
-.hud-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
-.hud-link:hover { color: #000; background: var(--gd); }
-
-/* ── MOUSE FIX ── */
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
+/* FLOATING GAUGE */
+.depth-gauge {
+  position:fixed!important; bottom:15px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:95%!important; height:46px!important; background:rgba(5,4,3,.95)!important;
+  border:1px solid rgba(255,215,0,.3)!important; border-radius:2px!important; padding:0 20px!important;
+  z-index:9999!important; display:flex!important; align-items:center!important; justify-content:center!important;
+  gap:1.5rem!important; flex-wrap:nowrap!important; box-shadow: 0 5px 20px rgba(0,0,0,0.9)!important;
+}
+.dg-stat { display:flex; align-items:center; gap:0.5rem; font-family:var(--font-pixel); font-size:0.45rem; color:var(--muted); text-transform:uppercase; letter-spacing: 1px;}
+.dg-val { font-family:var(--font-text); font-size:1.1rem; color:var(--gold); }
+.dg-link { font-family:var(--font-pixel); font-size:0.45rem; color:var(--gd); text-decoration:none; text-transform:uppercase; transition:color 0.3s; letter-spacing: 1px;}
+.dg-link:hover { color:var(--gold); }
+.dg-sep { color:var(--faint); font-size:0.6rem; }
 </style>
-
 </head>
 <body>
+
+<script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
+
 <header>
-  <a href="index.html" class="logo">NMN TORA'S DOMAIN</a>
+  <a href="index.html" class="logo">NMN — TORA'S DOMAIN</a>
   <a href="oracle.html" class="back">← RETURN TO ORACLE</a>
 </header>
 
 <main>
   <div class="entrance">
-    <canvas id="moon-icon" class="moon-canvas" width="16" height="16"></canvas>
+    <canvas id="moon-icon" class="moon-canvas" width="32" height="32"></canvas>
     <div class="entrance-eyebrow">THE VÖLVA'S QUARTER</div>
-    <h1 class="entrance-title">TORA'S <em>DOMAIN</em></h1>
-    <p class="entrance-sub">You don't summon Tora. You find her when you're ready to be found. This is her corner of the mine.</p>
+    <h1 class="entrance-title">Tora's <em>Domain</em></h1>
+    <p class="entrance-sub">You don't summon Tora. You find her when you're ready to be found. This is her sanctuary deep within the mine.</p>
     <div class="entrance-warning">"The mountain says your path is narrow, but the floor is solid. Walk on."</div>
   </div>
 
-  <div class="domain-tag">LIVE NOW — TORA'S CORNER</div>
+  <div class="domain-tag">THE ACTIVE RITUALS</div>
   <div class="domain-grid">
 
     <a href="tora.html" class="domain-card">
       <canvas id="tarot-icon" class="card-icon-canvas" width="16" height="16"></canvas>
-      <div class="card-type">TAROT & NUMEROLOGY</div>
-      <div class="card-name">Tora the <em>Tarot Reader</em></div>
-      <div class="card-desc">Enter your birthday. Tora reads your Life Path and daily card. Freyja's energy, Lord Oro's world. She reads the mine, not the cards.</div>
+      <div class="card-type">THE CODEX ENGINE</div>
+      <div class="card-name">Tora the <em>Reader</em></div>
+      <div class="card-desc">Enter your identifier. Tora calculates your Life Path, Zodiac, and Alchemical Stone. She reads the mine, not just the cards.</div>
       <span class="card-status status-live">ONLINE</span>
     </a>
 
     <a href="grimoire.html" class="domain-card">
       <canvas id="cat-icon" class="card-icon-canvas" width="16" height="16"></canvas>
-      <div class="card-type">SACRED ARCHIVE — 14 CHAPTERS</div>
+      <div class="card-type">SACRED ARCHIVE</div>
       <div class="card-name">Eskanar's <em>Grimoire</em></div>
-      <div class="card-desc">Fourteen cats who changed history. Lord Oro's poems. Tora's margin notes. One blank page at the end belongs to you.</div>
+      <div class="card-desc">Fourteen cats who changed history. Lord Oro's poems. Tora's margin notes. The history of the world before the mine.</div>
       <span class="card-status status-live">ONLINE</span>
     </a>
 
     <a href="apothecary.html" class="domain-card">
       <canvas id="herb-icon" class="card-icon-canvas" width="16" height="16"></canvas>
-      <div class="card-type">GEM HEALING</div>
+      <div class="card-type">ALCHEMICAL HEALING</div>
       <div class="card-name">Ivy's <em>Apothecary</em></div>
-      <div class="card-desc">Tell the mine how you're feeling. The mine finds the gemstone that matches what you're carrying.</div>
+      <div class="card-desc">Tell the mine how you're feeling. The stones vibrate to match your frequency and offer the cure.</div>
       <span class="card-status status-live">ONLINE</span>
     </a>
 
   </div>
 
-  <div class="domain-tag">COMING SOON — THE VÖLVA'S QUARTER</div>
+  <div class="domain-tag">IN FORGING — AWAITING EXTRACTION</div>
   <div class="domain-grid">
 
     <div class="domain-card coming-soon">
       <canvas id="garden-icon" class="card-icon-canvas" width="16" height="16"></canvas>
-      <div class="card-type">PATIENCE GAME</div>
+      <div class="card-type">PATIENCE SIMULATION</div>
       <div class="card-name">Nausicaa's <em>Garden</em></div>
-      <div class="card-desc">Tend a small garden inside the mine. Cats appear on their own schedule. The whole game is patience and warmth.</div>
+      <div class="card-desc">Tend a small sanctuary inside the mine. Cats appear on their own schedule. The whole game is patience and warmth.</div>
       <span class="card-status status-soon">IN DEVELOPMENT</span>
     </div>
 
     <div class="domain-card coming-soon">
       <canvas id="watch-icon" class="card-icon-canvas" width="16" height="16"></canvas>
-      <div class="card-type">NIGHTLY RITUAL</div>
+      <div class="card-type">NIGHTLY PROTOCOL</div>
       <div class="card-name">The Völva's <em>Watch</em></div>
       <div class="card-desc">Every night at 9pm, Tora sends one broadcast. One moon phase reading. Time-gated — you have to show up.</div>
       <span class="card-status status-soon">IN DEVELOPMENT</span>
@@ -178,39 +192,36 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
       <canvas id="spell-icon" class="card-icon-canvas" width="16" height="16"></canvas>
       <div class="card-type">SPELL CRAFTING</div>
       <div class="card-name">Eskanar's <em>Spellbook</em></div>
-      <div class="card-desc">Combine gems, lore fragments, moon phases, and words to cast spells. Tora never explains twice.</div>
-      <span class="card-status status-soon">IN DEVELOPMENT</span>
-    </div>
-
-    <div class="domain-card coming-soon">
-      <canvas id="loom-icon" class="card-icon-canvas" width="16" height="16"></canvas>
-      <div class="card-type">COMMUNITY WEAVING</div>
-      <div class="card-name">Freyja's <em>Loom</em></div>
-      <div class="card-desc">A massive pixel-art loom. Every visitor adds one thread. Over weeks the community weaves a tapestry together.</div>
+      <div class="card-desc">Combine gems, lore fragments, and moon phases to cast spells. Tora never explains the recipe twice.</div>
       <span class="card-status status-soon">IN DEVELOPMENT</span>
     </div>
 
   </div>
 
   <div class="tora-close">
-    <div class="tora-name">TORA</div>
+    <div class="tora-name">THE ORACLE SPEAKS</div>
     <div class="tora-text" id="toraQuote"></div>
   </div>
 </main>
 
-<div class="hud">
-  <div class="hud-stat">DOMAIN: <span class="hud-val">TORA</span></div>
-  <a href="oracle.html" class="hud-link">ORACLE'S CHAMBER</a>
-  <a href="index.html" class="hud-link">THE MINE</a>
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
+  <span class="dg-sep">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> LORE</div>
+  <span class="dg-sep">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 VAULT</a>
+  <a href="ledger.html" class="dg-link">📖 LEDGER</a>
 </div>
 
 <script>
 // ── PROCEDURAL ICON GENERATOR ──
-function drawIcon(canvasId, seedStr, colorHex) {
+function drawIcon(canvasId, seedStr, colorHex, isLarge = false) {
   const canvas = document.getElementById(canvasId);
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, 16, 16);
+  const w = isLarge ? 32 : 16;
+  const h = isLarge ? 32 : 16;
+  ctx.clearRect(0, 0, w, h);
   
   let seed = 0;
   for(let i=0; i<seedStr.length; i++) { seed = seed * 31 + seedStr.charCodeAt(i); }
@@ -220,11 +231,11 @@ function drawIcon(canvasId, seedStr, colorHex) {
   ctx.shadowColor = colorHex;
   ctx.shadowBlur = 5;
   
-  for(let x=0; x<8; x++) {
-    for(let y=0; y<16; y++) {
+  for(let x=0; x<w/2; x++) {
+    for(let y=0; y<h; y++) {
       if(random() > 0.4) {
         ctx.fillRect(x, y, 1, 1); 
-        ctx.fillRect(16 - x - 1, y, 1, 1); 
+        ctx.fillRect(w - x - 1, y, 1, 1); 
       }
     }
   }
@@ -232,29 +243,34 @@ function drawIcon(canvasId, seedStr, colorHex) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  drawIcon('moon-icon', 'ToraMoonPhase', '#AA55FF');
+  drawIcon('moon-icon', 'ToraMoonPhaseMain', '#AA55FF', true);
   drawIcon('tarot-icon', 'OracleTarotCards', '#AA55FF');
   drawIcon('cat-icon', 'GrimoireCatPaws', '#FFD700');
   drawIcon('herb-icon', 'IvyApothecaryLeaf', '#55FF55');
-  drawIcon('garden-icon', 'NausicaaGardenCat', '#888888');
-  drawIcon('watch-icon', 'VolvaWatchMoon', '#888888');
-  drawIcon('spell-icon', 'SpellbookMagic', '#888888');
-  drawIcon('loom-icon', 'FreyjaLoomThread', '#888888');
+  drawIcon('garden-icon', 'NausicaaGardenCat', '#666');
+  drawIcon('watch-icon', 'VolvaWatchMoon', '#666');
+  drawIcon('spell-icon', 'SpellbookMagic', '#666');
   
-  // Typewriter effect for Tora's quote
+  // Typewriter effect
   const text = `"You are not here by accident. The mine sent you a long time ago. You are only now arriving."`;
   const el = document.getElementById('toraQuote');
   let i = 0;
   const timer = setInterval(() => {
     el.textContent += text.charAt(i++);
     if (i >= text.length) clearInterval(timer);
-  }, 30);
-});
-</script>
+  }, 40);
 
-<script>
-if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
+  syncHUD();
+});
+
+function syncHUD() {
+  try {
+    const loreCount = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]').length;
+    if(window.NMNWallet) {
+        document.getElementById('dgGold').textContent = NMNWallet.get().gold.toLocaleString();
+        document.getElementById('dgLore').textContent = loreCount;
+    }
+  } catch(e) {}
 }
 </script>
 
