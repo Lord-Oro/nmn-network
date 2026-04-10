@@ -7,7 +7,6 @@
 
 <link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
 <link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
-<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
 
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
@@ -16,109 +15,140 @@
 :root {
   --gold: #FFD700;
   --gb: #e8b84b;
-  --gd: #AA7700;
-  --bg-color: #000000;
-  --panel-bg: #111111;
+  --gd: #8B6914;
+  --bg-color: #050308;
+  --panel-bg: #0a0806;
   --cream: #f0e6cc;
-  --muted: #aaaaaa;
+  --muted: #8a7654;
   --lg: #55FF55; 
+  --pu: #AA55FF;
   --font-pixel: 'Press Start 2P', monospace;
   --font-text: 'VT323', monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { min-height: 100vh; background: var(--bg-color); }
+html, body { min-height: 100vh; background: var(--bg-color); scroll-behavior: smooth;}
 
 body {
-  font-family: var(--font-text);
+  font-family: var(--font-pixel);
   color: var(--cream);
-  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
-  padding-bottom: 60px;
-  font-size: 1.2rem;
+  background-image: 
+    radial-gradient(2px 2px at 40px 60px, #FFD700 30%, transparent 100%),
+    linear-gradient(rgba(10, 8, 12, 0.8) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(10, 8, 12, 0.8) 2px, transparent 2px);
+  background-size: 200px 200px, 32px 32px, 32px 32px;
+  padding-bottom: 100px;
+  line-height: 1.8;
+}
+
+h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
+
+/* ─── CUSTOM CURSOR & GLOW ─── */
+body, a, button, input { 
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; 
+}
+#pickaxe-glow {
+    position: fixed; width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, transparent 70%);
+    pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
+}
+
+/* CRT EFFECTS */
+body::after{
+  content:""; position:fixed; inset:0;
+  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.1) 50%);
+  background-size:100% 4px; pointer-events:none; z-index:10000; opacity:0.4;
 }
 
 /* 16-BIT UI BORDER HELPER */
 .retro-box {
   background: var(--panel-bg);
-  border: 4px solid #FFF;
-  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
+  border: 4px solid var(--gd);
+  box-shadow: 6px 6px 0 #000;
 }
 
 /* HEADER */
 header {
   padding: 1rem 2rem; border-bottom: 4px solid var(--lg);
   display: flex; justify-content: space-between; align-items: center;
-  background: #000; z-index: 1000; position: sticky; top: 0;
+  background: rgba(5,3,2,.98); z-index: 999; position: sticky; top: 70px; /* Offset for global nav */
 }
-.logo { font-family: var(--font-pixel); color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
-.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.logo { color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #005500; }
+.back { font-size: 0.5rem; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: 0.2s;}
 .back:hover { color: var(--gold); }
 
-main { max-width: 800px; margin: 0 auto; padding: 2rem 1rem; }
+main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; position: relative; z-index: 10;}
 
 /* ANNOUNCEMENT BANNER */
-.update-banner { background: rgba(255, 215, 0, 0.1); border: 2px dashed var(--gold); padding: 1rem; margin-bottom: 2rem; text-align: center; position: relative; animation: pulseBorder 3s infinite;}
+.update-banner { background: rgba(255, 215, 0, 0.05); border: 2px dashed var(--gold); padding: 1.5rem; margin-bottom: 3rem; text-align: center; animation: pulseBorder 3s infinite;}
 @keyframes pulseBorder { 0%, 100% { border-color: var(--gd); } 50% { border-color: var(--gold); } }
-.update-title { font-family: var(--font-pixel); color: var(--gold); font-size: 0.6rem; margin-bottom: 0.5rem; letter-spacing: 0.1em; }
-.update-text { color: var(--cream); font-size: 1.1rem; line-height: 1.4; }
-.update-text em { color: var(--lg); font-style: normal; }
+.update-title { color: var(--gold); font-size: 0.6rem; margin-bottom: 1rem; letter-spacing: 0.1em; }
+.update-text { color: var(--cream); font-size: 0.6rem; line-height: 2; font-family: var(--font-text)!important;}
+.update-text em { color: var(--lg); font-style: normal; font-family: var(--font-pixel)!important;}
+.update-text strong { color: var(--gold); font-family: var(--font-pixel)!important;}
 
 /* HERO */
-.apo-hero { text-align: center; margin-bottom: 2rem; background: #000; padding: 2rem; border: 4px solid #444; }
-.vine-divider { font-family: var(--font-pixel); font-size: 0.8rem; color: var(--lg); margin-bottom: 1rem; text-shadow: 2px 2px 0 #005500; }
-.apo-title { font-family: var(--font-pixel); font-size: 1.5rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 3px 3px 0 #553300;}
+.apo-hero { text-align: center; margin-bottom: 3rem; background: #000; padding: 3rem 2rem; border: 4px solid #333; box-shadow: inset 0 0 20px #000;}
+.vine-divider { font-size: 0.8rem; color: var(--lg); margin-bottom: 1.5rem; text-shadow: 2px 2px 0 #005500; letter-spacing: 2px;}
+.apo-title { font-size: 2rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 4px 4px 0 #553300; line-height: 1.4;}
 .apo-title em { color: var(--lg); font-style: normal; }
-.apo-sub { font-size: 1.4rem; color: var(--muted); line-height: 1.5; max-width: 600px; margin: 0 auto 1rem auto; }
-.ivy-sig { font-family: var(--font-text); font-style: italic; font-size: 1.2rem; color: var(--gd); border-top: 2px dashed #333; padding-top: 1rem; }
+.apo-sub { font-size: 0.6rem; color: var(--muted); line-height: 2; max-width: 600px; margin: 0 auto 1.5rem auto; font-family: var(--font-text)!important;}
+.ivy-sig { font-style: italic; font-size: 0.6rem; color: var(--gd); border-top: 2px dashed #333; padding-top: 1.5rem; font-family: var(--font-text)!important;}
 
 /* INPUT AREA */
-.input-section { margin-bottom: 2rem; }
-.input-label { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gold); margin-bottom: 1rem; display: block; text-shadow: 2px 2px 0 #000; text-align: center;}
-.feeling-input { width: 100%; padding: 1.5rem; background: #000; border: 4px solid var(--muted); color: var(--cream); font-family: var(--font-pixel); font-size: 0.8rem; outline: none; transition: border-color 0.1s; text-align: center; text-transform: uppercase; box-shadow: inset 4px 4px 0 #000;}
-.feeling-input:focus { border-color: var(--lg); }
+.input-section { margin-bottom: 3rem; }
+.input-label { font-size: 0.7rem; color: var(--gold); margin-bottom: 1.5rem; display: block; text-shadow: 2px 2px 0 #000; text-align: center;}
+.feeling-input { width: 100%; padding: 1.5rem; background: #000; border: 4px solid #333; color: var(--cream); font-family: var(--font-pixel); font-size: 1rem; outline: none; transition: 0.2s; text-align: center; text-transform: uppercase; box-shadow: inset 4px 4px 0 #000;}
+.feeling-input:focus { border-color: var(--lg); box-shadow: inset 4px 4px 0 #000, 0 0 15px rgba(85,255,85,0.2);}
 .feeling-input::placeholder { color: #444; }
 
-.suggest-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; justify-content: center; }
-.suggest-btn { padding: 0.8rem 1rem; font-size: 0.6rem; font-family: var(--font-pixel); background: #000; border: 4px solid #444; color: var(--muted); cursor: pointer; transition: transform 0.1s; text-transform: uppercase; }
-.suggest-btn:hover { border-color: var(--lg); color: var(--cream); transform: translateY(-2px); box-shadow: 4px 4px 0 #000; }
+.suggest-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1.5rem; justify-content: center; }
+.suggest-btn { padding: 1rem; font-size: 0.5rem; font-family: var(--font-pixel); background: #000; border: 2px solid #444; color: var(--muted); cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+.suggest-btn:hover { border-color: var(--lg); color: var(--cream); transform: translateY(-3px); box-shadow: 4px 4px 0 #005500; background: #111;}
 
-.consult-btn { display: block; width: 100%; margin-top: 1.5rem; padding: 1.5rem; background: var(--gd); border: 4px solid #FFF; color: var(--cream); font-family: var(--font-pixel); font-size: 0.8rem; text-transform: uppercase; cursor: pointer; transition: transform 0.1s; box-shadow: 4px 4px 0 #000; }
-.consult-btn:hover { background: var(--gold); color: #000; transform: translateY(-4px); }
+.consult-btn { display: block; width: 100%; margin-top: 2rem; padding: 1.5rem; background: #000; border: 4px solid var(--gd); color: var(--gold); font-size: 0.8rem; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 6px 6px 0 #000; }
+.consult-btn:hover { background: var(--gd); color: #000; border-color: #FFF; transform: translateY(-4px); box-shadow: 8px 8px 0 #000;}
 
 /* RESULT SECTION */
-.result-section { display: none; margin-bottom: 3rem;}
-.result-section.show { display: block; animation: flashIn 0.2s steps(2); }
-@keyframes flashIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+.result-section { display: none; margin-bottom: 3rem; opacity: 0; transition: opacity 0.5s ease;}
+.result-section.show { display: block; opacity: 1; }
 
-.result-box { padding: 2rem; position: relative; text-align: center; }
-.result-canvas-container { display: flex; justify-content: center; margin-bottom: 1.5rem; }
-.gem-canvas { width: 120px; height: 120px; image-rendering: pixelated; filter: drop-shadow(4px 4px 0 #000); animation: float 3s ease-in-out infinite; }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.result-box { padding: 3rem 2rem; position: relative; text-align: center; background: #000; border: 4px solid var(--lg); box-shadow: 8px 8px 0 #005500;}
+.result-canvas-container { display: flex; justify-content: center; margin-bottom: 2rem; }
+.gem-canvas { width: 150px; height: 150px; image-rendering: pixelated; filter: drop-shadow(0 0 15px rgba(255,255,255,0.2)); animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-.result-gem-name { font-family: var(--font-pixel); font-size: 1.2rem; color: var(--cream); margin-bottom: 0.5rem; text-shadow: 2px 2px 0 #000;}
-.result-gem-name em { color: var(--gold); font-style: normal; }
-.result-property { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--lg); margin-bottom: 1.5rem; }
+.result-gem-name { font-size: 1.5rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 3px 3px 0 #000; line-height: 1.4;}
+.result-gem-name span { color: var(--gold); }
+.result-property { font-size: 0.7rem; color: var(--lg); margin-bottom: 2rem; letter-spacing: 2px;}
 
-.result-healing { font-size: 1.4rem; color: var(--cream); line-height: 1.6; margin-bottom: 1.5rem; text-align: left;}
-.result-how { font-size: 1.2rem; color: var(--muted); line-height: 1.6; padding: 1.5rem; background: #000; border: 4px solid #333; margin-bottom: 1.5rem; text-align: left; }
-.result-how strong { font-family: var(--font-pixel); color: var(--lg); font-size: 0.6rem; display: block; margin-bottom: 0.8rem; }
+.result-healing { font-size: 0.6rem; color: var(--cream); line-height: 2; margin-bottom: 2rem; text-align: left; font-family: var(--font-text)!important;}
+.result-how { font-size: 0.5rem; color: var(--muted); line-height: 2; padding: 1.5rem; background: #111; border: 2px dashed #444; margin-bottom: 2.5rem; text-align: left; font-family: var(--font-text)!important;}
+.result-how strong { font-family: var(--font-pixel)!important; color: var(--lg); font-size: 0.5rem; display: block; margin-bottom: 1rem; }
 
-.dialogue-box { background: #000; border: 4px solid var(--gd); padding: 1.5rem; margin-bottom: 1rem; text-align: left; position: relative; box-shadow: inset 0 0 0 4px #000;}
-.dialogue-name { position: absolute; top: -0.8rem; left: 1rem; background: var(--gd); color: #000; font-family: var(--font-pixel); font-size: 0.5rem; padding: 0.3rem 0.6rem; border: 2px solid #FFF;}
+.dialogue-box { background: #0a0806; border: 4px solid var(--gd); padding: 2rem 1.5rem 1.5rem; margin-bottom: 1.5rem; text-align: left; position: relative; box-shadow: inset 0 0 20px #000;}
+.dialogue-name { position: absolute; top: -0.8rem; left: 1.5rem; background: var(--gd); color: #000; font-size: 0.5rem; padding: 0.5rem 1rem; border: 2px solid #FFF;}
 .dialogue-name.ivy { background: var(--lg); border-color: #FFF; }
-.dialogue-text { font-size: 1.4rem; color: var(--cream); line-height: 1.5; min-height: 60px;}
-.dialogue-text::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 1rem; color: var(--gold);}
+.dialogue-text { font-size: 0.6rem; color: var(--cream); line-height: 2; min-height: 60px; font-family: var(--font-text)!important;}
+.dialogue-text::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 0.8rem; color: var(--gold);}
 @keyframes blink { 0%, 50%, 100% { opacity: 1; } 25%, 75% { opacity: 0; } }
 
-.try-again-btn { display: inline-block; margin-top: 1rem; padding: 1rem 2rem; background: transparent; border: 4px solid var(--muted); color: var(--cream); font-family: var(--font-pixel); font-size: 0.6rem; text-transform: uppercase; cursor: pointer; transition: transform 0.1s; }
-.try-again-btn:hover { border-color: var(--lg); color: var(--lg); transform: translateY(-2px); background: #111;}
+.try-again-btn { display: inline-block; margin-top: 2rem; padding: 1.2rem 2rem; background: transparent; border: 4px solid var(--muted); color: var(--cream); font-size: 0.6rem; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+.try-again-btn:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-4px); background: #111; box-shadow: 4px 4px 0 #000;}
 
 /* ARCADE HUD (BOTTOM) */
-.hud { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: #000; border-top: 4px solid #333; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; flex-wrap: wrap; gap: 10px; }
-.hud-stat { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); display: flex; align-items: center; gap: 1rem; }
-.hud-val { color: var(--gold); font-size: 1rem; text-shadow: 2px 2px 0 #553300; }
-.hud-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; }
-.hud-link:hover { color: var(--gold); }
+.depth-gauge {
+  position:fixed!important; bottom:15px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:95%!important; height:46px!important; background:#000!important;
+  border:4px solid var(--gd)!important; padding:0 20px!important;
+  z-index:9999!important; display:flex!important; align-items:center!important;
+  justify-content:center!important; gap:1.5rem!important; box-shadow: 4px 4px 0 #000!important;
+}
+.dg-stat { font-size: 10px; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
+.dg-val { color: var(--gold); font-size: 14px; }
+.dg-link { font-size: 10px; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: 0.3s; pointer-events: auto!important;}
+.dg-link:hover { color: var(--gold); }
 </style>
 
 </head>
@@ -128,8 +158,10 @@ main { max-width: 800px; margin: 0 auto; padding: 2rem 1rem; }
 
 <header>
   <a href="index.html" class="logo">NMN APOTHECARY</a>
-  <a href="ivytunnel.html" class="back">← RETURN TO TUNNEL</a>
+  <a href="oracle.html" class="back">← RETURN TO ORACLE</a>
 </header>
+
+<div id="pickaxe-glow"></div>
 
 <main>
   <div class="update-banner">
@@ -165,7 +197,7 @@ main { max-width: 800px; margin: 0 auto; padding: 2rem 1rem; }
   </div>
 
   <div class="result-section" id="resultSection">
-    <div class="result-box retro-box">
+    <div class="result-box retro-box" style="border-color: var(--lg);">
       <div class="result-canvas-container">
         <canvas id="gemCanvas" class="gem-canvas" width="12" height="12"></canvas>
       </div>
@@ -194,13 +226,29 @@ main { max-width: 800px; margin: 0 auto; padding: 2rem 1rem; }
   </div>
 </main>
 
-<div class="hud">
-  <div class="hud-stat">GOLD<span class="hud-val" id="dgGold">0</span></div>
-  <div class="hud-stat">LORE<span class="hud-val" id="dgLore">0</span></div>
-  <a href="lorevault.html" class="hud-link">ACCESS VAULT</a>
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> LORE</div>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <a href="lorevault.html" class="dg-link">📜 VAULT</a>
 </div>
 
 <script>
+// Glow Cursor Tracking
+document.addEventListener('mousemove', function(e){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
+});
+document.addEventListener('mousedown', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '180px'; r.style.height = '180px'; r.style.background = 'radial-gradient(circle,rgba(232,184,75,.4) 0%,transparent 70%)'; }
+});
+document.addEventListener('mouseup', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '140px'; r.style.height = '140px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.25) 0%,transparent 70%)'; }
+});
+
 // ── PROCEDURAL GEM GENERATOR ──
 function drawGem(canvasId, seedStr, colorHex) {
   const canvas = document.getElementById(canvasId);
@@ -218,12 +266,11 @@ function drawGem(canvasId, seedStr, colorHex) {
 
   ctx.fillStyle = colorHex;
   ctx.shadowColor = colorHex;
-  ctx.shadowBlur = 10; // Neon glow effect
+  ctx.shadowBlur = 10; 
   
   // Draw pixel gem (symmetric)
   for(let x=0; x<6; x++) {
     for(let y=0; y<12; y++) {
-      // Density logic to make it look like a crystal rather than a monster
       if(y > 2 && y < 10 && x > 1 && random() > 0.3) {
         ctx.fillRect(x + 3, y, 1, 1); 
         ctx.fillRect(12 - (x + 3) - 1, y, 1, 1); 
@@ -363,9 +410,11 @@ function typeText(elId, text) {
 }
 
 function consult() {
-  // clear previous typing
+  // Clear previous typing intervals if user clicks again rapidly
   typeIntervals.forEach(clearInterval);
   typeIntervals = [];
+  document.getElementById('resultOro').textContent = "";
+  document.getElementById('resultIvy').textContent = "";
 
   const input = document.getElementById('feelingInput').value.trim();
   if(!input) { document.getElementById('feelingInput').focus(); return; }
@@ -385,18 +434,22 @@ function consult() {
   // Draw the procedural pixel gem
   drawGem('gemCanvas', remedy.name + mood, remedy.color);
   
-  // JRPG typewriter effect for dialogue
-  typeText('resultOro', remedy.oro);
-  setTimeout(() => typeText('resultIvy', remedy.ivy), 1000);
+  // Wait a fraction of a second for CSS animation to start, then type
+  setTimeout(() => {
+      typeText('resultOro', remedy.oro);
+      setTimeout(() => typeText('resultIvy', remedy.ivy), 1500); // Wait for Oro to finish
+  }, 200);
   
   section.scrollIntoView({behavior:'smooth', block:'start'});
   
   // Save to lore vault
   try {
-    const v = JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]');
-    v.push({text:`Apothecary prescribed ${remedy.name} for feeling "${input}". ${remedy.property}.`, source:"Apothecary", date:new Date().toLocaleDateString()});
-    localStorage.setItem('nmn_lore_vault', JSON.stringify(v));
-    document.getElementById('dgLore').textContent = v.length;
+    if(typeof NMNWallet !== 'undefined') {
+        const v = JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]');
+        v.push({text:`Apothecary prescribed ${remedy.name} for feeling "${input}". ${remedy.property}.`, source:"Ivy's Apothecary", date:new Date().toLocaleDateString()});
+        localStorage.setItem('nmn_lore_vault', JSON.stringify(v));
+        document.getElementById('dgLore').textContent = v.length;
+    }
   } catch(e){}
 }
 
@@ -411,9 +464,12 @@ document.getElementById('feelingInput').addEventListener('keydown', e => {
   if(e.key === 'Enter') consult();
 });
 
+// Init Gauges
 try{
-  document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
-  document.getElementById('dgGold').textContent=localStorage.getItem('nmn_total_gold')||'0';
+    if(typeof NMNWallet !== 'undefined') {
+        document.getElementById('dgLore').textContent=JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+        document.getElementById('dgGold').textContent=NMNWallet.get().gold.toLocaleString();
+    }
 }catch(e){}
 </script>
 
