@@ -15,102 +15,161 @@
 :root {
   --gold: #FFD700;
   --gb: #e8b84b;
-  --gd: #AA7700;
-  --bg-color: #000000;
-  --panel-bg: #111111;
+  --gd: #8B6914;
+  --bg-color: #050308;
+  --panel-bg: #0a0806;
   --cream: #f0e6cc;
-  --muted: #aaaaaa;
+  --muted: #8a7654;
   --lg: #55FF55; 
+  --pu: #AA55FF;
   --font-pixel: 'Press Start 2P', monospace;
   --font-text: 'VT323', monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { min-height: 100vh; background: var(--bg-color); }
+html, body { min-height: 100vh; background: var(--bg-color); scroll-behavior: smooth; }
 
 body {
-  font-family: var(--font-text);
+  font-family: var(--font-pixel);
   color: var(--cream);
-  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
-  padding-bottom: 60px;
-  font-size: 1.2rem;
+  background-image: 
+    radial-gradient(2px 2px at 40px 60px, #FFD700 30%, transparent 100%),
+    linear-gradient(rgba(10, 8, 12, 0.8) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(10, 8, 12, 0.8) 2px, transparent 2px);
+  background-size: 200px 200px, 32px 32px, 32px 32px;
+  padding-bottom: 80px;
+  line-height: 1.8;
+}
+
+h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
+
+/* ─── CUSTOM CURSOR & GLOW ─── */
+body, a, button, .element-card, .synth-slot { 
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; 
+}
+#pickaxe-glow {
+    position: fixed; width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, transparent 70%);
+    pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
+}
+
+/* CRT EFFECTS */
+body::after{
+  content:""; position:fixed; inset:0;
+  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.1) 50%);
+  background-size:100% 4px; pointer-events:none; z-index:10000; opacity:0.4;
 }
 
 /* 16-BIT UI BORDER HELPER */
 .retro-box {
   background: var(--panel-bg);
-  border: 4px solid #FFF;
-  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
+  border: 4px solid var(--gd);
+  box-shadow: 6px 6px 0 #000;
 }
 
 /* HEADER */
 header {
-  padding: 1rem 2rem; border-bottom: 4px solid var(--lg);
+  padding: 1rem 2rem; border-bottom: 4px solid var(--gd);
   display: flex; justify-content: space-between; align-items: center;
-  background: #000; z-index: 1000; position: sticky; top: 0;
+  background: rgba(5,3,2,.98); z-index: 1000; position: sticky; top: 0;
 }
-.logo { font-family: var(--font-pixel); color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
-.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.logo { color: var(--gold); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #553300; }
+.back { font-size: 0.5rem; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: 0.2s;}
 .back:hover { color: var(--gold); }
 
-main { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem; }
+main { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem; position: relative; z-index: 10;}
 
-.al-hero { text-align: center; margin-bottom: 2.5rem; background: #000; padding: 2rem; border: 4px solid #444; }
-.al-eyebrow { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); margin-bottom: 1rem; }
-.al-title { font-family: var(--font-pixel); font-size: 1.5rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 3px 3px 0 #553300;}
+.instruction-banner {
+    background: rgba(85, 255, 85, 0.1);
+    border: 2px dashed var(--lg);
+    color: var(--lg);
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.5rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    animation: pulseBorder 2s infinite;
+}
+
+@keyframes pulseBorder {
+    0%, 100% { border-color: var(--lg); box-shadow: 0 0 10px rgba(85, 255, 85, 0.2); }
+    50% { border-color: transparent; box-shadow: none; }
+}
+
+.al-hero { text-align: center; margin-bottom: 2.5rem; background: #000; padding: 3rem 2rem; border: 4px solid #333; box-shadow: inset 0 0 20px #000;}
+.al-eyebrow { font-size: 0.5rem; color: var(--gd); margin-bottom: 1rem; letter-spacing: 2px;}
+.al-title { font-size: 2rem; color: var(--cream); margin-bottom: 1rem; text-shadow: 4px 4px 0 #553300; line-height: 1.4;}
 .al-title em { color: var(--gold); font-style: normal; }
-.al-sub { font-size: 1.3rem; color: var(--muted); line-height: 1.5; max-width: 600px; margin: 0 auto; }
+.al-sub { font-size: 0.6rem; color: var(--muted); line-height: 2; max-width: 600px; margin: 0 auto; font-family: var(--font-text)!important;}
 
 /* PERIODIC TABLE */
-.table-label { font-family: var(--font-pixel); font-size: 0.7rem; color: var(--gold); margin-bottom: 1.5rem; border-bottom: 4px solid #333; padding-bottom: 0.5rem; text-shadow: 2px 2px 0 #000; }
+.table-label { font-size: 0.7rem; color: var(--gold); margin-bottom: 1.5rem; border-bottom: 4px solid #333; padding-bottom: 0.5rem; text-shadow: 2px 2px 0 #000; }
 
-.periodic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.periodic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; margin-bottom: 4rem; }
 
-.element-card { background: #000; border: 4px solid #444; padding: 1rem 0.5rem; text-align: center; cursor: pointer; transition: transform 0.1s; position: relative; }
-.element-card:hover { border-color: var(--cream); transform: translateY(-4px); background: #111; box-shadow: 4px 4px 0 #000; }
-.element-card.active { border-color: var(--gold); background: #221100; box-shadow: inset 0 0 0 4px var(--gd), 4px 4px 0 #000; }
-.element-card.synth-selected { border-color: var(--lg); box-shadow: 0 0 15px var(--lg); }
+.element-card { background: #000; border: 4px solid #333; padding: 1rem 0.5rem; text-align: center; transition: 0.2s; position: relative; box-shadow: 4px 4px 0 #000;}
+.element-card:hover { border-color: var(--gold); transform: translateY(-4px); background: #111; }
+.element-card.active { border-color: var(--gold); background: #1a1208; box-shadow: inset 0 0 0 2px var(--gd), 6px 6px 0 #000; }
 
-.el-num { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--muted); margin-bottom: 0.5rem; text-align: left; padding-left: 0.2rem;}
-.el-symbol { font-family: var(--font-pixel); font-size: 1.8rem; color: var(--cream); margin-bottom: 0.5rem; text-shadow: 2px 2px 0 #000;}
-.el-name { font-size: 1rem; color: var(--muted); text-transform: uppercase; }
+.el-num { font-size: 0.4rem; color: var(--muted); margin-bottom: 0.5rem; text-align: left; padding-left: 0.2rem;}
+.el-symbol { font-size: 1.5rem; margin-bottom: 0.5rem; text-shadow: 2px 2px 0 #000;}
+.el-name { font-size: 0.45rem; color: var(--cream); text-transform: uppercase; }
 
-.el-type { position: absolute; top: 6px; right: 6px; width: 10px; height: 10px; border: 2px solid #FFF; }
+.el-type { position: absolute; top: 4px; right: 4px; width: 8px; height: 8px; border: 1px solid #FFF; }
 
 /* DETAIL PANEL */
-.element-detail { padding: 2rem; min-height: 250px; display: flex; flex-direction: column; justify-content: center; margin-bottom: 3rem;}
-.detail-empty { font-family: var(--font-pixel); color: var(--muted); text-align: center; font-size: 0.8rem; animation: blink 1.5s infinite;}
+.element-detail { padding: 2rem; min-height: 250px; display: flex; flex-direction: column; justify-content: center; margin-bottom: 4rem;}
+.detail-empty { color: var(--muted); text-align: center; font-size: 0.6rem; animation: blink 1.5s infinite;}
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
 .detail-header { display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; border-bottom: 4px dashed #333; padding-bottom: 1.5rem;}
-.detail-symbol-big { font-family: var(--font-pixel); font-size: 4rem; color: var(--gold); line-height: 1; text-shadow: 4px 4px 0 var(--gd); }
-.detail-info h2 { font-family: var(--font-pixel); font-size: 1.2rem; color: var(--cream); margin-bottom: 0.8rem; line-height: 1.4;}
+.detail-symbol-big { font-size: 3rem; line-height: 1; text-shadow: 4px 4px 0 #000; }
+.detail-info h2 { font-size: 1rem; color: var(--cream); margin-bottom: 0.8rem; line-height: 1.4;}
 .detail-info h2 em { color: var(--gold); font-style: normal; }
-.detail-meta { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gd); line-height: 1.8; margin-bottom: 1rem; }
+.detail-meta { font-size: 0.45rem; color: var(--gd); line-height: 2; margin-bottom: 1rem; }
 
-.detail-type-badge { display: inline-block; padding: 0.4rem 0.8rem; font-family: var(--font-pixel); font-size: 0.5rem; text-transform: uppercase; border: 2px solid; background: #000;}
-
-.detail-desc { font-size: 1.4rem; color: var(--cream); line-height: 1.6; margin-bottom: 1.5rem; }
+.detail-desc { font-size: 0.6rem; color: var(--cream); line-height: 2; margin-bottom: 2rem; font-family: var(--font-text)!important;}
 
 .detail-properties { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;}
 @media(max-width: 600px) { .detail-properties { grid-template-columns: 1fr; } }
-.detail-prop { background: #000; border: 4px solid #444; padding: 1rem; font-size: 1.2rem; color: var(--muted); line-height: 1.4;}
-.detail-prop strong { font-family: var(--font-pixel); color: var(--gd); display: block; font-size: 0.6rem; text-transform: uppercase; margin-bottom: 0.5rem; }
+.detail-prop { background: #000; border: 2px solid #333; padding: 1rem; font-size: 0.5rem; color: var(--muted); line-height: 1.8; font-family: var(--font-text)!important;}
+.detail-prop strong { color: var(--gd); display: block; font-size: 0.45rem; text-transform: uppercase; margin-bottom: 0.5rem; }
 
-.detail-lore { font-size: 1.3rem; color: var(--lg); padding: 1rem; border-left: 4px solid var(--lg); background: rgba(0, 255, 136, 0.05); line-height: 1.5; font-style: italic;}
+.detail-lore { font-size: 0.55rem; color: var(--lg); padding: 1rem; border-left: 4px solid var(--lg); background: rgba(0, 255, 136, 0.05); line-height: 2; font-style: italic;}
 
 /* CTA BUTTON */
-.cta-btn { display: inline-block; margin-top: 10px; padding: 8px 16px; font-family: var(--font-pixel); font-size: 0.6rem; color: #000; background: var(--gold); text-decoration: none; border: 2px solid #FFF; transition: all 0.2s;}
-.cta-btn:hover { background: #FFF; color: #000; transform: scale(1.05);}
+.cta-btn { display: inline-block; margin-top: 10px; padding: 12px 20px; font-size: 0.5rem; color: #000; background: var(--gold); text-decoration: none; border: 4px solid #FFF; transition: 0.2s;}
+.cta-btn:hover { background: #FFF; color: #000; transform: translateY(-3px); box-shadow: 4px 4px 0 var(--gd);}
 
-/* SYNTHESIS LAB */
-.synth-container { display: flex; justify-content: center; align-items: center; gap: 2rem; margin: 2rem 0; flex-wrap: wrap;}
-.synth-slot { width: 120px; height: 120px; border: 4px dashed #444; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: var(--font-pixel); color: #444; font-size: 0.6rem; text-align: center; }
-.synth-slot.filled { border: 4px solid var(--lg); color: var(--cream); background: #111; box-shadow: inset 0 0 15px rgba(85, 255, 85, 0.2);}
-.synth-slot.filled .s-sym { font-size: 2rem; margin-bottom: 5px; color: var(--lg); text-shadow: 2px 2px 0 #000;}
-.synth-btn { font-family: var(--font-pixel); background: #000; color: var(--lg); border: 4px solid var(--lg); padding: 1rem 2rem; font-size: 1rem; cursor: pointer; transition: all 0.2s; }
-.synth-btn:hover { background: var(--lg); color: #000; box-shadow: 0 0 20px var(--lg); }
-.synth-result { margin-top: 1.5rem; font-size: 1.2rem; color: var(--gold); text-align: center; min-height: 30px;}
+/* SYNTHESIS LAB & FUSION WINDOW */
+.synth-container { display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin: 3rem 0; flex-wrap: wrap;}
+.synth-slot { width: 120px; height: 120px; border: 4px dashed #444; background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #444; font-size: 0.5rem; text-align: center; transition: 0.3s;}
+.synth-slot.filled { border: 4px solid var(--cream); color: var(--cream); background: #111; box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.1);}
+.synth-slot.filled .s-sym { font-size: 1.5rem; margin-bottom: 8px; text-shadow: 2px 2px 0 #000;}
+
+/* The Fusion Crucible */
+.fusion-crucible {
+    width: 80px; height: 80px;
+    border: 2px solid #333;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 1.5rem; color: #333;
+    background: #000;
+    transition: all 0.5s ease;
+    position: relative;
+}
+.fusion-crucible.active {
+    border-color: transparent;
+    animation: hybridPulse 2s infinite alternate;
+}
+@keyframes hybridPulse {
+    0% { transform: scale(1); box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+    100% { transform: scale(1.1); box-shadow: 0 0 30px rgba(255,255,255,0.8); }
+}
+
+.synth-btn { background: #000; color: var(--lg); border: 4px solid var(--lg); padding: 1.2rem 2rem; font-size: 0.6rem; cursor: pointer; transition: 0.2s; text-transform: uppercase; box-shadow: 4px 4px 0 #003300;}
+.synth-btn:hover { background: var(--lg); color: #000; transform: translateY(-4px); box-shadow: 6px 6px 0 #003300; }
+.synth-result { margin-top: 2rem; font-size: 0.6rem; color: var(--gold); text-align: center; min-height: 40px; line-height: 2;}
 
 </style>
 </head>
@@ -119,11 +178,18 @@ main { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem; }
 <script src="nmn-nav.js"></script>
 
 <header>
-  <a href="index.html" class="logo">NMN DATA TERMINAL</a>
+  <a href="index.html" class="logo">⛏ NMN TERMINAL</a>
   <a href="oracle.html" class="back">← RETURN TO ORACLE</a>
 </header>
 
+<div id="pickaxe-glow"></div>
+
 <main>
+  
+  <div class="instruction-banner">
+      [ DIRECTIVE: SELECT ELEMENTS TO VIEW ARCHIVES. SCROLL DOWN TO INITIALIZE FUSION. ]
+  </div>
+
   <div class="al-hero">
     <div class="al-eyebrow">DATABASE ENTRY: ALCHEMY</div>
     <h1 class="al-title">THE ALCHEMIST'S <em>TABLE</em></h1>
@@ -138,15 +204,19 @@ main { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem; }
     <div class="detail-empty">AWAITING SELECTION...</div>
   </div>
 
-  <div class="table-label">SYNTHESIS PROTOCOL</div>
-  <div class="retro-box" style="padding: 2rem;">
-    <p style="text-align: center; color: var(--muted); font-size: 1.1rem; margin-bottom: 1rem;">Select two elements from the table above to test their reactive properties.</p>
+  <div class="table-label" id="synth-section">SYNTHESIS PROTOCOL</div>
+  <div class="retro-box" style="padding: 3rem 1.5rem;">
+    <p style="text-align: center; color: var(--muted); font-size: 0.6rem; margin-bottom: 2rem; line-height: 1.8; font-family: var(--font-text)!important;">Select two elements from the table above to test their reactive properties in the crucible.</p>
+    
     <div class="synth-container">
       <div id="slotA" class="synth-slot">SLOT A</div>
-      <div style="font-family: var(--font-pixel); font-size: 2rem; color: var(--gold);">+</div>
+      
+      <div id="fusionCrucible" class="fusion-crucible">?</div>
+      
       <div id="slotB" class="synth-slot">SLOT B</div>
     </div>
-    <div style="text-align: center;">
+    
+    <div style="text-align: center; margin-top: 2rem;">
       <button class="synth-btn" onclick="synthesize()">INITIATE FUSION</button>
       <div id="synthLog" class="synth-result"></div>
     </div>
@@ -154,6 +224,20 @@ main { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem; }
 </main>
 
 <script>
+// Glow Cursor Tracking
+document.addEventListener('mousemove', function(e){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
+});
+document.addEventListener('mousedown', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '180px'; r.style.height = '180px'; r.style.background = 'radial-gradient(circle,rgba(232,184,75,.4) 0%,transparent 70%)'; }
+});
+document.addEventListener('mouseup', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '140px'; r.style.height = '140px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.25) 0%,transparent 70%)'; }
+});
+
 const ELEMENTS = [
   {num:1,sym:'Au',name:'Aurite',type:'gold',typeLabel:'Gold Type',color:'#FFD700',
    mass:'196.97',state:'Solid — always',origin:'The Mine Core',
@@ -167,7 +251,7 @@ const ELEMENTS = [
    desc:'Void Ore arrived with the Outbreak. It is not mined — it appears. Where it appears, existing matter begins to doubt its own identity. Void Ore does not destroy. It replaces. This is significantly worse.',
    properties:{melting:'Absorbs heat rather than melting','boiling':'Causes surrounding elements to evaporate','reactivity':'Highly reactive to consciousness','stability':'Stable only in the absence of life'},
    lore:'"They didn\'t come with weapons. They came with Void Ore. That was the weapon." — Outbreak From the Stars',
-   stories:'Outbreak From the Stars', ctaUrl: 'outbreak-from-the-stars.html', ctaText: 'READ THE LOGS'},
+   stories:'Outbreak From the Stars', ctaUrl: 'archives.html', ctaText: 'READ THE LOGS'},
   
   {num:3,sym:'Px',name:'Pyrexite',type:'flame',typeLabel:'Flame Type',color:'#FF5555',
    mass:'39.₂',state:'Perpetually igniting',origin:'Pyro & Helios',
@@ -188,7 +272,7 @@ const ELEMENTS = [
    desc:'The element that makes Juni\'s immortality possible. Temporium does not stop time — it makes time optional. Juni\'s cells contain Temporium at levels that prevent the normal decay process. The side effect is that she cannot forget. Temporium remembers everything it touches.',
    properties:{melting:'Melts before and after simultaneously','boiling':'Has already boiled and will boil again','reactivity':'Reacts with memory — strengthens it','stability':'Paradoxically stable'},
    lore:'"Juni had Temporium in her blood before anyone knew what to call it. She was the first and only case. That has never stopped being a problem." — Juni the Immortal',
-   stories:'Juni the Immortal', ctaUrl: 'juni-the-immortal.html', ctaText: 'VIEW THE RECORD'},
+   stories:'Juni the Immortal', ctaUrl: 'archives.html', ctaText: 'VIEW THE RECORD'},
   
   {num:6,sym:'Mb',name:'Mnemite',type:'shadow',typeLabel:'Shadow Type',color:'#888888',
    mass:'44.₄',state:'Gaseous — always shifting',origin:'Lord Oro\'s Archive',
@@ -209,7 +293,7 @@ const ELEMENTS = [
    desc:'The element unique to Felik. Dualite exists as two contradictory states simultaneously — it is both the hardest substance in the NMN table and the most flexible. Felik\'s two souls are held together by Dualite bonds that should not be chemically possible.',
    properties:{melting:'Both melts and hardens under heat','boiling':'Splits into two elements and recombines','reactivity':'Reactive to choice — responds to decisions','stability':'Perfectly stable because it contains contradiction'},
    lore:'"Dualite shouldn\'t be able to exist. And yet here is Felik. The periodic table has been updated accordingly." — The Alchemist\'s Notes',
-   stories:'Nela the Lioness and Felik', ctaUrl: 'dualsouls.html', ctaText: 'TEST ALIGNMENT'},
+   stories:'Nela the Lioness and Felik', ctaUrl: 'archives.html', ctaText: 'TEST ALIGNMENT'},
   
   {num:9,sym:'Ax',name:'Axiom',type:'gold',typeLabel:'Mythic Type',color:'#55FF55',
    mass:'∞',state:'Undefined',origin:'Lord Oro',
@@ -235,6 +319,11 @@ document.getElementById('periodicGrid').innerHTML = ELEMENTS.map((el,i) =>
 function interactElement(i) {
   showElement(i);
   addToSynth(i);
+  
+  // Auto scroll to synthesis if two are selected
+  if(synthSlots[0] && synthSlots[1]) {
+      document.getElementById('synth-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 
 function showElement(i) {
@@ -251,7 +340,7 @@ function showElement(i) {
       <div class="detail-info">
         <h2>${el.name} — <em>${el.typeLabel}</em></h2>
         <div class="detail-meta">ATOMIC MASS: ${el.mass} <br> STATE: ${el.state} <br> ORIGIN: ${el.origin} <br> FILE: ${el.stories}</div>
-        <a href="${el.ctaUrl}" class="cta-btn">${el.ctaText} →</a>
+        <a href="${el.ctaUrl}" class="cta-btn">${el.ctaText}</a>
       </div>
     </div>
     <div class="detail-desc">${el.desc}</div>
@@ -277,6 +366,7 @@ function addToSynth(i) {
 function updateSynthUI() {
   const slotA = document.getElementById('slotA');
   const slotB = document.getElementById('slotB');
+  const crucible = document.getElementById('fusionCrucible');
   
   if (synthSlots[0]) {
     slotA.className = 'synth-slot filled';
@@ -286,11 +376,21 @@ function updateSynthUI() {
     slotB.className = 'synth-slot filled';
     slotB.innerHTML = `<div class="s-sym" style="color:${synthSlots[1].color}">${synthSlots[1].sym}</div><div>${synthSlots[1].name}</div>`;
   }
-  document.getElementById('synthLog').textContent = ""; // Clear old message
+  
+  // Reset crucible
+  crucible.className = 'fusion-crucible';
+  crucible.innerHTML = '?';
+  crucible.style.background = '#000';
+  crucible.style.clipPath = 'none';
+  crucible.style.borderRadius = '0';
+  
+  document.getElementById('synthLog').textContent = ""; 
 }
 
 function synthesize() {
   const log = document.getElementById('synthLog');
+  const crucible = document.getElementById('fusionCrucible');
+  
   if (!synthSlots[0] || !synthSlots[1]) {
     log.style.color = "var(--muted)";
     log.textContent = "SYSTEM ERROR: Two elements required for fusion.";
@@ -305,7 +405,6 @@ function synthesize() {
     resultText = "FUSION SUCCESS: Pyrexite and Lumexite form a perfect binary loop. Helios and Pyro are unified.";
   } else if (syms === 'Au+Vd') {
     resultText = "CRITICAL WARNING: Void Ore has consumed Aurite. The gold is gone. Only the Outbreak remains.";
-    log.style.color = "var(--red)";
   } else if (syms === 'Mb+Tm') {
     resultText = "TEMPORAL ANOMALY: Mnemite and Temporium have trapped this memory in an infinite loop. Juni observes.";
   } else if (syms === 'Ax+Ds') {
@@ -316,10 +415,36 @@ function synthesize() {
     resultText = `REACTION UNSTABLE: ${synthSlots[0].name} and ${synthSlots[1].name} repel each other. They belong to different worlds.`;
   }
 
+  // Visual Crucible Generation
+  crucible.classList.add('active');
+  crucible.innerHTML = '';
+  
+  // Create hybrid color gradient
+  const c1 = synthSlots[0].color;
+  const c2 = synthSlots[1].color;
+  crucible.style.background = `linear-gradient(45deg, ${c1}, ${c2})`;
+  
+  // Randomize shape to represent "new element"
+  const shapes = [
+      'circle(50% at 50% 50%)', // Orb
+      'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)', // Diamond
+      'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)' // Hexagon
+  ];
+  const randomShape = shapes[Math.floor(Math.random() * shapes.length)];
+  
+  // If it's a compound of the same element, make it a perfect square
+  if(synthSlots[0].sym === synthSlots[1].sym) {
+      crucible.style.clipPath = 'none';
+      crucible.style.borderRadius = '8px';
+  } else {
+      crucible.style.clipPath = randomShape;
+  }
+
+  // Log Result
   log.style.color = (syms === 'Au+Vd') ? "#FF5555" : "var(--lg)";
   log.textContent = resultText;
 
-  // Save to Lore Vault (Identity Phase)
+  // Save to Lore Vault
   try {
     const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
     vault.push({ 
@@ -328,10 +453,6 @@ function synthesize() {
       date: new Date().toLocaleDateString() 
     });
     localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
-    
-    // Attempt to update global HUD if present
-    const hudLore = document.getElementById('dgLore');
-    if(hudLore) hudLore.textContent = vault.length;
   } catch(e) {}
 }
 </script>
