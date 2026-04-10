@@ -27,16 +27,13 @@
   --cream: #E8E0D0; --neon-green: #00FF88;
   --font-pixel: 'Press Start 2P', monospace;
   --font-text: 'VT323', monospace;
-  
-  /* Map Variables */
-  --sector-border: 1px solid rgba(255, 215, 0, 0.25);
-  --sector-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
 }
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; background: var(--coal); }
 
 body {
-  font-family: var(--font-pixel);
+  font-family: var(--font-text);
   background-color: var(--coal);
   color: var(--cream);
   overflow-x: hidden;
@@ -50,6 +47,7 @@ body {
     linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
   background-size: 200px 200px, 200px 200px, 200px 200px, 32px 32px, 32px 32px;
   line-height: 1.8;
+  font-size: 1.2rem;
 }
 
 h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
@@ -81,15 +79,14 @@ body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 /* ─── NAV ─── */
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 10001;
-  background: rgba(7,6,5,.98);
-  border-bottom: 2px solid var(--gd);
+  background: rgba(7,6,5,.98); border-bottom: 4px solid var(--gd);
   backdrop-filter: blur(10px);
 }
 .nav-container {
   display: flex; justify-content: space-between; align-items: center;
   max-width: 1200px; margin: 0 auto; padding: 1rem 2rem; width: 100%;
 }
-.nav-logo { font-size: 0.85rem; color: var(--gold); flex-shrink: 0; letter-spacing: 2px; text-shadow: 0 0 15px rgba(255,215,0,0.4); }
+.nav-logo { font-size: 0.85rem; color: var(--gold); flex-shrink: 0; letter-spacing: 2px; text-shadow: 2px 2px 0 #553300; }
 .nav-links { display: flex; gap: 2.5rem; align-items: center; justify-content: flex-end; flex-grow: 1; }
 .nav-link { color: var(--cream); font-size: 0.5rem; letter-spacing: .15em; text-transform: uppercase; transition: color .3s; }
 .nav-link:hover { color: var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.4); }
@@ -100,104 +97,58 @@ nav {
   .nav-logo { font-size: 0.75rem; } 
 }
 
-/* ─── HERO & EYES ─── */
+/* PARTICLES */
+#particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.particle{position:absolute;width:4px;height:4px;background:var(--gold);opacity:0;animation:driftUp linear infinite; box-shadow: 0 0 5px var(--gold);}
+@keyframes driftUp{0%{transform:translateY(100vh);opacity:0}10%{opacity:.8}90%{opacity:.8}100%{transform:translateY(-5vh);opacity:0}}
+
+/* ─── HERO ─── */
 .hall-hero {
-  text-align: center; padding: 5rem 2rem 3rem;
-  position: relative; overflow: hidden;
-  border-bottom: 2px solid var(--gd);
-  background-image: url('oros_game_eyes.jpg');
-  background-size: cover; background-position: center 20%;
+  text-align: center; padding: 5rem 2rem 3rem; position: relative; overflow: hidden;
+  border-bottom: 4px solid var(--gd);
+  background-image: url('oros_game_eyes.jpg'); background-size: cover; background-position: center 20%;
   min-height: 80vh; display: flex; flex-direction: column; justify-content: flex-end;
 }
-.hall-hero::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.7); z-index: 1; }
+.hall-hero::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.75); z-index: 1; }
 .hall-hero-content { position: relative; z-index: 10; width: 100%; max-width: 800px; margin: 0 auto; }
 
 .hall-eyes{display:flex;gap:44px;justify-content:center;margin-bottom:1.5rem}
-.hall-eye{width:20px;height:14px;background:radial-gradient(ellipse at 40% 40%,#FFD700,#FF8C00);border-radius:50%;box-shadow:0 0 18px rgba(255,215,0,.8);animation:eyeBlink 5s infinite;position:relative}
-.hall-eye::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6px;height:6px;background:#000;border-radius:50%}
-@keyframes eyeBlink{0%,85%,100%{transform:scaleY(1)}90%{transform:scaleY(.05)}}
+.hall-eye{width:24px;height:16px;background:var(--gold);border:4px solid #fff;box-shadow:0 0 20px var(--gold);animation:eyeBlink 5s infinite;position:relative}
+.hall-eye::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;background:#000;}
+@keyframes eyeBlink{0%,85%,100%{transform:scaleY(1)}90%{transform:scaleY(0.1)}}
 
-.hero-title{ font-size:clamp(2rem,6vw,4rem); line-height:1.2; color:var(--cream); margin-bottom:1.5rem; text-shadow:4px 4px 0 #000; letter-spacing:2px; }
+.hero-title{ font-size:clamp(1.5rem,6vw,3.5rem); line-height:1.4; color:var(--cream); margin-bottom:1.5rem; text-shadow:4px 4px 0 #000; letter-spacing:2px; }
 .hero-title em{ color:var(--gold); display:block; text-shadow:4px 4px 0 #553300; font-style: normal;}
-.hero-tagline-box { border: 2px solid var(--gold); background: rgba(0,0,0,0.8); padding: 1rem; margin: 0 auto 0.5rem; max-width: 650px; box-shadow: 4px 4px 0 #000; }
+.hero-tagline-box { border: 4px solid var(--gold); background: rgba(0,0,0,0.8); padding: 1.5rem; margin: 0 auto 0.5rem; max-width: 650px; box-shadow: 6px 6px 0 #553300; }
 .hero-tagline { font-size:.5rem; letter-spacing:.05em; line-height:2.2; color:var(--gold); }
-.hero-whisper-box { border: 1px solid var(--gd); background: rgba(0,0,0,0.7); padding: 0.5rem; margin: 0 auto 2rem; max-width: 500px; }
+.hero-whisper-box { border: 2px dashed var(--gd); background: rgba(0,0,0,0.7); padding: 1rem; margin: 0 auto 2rem; max-width: 500px; }
 .hero-whisper { font-size: 0.4rem; color: var(--muted); letter-spacing: 0.1em; }
-.hero-quote-box { border: 2px dashed var(--gold); background: var(--coal); padding: 1.5rem; max-width: 600px; margin: 0 auto 2.5rem; }
-.hero-quote-box p { font-size: 0.5rem; color: var(--cream); line-height: 2; }
+.hero-quote-box { border: 4px solid var(--gold); background: var(--coal); padding: 1.5rem; max-width: 600px; margin: 0 auto 2.5rem; box-shadow: inset 0 0 0 4px #000, 6px 6px 0 #000; }
+.hero-quote-box p { font-size: 0.6rem; color: var(--cream); line-height: 2; }
 
 /* ─── WALLET BAR ─── */
 .wallet-bar{
   display:flex;align-items:center;justify-content:center;gap:1.5rem;
-  padding:.65rem 2rem;background:rgba(0,0,0,.8);
-  border-bottom:2px solid var(--gd);flex-wrap:wrap; position: relative; z-index: 10;
+  padding:1.5rem;background:#111; border-bottom:4px solid #333;flex-wrap:wrap; position: relative; z-index: 10;
+  box-shadow: inset 0 0 0 4px #000;
 }
-.w-item{text-align:center}
-.w-val{font-size:.6rem;color:var(--gold);text-shadow:2px 2px 0 #553300;display:block}
-.w-lbl{font-size:.3rem;color:var(--muted);letter-spacing:.1em}
-.gem-row{display:flex;gap:4px}
-.gem-pip{width:14px;height:14px;border:1px solid rgba(255,215,0,.25);background:#1a1500;font-size:7px;display:flex;align-items:center;justify-content:center;color:transparent;}
-.gem-pip.lit{border-color:var(--gold);background:var(--gold);color:#000;box-shadow:0 0 5px var(--gold)}
+.w-item{text-align:center; background:#000; border:4px solid #444; padding: 0.8rem 1.5rem; min-width: 140px;}
+.w-val{font-size:1.2rem;color:var(--gold);text-shadow:2px 2px 0 #553300;display:block; margin-bottom: 0.5rem;}
+.w-lbl{font-size:.5rem;color:var(--muted);letter-spacing:.1em}
+.gem-row{display:flex;gap:6px; justify-content: center; margin-bottom: 0.5rem;}
+.gem-pip{width:16px;height:16px;border:2px solid #553300;background:#221100;font-size:10px;display:flex;align-items:center;justify-content:center;color:transparent;}
+.gem-pip.lit{border-color:#FFF;background:var(--gold);color:#000;box-shadow:0 0 10px var(--gold)}
+.convert-btn{font-size:.6rem;background:#000;border:4px solid var(--gd);color:var(--gold);padding:1rem;transition:all .1s;cursor:pointer; text-transform: uppercase;}
+.convert-btn:hover{background:var(--gd);color:#000;border-color:#FFF; transform: translateY(-3px);}
 
-/* ─── DUAL VESSEL COLLECTION SYSTEM (BOOKS) ─── */
-section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin: 0 auto;}
-.section-tag{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:2rem;display:flex;align-items:center;gap:1rem; text-shadow: 2px 2px 0 #000;}
-.section-tag::after{content:'';height:2px;flex: 1;background:linear-gradient(to right,var(--gd),transparent)}
-
-.collection-gateway { display: flex; gap: 2rem; justify-content: center; align-items: stretch; margin-bottom: 3rem; flex-wrap: wrap; }
-.vessel-anchor-wrap { flex: 1; min-width: 280px; max-width: 100%; width: 100%; cursor: pointer; position: relative; border: 4px solid var(--gd); overflow: hidden; transition: all .3s; background: #0a0806; aspect-ratio: 16 / 9; box-shadow: 6px 6px 0 #000;}
-.vessel-anchor-wrap:hover, .vessel-anchor-wrap:active { border-color: var(--gold); transform: translateY(-4px); box-shadow: 6px 10px 0 #000;}
-.vessel-anchor-wrap.active { border-color: var(--gold); box-shadow: 0 0 20px rgba(255,215,0,.5); }
-.vessel-anchor-wrap img { display: block; width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; filter: brightness(.7) contrast(1.2); transition: filter .3s; }
-.vessel-anchor-wrap:hover img, .vessel-anchor-wrap.active img { filter: brightness(1) contrast(1.1); }
-.vessel-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); padding: 1rem; font-size: 0.5rem; letter-spacing: 0.1em; color: var(--gold); display: flex; justify-content: space-between; align-items: flex-end; border-top: 2px solid var(--gd);}
-.vessel-sublabel { font-size: .35rem; color: var(--muted); margin-top: 5px; }
-
-.filter-panel { display: none; animation: slideDown .3s ease; }
-@keyframes slideDown { from { opacity: 0; transform: translateY(-12px) } to { opacity: 1; transform: translateY(0) } }
-
-#vessel-obsidian { border-color: #440066; }
-#vessel-obsidian:hover, #vessel-obsidian.active { border-color: #AA55FF; }
-#vessel-obsidian .vessel-label { color: #AA55FF; border-color: #440066;}
-
-.works-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
-.work-card { position: relative; aspect-ratio: 2/3; background: #000; border: 4px solid var(--gd); overflow: hidden; transition: transform 0.3s ease; cursor: pointer; box-shadow: 4px 4px 0 #000;}
-.work-card:hover, .work-card:active { transform: translateY(-6px); border-color: var(--gold); }
-.work-img { width: 100%; height: 100%; object-fit: cover; transition: filter 0.3s ease; image-rendering: pixelated;}
-.work-card:hover .work-img { filter: brightness(0.2); }
-.work-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; opacity: 0; transition: opacity 0.3s ease; background: rgba(0,0,0,0.9); }
-.work-card:hover .work-overlay { opacity: 1; }
-.store-link { display: block; width: 90%; padding: 10px; margin: 4px 0; font-size: 0.4rem; text-decoration: none; border: 2px solid #444; color: #888; transition: 0.2s;}
-.store-link.available { border-color: var(--gold); color: var(--gold); background: #111; }
-.store-link.available:hover { background: var(--gold); color: #000; }
-
-/* ─── MAP GRID (PIXEL RETRO) ─── */
-.map-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-.map-sector {
-  position: relative; border: 4px solid var(--gd); box-shadow: 6px 6px 0 #000; 
-  border-radius: 0; background-color: var(--coal); background-size: cover; 
-  background-position: center; display: flex; flex-direction: column;
-  transition: all 0.3s; min-height: 350px; overflow: hidden; image-rendering: pixelated;
-}
-.map-sector:hover, .map-sector:active { border-color: var(--gold); transform: translateY(-4px); }
-.sector-overlay { position: absolute; inset: 0; background: rgba(0,0,0, 0.8); z-index: 1; transition: background 0.3s; }
-.map-sector:hover .sector-overlay { background: rgba(0,0,0, 0.5); }
-.sector-body { position: relative; z-index: 2; padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
-.sector-label { font-size: 0.4rem; color: var(--gold); margin-bottom: 0.5rem; }
-.sector-title { font-size: 1.2rem; color: #FFF; margin-bottom: 0.8rem; text-shadow: 2px 2px 0 #000; line-height: 1.4; }
-.sector-desc { font-size: 0.5rem; color: var(--muted); line-height: 1.8; margin-bottom: 1.5rem; }
-.map-link {
-  font-size: 0.45rem; color: var(--gold); text-decoration: none; text-transform: uppercase;
-  background: #000; border: 2px solid var(--gd); padding: 12px; margin-top: auto;
-  display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;
-}
-.map-link:hover { background: var(--gold); color: #000; }
+/* ─── GENERAL SECTIONS ─── */
+section{position:relative;z-index:1;padding:5rem 2rem; max-width: 1200px; margin: 0 auto;}
+.section-tag{font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:3rem;display:flex;align-items:center;gap:1rem; text-shadow: 2px 2px 0 #553300; border-bottom: 4px solid #333; padding-bottom: 1rem;}
 
 /* ─── THE NEW PIXEL CTA (MANIFESTO) ─── */
 .manifesto-section {
     margin: 4rem 2rem; border: 4px solid var(--gold); background: #000;
     padding: 3rem 2rem; text-align: center; box-shadow: 8px 8px 0 #553300;
-    position: relative;
 }
 .manifesto-title { font-size: 1.5rem; color: var(--gold); margin-bottom: 1.5rem; text-shadow: 3px 3px 0 #553300; line-height: 1.4;}
 .manifesto-text { font-size: 0.6rem; color: var(--cream); max-width: 800px; margin: 0 auto 2rem; line-height: 2; }
@@ -212,23 +163,90 @@ section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin
 .btn-ghost { background: #111; color: var(--gold); border-color: var(--gd); box-shadow: 4px 4px 0 #000; }
 .btn-ghost:hover { background: var(--gd); color: #000; border-color: var(--gold); transform: translateY(-4px); }
 
-/* Arcade Health Bar for Funding */
-.forge-status { max-width: 600px; margin: 3rem auto 0; text-align: left; background: #111; padding: 1rem; border: 2px solid #333;}
+.forge-status { max-width: 600px; margin: 3rem auto 0; text-align: left; background: #111; padding: 1rem; border: 4px solid #333;}
 .forge-label { font-size: 0.4rem; color: var(--cream); margin-bottom: 10px; display: flex; justify-content: space-between; }
 .forge-bar { height: 16px; background: #000; border: 2px solid #555; padding: 2px;}
 .forge-fill { width: 65%; height: 100%; background: var(--lg); box-shadow: 0 0 10px var(--lg); }
 
-/* ─── DESCENT OVERLAY ─── */
-#descent-overlay {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000;
-    z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+/* ─── SIGNAL LOG ─── */
+.signal-log { border: 4px solid var(--gd); background: #000; margin-bottom: 4rem; padding: 2rem; box-shadow: 6px 6px 0 #000; display: flex; flex-wrap: wrap; gap: 20px; align-items: center; }
+.signal-img-wrap { flex: 1; min-width: 250px; }
+.signal-img { width: 100%; border: 4px solid var(--gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); image-rendering: pixelated; }
+.signal-content { flex: 2; min-width: 300px; }
+.signal-title { color: var(--gold); font-size: 0.8rem; margin-bottom: 1.5rem; text-shadow: 2px 2px 0 #553300;}
+.signal-text { font-size: 0.5rem; color: var(--neon-green); line-height: 2.5; max-height: 150px; overflow-y: auto; }
+.signal-live { margin-top: 1.5rem; color: var(--gold); font-size: 0.5rem; animation: pulse 1s infinite; }
+
+/* ─── ABOUT PILLARS ─── */
+.about-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:4rem;align-items:start; margin-bottom: 4rem;}
+@media(max-width:768px){.about-grid{grid-template-columns:1fr;gap:2.5rem}}
+.about-headline{font-size:1.5rem;line-height:1.4;color:var(--cream);margin-bottom:1.5rem; text-shadow: 2px 2px 0 #000;}
+.about-headline em{color:var(--gold);font-style:normal;}
+.about-body{font-size:.6rem;line-height:2.2;color:var(--muted);margin-bottom:1.25rem;}
+.quote-box{margin-top:2rem;padding:1.5rem;background:#111;border:4px solid #333;}
+.quote-box p{font-size:.6rem;color:var(--gold);line-height:2}
+.pillars{display:flex;flex-direction:column; gap: 1.5rem;}
+.pillar{padding:1.5rem; border:4px solid #333; background: #000; transition: transform .2s;}
+.pillar:hover{transform: translateX(10px); border-color: var(--gd);}
+.pillar-num{font-size:.5rem;color:var(--gd);margin-bottom:.8rem;}
+.pillar h3{font-size:0.8rem;color:var(--cream);margin-bottom:.8rem;}
+.pillar p{font-size:.5rem;color:var(--muted);line-height:1.8;}
+
+/* ─── DUAL VESSEL COLLECTION (BOOKS) ─── */
+.collection-gateway { display: flex; gap: 2rem; justify-content: center; align-items: stretch; margin-bottom: 3rem; flex-wrap: wrap; }
+.vessel-anchor-wrap { flex: 1; min-width: 280px; max-width: 100%; width: 100%; cursor: pointer; position: relative; border: 4px solid var(--gd); overflow: hidden; transition: all .3s; background: #000; aspect-ratio: 16 / 9; box-shadow: 6px 6px 0 #000;}
+.vessel-anchor-wrap:hover, .vessel-anchor-wrap:active { border-color: var(--gold); transform: translateY(-4px); box-shadow: 6px 10px 0 #000; }
+.vessel-anchor-wrap.active { border-color: var(--gold); box-shadow: 0 0 20px rgba(255,215,0,.5); }
+.vessel-anchor-wrap img { display: block; width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; filter: brightness(.6) contrast(1.2); transition: filter .3s; }
+.vessel-anchor-wrap:hover img, .vessel-anchor-wrap.active img { filter: brightness(1); }
+.vessel-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.9); padding: 1rem; font-size: 0.6rem; color: var(--gold); display: flex; justify-content: space-between; align-items: flex-end; border-top: 4px solid var(--gd);}
+.vessel-sublabel { font-size: .4rem; color: var(--muted); margin-top: 10px; }
+
+#vessel-obsidian { border-color: #440066; }
+#vessel-obsidian:hover, #vessel-obsidian.active { border-color: #AA55FF; }
+#vessel-obsidian .vessel-label { color: #AA55FF; border-color: #440066;}
+
+.filter-panel { display: none; }
+.works-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
+.work-card { position: relative; aspect-ratio: 2/3; background: #000; border: 4px solid var(--gd); overflow: hidden; transition: transform 0.2s; cursor: pointer; box-shadow: 4px 4px 0 #000;}
+.work-card:hover { transform: translateY(-6px); border-color: var(--gold); }
+.work-img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; image-rendering: pixelated;}
+.work-card:hover .work-img { filter: brightness(0.2); }
+.work-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; text-align: center; opacity: 0; transition: opacity 0.3s; background: rgba(0,0,0,0.9); }
+.work-card:hover .work-overlay { opacity: 1; }
+.store-link { display: block; width: 90%; padding: 12px; margin: 6px 0; font-size: 0.45rem; text-decoration: none; border: 2px solid #444; color: #888; transition: 0.2s;}
+.store-link.available { border-color: var(--gold); color: var(--gold); background: #111; }
+.store-link.available:hover { background: var(--gold); color: #000; }
+
+/* ─── MAP SECTORS ─── */
+.map-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+.map-sector {
+  position: relative; border: 4px solid var(--gd); box-shadow: 6px 6px 0 #000;
+  background-color: var(--coal); background-size: cover; background-position: center;
+  display: flex; flex-direction: column; transition: all 0.3s; min-height: 380px; overflow: hidden;
+  image-rendering: pixelated;
 }
-.descent-active { opacity: 1 !important; pointer-events: all !important; }
-.elevator-shaft { width: 8px; height: 100vh; background: linear-gradient(to bottom, transparent, var(--gold), transparent); animation: drop 0.5s infinite linear; }
-.descent-text { color: var(--gold); font-size: 0.8rem; position: absolute; text-shadow: 0 0 10px var(--gold); animation: pulse 1s infinite; }
-@keyframes drop { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.map-sector:hover { border-color: var(--gold); transform: translateY(-5px); }
+.sector-overlay { position: absolute; inset: 0; background: rgba(0,0,0, 0.85); z-index: 1; transition: background 0.3s; }
+.map-sector:hover .sector-overlay { background: rgba(0,0,0, 0.6); }
+.sector-body { position: relative; z-index: 2; padding: 2rem; flex-grow: 1; display: flex; flex-direction: column; }
+.sector-label { font-size: 0.45rem; color: var(--gd); margin-bottom: 1rem; }
+.sector-title { font-size: 1.4rem; color: #FFF; margin-bottom: 1rem; text-shadow: 2px 2px 0 #000; line-height: 1.4; }
+.sector-desc { font-size: 0.55rem; color: var(--cream); line-height: 2; margin-bottom: 1.5rem; }
+.map-link {
+  font-size: 0.5rem; color: var(--cream); text-decoration: none; text-transform: uppercase;
+  background: #000; border: 2px solid var(--gd); padding: 1rem; margin-top: auto;
+  display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;
+}
+.map-link:hover { background: var(--gold); color: #000; border-color: #FFF;}
+
+/* ─── CONTACT FOOTER ─── */
+.contact-section { background: #000; border-top: 4px solid #333; padding: 5rem 2rem; margin-top: 4rem;}
+.contact-wrap { max-width: 800px; margin: 0 auto; }
+.contact-link { display: flex; align-items: center; padding: 1.5rem; border: 4px solid #222; margin-bottom: 1rem; transition: all 0.2s; background: #111; text-decoration: none;}
+.contact-link:hover { border-color: var(--gd); transform: translateX(10px); background: #000;}
+.contact-label { font-size: 0.6rem; color: var(--gd); width: 100px; flex-shrink: 0; }
+.contact-val { font-size: 0.6rem; color: var(--cream); }
 
 /* ─── MOBILE HUB DOCK & GAUGE ─── */
 .depth-gauge {
@@ -238,13 +256,13 @@ section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin
   z-index:9999!important; display:flex!important; align-items:center!important;
   justify-content:center!important; gap:1.2rem!important; box-shadow: 4px 4px 0 #000!important;
 }
-.dg-stat { font-size: 0.4rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
-.dg-val { color: var(--gold); font-size: 0.6rem; }
-.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+.dg-stat { font-size: 0.5rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
+.dg-val { color: var(--gold); font-size: 0.8rem; }
+.dg-link { font-size: 0.5rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
 .dg-link:hover { color: var(--gold); }
 
 @media (max-width: 768px) {
-  .depth-gauge { bottom: 75px !important; } /* Push up above mobile dock */
+  .depth-gauge { bottom: 75px !important; } 
   .mobile-hub-nav {
       position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
       background: #000; border-top: 4px solid var(--gd);
@@ -256,6 +274,18 @@ section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin
   .hub-icon { font-size: 1rem; display: block; margin-bottom: 5px; }
 }
 @media (min-width: 769px) { .mobile-hub-nav { display: none; } }
+
+/* FADE IN */
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.4s ease, transform 0.4s ease}
+.fade-in.visible{opacity:1;transform:none}
+
+/* DESCENT OVERLAY */
+#descent-overlay { position: fixed; inset: 0; background: #000; z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.descent-active { opacity: 1 !important; pointer-events: all !important; }
+.elevator-shaft { width: 8px; height: 100vh; background: linear-gradient(to bottom, transparent, var(--gold), transparent); animation: drop 0.5s infinite linear; }
+.descent-text { color: var(--gold); font-size: 0.8rem; position: absolute; text-shadow: 0 0 10px var(--gold); animation: pulse 1s infinite; }
+@keyframes drop { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 </style>
 
 </head>
@@ -276,6 +306,7 @@ section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin
 </nav>
 
 <div id="pickaxe-glow"></div>
+<div id="particles"></div>
 
 <div id="descent-overlay">
   <div class="elevator-shaft"></div>
@@ -283,7 +314,7 @@ section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin
 </div>
 
 <div class="hall-hero">
-  <div class="hall-hero-content">
+  <div class="hall-hero-content fade-in">
     <div class="hall-eyes"><div class="hall-eye"></div><div class="hall-eye"></div></div>
     <h1 class="hero-title">The goldmine<br><em>is within.</em></h1>
     
@@ -297,7 +328,7 @@ section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin
     
     <div class="hero-quote-box">
       <p>"My sword is my pen, the world is my playground."</p>
-      <span style="font-size: 0.4rem; color: var(--gd); display:block; margin-top: 10px;">— Lord Oro</span>
+      <span style="font-size: 0.5rem; color: var(--gd); display:block; margin-top: 10px;">— Lord Oro</span>
     </div>
   </div>
 </div>
@@ -317,7 +348,7 @@ section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin
   <button class="convert-btn" onclick="if(typeof NMNWallet!=='undefined'){ NMNWallet.convertGems(); }">⚗ CONVERT</button>
 </div>
 
-<section class="manifesto-section">
+<section class="manifesto-section fade-in">
     <h2 class="manifesto-title">BUILD THE EMPIRE</h2>
     <p class="manifesto-text">Every tunnel, game, and word is forged by hand. To expand the servers, build the high-fidelity Brawler engine, and keep the mine independent, we need Founding Architects. If you believe in the vision, fund the extraction.</p>
     
@@ -332,6 +363,55 @@ section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin
     </div>
 </section>
 
+<section class="fade-in">
+  <div class="signal-log">
+    <div class="signal-img-wrap">
+        <img src="goldmine_stable.jpg" id="current-transmission-img" class="signal-img">
+    </div>
+    <div class="signal-content">
+        <h3 class="signal-title">[ STATUS: SIGNAL ACQUIRED ]</h3>
+        <p class="signal-text">
+            [04.07.2026] > THE ARCHITECT HAS TAPPED THE OBSIDIAN VEIN.<br>
+            [04.07.2026] > THE OBSIDIAN VEIN IS EXPANDING INTO 7 LANGUAGES.<br>
+            [04.05.2026] > NEW 16-BIT RENDERS ARE BEING ARCHIVED IN THE LOG.<br>
+            [04.02.2026] > TRANSMISSIONS (STORIES) ARE PREPARING FOR EXTRACTION.<br>
+            [03.28.2026] > THE ARCHITECT HAS DECLASSIFIED THE MINE WARS.
+        </p>
+        <div class="signal-live">● LIVE UPDATES ACTIVE</div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="section-tag">ABOUT LORD ORO</div>
+  <div class="about-grid fade-in">
+    <div>
+      <h2 class="about-headline">A lord leads people to victory<br><em>in their minds.</em></h2>
+      <p class="about-body">Lord Oro is the creative identity of a Brooklyn-born storyteller building a transmedia empire from the inside out. The name carries its own mythology — born at 17 as Mina De Oro, refined through years of living, creating, and surviving.</p>
+      <div class="quote-box">
+        <p>The sword is the pen. The kingdom is the human interior world. Gold is not what you find — it's what you become when you stop running from yourself.</p>
+      </div>
+    </div>
+    <div class="pillars">
+      <div class="pillar"><div class="pillar-num">01 — BOOKS</div><h3>THE WRITTEN UNIVERSE</h3><p>Fantasy novels, novellas, serialized fiction. Lord Oro woven as a silent observer across every world.</p></div>
+      <div class="pillar"><div class="pillar-num">02 — MUSIC</div><h3>LORD ORO'S ALLEGORY</h3><p>A concept album tracing awakening, temptation, shadow work, and enlightenment.</p></div>
+      <div class="pillar"><div class="pillar-num">03 — GAMES</div><h3>MICRO GAMES COLLECTION</h3><p>12 games built inside the mine shaft by the Excavation Committee.</p></div>
+      <div class="pillar"><div class="pillar-num">04 — EXPERIENCES</div><h3>THE ORACLE'S CHAMBER</h3><p>Tora, the Echoing Well, the Star Map. Corners of the mine that reward curiosity.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="fade-in" style="padding-top:0;">
+    <div class="section-tag">THE COMBAT FREQUENCY</div>
+    <a href="#" onclick="interceptDescent(event, 'THE FORGE', 'brawler/index.html')" style="display:block; border: 4px solid var(--gold); background: #000; box-shadow: 8px 8px 0 #553300; transition: transform 0.2s; text-decoration: none;">
+        <img src="brawler_promo.jpg" alt="Nonsensical Brawlers" style="width: 100%; aspect-ratio: 21/9; object-fit: cover; image-rendering: pixelated; border-bottom: 4px solid var(--gold);">
+        <div style="padding: 1.5rem; text-align: center;">
+            <div style="font-size: 1rem; color: var(--cream); margin-bottom: 10px;">NONSENSICAL BRAWLERS</div>
+            <div style="font-size: 0.5rem; color: var(--gd);">SECTOR 1: THE FORGE — PLAYABLE BETA PROTOCOL</div>
+        </div>
+    </a>
+</section>
+
 <section id="works">
   <div class="section-tag">THE LIBRARY</div>
   <p style="font-size:.5rem;color:var(--muted);text-align:center;margin-bottom:2rem;line-height:2;">SELECT YOUR COLLECTION — 12 TITLES — 5 LANGUAGES</p>
@@ -342,9 +422,9 @@ section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin
       <div class="vessel-label">
         <div>
           <div>The Goldmine Collection</div>
-          <div class="vessel-sublabel">Full Novels &amp; Pillars</div>
+          <div class="vessel-sublabel">Full Novels &amp; Localizations</div>
         </div>
-        <span class="vessel-chevron" style="font-size: 1rem;">▶</span>
+        <span style="font-size: 1.2rem;">▶</span>
       </div>
     </div>
     <div class="vessel-anchor-wrap" id="vessel-obsidian" onclick="filterVessel('obsidian')" role="button" tabindex="0">
@@ -354,7 +434,7 @@ section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin
           <div>The Obsidian Extractions</div>
           <div class="vessel-sublabel">Shorts &amp; Fragments</div>
         </div>
-        <span class="vessel-chevron" style="font-size: 1rem;">▶</span>
+        <span style="font-size: 1.2rem;">▶</span>
       </div>
     </div>
   </div>
@@ -367,6 +447,15 @@ section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin
           <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">PYRO & HELIOS</h3>
           <a href="https://amzn.to/4uOpLpA" target="_blank" class="store-link available">AMAZON [LIT]</a>
           <a href="https://books2read.com/u/meW9gA" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <img src="outbreak_ja.jpg" class="work-img">
+        <div class="work-overlay">
+          <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">パイロとヘリオス (JA)</h3>
+          <a href="https://books2read.com/u/bMLwXB" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
+          <div class="store-link">AMAZON [PENDING]</div>
         </div>
       </div>
 
@@ -389,6 +478,33 @@ section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin
       </div>
 
       <div class="work-card">
+        <img src="outbreak_es.jpeg" class="work-img">
+        <div class="work-overlay">
+          <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">BROTE (ES)</h3>
+          <div class="store-link">AMAZON [PENDING]</div>
+          <div class="store-link">UNIVERSAL [PENDING]</div>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <img src="outbreak_pt.jpeg" class="work-img">
+        <div class="work-overlay">
+          <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">OUTBREAK (PT)</h3>
+          <div class="store-link">AMAZON [PENDING]</div>
+          <div class="store-link">UNIVERSAL [PENDING]</div>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <img src="outbreak_ko.jpg" class="work-img">
+        <div class="work-overlay">
+          <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">OUTBREAK (KO)</h3>
+          <div class="store-link">AMAZON [PENDING]</div>
+          <div class="store-link">UNIVERSAL [PENDING]</div>
+        </div>
+      </div>
+
+      <div class="work-card">
         <img src="tabbies_en.jpeg" class="work-img">
         <div class="work-overlay">
           <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">ALL TABBIES</h3>
@@ -396,6 +512,43 @@ section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin
           <a href="https://books2read.com/u/brzavW" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
         </div>
       </div>
+
+      <div class="work-card">
+        <img src="tabbies_es.jpg" class="work-img">
+        <div class="work-overlay">
+          <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">TODOS LOS GATOS</h3>
+          <a href="https://amzn.to/47qbOUT" target="_blank" class="store-link available">AMAZON [LIT]</a>
+          <div class="store-link">UNIVERSAL [PENDING]</div>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <img src="tabbies_pt.jpeg" class="work-img">
+        <div class="work-overlay">
+          <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">TODOS OS GATOS</h3>
+          <div class="store-link">AMAZON [PENDING]</div>
+          <div class="store-link">UNIVERSAL [PENDING]</div>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <img src="tabbies_ja.jpg" class="work-img">
+        <div class="work-overlay">
+          <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">猫にも居場所がある</h3>
+          <a href="https://amzn.to/3PPrJG9" target="_blank" class="store-link available">AMAZON [LIT]</a>
+          <div class="store-link">UNIVERSAL [PENDING]</div>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <img src="tabbies_ko.jpeg" class="work-img">
+        <div class="work-overlay">
+          <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">모든 고양이는...</h3>
+          <div class="store-link available">GOOGLE PLAY [LIT]</div>
+          <div class="store-link">UNIVERSAL [PENDING]</div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -408,13 +561,58 @@ section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin
           <a href="#" onclick="interceptDescent(event, 'MINE WARS', 'minewars.html')" class="store-link available" style="border-color:#FF4444; color:#FF4444;">DECRYPT ARCHIVE</a>
         </div>
       </div>
+
+      <div class="work-card" style="border-color:var(--neon-green);">
+        <img src="wanderer_cover.jpg" class="work-img">
+        <div class="work-overlay" style="background:rgba(0,30,0,0.9);">
+          <h3 style="color:var(--neon-green); font-size:0.6rem; margin-bottom:10px;">THE WANDERER (EN)</h3>
+          <div class="store-link">AMAZON [PENDING]</div>
+          <div class="store-link">UNIVERSAL [PENDING]</div>
+        </div>
+      </div>
+
+      <div class="work-card" style="border-color:var(--neon-green);">
+        <img src="wanderer_DE.jpg" class="work-img">
+        <div class="work-overlay" style="background:rgba(0,30,0,0.9);">
+          <h3 style="color:var(--neon-green); font-size:0.6rem; margin-bottom:10px;">DER WANDERER (DE)</h3>
+          <div class="store-link">AMAZON [PENDING]</div>
+          <div class="store-link">UNIVERSAL [PENDING]</div>
+        </div>
+      </div>
+
+      <div class="work-card" style="border-color:var(--neon-green);">
+        <img src="wanderer_fr.jpg" class="work-img">
+        <div class="work-overlay" style="background:rgba(0,30,0,0.9);">
+          <h3 style="color:var(--neon-green); font-size:0.6rem; margin-bottom:10px;">LE VOYAGEUR (FR)</h3>
+          <div class="store-link">AMAZON [PENDING]</div>
+          <div class="store-link">UNIVERSAL [PENDING]</div>
+        </div>
+      </div>
+
       <div class="work-card" style="border-color:var(--neon-green);">
         <img src="swimmer_en.jpg" class="work-img">
         <div class="work-overlay" style="background:rgba(0,30,0,0.9);">
-          <h3 style="color:var(--neon-green); font-size:0.6rem; margin-bottom:10px;">THE SWIMMER</h3>
+          <h3 style="color:var(--neon-green); font-size:0.6rem; margin-bottom:10px;">THE SWIMMER (EN)</h3>
           <a href="https://books2read.com/u/3ndXGR" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
         </div>
       </div>
+
+      <div class="work-card" style="border-color:var(--neon-green);">
+        <img src="swimmer_de.jpg" class="work-img">
+        <div class="work-overlay" style="background:rgba(0,30,0,0.9);">
+          <h3 style="color:var(--neon-green); font-size:0.6rem; margin-bottom:10px;">DER SCHWIMMER (DE)</h3>
+          <div class="store-link">UNIVERSAL [PENDING]</div>
+        </div>
+      </div>
+
+      <div class="work-card" style="border-color:var(--neon-green);">
+        <img src="swimmer_fr.jpg" class="work-img">
+        <div class="work-overlay" style="background:rgba(0,30,0,0.9);">
+          <h3 style="color:var(--neon-green); font-size:0.6rem; margin-bottom:10px;">LE NAGEUR (FR)</h3>
+          <div class="store-link">UNIVERSAL [PENDING]</div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -433,6 +631,17 @@ section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin
         <a href="#" onclick="interceptDescent(event, 'RECREATION HALL', 'games.html')" class="map-link">ENTER HALL</a>
       </div>
     </div>
+    
+    <div class="map-sector">
+      <div class="sector-bg" style="background-image: url('image_1.jpg'); position:absolute; inset:0; opacity:0.3; filter:grayscale(0.8); background-size:cover;"></div>
+      <div class="sector-overlay"></div>
+      <div class="sector-body">
+        <span class="sector-label">SECTOR 2</span>
+        <h2 class="sector-title">THE ARCHIVES</h2>
+        <p class="sector-desc">Where the mine keeps its stories. Card dungeons and ancient words are locked here. Access your Lore Fragments.</p>
+        <a href="#" onclick="interceptDescent(event, 'THE ARCHIVES', 'archives.html')" class="map-link">ENTER ARCHIVES</a>
+      </div>
+    </div>
 
     <div class="map-sector">
       <div class="sector-bg" style="background-image: url('image_2.jpg'); position:absolute; inset:0; opacity:0.3; filter:grayscale(0.8); background-size:cover;"></div>
@@ -444,7 +653,40 @@ section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin
         <a href="#" onclick="interceptDescent(event, 'THE ORACLE', 'oracle.html')" class="map-link">SEEK ORACLE</a>
       </div>
     </div>
+    
+    <div class="map-sector classified">
+      <div class="sector-bg" style="background-image: url('image_3.jpg'); position:absolute; inset:0; opacity:0.1; filter:grayscale(1); background-size:cover;"></div>
+      <div class="sector-overlay"></div>
+      <div class="sector-body">
+        <span class="sector-label">?? CLASSIFIED ??</span>
+        <h2 class="sector-title">[ CLEARANCE REQUIRED ]</h2>
+        <p class="sector-desc">The Board's private tunnels. Access denied. Secure the Trigger in the Oracle Chamber to bypass visual locks.</p>
+      </div>
+    </div>
   </div> 
+</section>
+
+<section class="contact-section">
+  <div class="contact-wrap fade-in">
+    <div class="section-tag" style="justify-content: center; margin-bottom: 2rem;">CONTACT</div>
+    <h2 style="font-size: 1.5rem; text-align: center; margin-bottom: 2rem; color: var(--cream);">A NEW TUNNEL IS ALWAYS BEING DUG.</h2>
+    <a href="mailto:doradoyoro@gmail.com" class="contact-link">
+        <span class="contact-label">EMAIL</span>
+        <span class="contact-val">doradoyoro@gmail.com</span>
+    </a>
+    <a href="https://twitter.com/LordOroNMN" target="_blank" class="contact-link">
+        <span class="contact-label">TWITTER</span>
+        <span class="contact-val">@LordOroNMN</span>
+    </a>
+    <a href="https://www.tiktok.com/@orominade" target="_blank" class="contact-link">
+        <span class="contact-label">TIKTOK</span>
+        <span class="contact-val">@orominade</span>
+    </a>
+    <a href="https://www.youtube.com/@LordOroNMN" target="_blank" class="contact-link">
+        <span class="contact-label">YOUTUBE</span>
+        <span class="contact-val">Lord Oro / NMN</span>
+    </a>
+  </div>
 </section>
 
 <div class="mobile-hub-nav">
@@ -465,21 +707,33 @@ section{position:relative;z-index:1;padding:4rem 2rem; max-width: 1200px; margin
 <div class="depth-gauge" id="depthGauge">
   <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
   <span class="dg-sep" style="color:var(--faint);">⬡</span>
-  <a href="lorevault.html" class="dg-link">📜 VAULT</a>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> LORE</div>
+  <span class="dg-sep" style="color:var(--faint);">⬡</span>
   <a href="origins.html" class="dg-link">📖 ORIGINS</a>
 </div>
 
 <script>
+// Create Stars
+const particles = document.getElementById('particles');
+for(let i=0; i<30; i++){
+    let p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDuration = (Math.random() * 5 + 5) + 's';
+    p.style.animationDelay = (Math.random() * 5) + 's';
+    particles.appendChild(p);
+}
+
 // Wallet Sync
 function syncGauges() {
     if(typeof NMNWallet !== 'undefined') {
         const w = NMNWallet.get();
         const gold = w.gold || 0;
         const dG = document.getElementById('dgGold');
-        if(dG) dG.textContent = gold;
+        if(dG) dG.textContent = gold.toLocaleString();
         
         const hG = document.getElementById('gold-disp');
-        if(hG) hG.textContent = gold;
+        if(hG) hG.textContent = gold.toLocaleString();
         const lD = document.getElementById('lvl-disp');
         if(lD) lD.textContent = w.level || 1;
         const xD = document.getElementById('xp-disp');
@@ -490,6 +744,8 @@ function syncGauges() {
           const p = document.getElementById('gp'+i);
           if(p) p.classList.toggle('lit', i < gemCount);
         }
+        
+        document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]').length;
     }
 }
 window.addEventListener('nmn_wallet_update', syncGauges);
@@ -502,12 +758,20 @@ document.addEventListener('mousemove', function(e){
 });
 document.addEventListener('mousedown', function(){
   const r = document.getElementById('pickaxe-glow');
-  if(r) { r.style.width = '150px'; r.style.height = '150px'; r.style.background = 'radial-gradient(circle,rgba(232,184,75,.4) 0%,transparent 70%)'; }
+  if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(232,184,75,.4) 0%,transparent 70%)'; }
 });
 document.addEventListener('mouseup', function(){
   const r = document.getElementById('pickaxe-glow');
   if(r) { r.style.width = '140px'; r.style.height = '140px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.35) 0%,rgba(232,184,75,.15) 30%,transparent 70%)'; }
 });
+
+// Fade In Observer
+const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        if(e.isIntersecting) e.target.classList.add('visible');
+    });
+}, {threshold: 0.1});
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
 
 // Vessel Filter
 window.filterVessel = function(vessel) {
@@ -531,34 +795,24 @@ window.filterVessel = function(vessel) {
   }
 };
 
-// Descent Protocol Audio
+// Descent Protocol
 const NMNAudioEngine = {
     ctx: null,
     init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
-    playTone(freq1, freq2, duration) {
+    playDescent() {
         this.init();
-        const osc1 = this.ctx.createOscillator();
-        const osc2 = this.ctx.createOscillator();
+        const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-        
-        osc1.type = 'square'; osc1.frequency.value = freq1;
-        osc2.type = 'triangle'; osc2.frequency.value = freq2;
-        
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(20, this.ctx.currentTime + 1.5);
         gain.gain.setValueAtTime(0, this.ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.15, this.ctx.currentTime + 0.1);
-        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
-        
-        osc1.connect(gain); osc2.connect(gain);
-        gain.connect(this.ctx.destination);
-        
-        osc1.start(); osc2.start();
-        osc1.stop(this.ctx.currentTime + duration);
-        osc2.stop(this.ctx.currentTime + duration);
-    },
-    playDescent() { this.playTone(82.41, 123.47, 2.0); } 
+        gain.gain.linearRampToValueAtTime(0.1, this.ctx.currentTime + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 1.5);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(); osc.stop(this.ctx.currentTime + 1.5);
+    } 
 };
 
-// Descent Protocol
 function interceptDescent(event, locationName, targetUrl) {
     event.preventDefault(); 
     NMNAudioEngine.playDescent();
@@ -568,9 +822,7 @@ function interceptDescent(event, locationName, targetUrl) {
     text.innerText = `DESCENDING TO: ${locationName}...`;
     overlay.classList.add('descent-active');
 
-    setTimeout(() => {
-        if(targetUrl) window.location.href = targetUrl;
-    }, 1600);
+    setTimeout(() => { if(targetUrl) window.location.href = targetUrl; }, 1500);
 }
 </script>
 
