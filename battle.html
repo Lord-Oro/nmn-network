@@ -31,11 +31,21 @@ body {
     linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
     linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
   background-size: 32px 32px;
-  padding-bottom: 65px !important;
 }
 
 /* OVERRIDE ALL OLD FONTS */
 h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
+
+/* ─── CUSTOM CURSOR & GLOW ─── */
+body, a, button, canvas { 
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, crosshair !important; 
+}
+#pickaxe-glow {
+    position: fixed; width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, rgba(232,184,75,0.1) 30%, transparent 70%);
+    pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
+}
 
 /* CRT SCANLINES & VIGNETTE */
 body::after {
@@ -76,14 +86,14 @@ header {
 .round-info { text-align: center; color: var(--gold); font-size: 0.6rem; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
 
 /* GAME CANVAS */
-.game-area { flex: 1; position: relative; overflow: hidden; background: transparent; }
-canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
+.game-area { flex: 1; position: relative; overflow: hidden; background: transparent; display: flex; flex-direction: column; }
+canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
 
 /* MINE SELECT SCREEN */
 .mine-select {
   position: absolute; inset: 0; background: rgba(5,3,8,0.98);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  z-index: 100; padding: 1rem;
+  z-index: 100; padding: 1rem; overflow-y: auto;
 }
 .select-title { font-size: 1.2rem; color: var(--gold); margin-bottom: 1rem; text-shadow: 0 0 20px rgba(255,215,0,0.4); text-align: center; line-height: 1.5; }
 .select-sub { font-size: 0.45rem; color: var(--gd); margin-bottom: 2.5rem; text-align: center; line-height: 1.8; max-width: 600px; }
@@ -151,13 +161,27 @@ canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
 }
 .overlay-title { font-size: 2rem; color: var(--gold); margin-bottom: 1rem; text-shadow: 0 0 20px rgba(255,215,0,0.5); }
 .overlay-sub { font-size: 0.6rem; color: var(--cream); margin-bottom: 2rem; text-align: center; line-height: 1.8; }
-.btn-group { display: flex; gap: 1rem; }
+.btn-group { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
 .btn-outline { background: transparent; border: 2px solid var(--gold); color: var(--gold); padding: 0.8rem 1.5rem; font-size: 0.5rem; cursor: pointer; text-decoration: none; transition: background 0.2s;}
 .btn-outline:hover { background: rgba(255,215,0,0.1); }
 
+/* GLOBAL CTA BOTTOM */
+.nmn-global-cta {
+  border-top: 2px solid rgba(255,215,0,.2); background: rgba(5,3,8,.98);
+  padding: 1.5rem; text-align: center; flex-shrink: 0; z-index: 50;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.cta-title { font-family: 'Press Start 2P', cursive; font-size: .4rem; color: #8B6914; letter-spacing: .2em; margin-bottom: 1rem; }
+.cta-row { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-bottom: 1rem; }
+.cta-link { padding: .5rem 1rem; font-family: 'Press Start 2P', cursive; font-size: .3rem; letter-spacing: .08em; text-decoration: none; transition: 0.2s; }
+.cta-link:hover { transform: translateY(-2px); }
+
+.cta-gold { background: rgba(255,215,0,.1); border: 1px solid #FFD700; color: #FFD700; }
+.cta-green { background: rgba(0,255,136,.08); border: 1px solid #00FF88; color: #00FF88; }
+.cta-faint { background: transparent; border: 1px solid rgba(255,215,0,.15); color: #8B6914; }
+.cta-patreon { background: rgba(197,146,0,.1); border: 1px solid #C59200; color: #C59200; }
+
 </style>
-<style id="nmn-cursor-global">body,*{cursor:none!important}</style>
-<style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
 </head>
 <body>
 
@@ -166,7 +190,7 @@ canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
 
 <header>
   <a href="index.html" class="logo">NMN — Lord Oro</a>
-  <a href="index.html" class="back-btn">← RETURN TO MINE</a>
+  <a href="games.html" class="back-btn">← RETURN TO FORGE</a>
 </header>
 
 <div class="hud">
@@ -252,12 +276,34 @@ canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
     <div class="btn-group">
       <button class="start-btn" style="margin-top:0;" onclick="resetGame()">FIGHT AGAIN</button>
       <a href="minewars.html" class="btn-outline">READ ARCHIVE</a>
-      <a href="index.html" class="btn-outline" style="border-color:#444; color:#888;">EXIT</a>
     </div>
   </div>
 </div>
 
+<div class="nmn-global-cta">
+  <p class="cta-title">⬡ MINE YOUR COPY ⬡</p>
+  <div class="cta-row">
+    <a href="https://books2read.com/u/3LPyjw" target="_blank" class="cta-link cta-gold">THE WANDERER $2.99</a>
+    <a href="https://books2read.com/u/3ndXGR" target="_blank" class="cta-link cta-gold">THE SWIMMER $2.99</a>
+    <a href="https://books2read.com/u/4EOxZ0" target="_blank" class="cta-link cta-green">JUNI $9.99</a>
+    <a href="https://books2read.com/u/31NrLw" target="_blank" class="cta-link cta-green">OUTBREAK $9.99</a>
+  </div>
+  <div class="cta-row" style="margin-bottom: 0;">
+    <a href="brawler/index.html" class="cta-link cta-faint">⚔️ PLAY FREE</a>
+    <a href="https://gofund.me/e643a8283" target="_blank" class="cta-link cta-green">⛏ SUPPORT NMN</a>
+    <a href="https://patreon.com/Lordminadeoro" target="_blank" class="cta-link cta-patreon">🏮 PATREON</a>
+  </div>
+</div>
+
+<div id="pickaxe-glow"></div>
+
 <script>
+// Glow Cursor Tracking
+document.addEventListener('mousemove', function(e){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
+});
+
 window.NMN_CONTEXT = "mine";
 const NMN_Audio = {
   ctx: null, running: false, masterGain: null, windSrc: null,
@@ -278,7 +324,7 @@ const NMN_Audio = {
     this.windSrc.loop = true;
     const filter = this.ctx.createBiquadFilter();
     filter.type = 'lowpass';
-    filter.frequency.value = 300; // Deep wind
+    filter.frequency.value = 300; 
     const g = this.ctx.createGain();
     g.gain.setValueAtTime(0.015, this.ctx.currentTime);
     this.windSrc.connect(filter);
@@ -374,11 +420,18 @@ let screenShake = 0;
 let centerWall = { x: 0, y: 0, w: 40, h: 0 };
 
 function resize() {
-  W = canvas.width = window.innerWidth;
+  W = canvas.width = canvas.parentElement.clientWidth;
   H = canvas.height = canvas.parentElement.clientHeight;
+  if(gameRunning) {
+      p1.y = H - 80;
+      p2.y = H - 80;
+      p2.x = Math.max(W*0.85 - 60, W - 200);
+      generateWall();
+  }
 }
 window.addEventListener('resize', resize);
-resize();
+// Initial resize wait for layout
+setTimeout(resize, 100);
 
 // MOUSE TRACKING FOR AIMING
 canvas.addEventListener('mousemove', (e) => {
@@ -647,11 +700,13 @@ function draw() {
     if (screenShake < 0.5) screenShake = 0;
   }
 
+  // Draw Ground Line
   ctx.strokeStyle = '#8B6914'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(0, H - 20); ctx.lineTo(W, H - 20); ctx.stroke();
 
   if (!p1 || !p2) { ctx.restore(); return; }
 
+  // Draw Wall
   ctx.fillStyle = '#110a11';
   ctx.fillRect(centerWall.x, centerWall.y, centerWall.w, centerWall.h);
   ctx.strokeStyle = 'rgba(255,215,0,0.2)';
@@ -747,24 +802,9 @@ function resetGame() {
   document.getElementById('ammoBar').style.display = 'none';
   document.getElementById('arenaBar').style.display = 'none';
   gameRunning = false;
+  ctx.clearRect(0,0,W,H);
 }
 </script>
 
-
-<div class="nmn-global-cta" style="border-top:2px solid rgba(255,215,0,.2);background:rgba(5,3,8,.98);padding:2rem 1.5rem;text-align:center;margin-top:3rem;">
-  <p style="font-family:'Press Start 2P',cursive;font-size:.4rem;color:#8B6914;letter-spacing:.2em;margin-bottom:1.2rem;">⬡ MINE YOUR COPY ⬡</p>
-  <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:1.2rem;">
-    <a href="https://books2read.com/u/3LPyjw" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE WANDERER $2.99</a>
-    <a href="https://books2read.com/u/3ndXGR" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE SWIMMER $2.99</a>
-    <a href="https://books2read.com/u/4EOxZ0" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">JUNI $9.99</a>
-    <a href="https://books2read.com/u/31NrLw" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">OUTBREAK $9.99</a>
-  </div>
-  <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;">
-    <a href="brawler/index.html" style="padding:.55rem 1rem;background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.3);color:#e8b84b;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⚔️ PLAY FREE</a>
-    <a href="https://gofund.me/e643a8283" target="_blank" style="padding:.55rem 1rem;background:rgba(0,169,92,.1);border:1px solid #02a95c;color:#02a95c;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⛏ SUPPORT NMN</a>
-    <a href="https://patreon.com/Lordminadeoro" target="_blank" style="padding:.55rem 1rem;background:rgba(197,146,0,.1);border:1px solid #C59200;color:#C59200;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">🏮 PATREON</a>
-    <a href="index.html" style="padding:.55rem 1rem;background:transparent;border:1px solid rgba(255,215,0,.15);color:#8B6914;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">← HUB</a>
-  </div>
-</div>
 </body>
 </html>
