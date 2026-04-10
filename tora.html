@@ -3,408 +3,450 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tora the Tarot Reader — NMN Retro</title>
+<title>Tora's Codex — NMN</title>
 
-<link rel="icon" href="logo.jpg" type="image/jpeg">
-<link rel="shortcut icon" href="logo.jpg" type="image/jpeg">
-<link rel="apple-touch-icon" href="logo.jpg">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
 
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
 
 <style>
 :root {
-  --gold: #FFD700;
-  --gb: #e8b84b;
-  --gd: #AA7700;
-  --bg-color: #000000;
-  --panel-bg: #111111;
-  --cream: #f0e6cc;
-  --muted: #aaaaaa;
-  --lg: #55FF55; 
-  --pu: #AA55FF; /* Tora Purple */
-  --dp: #440066; /* Deep Purple */
+  --gold: #FFD700; --gb: #e8b84b; --gd: #AA7700;
+  --bg-color: #050302; --panel-bg: #0a0806; --cream: #f0e6cc;
+  --muted: #8a7654; --faint: #4a3c28;
+  --pu: #AA55FF; --dp: #440066;
   --font-pixel: 'Press Start 2P', monospace;
-  --font-text: 'VT323', monospace;
+  --font-ancient: 'Cormorant Garamond', serif;
 }
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; }
 
 body {
-  font-family: var(--font-text);
+  font-family: var(--font-ancient);
+  background: var(--bg-color);
   color: var(--cream);
-  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
-  padding-bottom: 60px;
-  font-size: 1.2rem;
+  min-height: 100vh;
+  padding-bottom: 80px !important;
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(170, 85, 255, 0.08) 0%, transparent 70%);
 }
 
-/* 16-BIT UI BORDER HELPER */
-.retro-box {
-  background: var(--panel-bg);
-  border: 4px solid #FFF;
-  box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
-}
-
-/* HEADER */
 header {
-  padding: 1rem 2rem; border-bottom: 4px solid var(--pu);
+  padding: 1rem 2rem; border-bottom: 2px solid var(--pu);
   display: flex; justify-content: space-between; align-items: center;
-  background: #000; z-index: 1000; position: sticky; top: 0;
+  background: rgba(5,3,2,0.95); z-index: 1000; position: sticky; top: 0;
+  backdrop-filter: blur(5px);
 }
-.logo { font-family: var(--font-pixel); color: var(--pu); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
-.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.logo { font-family: var(--font-pixel); color: var(--pu); font-size: 0.7rem; text-decoration: none; letter-spacing: 2px; }
+.back { font-family: var(--font-pixel); font-size: 0.45rem; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
 .back:hover { color: var(--gold); }
 
 /* TORA STAGE */
-.pixel-stage { display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem; position: relative; background: #000; border-bottom: 4px dashed #333; margin-bottom: 2rem;}
-canvas#toraCanvas { image-rendering: pixelated; display: block; margin: 0 auto 1.5rem; border: 4px solid var(--pu); box-shadow: inset 0 0 0 4px #000, 4px 4px 0 #000; background: #0f0a1e; }
-.tora-pixel-name { font-family: var(--font-pixel); font-size: 1.4rem; color: var(--gold); text-align: center; margin-bottom: 0.5rem; text-shadow: 3px 3px 0 var(--dp); }
-.tora-pixel-sub { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--pu); text-align: center; margin-bottom: 1rem; }
-.tora-rune-line { font-family: var(--font-pixel); font-size: 0.8rem; color: var(--pu); opacity: 0.5; text-align: center; letter-spacing: 0.5em; margin-bottom: 1.5rem; }
+.pixel-stage { 
+    display: flex; flex-direction: column; align-items: center; 
+    padding: 3rem 1rem; position: relative; background: #000; 
+    border-bottom: 1px dashed var(--dp); margin-bottom: 3rem;
+    box-shadow: inset 0 -30px 60px rgba(68,0,102,0.2);
+}
+canvas#toraCanvas { image-rendering: pixelated; border: 1px solid var(--pu); background: #0f0a1e; box-shadow: 0 0 30px var(--dp); width: 128px; height: 192px; }
 
-/* NPC DIALOGUE BOX */
-.pixel-dialog { border: 4px solid var(--gold); background: #000; padding: 1.5rem; max-width: 640px; width: 100%; margin: 0 auto; position: relative; box-shadow: 4px 4px 0 #553300; }
-.dialog-name { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--pu); margin-bottom: 1rem; }
-.dialog-text { font-size: 1.4rem; color: var(--cream); line-height: 1.5; min-height: 60px;}
-.dialog-text::after { content: '▼'; display: inline-block; animation: blink 1s infinite; margin-left: 10px; font-size: 1rem; color: var(--gold);}
-@keyframes blink { 0%, 50%, 100% { opacity: 1; } 25%, 75% { opacity: 0; } }
+.pixel-dialog { 
+    border: 1px solid var(--pu); background: rgba(0,0,0,0.8); 
+    padding: 2rem; max-width: 700px; width: 100%; margin: 2rem auto 0; 
+    position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.9);
+}
+.dialog-text { font-size: 1.8rem; color: var(--cream); line-height: 1.4; min-height: 60px; text-align: center; font-style: italic; }
 
-main { max-width: 800px; margin: 0 auto; padding: 0 1rem 4rem; width: 100%;}
+main { max-width: 900px; margin: 0 auto; padding: 0 1.5rem 6rem; width: 100%;}
 
 /* READING FORM */
-.reading-form { background: #000; border: 4px solid var(--gd); padding: 2rem; margin-bottom: 2rem; box-shadow: 4px 4px 0 #000; }
-.form-title { font-family: var(--font-pixel); font-size: 0.8rem; color: var(--gold); margin-bottom: 1.5rem; border-bottom: 4px dashed #333; padding-bottom: 0.8rem; text-shadow: 2px 2px 0 #000;}
-.form-row { margin-bottom: 1.5rem; }
-.form-label { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gd); display: block; margin-bottom: 0.8rem; }
-.form-input { width: 100%; padding: 1rem; background: #111; border: 4px solid #444; color: var(--cream); font-family: var(--font-pixel); font-size: 0.8rem; outline: none; transition: border-color 0.1s; text-transform: uppercase;}
-.form-input:focus { border-color: var(--pu); }
-.form-note { font-size: 1rem; color: var(--muted); margin-top: 0.5rem; }
+.reading-form { 
+    background: linear-gradient(180deg, #0a0806, #050403); 
+    border: 1px solid #222; padding: 3rem; margin-bottom: 4rem; 
+    box-shadow: inset 0 0 20px #000, 0 10px 30px #000; 
+}
+.form-title { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--pu); margin-bottom: 2rem; text-align: center; letter-spacing: 2px;}
+.form-input { 
+    width: 100%; padding: 1.2rem; background: #000; border: 1px solid #333; 
+    color: var(--cream); font-family: var(--font-ancient); font-size: 1.6rem; 
+    outline: none; margin-bottom: 1.5rem; text-align: center; font-style: italic;
+    transition: all 0.3s;
+}
+.form-input:focus { border-color: var(--pu); box-shadow: 0 0 15px rgba(170, 85, 255, 0.2); }
 
-.btn-reveal { width: 100%; padding: 1.2rem; background: var(--pu); color: #000; font-family: var(--font-pixel); font-size: 0.8rem; border: 4px solid #FFF; cursor: pointer; transition: transform 0.1s; box-shadow: 4px 4px 0 #000; margin-top: 1rem; }
-.btn-reveal:hover { background: var(--gold); transform: translateY(-4px); }
+.btn-reveal { 
+    width: 100%; padding: 1.2rem; background: var(--pu); color: #000; 
+    font-family: var(--font-pixel); font-size: 0.6rem; border: none; cursor: pointer; 
+    transition: all 0.3s; letter-spacing: 2px; text-transform: uppercase;
+}
+.btn-reveal:hover { background: #fff; transform: translateY(-3px); box-shadow: 0 5px 20px var(--pu); }
 
-/* READING RESULTS */
-.reading-result { display: none; }
-.reading-result.active { display: block; animation: flashIn 0.2s steps(2); }
-@keyframes flashIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+/* CODEX RESULTS */
+.codex-section {
+    background: linear-gradient(180deg, #0a0806, #050302);
+    border: 1px solid #222; padding: 3rem; margin-bottom: 2rem;
+    box-shadow: inset 0 0 30px #000, 0 10px 20px rgba(0,0,0,0.5); position: relative;
+    transition: border-color 0.3s;
+}
+.codex-section:hover { border-color: var(--pu); }
+.codex-label { font-family: var(--font-pixel); font-size: 0.4rem; color: var(--pu); margin-bottom: 1.5rem; letter-spacing: 3px; display: block; opacity: 0.8; border-bottom: 1px dashed #333; padding-bottom: 10px;}
+.codex-title { font-size: 2.2rem; color: var(--gold); margin-bottom: 1rem; font-weight: 600; }
+.codex-body { font-size: 1.3rem; color: var(--muted); line-height: 1.7; font-style: italic; margin-bottom: 1.5rem; }
 
-.section-tag { font-family: var(--font-pixel); font-size: 0.8rem; color: var(--gd); margin-bottom: 1.5rem; border-bottom: 4px solid #333; padding-bottom: 0.5rem; text-shadow: 2px 2px 0 #000; margin-top: 3rem;}
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 2rem; border-top: 1px solid #222; padding-top: 2rem; }
+.stat-box { text-align: center; }
+.stat-val { font-family: var(--font-pixel); font-size: 1.5rem; color: var(--gold); display: block; margin-bottom: 0.8rem; text-shadow: 0 0 15px rgba(255,215,0,0.2); }
+.stat-lab { font-family: var(--font-pixel); font-size: 0.35rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
 
-/* TAROT CARD */
-.tarot-card-pixel { border: 4px solid var(--pu); background: #0f0a1e; padding: 2rem; text-align: center; position: relative; margin-bottom: 2rem; box-shadow: inset 0 0 0 4px #000, 6px 6px 0 var(--dp); }
-.card-canvas { width: 96px; height: 96px; image-rendering: pixelated; margin: 0 auto 1.5rem auto; display: block; filter: drop-shadow(4px 4px 0 #000); animation: float 4s ease-in-out infinite; }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+/* THE SYNTHESIS & CTA */
+.synthesis-box {
+    background: radial-gradient(circle at center, #1a1208 0%, #050403 100%);
+    border: 2px solid var(--gold); padding: 4rem 3rem; margin-top: 4rem;
+    text-align: center; box-shadow: 0 0 40px rgba(255,215,0,0.15), inset 0 0 50px rgba(0,0,0,0.8);
+}
+.synthesis-text { font-size: 1.6rem; color: var(--cream); line-height: 1.8; font-style: italic; margin-bottom: 3rem; }
+.synthesis-text em { color: var(--gold); font-weight: 600; }
 
-.card-pixel-name { font-family: var(--font-pixel); font-size: 1.2rem; color: var(--gold); margin-bottom: 0.8rem; text-shadow: 2px 2px 0 #000;}
-.card-pixel-pos { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--pu); margin-bottom: 1.5rem; }
-.card-pixel-meaning { font-size: 1.4rem; color: var(--cream); line-height: 1.6; }
+.cta-header { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gold); margin-bottom: 1.5rem; letter-spacing: 2px; }
+.cta-desc { font-size: 1.2rem; color: var(--muted); line-height: 1.6; margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+.cta-grid { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.cta-btn {
+    padding: 1rem 1.5rem; font-family: var(--font-pixel); font-size: 0.45rem;
+    text-decoration: none; border: 1px solid var(--gold); color: #000; background: var(--gold);
+    transition: all 0.3s; letter-spacing: 1px; text-transform: uppercase;
+}
+.cta-btn.ghost { background: transparent; color: var(--gold); }
+.cta-btn:hover { background: #fff; border-color: #fff; color: #000; box-shadow: 0 5px 20px rgba(255,215,0,0.4); transform: translateY(-3px); }
 
-/* NUMEROLOGY */
-.numerology-pixel { border: 4px solid var(--gd); background: #000; padding: 2rem; margin-bottom: 2rem; box-shadow: 4px 4px 0 #553300; }
-.life-path-pixel { display: flex; align-items: center; gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap; justify-content: center;}
-.life-number-pixel { font-family: var(--font-pixel); font-size: 4rem; color: var(--gold); line-height: 1; text-shadow: 4px 4px 0 #553300; }
-.life-info h3 { font-family: var(--font-pixel); font-size: 0.8rem; color: var(--cream); margin-bottom: 0.8rem; }
-.life-info p { font-size: 1.3rem; color: var(--muted); line-height: 1.5; }
-.life-message { font-size: 1.4rem; color: var(--gold); line-height: 1.6; padding-top: 1.5rem; border-top: 4px dashed #333; font-style: italic;}
-
-/* PERSONAL READING */
-.personal-reading-pixel { border: 4px solid var(--pu); background: rgba(106, 58, 138, 0.1); padding: 2rem; margin-bottom: 2rem; box-shadow: 6px 6px 0 var(--dp); }
-.reading-text-pixel { font-size: 1.5rem; color: var(--cream); line-height: 1.6; }
-.reading-sig { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--pu); margin-top: 1.5rem; text-align: right; }
-
-.btn-again { display: block; width: 100%; padding: 1.2rem; margin-top: 2rem; background: #000; color: var(--cream); border: 4px solid var(--pu); font-family: var(--font-pixel); font-size: 0.8rem; cursor: pointer; box-shadow: 4px 4px 0 #000; transition: transform 0.1s;}
-.btn-again:hover { background: var(--pu); color: #000; transform: translateY(-4px); border-color: var(--cream);}
-
-/* HUD (BOTTOM) */
-.hud { display: flex; justify-content: center; align-items: center; padding: 1rem 2rem; background: #000; border-top: 4px solid #333; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; flex-wrap: wrap; gap: 20px; }
-.hud-stat { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; }
-.hud-val { color: var(--gold); font-size: 1rem; text-shadow: 2px 2px 0 #553300; }
-.hud-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
-.hud-link:hover { color: #000; background: var(--gd); }
-
-/* ── MOUSE FIX ── */
-body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='square'/%3E%3Cpath d='M18 4 L30 4 L22 12 L16 12 Z' fill='%23e8b84b'/%3E%3Crect x='6' y='24' width='4' height='4' fill='%23c9962a'/%3E%3C/svg%3E") 6 26,auto!important}
-
+/* DEPTH GAUGE */
+.depth-gauge {
+  position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:95%!important; height:46px!important; background:rgba(5,4,3,.95)!important;
+  border:1px solid rgba(255,215,0,.3)!important; border-radius:2px!important; padding:0 20px!important;
+  z-index:9999!important; display:flex!important; align-items:center!important; justify-content:center!important;
+  gap:1.5rem!important; flex-wrap:nowrap!important; box-shadow: 0 5px 20px rgba(0,0,0,0.9)!important;
+}
+.dg-stat { display:flex; align-items:center; gap:0.5rem; font-family:var(--font-pixel); font-size:0.4rem; color:var(--muted); text-transform:uppercase;}
+.dg-val { font-family:var(--font-text); font-size:1.1rem; color:var(--gold); }
 </style>
 </head>
 <body>
 
+<script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
+
 <header>
-  <a href="toradomain.html" class="logo">TORA THE READER</a>
-  <a href="toradomain.html" class="back">← RETURN TO DOMAIN</a>
+  <a href="oracle.html" class="logo">TORA THE READER</a>
+  <a href="oracle.html" class="back">← RETURN TO ORACLE</a>
 </header>
 
 <div class="pixel-stage">
-  <canvas id="toraCanvas" width="64" height="96" style="width:192px;height:288px"></canvas>
-  <div class="tora-pixel-name">TORA</div>
-  <div class="tora-pixel-sub">VÖLVA OF THE MINE</div>
-  <div class="tora-rune-line">ᚠ ᚢ ᚦ ᚱ ᚲ ᚷ ᛏ ᛒ ᛖ ᛗ ᛚ</div>
-  
-  <div class="pixel-dialog">
-    <div class="dialog-name">TORA</div>
-    <div class="dialog-text" id="toraDialog"></div>
-  </div>
+  <canvas id="toraCanvas" width="64" height="96"></canvas>
+  <div class="dialog-text" id="toraDialog" style="margin-top:20px;"></div>
 </div>
 
 <main>
   <div class="reading-form" id="readingForm">
-    <div class="form-title">SYSTEM PROMPT: REQUEST READING</div>
-    <div class="form-row">
-      <label class="form-label">YOUR NAME</label>
-      <input type="text" class="form-input" id="userName" placeholder="ENTER NAME...">
+    <div class="form-title">INITIATE EXCAVATION PROTOCOL</div>
+    <input type="text" class="form-input" id="userName" placeholder="ENTER FULL NAME...">
+    <input type="date" class="form-input" id="userDob">
+    <div style="text-align:center; font-family:var(--font-pixel); font-size:0.35rem; color:var(--muted); margin-bottom:2rem; line-height:1.6;">
+        THE MINE REQUIRES EXACT COORDINATES TO MAP YOUR FREQUENCY.<br>NO DATA IS SAVED TO THE SURFACE SERVERS.
     </div>
-    <div class="form-row">
-      <label class="form-label">DATE OF BIRTH</label>
-      <input type="date" class="form-input" id="userDob">
-      <div class="form-note">Required to calculate Life Path Number.</div>
-    </div>
-    <button class="btn-reveal" onclick="revealReading()">REVEAL MY READING</button>
+    <button class="btn-reveal" onclick="revealCodex()">DECRYPT MY CODEX</button>
   </div>
 
-  <div class="reading-result" id="readingResult">
+  <div id="codexResult" style="display:none;">
     
-    <div class="section-tag">TODAY'S CARD</div>
-    <div class="tarot-card-pixel">
-      <canvas id="cardCanvas" class="card-canvas" width="16" height="16"></canvas>
-      <div class="card-pixel-name" id="cardName"></div>
-      <div class="card-pixel-pos" id="cardPosition"></div>
-      <div class="card-pixel-meaning" id="cardMeaning"></div>
+    <div class="codex-section">
+        <span class="codex-label">I. THE NUMEROLOGICAL ARCHIVE</span>
+        <div class="stat-grid" style="border-top:none; margin-top:0; padding-top:0;">
+            <div class="stat-box">
+                <span class="stat-val" id="lpNum">--</span>
+                <span class="stat-lab">LIFE PATH</span>
+                <div class="codex-title" id="lpTitle" style="font-size:1.5rem; margin-top:1rem;">--</div>
+                <div class="codex-body" id="lpDesc" style="font-size:1.1rem;"></div>
+            </div>
+            <div class="stat-box">
+                <span class="stat-val" id="expNum">--</span>
+                <span class="stat-lab">EXPRESSION</span>
+                <div class="codex-title" id="expTitle" style="font-size:1.5rem; margin-top:1rem;">--</div>
+                <div class="codex-body" id="expDesc" style="font-size:1.1rem;"></div>
+            </div>
+            <div class="stat-box" style="grid-column: 1 / -1; border-top: 1px dashed #333; padding-top: 1.5rem;">
+                <span class="stat-val" id="pyNum">--</span>
+                <span class="stat-lab">2026 PERSONAL YEAR</span>
+                <div class="codex-body" id="pyDesc" style="font-size:1.1rem; max-width:600px; margin: 1rem auto 0;"></div>
+            </div>
+        </div>
     </div>
-    
-    <div class="section-tag">YOUR LIFE PATH</div>
-    <div class="numerology-pixel">
-      <div class="life-path-pixel">
-        <div class="life-number-pixel" id="lifeNumber"></div>
-        <div class="life-info"><h3 id="lifeTitle"></h3><p id="lifeDesc"></p></div>
-      </div>
-      <div class="life-message" id="lifeMessage"></div>
+
+    <div class="codex-section">
+        <span class="codex-label">II. THE CELESTIAL ALIGNMENT</span>
+        <div class="stat-grid" style="border-top:none; margin-top:0; padding-top:0;">
+            <div class="stat-box">
+                <span class="stat-val" id="zodiacSign" style="color:var(--pu);">--</span>
+                <span class="stat-lab">WESTERN ZODIAC</span>
+                <div class="codex-body" id="zodiacDesc" style="font-size:1.1rem; margin-top:1rem;"></div>
+            </div>
+            <div class="stat-box">
+                <span class="stat-val" id="chineseSign" style="color:var(--pu);">--</span>
+                <span class="stat-lab">CHINESE ZODIAC</span>
+                <div class="codex-body" id="chineseDesc" style="font-size:1.1rem; margin-top:1rem;"></div>
+            </div>
+            <div class="stat-box" style="grid-column: 1 / -1; border-top: 1px dashed #333; padding-top: 1.5rem;">
+                <span class="stat-val" id="birthStone" style="color:var(--neon-green, #00FF88);">--</span>
+                <span class="stat-lab">ALCHEMICAL STONE</span>
+                <div class="codex-body" id="stoneDesc" style="font-size:1.1rem; max-width:600px; margin: 1rem auto 0;"></div>
+            </div>
+        </div>
     </div>
-    
-    <div class="section-tag">TORA'S READING</div>
-    <div class="personal-reading-pixel">
-      <div class="reading-text-pixel" id="readingText"></div>
-      <div class="reading-sig">— TORA / VÖLVA OF THE MINE<br>NONSENSE MEDIA NETWORK</div>
+
+    <div class="synthesis-box">
+        <div class="synthesis-text" id="finalSynthesis"></div>
+        
+        <div style="margin: 4rem auto 0; border-top: 1px solid rgba(255,215,0,0.2); padding-top: 4rem;">
+            <div class="cta-header">TRIBUTE TO THE VÖLVA</div>
+            <p class="cta-desc">The Oracle does not charge, but the mine requires energy to stay open. Maintaining the servers, writing the lore, and coding the infrastructure takes immense human labor. If this codex resonated with you, support the extraction.</p>
+            <div class="cta-grid">
+                <a href="https://patreon.com" target="_blank" class="cta-btn">JOIN THE ARCHITECTS (PATREON)</a>
+                <a href="https://gofund.me/e643a8283" target="_blank" class="cta-btn ghost">EXPANSION FUND (GOFUNDME)</a>
+            </div>
+            <button onclick="location.reload()" style="background:none; border:none; color:var(--faint); font-family:var(--font-pixel); font-size:0.35rem; margin-top:3rem; cursor:pointer; text-decoration:underline;">RESET TERMINAL</button>
+        </div>
     </div>
-    
-    <button class="btn-again" onclick="resetReading()">REQUEST ANOTHER READING</button>
   </div>
 </main>
 
-<div class="hud">
-  <div class="hud-stat">GOLD: <span class="hud-val" id="dgGold">0</span></div>
-  <div class="hud-stat">LORE: <span class="hud-val" id="dgLore">0</span></div>
-  <a href="lorevault.html" class="hud-link">VAULT</a>
+<div class="depth-gauge" id="depthGauge">
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
+  <span style="color:rgba(255,215,0,0.2);">⬡</span>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> LORE</div>
 </div>
 
 <script>
-// ── PROCEDURAL SPRITE GENERATOR ──
-function drawSprite(canvasId, seedStr, colorHex) {
-  const canvas = document.getElementById(canvasId);
-  if(!canvas) return;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, 16, 16);
-  
-  let seed = 0;
-  for(let i=0; i<seedStr.length; i++) { seed = seed * 31 + seedStr.charCodeAt(i); }
-  const random = () => { let x = Math.sin(seed++) * 10000; return x - Math.floor(x); };
+// --- MASTER DATA DICTIONARIES ---
 
-  ctx.fillStyle = colorHex;
-  ctx.shadowColor = colorHex;
-  ctx.shadowBlur = 5;
-  
-  for(let x=0; x<8; x++) {
-    for(let y=0; y<16; y++) {
-      if(random() > 0.4) {
-        ctx.fillRect(x, y, 1, 1); 
-        ctx.fillRect(16 - x - 1, y, 1, 1); 
-      }
-    }
-  }
-  ctx.shadowBlur = 0;
-}
-
-// PIXEL TORA PORTRAIT
-function drawTora() {
-  const canvas=document.getElementById('toraCanvas');
-  const ctx=canvas.getContext('2d');
-  ctx.imageSmoothingEnabled=false;
-  ctx.clearRect(0,0,64,96);
-  const p=(x,y,c)=>{ctx.fillStyle=c;ctx.fillRect(x,y,1,1)};
-  const rect=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(x,y,w,h)};
-  
-  rect(0,0,64,96,'#0f0a1e');
-  
-  const crown=[
-    [25,8,'#c9962a'],[27,6,'#e8b84b'],[29,8,'#c9962a'],
-    [31,7,'#c9c0e8'],[33,8,'#c9962a'],[35,6,'#e8b84b'],[37,8,'#c9962a'],
-    [25,9,'#c9962a'],[26,9,'#c9962a'],[27,9,'#c9962a'],[28,9,'#c9962a'],
-    [29,9,'#c9962a'],[30,9,'#c9962a'],[31,9,'#c9962a'],[32,9,'#c9962a'],
-    [33,9,'#c9962a'],[34,9,'#c9962a'],[35,9,'#c9962a'],[36,9,'#c9962a'],[37,9,'#c9962a']
-  ];
-  crown.forEach(([x,y,c])=>p(x,y,c));
-  
-  rect(22,10,20,4,'#d4b830'); rect(20,14,24,8,'#d4b830'); rect(19,22,3,20,'#d4b830'); rect(42,22,3,20,'#d4b830');
-  rect(23,14,18,16,'#f0d8b0');
-  rect(26,18,3,2,'#6a3a8a'); p(27,18,'#9a6aaa'); p(27,17,'#c9c0e8'); 
-  rect(35,18,3,2,'#6a3a8a'); p(36,18,'#9a6aaa'); p(36,17,'#c9c0e8'); 
-  rect(25,16,5,1,'#c9a850'); rect(34,16,5,1,'#c9a850');
-  p(31,22,'#c0a070'); p(32,22,'#c0a070');
-  rect(28,25,8,2,'#c06868'); p(31,24,'#e08888'); p(32,24,'#e08888');
-  rect(27,31,10,1,'#c9962a'); [27,29,31,33,35,37].forEach(x=>p(x,31,'#e8b84b'));
-  
-  rect(18,32,28,40,'#2a1a3a'); rect(18,32,2,40,'#3a2a4a'); rect(44,32,2,40,'#3a2a4a'); rect(30,33,4,2,'#c9962a'); 
-  rect(14,34,6,20,'#f0d8b0'); rect(44,34,6,20,'#f0d8b0'); 
-  
-  rect(22,52,20,16,'#1a1228'); rect(23,53,18,14,'#0f0a1e');
-  p(28,56,'#9a8ac8'); p(29,55,'#c9c0e8'); p(30,56,'#9a8ac8'); p(33,58,'#6a3a8a'); p(35,57,'#9a8ac8');
-  rect(22,52,20,1,'#9a8ac8'); rect(22,67,20,1,'#9a8ac8'); 
-  rect(24,68,16,3,'#3a2a10'); rect(22,71,20,2,'#2a1808');
-  rect(19,70,26,2,'#c9962a'); 
-}
-
-// ── TYPEWRITER TEXT ──
-let typeTimer = null;
-function typeText(text, speed=25) {
-  const el = document.getElementById('toraDialog');
-  el.textContent = "";
-  if(typeTimer) clearInterval(typeTimer);
-  let i = 0;
-  typeTimer = setInterval(() => {
-    el.textContent += text.charAt(i++);
-    if (i >= text.length) clearInterval(typeTimer);
-  }, speed);
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-  drawTora();
-  typeText('"I have been here since before the mine had a name. I read what the stones remember. Give me your birth date and I will tell you what the mine sees in you."');
-  
-  try {
-    document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]').length;
-    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold') || '0';
-  } catch(e) {}
-});
-
-// ── DATA ──
-const TAROT=[
-  {color:'#FFD700',name:'THE GOLDMINE',position:"The World — Lord Oro's Domain",meaning:"You have everything you need within you. The mine is rich. Stop looking outside yourself for what you already carry."},
-  {color:'#55FF55',name:'THE MADMAN',position:'The Fool — New Beginnings',meaning:"A new journey begins. You step into the unknown — and that is exactly where the gold is. Trust the descent."},
-  {color:'#AA55FF',name:'TORA',position:'The High Priestess — Hidden Knowledge',meaning:"There is something you know but haven't named yet. Sit with it. The answer is already inside you."},
-  {color:'#888888',name:'THE WATCHER',position:'The Hermit — Inner Guidance',meaning:"Lord Oro watches. You are being guided from within. Trust what you already know."},
-  {color:'#AA7700',name:'THE MINER',position:'The Magician — Creation',meaning:"You have all the tools. The mine doesn't dig itself. Begin."},
-  {color:'#FFD700',name:'NELA',position:'Strength — Courage',meaning:"You are stronger than you believe. Nela didn't ask permission. Neither should you."},
-  {color:'#5555FF',name:'FELIK',position:'The Lovers — Duality',meaning:"Two paths. Two truths. Both real. You don't have to choose — you have to hold both at once."},
-  {color:'#FF5555',name:'PYRO',position:'The Sun — Energy',meaning:"Something burns bright right now. Don't extinguish it with doubt. Let it light the shaft."},
-  {color:'#FFFF88',name:'HELIOS',position:'Judgement — Clarity',meaning:"Something is becoming clear. The decision you've been avoiding is ready to be made."},
-  {color:'#55FFFF',name:'JUNI',position:'The Wheel — Cycles',meaning:"You have been here before. But you are not the same person who was here last time."},
-  {color:'#55AAFF',name:'CALYPSO',position:'The Moon — Intuition',meaning:"Your intuition is speaking. The water knows what the mind hasn't caught up to yet."},
-  {color:'#FF0000',name:'THE OUTBREAK',position:'The Tower — Change',meaning:"Something is being dismantled. It is not loss. It is preparation for something that fits better."},
-  {color:'#888888',name:'THE STONE',position:'The Emperor — Foundation',meaning:"Build the structure first. The gold comes after the foundation is set."},
-  {color:'#AAAAFF',name:'THE DREAM',position:'The Star — Hope',meaning:"There is something you dream about that you haven't told anyone. It is real. Pursue it."},
-  {color:'#FFFFFF',name:'THE BALANCE',position:'Justice — Truth',meaning:"Something needs to be addressed honestly. You already know what it is. Say it."},
-  {color:'#FFD700',name:'THE LANTERN',position:'Temperance — Patience',meaning:"Let the lantern burn slowly. The mine reveals itself to those who are willing to wait."},
-  {color:'#444444',name:'ORE DRAGON',position:"The Devil — Chains",meaning:"Something holds you that you think you cannot release. You can. The chain is in your mind."},
-  {color:'#AA5500',name:'THE KEY',position:'The Chariot — Drive',meaning:"The door is already unlocked. You just haven't tried the handle yet. Try it."},
-  {color:'#55FF55',name:'THE GROWTH',position:'The Empress — Abundance',meaning:"Something is growing quietly. Water it. Don't dig it up to check the roots."},
-  {color:'#FFD700',name:'THE CROWN',position:'The Emperor — Authority',meaning:"Lead with what you know. You don't need permission to step into your power."},
-  {color:'#885522',name:'THE BEAM',position:'The Hierophant — Structure',meaning:"Build systems that support you. The beam holds the mine open for everyone after you."},
-  {color:'#FFFFFF',name:'THE DIAMOND',position:'The World — Completion',meaning:"Something is complete. Recognize it fully before asking what comes next."}
-];
-
-const LP={
-  1:{title:'THE PIONEER',desc:'Independent, driven, original. You lead by instinct. The goldmine was made for someone who goes first.',message:'"The mine waits for the one who arrives without a map and starts digging anyway. That is you."'},
-  2:{title:'THE PARTNER',desc:"Collaborative, intuitive, diplomatic. Your strength is in connection. You find gold others miss because you listen.",message:'"The best finds happen when two lanterns combine. You know how to make that happen."'},
-  3:{title:'THE CREATOR',desc:"Expressive, imaginative, communicative. You are here to make things. The goldmine is your studio.",message:'"Every story is a tunnel. Every song is a shaft. You dig with words and the mine gives back."'},
-  4:{title:'THE BUILDER',desc:"Disciplined, methodical, reliable. You build what others dream. The mine trusts its structure to you.",message:'"The beams that hold the mine open were placed by someone who took their time. That is you."'},
-  5:{title:'THE EXPLORER',desc:"Adventurous, adaptable, free. You need movement. The mine has infinite tunnels you'll find alone.",message:'"Don\'t fear the unexpected turn. In the mine, they always lead somewhere worth going."'},
-  6:{title:'THE NURTURER',desc:"Caring, responsible, protective. You hold others together. The mine survives because of you.",message:'"The goldmine needs people who remember the gold isn\'t just for themselves. You never forgot."'},
-  7:{title:'THE SEEKER',desc:"Analytical, introspective, wise. You need to understand. The mine keeps secrets — you are patient enough.",message:'"The deepest veins are found by the ones who ask why. You have always been asking why."'},
-  8:{title:'THE ACHIEVER',desc:"Ambitious, powerful, authoritative. You are here to build something significant.",message:'"Power is not taken from the mine. It is excavated from within the self. You know how to do that."'},
-  9:{title:'THE VISIONARY',desc:"Humanitarian, compassionate, complete. You see the largest picture. Your gold is meant to be shared.",message:'"The mine belongs to everyone who digs in it. You understood that before you picked up the pickaxe."'},
-  11:{title:'THE ILLUMINATOR',desc:"Intuitive, inspiring, visionary. You carry a light others don't. The mine glows differently when you're in it.",message:'"Some lanterns are brighter than others. Yours lights tunnels no one knew existed."'},
-  22:{title:'THE MASTER BUILDER',desc:"Visionary and practical together. You build empires. The goldmine isn't enough — you'll build the city above it.",message:'"Most miners find gold. You will build something with it that outlasts the mine itself."'},
-  33:{title:'THE MASTER TEACHER',desc:"Compassion at the highest level. You teach by living. The mine learns from you.",message:'"You don\'t just carry a light. You teach others to carry their own. That is the rarest gift."'}
+// Numbers (Used for Life Path and Expression)
+const NUMBERS = {
+    1: { t: "The Pioneer", d: "Independent and driven. You strike the first vein and lead others into the depths." },
+    2: { t: "The Bridge", d: "Intuitive and diplomatic. You find the gold that exists in the space between people." },
+    3: { t: "The Creator", d: "Expressive and imaginative. Every word you speak carves new realities in the stone." },
+    4: { t: "The Builder", d: "Methodical and reliable. You build the beams that keep the entire mine from collapsing." },
+    5: { t: "The Explorer", d: "Adventurous and adaptable. You are the chaotic fire that forces the extraction of truth." },
+    6: { t: "The Nurturer", d: "Responsible and protective. You ensure the mine provides for everyone who dares to enter." },
+    7: { t: "The Seeker", d: "Analytical and deep. You don't just want the gold; you want to know why the gold exists." },
+    8: { t: "The Sovereign", d: "Ambitious and powerful. You are here to build a material legacy that outlasts the mountain." },
+    9: { t: "The Storyteller", d: "Humanitarian and wise. Your purpose is to turn the extraction into a myth for the ages." },
+    11: { t: "The Master Intuitive", d: "A visionary channel. You operate at a frequency that allows you to see in the absolute dark." },
+    22: { t: "The Master Builder", d: "The rare architect. You are capable of building the empire above the mine." },
+    33: { t: "The Master Teacher", d: "The highest empathy. Your lantern illuminates the path for every other miner." }
 };
 
-const DIALOGS = [
-  '"The cards speak only to those who are ready to hear. Are you ready?"',
-  '"Every life path number is a different kind of gold. None is lesser than another."',
-  '"I have read for miners who found nothing and miners who found everything. The difference was never the mine."',
-  '"Freyja taught me that wisdom and magic are the same thing. You carry both."',
-  '"The runes do not predict. They illuminate what is already true."'
+// Personal Years
+const P_YEARS = {
+    1: "A year of new beginnings. You are planting seeds in fresh soil. Strike the rock now.",
+    2: "A year of patience and partnerships. Wait for the dust to settle before moving forward.",
+    3: "A year of creative expansion. Let your internal voice echo loudly through the shafts.",
+    4: "A year of foundation building. It is time for disciplined, hard work. Reinforce the beams.",
+    5: "A year of chaos and necessary upheaval. The old tunnels are collapsing to reveal new paths.",
+    6: "A year of home, responsibility, and creative completion. Build the stable foundation that sustains everything.",
+    7: "A year of reflection and solitude. Retreat into the deep mine to find your inner knowing.",
+    8: "A year of ambition and material harvest. The gold you have been digging for is finally visible.",
+    9: "A year of completion and release. Let go of the dead weight. A full chapter is ending."
+};
+
+// Western Zodiac
+const ZODIAC = [
+    { n: "Capricorn", d: "The foundation builder. You find your gold in structure and unrelenting discipline." },
+    { n: "Aquarius", d: "The visionary outsider. You mine the future, bringing alien concepts to the surface." },
+    { n: "Pisces", d: "The intuitive dreamer. You dig with the heart, navigating the subterranean waters." },
+    { n: "Aries", d: "The fierce pioneer. You strike the first vein with pure, unhesitating force." },
+    { n: "Taurus", d: "The keeper of the earth. You know the true, tactile value of the stone you hold." },
+    { n: "Gemini", d: "The quicksilver messenger. You map the twisting tunnels for others to follow." },
+    { n: "Cancer", d: "The protective guardian. You fiercely guard the treasures and people you have found." },
+    { n: "Leo", d: "The solar generator. You create your own light in the dark; you do not reflect others." },
+    { n: "Virgo", d: "The meticulous analyst. You find the microscopic gold that everyone else misses." },
+    { n: "Libra", d: "The seeker of balance. You find harmony even in the chaotic depths of the earth." },
+    { n: "Scorpio", d: "The intense alchemist. You effortlessly transform pressure and coal into diamonds." },
+    { n: "Sagittarius", d: "The restless explorer. No shaft is too deep, no truth too dangerous for you." }
 ];
 
-function calcLP(dob) {
-  let d = dob.replace(/-/g, '').split('').map(Number);
-  let s = d.reduce((a, b) => a + b, 0);
-  while(s > 9 && s !== 11 && s !== 22 && s !== 33) {
-    s = s.toString().split('').map(Number).reduce((a, b) => a + b, 0);
-  }
-  return s;
+// Chinese Zodiac
+const CHINESE = [
+    { n: "Rat", d: "Resourceful and quick-witted. You survive collapses others wouldn't." },
+    { n: "Ox", d: "Steadfast and strong. You pull the heaviest carts without complaint." },
+    { n: "Tiger", d: "Courageous and unpredictable. You walk the dark paths without fear." },
+    { n: "Rabbit", d: "Elegant and cautious. You navigate the mine with silent grace." },
+    { n: "Dragon", d: "Powerful and magnetic. Your presence alone alters the frequency of the room." },
+    { n: "Snake", d: "Enigmatic and wise. You shed old versions of yourself to grow." },
+    { n: "Horse", d: "Energetic and independent. You require open space to run." },
+    { n: "Goat", d: "Creative and calm. You find beauty even in the raw, unpolished stone." },
+    { n: "Monkey", d: "Clever and curious. You solve the puzzles of the deep earth." },
+    { n: "Rooster", d: "Observant and hardworking. You crow to awaken the other miners." },
+    { n: "Dog", d: "Loyal and true. You never abandon a partner in the dark." },
+    { n: "Pig", d: "Generous and genuine. You find joy even inside the hardest labor." }
+];
+
+// Birthstones
+const STONES = [
+    { n: "Garnet", d: "The stone of commitment and fire. It keeps you grounded when the shaft shakes." },
+    { n: "Amethyst", d: "The stone of clarity and spirit. It clears the fog of the mind." },
+    { n: "Aquamarine", d: "The stone of the sea and courage. It washes away fear." },
+    { n: "Diamond", d: "The stone of invincibility. Forged under ultimate pressure." },
+    { n: "Emerald", d: "The stone of truth and rebirth. It glows with ancient life." },
+    { n: "Pearl", d: "The stone of wisdom acquired through time. Formed around a single grain of grit." },
+    { n: "Ruby", d: "The stone of the warrior-king. An inner fire that amplifies from within." },
+    { n: "Peridot", d: "The stone of light and strength. It protects you from the shadows." },
+    { n: "Sapphire", d: "The stone of destiny and focus. It aligns your thoughts with your actions." },
+    { n: "Opal", d: "The stone of magic and reflection. It holds every color of the universe." },
+    { n: "Topaz", d: "The stone of abundance and manifestation. It draws the gold to you." },
+    { n: "Turquoise", d: "The stone of the sky and healing. A bridge between the earth and the heavens." }
+];
+
+// --- CALCULATORS ---
+function calcLifePath(dob) {
+    let s = dob.replace(/-/g, '').split('').reduce((a,b)=>a+parseInt(b),0);
+    while(s > 9 && s!==11 && s!==22 && s!==33) s = s.toString().split('').reduce((a,b)=>a+parseInt(b),0);
+    return s;
 }
 
-function getDailyCard() {
-  const t = new Date();
-  const dy = Math.floor((t - new Date(t.getFullYear(), 0, 0)) / 86400000);
-  return TAROT[dy % TAROT.length];
+function calcExpression(name) {
+    const map = {a:1,j:1,s:1,b:2,k:2,t:2,c:3,l:3,u:3,d:4,m:4,v:4,e:5,n:5,w:5,f:6,o:6,x:6,g:7,p:7,y:7,h:8,q:8,z:8,i:9,r:9};
+    let s = name.toLowerCase().replace(/[^a-z]/g,'').split('').reduce((a,b)=>a+(map[b]||0),0);
+    while(s > 9 && s!==11 && s!==22 && s!==33) s = s.toString().split('').reduce((a,b)=>a+parseInt(b),0);
+    return s;
 }
 
-function revealReading() {
-  const name = document.getElementById('userName').value.trim().toUpperCase();
-  const dob = document.getElementById('userDob').value;
-  
-  if(!name || !dob) {
-    typeText('"Tora needs your name and the date you were born. Without these, the stones are silent."');
-    return;
-  }
-  
-  const lp = calcLP(dob);
-  const ld = LP[lp] || LP[1];
-  const card = getDailyCard();
-  const fn = name.split(' ')[0];
-  const mo = new Date(dob + 'T12:00:00').toLocaleString('default', { month: 'long' });
-  
-  document.getElementById('cardName').textContent = card.name;
-  document.getElementById('cardPosition').textContent = card.position;
-  document.getElementById('cardMeaning').textContent = card.meaning;
-  
-  document.getElementById('lifeNumber').textContent = lp;
-  document.getElementById('lifeTitle').textContent = ld.title;
-  document.getElementById('lifeDesc').textContent = ld.desc;
-  document.getElementById('lifeMessage').textContent = ld.message;
-  
-  document.getElementById('readingText').innerHTML = `${fn}, the mine has been watching you. Today's card — <strong style="color:${card.color}">${card.name}</strong> — arrives with a message for a Life Path ${lp}.<br><br>${card.meaning}<br><br>This combines with your nature as ${ld.title} to reveal something important. ${ld.desc}<br><br>The energy of ${mo.toUpperCase()} amplifies everything. Tora sees a moment approaching where what you have been building quietly becomes visible. Do not shrink from it. The goldmine reveals its richest veins to those who keep digging even when they cannot yet see the gold.<br><br>You are close. Freyja's wisdom: the völva does not create fate. She reads what is already written in the stone. This is yours.`;
-  
-  typeText(DIALOGS[Math.floor(Math.random() * DIALOGS.length)]);
-  
-  // Procedural Card Icon
-  drawSprite('cardCanvas', card.name, card.color);
-  
-  document.getElementById('readingForm').style.display = 'none';
-  document.getElementById('readingResult').classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  
-  // Save Lore Fragment
-  try {
-    const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
-    vault.push({ text: `Tora read my life path: ${lp} - ${ld.title}. Today's card was ${card.name}.`, source: "Tora the Reader", date: new Date().toLocaleDateString() });
-    localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
-    document.getElementById('dgLore').textContent = vault.length;
-  } catch(e) {}
+function getZodiac(dob) {
+    const d = new Date(dob + 'T12:00:00Z'); // Force UTC to avoid timezone drift
+    const m = d.getUTCMonth();
+    const day = d.getUTCDate();
+    if((m==0 && day>=20) || (m==1 && day<=18)) return ZODIAC[1];
+    if((m==1 && day>=19) || (m==2 && day<=20)) return ZODIAC[2];
+    if((m==2 && day>=21) || (m==3 && day<=19)) return ZODIAC[3];
+    if((m==3 && day>=20) || (m==4 && day<=20)) return ZODIAC[4];
+    if((m==4 && day>=21) || (m==5 && day<=20)) return ZODIAC[5];
+    if((m==5 && day>=21) || (m==6 && day<=22)) return ZODIAC[6];
+    if((m==6 && day>=23) || (m==7 && day<=22)) return ZODIAC[7];
+    if((m==7 && day>=23) || (m==8 && day<=22)) return ZODIAC[8];
+    if((m==8 && day>=23) || (m==9 && day<=22)) return ZODIAC[9];
+    if((m==9 && day>=23) || (m==10 && day<=21)) return ZODIAC[10];
+    if((m==10 && day>=22) || (m==11 && day<=21)) return ZODIAC[11];
+    return ZODIAC[0];
 }
 
-function resetReading() {
-  document.getElementById('readingResult').classList.remove('active');
-  document.getElementById('readingForm').style.display = 'block';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+function getChinese(dob) {
+    const year = parseInt(dob.split('-')[0]);
+    let offset = year - 1924;
+    while(offset < 0) offset += 12;
+    return CHINESE[offset % 12];
 }
-</script>
 
-<script>
-if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/sw.js').catch(function(err){ console.log('NMN SW error:', err); });
+// --- EXECUTION ---
+function revealCodex() {
+    const nameInput = document.getElementById('userName').value.trim();
+    const dob = document.getElementById('userDob').value;
+    
+    if(!nameInput || !dob) {
+        typeText("THE STONES ARE SILENT. PROVIDE YOUR IDENTIFIER AND ORIGIN DATE.");
+        return;
+    }
+
+    const firstName = nameInput.split(' ')[0].toUpperCase();
+    
+    // Calculations
+    const lp = calcLifePath(dob);
+    const exp = calcExpression(nameInput) || 1; // Fallback if non-english chars used
+    const zodiac = getZodiac(dob);
+    const chinese = getChinese(dob);
+    const monthIdx = new Date(dob + 'T12:00:00Z').getUTCMonth();
+    const stone = STONES[monthIdx];
+    
+    // Personal Year 2026: (Birth Month + Birth Day + 2026) reduced. 2026 reduces to 1.
+    const day = new Date(dob + 'T12:00:00Z').getUTCDate();
+    const month = monthIdx + 1;
+    let py = month + day + 1; 
+    while(py > 9) py = py.toString().split('').reduce((a,b)=>a+parseInt(b),0);
+
+    // Populate DOM
+    document.getElementById('lpNum').textContent = lp;
+    document.getElementById('lpTitle').textContent = NUMBERS[lp].t;
+    document.getElementById('lpDesc').textContent = NUMBERS[lp].d;
+
+    document.getElementById('expNum').textContent = exp;
+    document.getElementById('expTitle').textContent = NUMBERS[exp].t;
+    document.getElementById('expDesc').textContent = `How you express yourself: ${NUMBERS[exp].d}`;
+
+    document.getElementById('pyNum').textContent = py;
+    document.getElementById('pyDesc').textContent = P_YEARS[py];
+
+    document.getElementById('zodiacSign').textContent = zodiac.n.toUpperCase();
+    document.getElementById('zodiacDesc').textContent = zodiac.d;
+
+    document.getElementById('chineseSign').textContent = chinese.n.toUpperCase();
+    document.getElementById('chineseDesc').textContent = chinese.d;
+
+    document.getElementById('birthStone').textContent = stone.n.toUpperCase();
+    document.getElementById('stoneDesc').textContent = stone.d;
+
+    // Build the Synthesis Paragraph
+    const synthesis = `"${firstName}, as a <em>${zodiac.n}</em> born in the year of the <em>${chinese.n}</em>, your alchemical foundation is <em>${stone.n}</em>. Walking the path of <em>${NUMBERS[lp].t}</em>, you interact with the world as <em>${NUMBERS[exp].t}</em>. The sequence is set. In this current cycle (Year <em>${py}</em>), the mine demands your full attention. The gold is not outside of you. You are the excavation."`;
+    
+    document.getElementById('finalSynthesis').innerHTML = synthesis;
+
+    // View Transition
+    document.getElementById('readingForm').style.display = 'none';
+    document.getElementById('codexResult').style.display = 'block';
+    typeText("THE VEIN HAS BEEN DECRYPTED. READ YOUR TRUTH.");
+    
+    if(window.NMNWallet) NMNWallet.addXP(250); // Big reward for engagement
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// Visual Tora logic
+function drawTora() {
+    const c = document.getElementById('toraCanvas');
+    const ctx = c.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+    
+    // Dark Bg
+    ctx.fillStyle = "#0f0a1e"; ctx.fillRect(0,0,64,96);
+    
+    // Abstract Tora Face
+    ctx.fillStyle = "#f0d8b0"; ctx.fillRect(20, 30, 24, 30); // face
+    ctx.fillStyle = "#AA55FF"; ctx.fillRect(16, 20, 32, 16); // hood
+    ctx.fillStyle = "#FFD700"; ctx.fillRect(24, 26, 16, 4); // crown/circlet
+    ctx.fillStyle = "#440066"; ctx.fillRect(24, 40, 4, 4); // L eye
+    ctx.fillRect(36, 40, 4, 4); // R eye
+    ctx.fillStyle = "#FFD700"; ctx.fillRect(25, 41, 2, 2); // glint
+    ctx.fillRect(37, 41, 2, 2); // glint
+    
+    ctx.fillStyle = "#6a3a8a"; ctx.fillRect(14, 60, 36, 36); // cloak
+}
+
+let typeTimer = null;
+function typeText(txt) {
+    const el = document.getElementById('toraDialog');
+    el.textContent = "";
+    if(typeTimer) clearInterval(typeTimer);
+    let i = 0;
+    typeTimer = setInterval(() => {
+        el.textContent += txt[i++];
+        if(i >= txt.length) clearInterval(typeTimer);
+    }, 50);
+}
+
+window.onload = () => {
+    drawTora();
+    typeText("GIVE ME YOUR IDENTIFIER. I WILL EXTRACT YOUR TRUTH.");
+    
+    if(window.NMNWallet) {
+        document.getElementById('dgGold').textContent = NMNWallet.get().gold.toLocaleString();
+        document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]').length;
+    }
+};
 </script>
 
 </body>
