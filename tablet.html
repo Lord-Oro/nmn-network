@@ -4,279 +4,503 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Deciphered Tablet — NMN</title>
-
 <link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
 <link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
 
-<link rel="stylesheet" href="nmn-theme.css">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
 
 <style>
 :root {
   --gold: #FFD700; --gb: #e8b84b; --gd: #8B6914;
   --coal: #050302; --panel-bg: #0a0806; --cream: #f0e6cc;
-  --muted: #8a7654; --faint: #4a3c28;
+  --muted: #8a7654; --faint: #4a3c28; --lg: #55FF55; --red: #FF5555;
   --font-pixel: 'Press Start 2P', monospace;
   --font-ancient: 'Cormorant Garamond', serif;
+  --font-text: 'VT323', monospace;
 }
 
+* { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: var(--font-ancient);
   background: var(--coal);
   color: var(--cream);
   min-height: 100vh;
   padding-top: 80px;
-  background-image: radial-gradient(circle at 50% 30%, rgba(139, 105, 20, 0.05) 0%, transparent 70%);
+  padding-bottom: 100px;
+  background-image: 
+    radial-gradient(circle at 50% 30%, rgba(139, 105, 20, 0.05) 0%, transparent 70%),
+    linear-gradient(rgba(10, 8, 12, 0.8) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(10, 8, 12, 0.8) 2px, transparent 2px);
+  background-size: 100% 100%, 32px 32px, 32px 32px;
+}
+
+/* ─── CUSTOM CURSOR & GLOW ─── */
+body, a, button, select, .dial-btn { 
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; 
+}
+#pickaxe-glow {
+    position: fixed; width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, transparent 70%);
+    pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
+}
+
+/* CRT EFFECTS */
+body::after{
+  content:""; position:fixed; inset:0;
+  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.1) 50%);
+  background-size:100% 4px; pointer-events:none; z-index:10000; opacity:0.4;
 }
 
 header {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 10000;
-  padding: 1rem 2rem; border-bottom: 1px solid rgba(255,215,0,.15);
+  position: sticky; top: 70px; z-index: 999;
+  padding: 1rem 2rem; border-bottom: 4px solid var(--gd);
   display: flex; justify-content: space-between; align-items: center;
-  background: rgba(5,3,2,0.95); backdrop-filter: blur(8px);
+  background: rgba(5,3,2,0.98); 
 }
-.logo { font-family: var(--font-pixel); color: var(--gold); font-size: .6rem; text-decoration: none; }
-.back { font-family: var(--font-pixel); font-size: .45rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.logo { font-family: var(--font-pixel); color: var(--gold); font-size: .7rem; text-decoration: none; text-shadow: 2px 2px 0 #553300;}
+.back { font-family: var(--font-pixel); font-size: .45rem; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: 0.2s;}
+.back:hover { color: var(--gold); }
 
-main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; position: relative; }
+main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center;}
 
-.game-header { text-align: center; margin-bottom: 3rem; }
-.eyebrow { font-family: var(--font-pixel); font-size: 0.4rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gd); margin-bottom: 1rem; }
-.game-title { font-family: var(--font-ancient); font-size: clamp(2.5rem, 6vw, 4rem); color: var(--cream); font-weight: 600; line-height: 1; margin-bottom: 0.5rem; }
+.game-header { text-align: center; margin-bottom: 2rem; background: #000; padding: 2rem; border: 4px solid #333; box-shadow: inset 0 0 20px #000; width: 100%;}
+.eyebrow { font-family: var(--font-pixel); font-size: 0.5rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gd); margin-bottom: 1rem; }
+.game-title { font-family: var(--font-ancient); font-size: clamp(2rem, 6vw, 3.5rem); color: var(--cream); font-weight: 600; line-height: 1; margin-bottom: 0.5rem; text-shadow: 4px 4px 0 #000;}
 .game-title em { color: var(--gold); font-style: italic; }
+.game-sub { font-size: 1.2rem; font-style: italic; color: var(--muted); font-family: var(--font-text); letter-spacing: 1px;}
+
+/* OVERLAY START */
+#startOverlay { text-align: center; margin-top: 2rem; }
+.init-btn { font-family: var(--font-pixel); font-size: 0.8rem; background: #000; color: var(--gold); border: 4px solid var(--gd); padding: 1.5rem 3rem; cursor: pointer; text-transform: uppercase; transition: 0.2s; box-shadow: 6px 6px 0 #000;}
+.init-btn:hover { background: var(--gd); color: #000; transform: translateY(-4px); box-shadow: 8px 8px 0 #000; border-color: #FFF;}
+
+/* GAME UI (Hidden Initially) */
+#gameUI { display: none; width: 100%; flex-direction: column; align-items: center;}
 
 /* STATS TABLET */
 .stats-bar {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  background: linear-gradient(180deg, #0a0806, #050403);
-  border: 1px solid #222; padding: 1.5rem; margin-bottom: 2rem;
-  box-shadow: inset 0 0 20px #000; text-align: center;
+  display: flex; justify-content: space-between; width: 100%; max-width: 700px;
+  background: #0a0806; border: 4px solid var(--gd); padding: 1.5rem; margin-bottom: 3rem;
+  box-shadow: inset 0 0 20px #000, 6px 6px 0 #000; text-align: center;
 }
-.stat-val { font-family: var(--font-ancient); font-size: 2rem; color: var(--gold); font-weight: 700; }
-.stat-lab { font-family: var(--font-pixel); font-size: 0.35rem; color: var(--faint); text-transform: uppercase; margin-top: 5px; }
+.stat { flex: 1; border-right: 2px dashed #333;}
+.stat:last-child { border-right: none; }
+.stat-val { font-family: var(--font-pixel); font-size: 1.5rem; color: var(--gold); text-shadow: 3px 3px 0 #553300; margin-bottom: 10px;}
+.stat-val.warning { color: var(--red); animation: pulseRed 1s infinite; }
+@keyframes pulseRed { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.stat-lab { font-family: var(--font-pixel); font-size: 0.45rem; color: var(--muted); text-transform: uppercase; }
 
-/* TILES */
-.match-area { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
-.column { display: flex; flex-direction: column; gap: 0.8rem; }
-.col-label { font-family: var(--font-pixel); font-size: 0.4rem; color: var(--gd); margin-bottom: 1rem; text-align: center; border-bottom: 1px solid #222; padding-bottom: 10px; }
-
-.tile {
-  padding: 1.2rem; background: #080605; border: 1px solid #1a1a1a;
-  cursor: pointer; transition: all 0.3s; font-family: var(--font-ancient);
-  font-size: 1.4rem; color: var(--muted); text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+/* ─── THE DIAL CYLINDERS ─── */
+.dial-machine {
+    display: flex; align-items: stretch; justify-content: center; gap: 1.5rem; margin-bottom: 3rem; width: 100%; flex-wrap: wrap;
 }
-.tile:hover { border-color: var(--gd); color: var(--cream); transform: translateY(-2px); }
-.tile.selected { border-color: var(--gold); color: var(--gold); background: rgba(255,215,0,0.05); box-shadow: 0 0 15px rgba(255,215,0,0.1); }
-.tile.matched { border-color: var(--neon-green, #00FF88); color: #00FF88; opacity: 0.4; cursor: default; }
 
-/* TABS */
-.lang-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 2rem; }
-.lang-tab {
-  background: #000; border: 1px solid #222; color: var(--faint);
-  padding: 8px 15px; font-family: var(--font-pixel); font-size: 0.35rem; cursor: pointer;
+.dial-column {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
 }
-.lang-tab.active { border-color: var(--gold); color: var(--gold); }
+
+/* 16-Bit Dropdowns */
+.lang-select {
+    font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gold); background: #000; 
+    border: 2px solid var(--gd); padding: 0.8rem; outline: none; margin-bottom: 5px;
+    text-align: center; appearance: none; -webkit-appearance: none; -moz-appearance: none;
+    box-shadow: 4px 4px 0 #000; transition: 0.2s;
+}
+.lang-select:hover { border-color: var(--cream); transform: translateY(-2px); }
+
+.dial-btn {
+    background: #000; border: 4px solid #444; color: var(--muted); font-size: 1rem; width: 80px; height: 40px;
+    display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.1s;
+}
+.dial-btn:active { transform: scale(0.9); border-color: var(--gold); color: var(--gold); background: #111;}
+
+.dial-window {
+    width: 240px; height: 180px; background: #050403; border: 6px solid #FFF;
+    box-shadow: inset 0 15px 15px -10px #000, inset 0 -15px 15px -10px #000, 6px 6px 0 #000;
+    display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+    position: relative; overflow: hidden; padding: 15px 0;
+}
+/* Middle highlight bar */
+.dial-window::after {
+    content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 60px;
+    transform: translateY(-50%); border-top: 2px solid rgba(255,215,0,0.3); border-bottom: 2px solid rgba(255,215,0,0.3);
+    background: rgba(255,215,0,0.05); pointer-events: none;
+}
+
+.dial-slot {
+    font-family: var(--font-text); font-size: 1.4rem; color: #444; text-align: center; width: 100%;
+    transition: all 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px;
+}
+.dial-slot.active {
+    font-size: 2.2rem; color: var(--gold); text-shadow: 2px 2px 0 #000; z-index: 2;
+}
+
+/* ALIGN BUTTON */
+.align-btn {
+    background: #111; border: 4px solid var(--gd); color: var(--gold);
+    font-family: var(--font-pixel); font-size: 0.7rem; padding: 1.5rem 1rem;
+    cursor: pointer; text-transform: uppercase; transition: 0.2s; height: 120px; align-self: center;
+    box-shadow: 4px 4px 0 #000; writing-mode: vertical-rl; text-orientation: upright; margin-top: 35px;
+}
+.align-btn:hover { background: var(--gold); color: #000; border-color: #FFF; transform: translateY(-2px);}
+.align-btn.disabled { opacity: 0.3; pointer-events: none; }
+
+/* FEEDBACK & ROUND COMPLETE */
+#feedback { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--lg); text-align: center; min-height: 20px; margin-bottom: 2rem; text-shadow: 2px 2px 0 #000;}
+
+#roundComplete {
+    display: none; text-align: center; background: #0a0806; padding: 3rem; border: 4px solid var(--gold);
+    box-shadow: inset 0 0 20px rgba(255,215,0,0.2), 8px 8px 0 #000; width: 100%; max-width: 600px; margin-top: 1rem;
+}
+.rc-title { font-family: var(--font-pixel); font-size: 1.5rem; color: var(--cream); margin-bottom: 1.5rem; text-shadow: 4px 4px 0 #553300;}
+.rc-reward { font-family: var(--font-pixel); font-size: 0.8rem; color: var(--lg); margin-bottom: 2rem; animation: pulse 1s infinite;}
+.rc-btn { background: var(--gold); border: 4px solid #FFF; color: #000; font-family: var(--font-pixel); padding: 1.2rem; font-size: 0.6rem; cursor: pointer; transition: 0.2s; text-transform: uppercase;}
+.rc-btn:hover { background: #FFF; transform: translateY(-3px); box-shadow: 4px 4px 0 var(--gd);}
+
+@media(max-width: 700px) {
+    .dial-machine { flex-direction: column; gap: 2rem; }
+    .align-btn { writing-mode: horizontal-tb; height: auto; width: 240px; padding: 1.5rem; margin-top: 0;}
+}
 
 /* FLOATING GAUGE */
 .depth-gauge {
   position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
-  width:auto!important; max-width:95%!important; height:46px!important; background:rgba(5,4,3,.95)!important;
-  border:1px solid rgba(255,215,0,.3)!important; border-radius:2px!important; padding:0 20px!important;
+  width:auto!important; max-width:95%!important; height:46px!important; background:#000!important;
+  border:4px solid var(--gd)!important; padding:0 20px!important;
   z-index:9999!important; display:flex!important; align-items:center!important; justify-content:center!important;
-  gap:1.5rem!important; flex-wrap:nowrap!important; box-shadow: 0 5px 20px rgba(0,0,0,0.9)!important;
+  gap:1.5rem!important; flex-wrap:nowrap!important; box-shadow: 4px 4px 0 #000!important;
 }
+.dg-stat { font-family: var(--font-pixel); font-size: 10px; color: var(--muted); display: flex; align-items: center; gap: 5px; text-transform: uppercase; }
+.dg-val { color: var(--gold); font-size: 14px; }
 </style>
-<style id="nmn-cursor-global">body,*{cursor:none!important}</style>
-<style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
 </head>
 <body>
-
 <script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
 
 <header>
-  <a href="index.html" class="logo">DECIPHERED TABLET</a>
+  <a href="index.html" class="logo">⛏ DECIPHERED TABLET</a>
   <a href="games.html" class="back">← RETURN TO FORGE</a>
 </header>
 
+<div id="pickaxe-glow"></div>
+
 <main>
-  <div class="game-header">
+  <div class="game-header retro-box">
     <div class="eyebrow">THE EXCAVATION COMMITTEE</div>
     <h1 class="game-title">The Deciphered <em>Tablet</em></h1>
-    <p style="font-size: 1.2rem; font-style: italic; color: var(--muted);">Align the ancient tongues to reveal the veins of gold.</p>
+    <p class="game-sub">Align the ancient tongues to reveal the veins of gold.</p>
   </div>
 
-  <div class="stats-bar">
-    <div class="stat"><div class="stat-val" id="scoreVal">0</div><div class="stat-lab">SCORE</div></div>
-    <div class="stat"><div class="stat-val" id="timeVal">60</div><div class="stat-lab">TIME</div></div>
-    <div class="stat"><div class="stat-val" id="streakVal">0</div><div class="stat-lab">STREAK</div></div>
+  <div id="startOverlay">
+      <button class="init-btn" onclick="initGame()">INITIALIZE CYPHER</button>
   </div>
 
-  <div class="lang-tabs">
-    <div class="lang-tab active" onclick="setMode('kr-es')">🇰🇷 ↔ 🇵🇷</div>
-    <div class="lang-tab" onclick="setMode('kr-no')">🇰🇷 ↔ 🇳🇴</div>
-    <div class="lang-tab" onclick="setMode('kr-jp')">🇰🇷 ↔ 🇯🇵</div>
+  <div id="gameUI">
+      <div class="stats-bar">
+        <div class="stat"><div class="stat-val" id="scoreVal">0</div><div class="stat-lab">SCORE</div></div>
+        <div class="stat"><div class="stat-val" id="timeVal">60</div><div class="stat-lab">TIME</div></div>
+        <div class="stat"><div class="stat-val" id="streakVal">0</div><div class="stat-lab">STREAK</div></div>
+      </div>
+
+      <div class="dial-machine">
+          <div class="dial-column">
+              <select id="langL" class="lang-select" onchange="changeLang('L')">
+                  <option value="en">ENGLISH</option>
+                  <option value="ko" selected>KOREAN</option>
+                  <option value="es">SPANISH</option>
+                  <option value="fr">FRENCH</option>
+                  <option value="de">GERMAN</option>
+                  <option value="pt">PORTUGUESE</option>
+                  <option value="jp">JAPANESE</option>
+                  <option value="no">NORWEGIAN</option>
+              </select>
+              <button class="dial-btn" onclick="spinDial('L', -1)">▲</button>
+              <div class="dial-window">
+                  <div class="dial-slot" id="L-prev">---</div>
+                  <div class="dial-slot active" id="L-curr">---</div>
+                  <div class="dial-slot" id="L-next">---</div>
+              </div>
+              <button class="dial-btn" onclick="spinDial('L', 1)">▼</button>
+          </div>
+
+          <button class="align-btn" id="alignBtn" onclick="checkAlignment()">ALIGN</button>
+
+          <div class="dial-column">
+              <select id="langR" class="lang-select" onchange="changeLang('R')">
+                  <option value="en" selected>ENGLISH</option>
+                  <option value="ko">KOREAN</option>
+                  <option value="es">SPANISH</option>
+                  <option value="fr">FRENCH</option>
+                  <option value="de">GERMAN</option>
+                  <option value="pt">PORTUGUESE</option>
+                  <option value="jp">JAPANESE</option>
+                  <option value="no">NORWEGIAN</option>
+              </select>
+              <button class="dial-btn" onclick="spinDial('R', -1)">▲</button>
+              <div class="dial-window">
+                  <div class="dial-slot" id="R-prev">---</div>
+                  <div class="dial-slot active" id="R-curr">---</div>
+                  <div class="dial-slot" id="R-next">---</div>
+              </div>
+              <button class="dial-btn" onclick="spinDial('R', 1)">▼</button>
+          </div>
+      </div>
+
+      <div id="feedback">AWAITING ALIGNMENT...</div>
+
+      <div id="roundComplete">
+          <h2 class="rc-title">TABLET DECODED</h2>
+          <p class="rc-reward" id="roundGold">+0 GOLD EXTRACTED</p>
+          <button class="rc-btn" onclick="nextRound()">EXCAVATE NEXT FRAGMENT</button>
+      </div>
   </div>
-
-  <div class="match-area">
-    <div class="column">
-      <div class="col-label" id="leftLabel">Korean</div>
-      <div id="leftCol"></div>
-    </div>
-    <div class="column">
-      <div class="col-label" id="rightLabel">Spanish</div>
-      <div id="rightCol"></div>
-    </div>
-  </div>
-
-  <div id="feedback" style="text-align:center; font-style:italic; color:var(--gold); min-height:30px; margin-bottom:2rem;">Select fragments to match...</div>
-
-  <div id="roundComplete" style="display:none; text-align:center; background:rgba(255,215,0,0.05); padding:2rem; border:1px solid var(--gd);">
-      <h2 style="font-family:var(--font-ancient); font-size:2rem; color:var(--gold);">TABLET DECODED</h2>
-      <p id="roundGold" style="font-family:var(--font-pixel); font-size:0.5rem; margin:1rem 0;"></p>
-      <button class="nmn-btn" onclick="nextRound()">EXCAVATE NEXT TABLET</button>
-  </div>
-
 </main>
 
 <div class="depth-gauge" id="depthGauge">
-  <div class="dg-stat" style="font-family:var(--font-pixel); font-size:0.4rem; color:var(--muted); text-transform:uppercase;">
-      <span style="color:var(--gold); font-size:0.7rem; margin-right:5px;" id="dgGold">0</span> Gold
-  </div>
+  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> GOLD</div>
   <span style="color:rgba(255,215,0,0.2);">⬡</span>
-  <div class="dg-stat" style="font-family:var(--font-pixel); font-size:0.4rem; color:var(--muted); text-transform:uppercase;">
-      <span style="color:var(--gold); font-size:0.7rem; margin-right:5px;" id="dgLore">0</span> Lore
-  </div>
+  <div class="dg-stat"><span class="dg-val" id="dgLore">0</span> LORE</div>
 </div>
 
 <script>
-const wordSets = {
-  'kr-es': { left: 'Korean', right: 'Spanish', pairs: [
-      { left: '금 (geum)', right: 'Oro', meaning: 'Gold' },
-      { left: '산 (san)', right: 'Montaña', meaning: 'Mountain' },
-      { left: '불 (bul)', right: 'Fuego', meaning: 'Fire' },
-      { left: '물 (mul)', right: 'Agua', meaning: 'Water' },
-      { left: '별 (byeol)', right: 'Estrella', meaning: 'Star' }
-  ]},
-  'kr-no': { left: 'Korean', right: 'Norwegian', pairs: [
-      { left: '금 (geum)', right: 'Gull', meaning: 'Gold' },
-      { left: '길 (gil)', right: 'Vei', meaning: 'Path' },
-      { left: '꿈 (kkum)', right: 'Drøm', meaning: 'Dream' },
-      { left: '빛 (bit)', right: 'Lys', meaning: 'Light' },
-      { left: '산 (san)', right: 'Fjell', meaning: 'Mountain' }
-  ]},
-  'kr-jp': { left: 'Korean', right: 'Japanese', pairs: [
-      { left: '금 (geum)', right: '金 (kin)', meaning: 'Gold' },
-      { left: '산 (san)', right: '山 (yama)', meaning: 'Mountain' },
-      { left: '불 (bul)', right: '火 (hi)', meaning: 'Fire' },
-      { left: '물 (mul)', right: '水 (mizu)', meaning: 'Water' },
-      { left: '별 (byeol)', right: '星 (hoshi)', meaning: 'Star' }
-  ]}
+// Glow Cursor Tracking
+document.addEventListener('mousemove', function(e){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
+});
+document.addEventListener('mousedown', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '180px'; r.style.height = '180px'; r.style.background = 'radial-gradient(circle,rgba(232,184,75,.4) 0%,transparent 70%)'; }
+});
+document.addEventListener('mouseup', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '140px'; r.style.height = '140px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.25) 0%,transparent 70%)'; }
+});
+
+// The Universal Master Dictionary
+const DICTIONARY = [
+  { id: 'gold', en: 'Gold', ko: '금 (Geum)', es: 'Oro', jp: '金 (Kin)', no: 'Gull', fr: 'Or', de: 'Gold', pt: 'Ouro' },
+  { id: 'mountain', en: 'Mountain', ko: '산 (San)', es: 'Montaña', jp: '山 (Yama)', no: 'Fjell', fr: 'Montagne', de: 'Berg', pt: 'Montanha' },
+  { id: 'fire', en: 'Fire', ko: '불 (Bul)', es: 'Fuego', jp: '火 (Hi)', no: 'Ild', fr: 'Feu', de: 'Feuer', pt: 'Fogo' },
+  { id: 'water', en: 'Water', ko: '물 (Mul)', es: 'Agua', jp: '水 (Mizu)', no: 'Vann', fr: 'Eau', de: 'Wasser', pt: 'Água' },
+  { id: 'star', en: 'Star', ko: '별 (Byeol)', es: 'Estrella', jp: '星 (Hoshi)', no: 'Stjerne', fr: 'Étoile', de: 'Stern', pt: 'Estrela' },
+  { id: 'light', en: 'Light', ko: '빛 (Bit)', es: 'Luz', jp: '光 (Hikari)', no: 'Lys', fr: 'Lumière', de: 'Licht', pt: 'Luz' },
+  { id: 'shadow', en: 'Shadow', ko: '그림자 (Geurimja)', es: 'Sombra', jp: '影 (Kage)', no: 'Skygge', fr: 'Ombre', de: 'Schatten', pt: 'Sombra' },
+  { id: 'dream', en: 'Dream', ko: '꿈 (Kkum)', es: 'Sueño', jp: '夢 (Yume)', no: 'Drøm', fr: 'Rêve', de: 'Traum', pt: 'Sonho' },
+  { id: 'path', en: 'Path', ko: '길 (Gil)', es: 'Camino', jp: '道 (Michi)', no: 'Vei', fr: 'Chemin', de: 'Weg', pt: 'Caminho' },
+  { id: 'stone', en: 'Stone', ko: '돌 (Dol)', es: 'Piedra', jp: '石 (Ishi)', no: 'Stein', fr: 'Pierre', de: 'Stein', pt: 'Pedra' }
+];
+
+const state = { 
+    score: 0, round: 1, streak: 0, timeLeft: 60, timerActive: false,
+    arrL: [], arrR: [], idxL: 0, idxR: 0, timerInt: null,
+    currentConcepts: []
 };
 
-const state = { mode: 'kr-es', score: 0, round: 1, streak: 0, matches: 0, selectedL: null, selectedR: null, timeLeft: 60, pairs: [] };
-
-function setMode(m) {
-    state.mode = m;
-    document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
-    event.target.classList.add('active');
+function initGame() {
+    document.getElementById('startOverlay').style.display = 'none';
+    document.getElementById('gameUI').style.display = 'flex';
     resetRound();
+    state.timerActive = true;
+    startTimer();
+}
+
+function changeLang(side) {
+    if(document.getElementById('roundComplete').style.display === 'block') return;
+    buildDialsFromConcepts();
+    renderDials();
 }
 
 function resetRound() {
-    state.matches = 0; state.selectedL = null; state.selectedR = null;
-    state.timeLeft = 60; state.pairs = [...wordSets[state.mode].pairs].sort(() => Math.random() - 0.5);
-    document.getElementById('leftLabel').textContent = wordSets[state.mode].left;
-    document.getElementById('rightLabel').textContent = wordSets[state.mode].right;
     document.getElementById('roundComplete').style.display = 'none';
-    renderBoard();
+    document.getElementById('alignBtn').classList.remove('disabled');
+    document.getElementById('feedback').textContent = "AWAITING ALIGNMENT...";
+    document.getElementById('feedback').style.color = "var(--muted)";
+    
+    if(!state.timerActive) { state.timeLeft = 60; }
+    
+    // Pick 5 random concepts for this round
+    const shuffledDict = [...DICTIONARY].sort(() => Math.random() - 0.5);
+    state.currentConcepts = shuffledDict.slice(0, 5);
+    
+    buildDialsFromConcepts();
+    renderDials();
 }
 
-function renderBoard() {
-    const leftCol = document.getElementById('leftCol');
-    const rightCol = document.getElementById('rightCol');
-    const leftWords = [...state.pairs].sort(() => Math.random() - 0.5);
-    const rightWords = [...state.pairs].sort(() => Math.random() - 0.5);
-
-    leftCol.innerHTML = leftWords.map(w => `<div class="tile" onclick="selectTile(this, 'L')">${w.left}</div>`).join('');
-    rightCol.innerHTML = rightWords.map(w => `<div class="tile" onclick="selectTile(this, 'R')">${w.right}</div>`).join('');
+function buildDialsFromConcepts() {
+    const langL = document.getElementById('langL').value;
+    const langR = document.getElementById('langR').value;
+    
+    state.arrL = [];
+    state.arrR = [];
+    
+    state.currentConcepts.forEach(c => {
+        state.arrL.push({ id: c.id, text: c[langL] });
+        state.arrR.push({ id: c.id, text: c[langR] });
+    });
+    
+    // Shuffle the cylinders
+    state.arrL.sort(() => Math.random() - 0.5);
+    state.arrR.sort(() => Math.random() - 0.5);
+    
+    state.idxL = 0;
+    state.idxR = 0;
 }
 
-function selectTile(el, side) {
-    if(el.classList.contains('matched')) return;
-    document.querySelectorAll(`.column:nth-child(${side === 'L' ? 1 : 2}) .tile`).forEach(t => t.classList.remove('selected'));
-    el.classList.add('selected');
-    if(side === 'L') state.selectedL = el; else state.selectedR = el;
-    if(state.selectedL && state.selectedR) checkMatch();
-}
-
-function checkMatch() {
-    const pair = state.pairs.find(p => p.left === state.selectedL.textContent && p.right === state.selectedR.textContent);
-    if(pair) {
-        state.selectedL.classList.add('matched'); state.selectedR.classList.add('matched');
-        state.matches++; state.streak++; state.score += 50 * state.streak;
-        if(state.matches === state.pairs.length) roundComplete();
-    } else {
-        state.streak = 0;
-        state.selectedL.classList.remove('selected'); state.selectedR.classList.remove('selected');
+function spinDial(side, dir) {
+    if(document.getElementById('roundComplete').style.display === 'block') return;
+    
+    if(side === 'L' && state.arrL.length > 0) {
+        state.idxL = (state.idxL + dir + state.arrL.length) % state.arrL.length;
+    } else if(side === 'R' && state.arrR.length > 0) {
+        state.idxR = (state.idxR + dir + state.arrR.length) % state.arrR.length;
     }
-    state.selectedL = null; state.selectedR = null;
+    renderDials();
+}
+
+function renderDials() {
+    // Render Left
+    if(state.arrL.length === 0) {
+        document.getElementById('L-prev').textContent = "";
+        document.getElementById('L-curr').textContent = "---";
+        document.getElementById('L-next').textContent = "";
+    } else {
+        let lenL = state.arrL.length;
+        document.getElementById('L-curr').textContent = state.arrL[state.idxL].text;
+        document.getElementById('L-prev').textContent = lenL > 1 ? state.arrL[(state.idxL - 1 + lenL) % lenL].text : "";
+        document.getElementById('L-next').textContent = lenL > 2 ? state.arrL[(state.idxL + 1) % lenL].text : (lenL === 2 ? state.arrL[(state.idxL - 1 + lenL) % lenL].text : "");
+    }
+
+    // Render Right
+    if(state.arrR.length === 0) {
+        document.getElementById('R-prev').textContent = "";
+        document.getElementById('R-curr').textContent = "---";
+        document.getElementById('R-next').textContent = "";
+    } else {
+        let lenR = state.arrR.length;
+        document.getElementById('R-curr').textContent = state.arrR[state.idxR].text;
+        document.getElementById('R-prev').textContent = lenR > 1 ? state.arrR[(state.idxR - 1 + lenR) % lenR].text : "";
+        document.getElementById('R-next').textContent = lenR > 2 ? state.arrR[(state.idxR + 1) % lenR].text : (lenR === 2 ? state.arrR[(state.idxR - 1 + lenR) % lenR].text : "");
+    }
+}
+
+function checkAlignment() {
+    if(state.arrL.length === 0) return;
+    
+    const fb = document.getElementById('feedback');
+    const wordL = state.arrL[state.idxL];
+    const wordR = state.arrR[state.idxR];
+    
+    if(wordL.id === wordR.id) {
+        // Match!
+        fb.textContent = `FREQUENCY LOCKED: [ ${wordL.id.toUpperCase()} ]`;
+        fb.style.color = "var(--lg)";
+        
+        // Remove matched words
+        state.arrL.splice(state.idxL, 1);
+        state.arrR.splice(state.idxR, 1);
+        state.currentConcepts = state.currentConcepts.filter(c => c.id !== wordL.id);
+        
+        state.idxL = 0; state.idxR = 0;
+        
+        state.streak++; 
+        state.score += 50 * state.streak;
+        
+        if(state.arrL.length === 0) {
+            roundComplete();
+        }
+    } else {
+        // Wrong!
+        fb.textContent = "FREQUENCY MISMATCH. SIGNAL DROPPED.";
+        fb.style.color = "var(--red)";
+        state.streak = 0;
+    }
+    
     updateHUD();
+    renderDials();
+}
+
+function startTimer() {
+    if(state.timerInt) clearInterval(state.timerInt);
+    state.timerInt = setInterval(() => { 
+        if(state.timeLeft > 0 && document.getElementById('roundComplete').style.display === 'none') { 
+            state.timeLeft--; 
+            updateHUD(); 
+            
+            const timeEl = document.getElementById('timeVal');
+            if(state.timeLeft <= 10) {
+                timeEl.classList.add('warning');
+            } else {
+                timeEl.classList.remove('warning');
+            }
+            
+            if(state.timeLeft === 0) {
+                document.getElementById('feedback').textContent = "OXYGEN DEPLETED. ROUND OVER.";
+                document.getElementById('feedback').style.color = "var(--red)";
+                document.getElementById('alignBtn').classList.add('disabled');
+                document.getElementById('roundComplete').style.display = 'block';
+                document.getElementById('roundGold').textContent = "0 GOLD. TIME EXPIRED.";
+            }
+        } 
+    }, 1000);
 }
 
 function roundComplete() {
-    const gold = 50 + (state.timeLeft);
-    if(window.NMNWallet) {
+    const gold = 50 + (state.timeLeft * 2); // Time bonus
+    if(typeof NMNWallet !== 'undefined') {
         NMNWallet.addGold(gold);
         NMNWallet.addXP(20);
     }
+    document.getElementById('alignBtn').classList.add('disabled');
     document.getElementById('roundGold').textContent = `+${gold} GOLD EXTRACTED`;
     document.getElementById('roundComplete').style.display = 'block';
-    if(Math.random() < 0.1) triggerLore();
+    updateHUD();
+    if(Math.random() < 0.25) triggerLore();
 }
 
 function triggerLore() {
     try {
-        const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
-        const entry = { text: `Linguistic Discovery: Ancient roots link the word for 'Gold' across the four tongues.`, source: 'Deciphered Tablet', date: new Date().toLocaleDateString() };
-        vault.push(entry);
-        localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
+        if(typeof NMNWallet !== 'undefined') {
+            const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
+            const entry = { text: `Linguistic Discovery: The root frequency for understanding the mine is omni-directional.`, source: 'Deciphered Tablet', date: new Date().toLocaleDateString() };
+            if(!vault.some(v => v.text === entry.text)) {
+                vault.push(entry);
+                localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
+                document.getElementById('dgLore').textContent = vault.length;
+            }
+        }
     } catch(e) {}
 }
 
-function nextRound() { state.round++; resetRound(); }
+function nextRound() { 
+    state.round++; 
+    state.timeLeft += 30; // Grant extra time
+    resetRound(); 
+}
 
 function updateHUD() {
     document.getElementById('scoreVal').textContent = state.score;
     document.getElementById('timeVal').textContent = state.timeLeft;
     document.getElementById('streakVal').textContent = state.streak;
-    if(window.NMNWallet) {
+    if(typeof NMNWallet !== 'undefined') {
         document.getElementById('dgGold').textContent = NMNWallet.get().gold.toLocaleString();
         document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]').length;
     }
 }
 
-setInterval(() => { if(state.timeLeft > 0 && document.getElementById('roundComplete').style.display === 'none') { state.timeLeft--; updateHUD(); } }, 1000);
-
-window.onload = resetRound;
+// Init Gauges
+(function(){
+  try{
+    if(typeof NMNWallet !== 'undefined') {
+        document.getElementById('dgGold').textContent = NMNWallet.get().gold.toLocaleString();
+        document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault')||'[]').length;
+    }
+  }catch(e){}
+})();
 </script>
 
-
-<div class="nmn-global-cta" style="border-top:2px solid rgba(255,215,0,.2);background:rgba(5,3,8,.98);padding:2rem 1.5rem;text-align:center;margin-top:3rem;">
-  <p style="font-family:'Press Start 2P',cursive;font-size:.4rem;color:#8B6914;letter-spacing:.2em;margin-bottom:1.2rem;">⬡ MINE YOUR COPY ⬡</p>
-  <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:1.2rem;">
-    <a href="https://books2read.com/u/3LPyjw" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE WANDERER $2.99</a>
-    <a href="https://books2read.com/u/3ndXGR" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE SWIMMER $2.99</a>
-    <a href="https://books2read.com/u/4EOxZ0" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">JUNI $9.99</a>
-    <a href="https://books2read.com/u/31NrLw" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">OUTBREAK $9.99</a>
-  </div>
-  <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;">
-    <a href="brawler/index.html" style="padding:.55rem 1rem;background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.3);color:#e8b84b;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⚔️ PLAY FREE</a>
-    <a href="https://gofund.me/e643a8283" target="_blank" style="padding:.55rem 1rem;background:rgba(0,169,92,.1);border:1px solid #02a95c;color:#02a95c;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⛏ SUPPORT NMN</a>
-    <a href="https://patreon.com/Lordminadeoro" target="_blank" style="padding:.55rem 1rem;background:rgba(197,146,0,.1);border:1px solid #C59200;color:#C59200;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">🏮 PATREON</a>
-    <a href="index.html" style="padding:.55rem 1rem;background:transparent;border:1px solid rgba(255,215,0,.15);color:#8B6914;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">← HUB</a>
-  </div>
-</div>
 </body>
 </html>
