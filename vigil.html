@@ -80,6 +80,10 @@ body,*{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
 
 <script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
 
+<style id="nmn-cursor-global">body,*{cursor:none!important}</style>
+<style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
+<link rel="icon" type="image/jpeg" href="lord_oro_emblem.jpg">
+<link rel="shortcut icon" type="image/jpeg" href="lord_oro_emblem.jpg">
 </head>
 <body>
 <script src="nmn-wallet.js"></script>
@@ -417,13 +421,7 @@ document.addEventListener('click', () => {
 " style="position:fixed;bottom:42px;right:.75rem;z-index:998;background:rgba(12,10,7,.9);border:1px solid rgba(255,215,0,.2);color:#4a3c28;font-family:Josefin Sans,sans-serif;font-size:.42rem;letter-spacing:.1em;padding:.35rem .6rem;cursor:pointer;transition:all .3s">🔇 Sound Off</button>
 
 <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(function(registration) {
-      console.log('NMN SW registered with scope:', registration.scope);
-    })
-    .catch(function(err){
-      console.log('NMN SW error:', err);
+/* sw removed */
     });
 }
 </script>
@@ -432,6 +430,22 @@ if ('serviceWorker' in navigator) {
   <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
   <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
   <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+
+<div class="nmn-global-cta" style="border-top:2px solid rgba(255,215,0,.2);background:rgba(5,3,8,.98);padding:2rem 1.5rem;text-align:center;margin-top:3rem;">
+  <p style="font-family:'Press Start 2P',cursive;font-size:.4rem;color:#8B6914;letter-spacing:.2em;margin-bottom:1.2rem;">⬡ MINE YOUR COPY ⬡</p>
+  <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:1.2rem;">
+    <a href="https://books2read.com/u/3LPyjw" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE WANDERER $2.99</a>
+    <a href="https://books2read.com/u/3ndXGR" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE SWIMMER $2.99</a>
+    <a href="https://books2read.com/u/4EOxZ0" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">JUNI $9.99</a>
+    <a href="https://books2read.com/u/31NrLw" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">OUTBREAK $9.99</a>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;">
+    <a href="brawler/index.html" style="padding:.55rem 1rem;background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.3);color:#e8b84b;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⚔️ PLAY FREE</a>
+    <a href="https://gofund.me/e643a8283" target="_blank" style="padding:.55rem 1rem;background:rgba(0,169,92,.1);border:1px solid #02a95c;color:#02a95c;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⛏ SUPPORT NMN</a>
+    <a href="https://patreon.com/Lordminadeoro" target="_blank" style="padding:.55rem 1rem;background:rgba(197,146,0,.1);border:1px solid #C59200;color:#C59200;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">🏮 PATREON</a>
+    <a href="index.html" style="padding:.55rem 1rem;background:transparent;border:1px solid rgba(255,215,0,.15);color:#8B6914;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">← HUB</a>
+  </div>
 </div>
 </body>
 </html>
