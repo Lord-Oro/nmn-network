@@ -31,19 +31,28 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; background: var(--coal); }
 
+/* THE MINE, GOLD, OBSIDIAN & COSMIC BACKGROUND */
 body {
   font-family: var(--font-pixel);
   background-color: var(--coal);
   color: var(--cream);
   overflow-x: hidden;
-  padding-top: 70px; 
-  padding-bottom: 90px; 
+  padding-top: 80px; 
+  padding-bottom: 100px; 
   background-image: 
+    /* Gold Speckles */
     radial-gradient(2px 2px at 40px 60px, #FFD700 50%, transparent 100%),
-    radial-gradient(2px 2px at 120px 180px, #e8b84b 50%, transparent 100%),
-    linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
-    linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
-  background-size: 200px 200px, 200px 200px, 32px 32px, 32px 32px;
+    radial-gradient(3px 3px at 150px 200px, #e8b84b 50%, transparent 100%),
+    /* Obsidian Speckles */
+    radial-gradient(2px 2px at 90px 120px, #AA55FF 50%, transparent 100%),
+    radial-gradient(3px 3px at 250px 300px, #440066 50%, transparent 100%),
+    /* Cosmic Stars */
+    radial-gradient(1px 1px at 180px 40px, #FFF 50%, transparent 100%),
+    radial-gradient(1px 1px at 300px 180px, #FFF 50%, transparent 100%),
+    /* Mine Shaft Scanlines */
+    linear-gradient(rgba(10, 8, 12, 0.8) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(10, 8, 12, 0.8) 2px, transparent 2px);
+  background-size: 200px 200px, 250px 250px, 150px 150px, 300px 300px, 120px 120px, 220px 220px, 32px 32px, 32px 32px;
   line-height: 1.8;
 }
 
@@ -51,8 +60,8 @@ h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !import
 a { text-decoration: none; color: inherit; }
 
 /* ─── CUSTOM CURSOR & GLOW ─── */
-body, a, button, .vessel-anchor-wrap, .work-card, .map-sector { 
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; 
+body, a, button, .vessel-anchor-wrap, .work-card, .map-sector, .dir-link { 
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; 
 }
 #pickaxe-glow {
     position: fixed; width: 140px; height: 140px; border-radius: 50%;
@@ -61,11 +70,11 @@ body, a, button, .vessel-anchor-wrap, .work-card, .map-sector {
     mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
 }
 
-/* ─── CRT SCANLINES ─── */
+/* ─── CRT EFFECTS ─── */
 body::after{
   content:""; position:fixed; inset:0;
   background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.1) 50%);
-  background-size:100% 4px; pointer-events:none; z-index:10000; opacity:0.3;
+  background-size:100% 4px; pointer-events:none; z-index:10000; opacity:0.4;
 }
 body::before{
   content:""; position:fixed; inset:0;
@@ -81,73 +90,88 @@ nav {
 }
 .nav-container {
   display: flex; justify-content: space-between; align-items: center;
-  max-width: 1200px; margin: 0 auto; padding: 1rem; width: 100%;
-  overflow-x: auto; white-space: nowrap;
+  max-width: 1200px; margin: 0 auto; padding: 1.2rem 2rem; width: 100%;
 }
-.nav-container::-webkit-scrollbar { display: none; }
-.nav-logo { font-size: 1rem; color: var(--gold); letter-spacing: 2px; text-shadow: 4px 4px 0 #553300; margin-right: 2rem;}
-.nav-links { display: flex; gap: 1.5rem; align-items: center; }
-.nav-link { color: var(--cream); font-size: 0.6rem; letter-spacing: 2px; transition: 0.2s; }
+.nav-logo { font-size: 16px; color: var(--gold); letter-spacing: 2px; text-shadow: 4px 4px 0 #553300; margin-right: 2rem;}
+.nav-links { display: flex; gap: 2rem; align-items: center; overflow-x: auto; white-space: nowrap; padding-bottom: 5px;}
+.nav-links::-webkit-scrollbar { height: 4px; }
+.nav-links::-webkit-scrollbar-thumb { background: var(--gd); }
+.nav-link { color: var(--cream); font-size: 10px; letter-spacing: 2px; transition: 0.2s; padding: 5px;}
 .nav-link:hover { color: var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+
+@media(max-width:768px){ 
+  .nav-container { flex-direction: column; padding: 10px; gap: 10px;}
+  .nav-logo { font-size: 14px; margin-right: 0;} 
+}
 
 /* ─── HERO & GOLDEN EYES ─── */
 .hall-hero {
-  text-align: center; padding: 6rem 1rem 4rem; position: relative;
+  text-align: center; padding: 8rem 1rem 5rem; position: relative;
   border-bottom: 4px solid var(--gd);
   background-image: url('oros_game_eyes.jpg'); background-size: cover; background-position: center 30%;
   min-height: 80vh; display: flex; flex-direction: column; justify-content: flex-end;
 }
-.hall-hero::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 1; }
+.hall-hero::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.65); z-index: 1; }
 .hall-hero-content { position: relative; z-index: 10; width: 100%; max-width: 800px; margin: 0 auto; }
 
-.hall-eyes { display: flex; gap: 40px; justify-content: center; margin-bottom: 2rem; }
-.hall-eye { width: 28px; height: 18px; background: radial-gradient(ellipse at center, #FFD700, #FF8C00); border-radius: 50%; box-shadow: 0 0 25px rgba(255,215,0,1); animation: eyeBlink 5s infinite; position: relative; border: 2px solid #fff; }
-.hall-eye::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 8px; height: 8px; background: #000; border-radius: 50%; }
-@keyframes eyeBlink { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
-
-.hero-title { font-size: clamp(1.8rem, 6vw, 3.5rem); line-height: 1.4; color: var(--cream); margin-bottom: 1.5rem; text-shadow: 4px 4px 0 #000; }
+.hero-title { font-size: clamp(24px, 6vw, 48px); line-height: 1.4; color: var(--cream); margin-bottom: 1.5rem; text-shadow: 4px 4px 0 #000; }
 .hero-title em { color: var(--gold); display: block; font-style: normal; text-shadow: 4px 4px 0 #553300; }
-.hero-tagline-box { border: 4px solid var(--gold); background: rgba(0,0,0,0.8); padding: 1.5rem; margin: 0 auto 1rem; max-width: 650px; box-shadow: 8px 8px 0 #553300; }
-.hero-tagline { font-size: 0.7rem; line-height: 1.8; color: var(--gold); text-transform: uppercase; }
-.hero-whisper { font-size: 0.5rem; color: var(--muted); margin-bottom: 2rem; }
+.hero-tagline-box { border: 4px solid var(--gold); background: rgba(0,0,0,0.8); padding: 1.5rem; margin: 0 auto 1.5rem; max-width: 650px; box-shadow: 8px 8px 0 #553300; }
+.hero-tagline { font-size: 12px; line-height: 2; color: var(--gold); text-transform: uppercase; }
+.hero-whisper { font-size: 10px; color: var(--muted); margin-bottom: 2rem; }
 
 /* ─── STATUS WALLET BAR ─── */
 .wallet-bar {
-  display: flex; align-items: center; justify-content: center; gap: 1.5rem;
-  padding: 1.5rem; background: #0a0806; border-bottom: 4px solid #333;
+  display: flex; align-items: center; justify-content: center; gap: 2rem;
+  padding: 2rem 1.5rem; background: #0a0806; border-bottom: 4px solid #333;
   flex-wrap: wrap; position: relative; z-index: 10; box-shadow: inset 0 0 20px #000;
 }
-.w-item { text-align: center; background: #000; border: 4px solid #222; padding: 1rem; min-width: 150px; }
-.w-val { font-size: 1.2rem; color: var(--gold); text-shadow: 3px 3px 0 #553300; display: block; margin-bottom: 0.5rem; }
-.w-lbl { font-size: 0.5rem; color: var(--muted); }
-.gem-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 0.5rem; }
-.gem-pip { width: 16px; height: 16px; border: 2px solid #553300; background: #1a0a00; color: transparent; font-size: 10px; display: flex; align-items: center; justify-content: center; }
+.w-item { text-align: center; background: #000; border: 4px solid #222; padding: 1.5rem; min-width: 160px; box-shadow: 4px 4px 0 #111;}
+.w-val { font-size: 20px; color: var(--gold); text-shadow: 3px 3px 0 #553300; display: block; margin-bottom: 10px; }
+.w-lbl { font-size: 10px; color: var(--muted); }
+.gem-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; }
+.gem-pip { width: 18px; height: 18px; border: 2px solid #553300; background: #1a0a00; color: transparent; display: flex; align-items: center; justify-content: center; }
 .gem-pip.lit { border-color: #FFF; background: var(--gold); color: #000; box-shadow: 0 0 10px var(--gold); }
-.convert-btn { background: #000; border: 4px solid var(--gd); color: var(--gold); padding: 1rem; font-size: 0.6rem; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+.convert-btn { background: #000; border: 4px solid var(--gd); color: var(--gold); padding: 1.2rem; font-size: 12px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
 .convert-btn:hover { background: var(--gd); color: #000; border-color: #FFF; transform: translateY(-4px); box-shadow: 4px 4px 0 #000;}
 
 /* ─── GENERAL SECTIONS ─── */
-section { padding: 5rem 1.5rem; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
-.section-tag { font-size: 0.8rem; color: var(--gold); margin-bottom: 3rem; text-shadow: 3px 3px 0 #553300; text-align: center; border-bottom: 4px solid #333; padding-bottom: 1.5rem; }
-.glitch-text { font-size: 1.2rem; color: var(--cream); line-height: 1.6; margin-bottom: 1.5rem; text-align: center; min-height: 40px; }
+section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+.section-tag { font-size: 16px; color: var(--gold); margin-bottom: 3rem; text-shadow: 3px 3px 0 #553300; text-align: center; border-bottom: 4px solid #333; padding-bottom: 1.5rem; }
+.glitch-text { font-size: 18px; color: var(--cream); line-height: 1.6; margin-bottom: 2rem; text-align: center; min-height: 40px; text-shadow: 2px 2px 0 #000;}
 
-/* ─── ABOUT & SIGNAL LOG ─── */
-.signal-log { border: 4px solid var(--gd); background: #000; padding: 2rem; margin-bottom: 4rem; box-shadow: 8px 8px 0 #000; display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; }
-.signal-img { width: 100%; min-width: 250px; border: 4px solid var(--gold); image-rendering: pixelated; flex: 1; }
+/* ─── DYNAMIC SIGNAL LOG ─── */
+.signal-log { border: 4px solid var(--gd); background: #000; padding: 2rem; box-shadow: 8px 8px 0 #000; display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; position: relative; overflow: hidden;}
+.signal-img-wrap { flex: 1; min-width: 250px; position: relative; }
+.signal-img { width: 100%; border: 4px solid var(--gold); image-rendering: pixelated; display: block; transition: filter 0.2s;}
+
+/* Signal Glitch Effects */
+.signal-stable .signal-img { filter: sepia(0.2) contrast(1.2); }
+.signal-stable::after { content:''; position:absolute; inset:0; background: rgba(255,215,0,0.05); pointer-events: none; animation: staticFlicker 0.1s infinite; }
+
+.signal-obsidian .signal-img { filter: hue-rotate(90deg) saturate(2) contrast(1.5) invert(0.2); border-color: var(--pu); }
+.signal-obsidian::after { content:''; position:absolute; inset:0; background: rgba(170,85,255,0.1); pointer-events: none; animation: heavyGlitch 0.2s infinite; }
+
+@keyframes staticFlicker { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.9; } }
+@keyframes heavyGlitch { 0% { transform: translate(2px, 2px); opacity: 0.8; } 25% { transform: translate(-2px, -2px); opacity: 1; } 50% { transform: translate(0px, 4px); filter: invert(1); } 100% { transform: translate(-2px, 0); opacity: 0.9; } }
+
 .signal-text-box { flex: 2; min-width: 280px; }
-.signal-title { color: var(--gold); font-size: 0.9rem; margin-bottom: 1.5rem; text-shadow: 2px 2px 0 #553300;}
-.signal-body { font-size: 0.6rem; color: var(--neon-green); line-height: 2; max-height: 150px; overflow-y: auto; padding-right: 10px; }
-.signal-live { margin-top: 1.5rem; color: var(--gold); font-size: 0.6rem; animation: pulse 1s infinite; }
+.signal-title { color: var(--gold); font-size: 14px; margin-bottom: 1.5rem; text-shadow: 2px 2px 0 #553300; transition: color 0.3s;}
+.signal-obsidian .signal-title { color: var(--pu); text-shadow: 2px 2px 0 #000; }
+
+.signal-body { font-size: 11px; color: var(--neon-green); line-height: 2.2; max-height: 180px; overflow-y: auto; padding-right: 10px; transition: color 0.3s;}
+.signal-obsidian .signal-body { color: #ff4444; }
+.signal-live { margin-top: 1.5rem; color: var(--gold); font-size: 12px; animation: pulse 1s infinite; }
 
 /* ─── DUAL VESSEL LIBRARY (THE BOOKS) ─── */
-.collection-gateway { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem; }
-.vessel-anchor-wrap { flex: 1; min-width: 280px; border: 4px solid var(--gd); background: #000; cursor: pointer; transition: 0.2s; position: relative; aspect-ratio: 16/9; overflow: hidden; box-shadow: 6px 6px 0 #000; }
+.collection-gateway { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-bottom: 4rem; }
+.vessel-anchor-wrap { flex: 1; min-width: 300px; border: 4px solid var(--gd); background: #000; cursor: pointer; transition: 0.2s; position: relative; aspect-ratio: 16/9; overflow: hidden; box-shadow: 6px 6px 0 #000; }
 .vessel-anchor-wrap:hover, .vessel-anchor-wrap.active { border-color: var(--gold); transform: translateY(-5px); box-shadow: 6px 10px 0 var(--gold); }
 .vessel-anchor-wrap img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); transition: 0.3s; image-rendering: pixelated; }
 .vessel-anchor-wrap:hover img, .vessel-anchor-wrap.active img { filter: brightness(1); }
-.vessel-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.9); padding: 1rem; border-top: 4px solid var(--gd); display: flex; justify-content: space-between; align-items: center; }
-.vessel-label-title { font-size: 0.7rem; color: var(--gold); }
-.vessel-label-sub { font-size: 0.4rem; color: var(--muted); margin-top: 8px; }
+.vessel-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.9); padding: 1.5rem; border-top: 4px solid var(--gd); display: flex; justify-content: space-between; align-items: center; }
+.vessel-label-title { font-size: 12px; color: var(--gold); line-height: 1.4;}
+.vessel-label-sub { font-size: 9px; color: var(--muted); margin-top: 8px; }
 
 #vessel-obsidian { border-color: var(--pu); }
 #vessel-obsidian:hover, #vessel-obsidian.active { box-shadow: 6px 10px 0 var(--pu); border-color: #FFF; }
@@ -155,67 +179,93 @@ section { padding: 5rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
 #vessel-obsidian .vessel-label-title { color: var(--pu); }
 
 .filter-panel { display: none; }
-.works-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+.works-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
 .work-card { aspect-ratio: 2/3; background: #000; border: 4px solid var(--gd); position: relative; cursor: pointer; overflow: hidden; transition: 0.2s; box-shadow: 6px 6px 0 #000; }
-.work-card:hover { transform: translateY(-5px); border-color: var(--gold); }
+.work-card:hover { transform: translateY(-6px); border-color: var(--gold); }
 .work-img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; image-rendering: pixelated;}
 .work-card:hover .work-img { filter: brightness(0.2); }
 .work-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; text-align: center; opacity: 0; background: rgba(0,0,0,0.9); transition: 0.3s; }
 .work-card:hover .work-overlay { opacity: 1; }
-.store-link { display: block; width: 100%; padding: 12px; margin: 6px 0; font-size: 0.5rem; text-decoration: none; border: 4px solid #444; color: #888; background: #111; transition: 0.2s; }
+.work-title { font-size: 12px; color: var(--gold); margin-bottom: 15px; line-height: 1.4; }
+.store-link { display: block; width: 100%; padding: 12px; margin: 6px 0; font-size: 10px; text-decoration: none; border: 4px solid #444; color: #888; background: #111; transition: 0.2s; }
 .store-link.available { border-color: var(--gold); color: var(--gold); }
 .store-link.available:hover { background: var(--gold); color: #000; border-color: #FFF;}
 
-/* ─── MAP SECTORS & GUARDIANS ─── */
-.map-grid, .guardian-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
-.map-sector, .guardian-card { 
-    background: #000; border: 4px solid var(--gd); padding: 2rem; text-align: center; 
-    box-shadow: 8px 8px 0 #000; transition: 0.2s; display: flex; flex-direction: column;
+/* ─── FULL INDEX DIRECTORY (SECTOR CARDS) ─── */
+.dir-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+.dir-card { 
+    background: #000; border: 4px solid var(--gd); box-shadow: 8px 8px 0 #000;
+    position: relative; overflow: hidden; display: flex; flex-direction: column;
+    min-height: 400px; transition: transform 0.2s, border-color 0.2s;
 }
-.map-sector:hover, .guardian-card:hover { transform: translateY(-5px); border-color: var(--gold); box-shadow: 8px 12px 0 var(--gold); }
+.dir-card:hover { transform: translateY(-5px); border-color: var(--gold); box-shadow: 8px 12px 0 var(--gold);}
+.dir-bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0.2; filter: grayscale(1); transition: 0.3s; image-rendering: pixelated;}
+.dir-card:hover .dir-bg { opacity: 0.4; filter: grayscale(0); }
+.dir-content { position: relative; z-index: 2; padding: 2rem; background: linear-gradient(0deg, #000 40%, transparent 100%); flex-grow: 1; display: flex; flex-direction: column;}
+.dir-header { font-size: 16px; color: var(--gold); margin-bottom: 1.5rem; text-shadow: 2px 2px 0 #000; line-height: 1.4; text-align: center;}
+.dir-links { display: flex; flex-direction: column; gap: 12px; margin-top: auto; }
+.dir-link { 
+    display: block; font-size: 10px; color: var(--cream); text-decoration: none; 
+    background: rgba(0,0,0,0.8); border: 2px solid #333; padding: 12px; 
+    transition: 0.2s; text-align: center; text-transform: uppercase;
+}
+.dir-link:hover { background: var(--gold); color: #000; border-color: #FFF; transform: scale(1.02);}
 
-/* Guardian Specifics */
-.guardian-img { width: 120px; height: 120px; margin: 0 auto 1.5rem; border: 4px solid var(--gold); border-radius: 50%; overflow: hidden; background: #111; }
-.guardian-img img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; filter: sepia(0.4); }
-.g-name { font-size: 1rem; color: var(--cream); margin-bottom: 0.5rem; }
-.g-title { font-size: 0.5rem; color: var(--pu); margin-bottom: 1rem; }
-.g-desc { font-size: 0.6rem; color: var(--muted); line-height: 1.8; }
-
-/* Sector Specifics */
-.s-label { font-size: 0.5rem; color: var(--gd); margin-bottom: 1rem; }
-.s-title { font-size: 1.4rem; color: var(--gold); margin-bottom: 1rem; text-shadow: 2px 2px 0 #553300; }
-.s-desc { font-size: 0.6rem; color: var(--cream); line-height: 1.8; margin-bottom: 2rem; flex-grow: 1; }
-.s-link { background: #111; border: 4px solid var(--gd); color: var(--gold); padding: 1rem; font-size: 0.6rem; text-decoration: none; transition: 0.2s; }
-.s-link:hover { background: var(--gold); color: #000; border-color: #FFF; }
-
-/* ─── DIRECTORY & MANIFESTO CTA ─── */
-.dir-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; padding: 2rem; border: 4px solid #333; background: #0a0806; }
-.dir-header { font-size: 0.7rem; color: var(--pu); margin-bottom: 1.5rem; border-bottom: 4px dashed #333; padding-bottom: 1rem; }
-.dir-link { display: block; font-size: 0.5rem; color: var(--muted); margin-bottom: 1rem; text-decoration: none; transition: 0.2s; }
-.dir-link:hover { color: var(--gold); transform: translateX(5px); }
-.dir-link::before { content: '>'; color: var(--gd); margin-right: 10px; }
-
-.manifesto-section { margin: 5rem auto; border: 4px solid var(--gold); background: #000; padding: 4rem 2rem; text-align: center; box-shadow: 10px 10px 0 #553300; }
-.manifesto-title { font-size: 1.8rem; color: var(--gold); margin-bottom: 1.5rem; text-shadow: 4px 4px 0 #553300; line-height: 1.4;}
-.manifesto-text { font-size: 0.7rem; color: var(--cream); max-width: 800px; margin: 0 auto 3rem; line-height: 2; }
+/* ─── THE MANIFESTO CTA ─── */
+.manifesto-section {
+    margin: 5rem auto; border: 4px solid var(--gold); background: #000;
+    padding: 4rem 2rem; text-align: center; box-shadow: 10px 10px 0 #553300;
+}
+.manifesto-title { font-size: 24px; color: var(--gold); margin-bottom: 2rem; text-shadow: 4px 4px 0 #553300; line-height: 1.4;}
+.manifesto-text { font-size: 12px; color: var(--cream); max-width: 800px; margin: 0 auto 3rem; line-height: 2; }
 .manifesto-actions { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
-.btn-manifesto { padding: 1.2rem 2rem; font-size: 0.7rem; border: 4px solid; text-decoration: none; transition: 0.2s; }
+
+.btn-retro {
+    padding: 1.2rem 2rem; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; 
+    text-decoration: none; display: inline-block; transition: all 0.2s; cursor: pointer; border: 4px solid;
+}
 .btn-m-primary { background: var(--gold); color: #000; border-color: #FFF; box-shadow: 6px 6px 0 #553300; }
 .btn-m-primary:hover { transform: translateY(-4px); background: #FFF; box-shadow: 6px 10px 0 #553300; }
 .btn-m-ghost { background: #111; color: var(--gold); border-color: var(--gd); box-shadow: 6px 6px 0 #000; }
-.btn-m-ghost:hover { transform: translateY(-4px); background: var(--gd); color: #000; }
+.btn-m-ghost:hover { transform: translateY(-4px); background: var(--gd); color: #000; border-color: #FFF;}
 
-/* ─── OVERLAYS & UI ─── */
-.nmn-seal{ position:fixed; bottom:20px; right:20px; width:64px; height:64px; border-radius:50%; border:4px solid var(--gold); box-shadow:0 0 20px rgba(255,215,0,0.5); z-index:9998; cursor:pointer; background: #000; overflow: hidden; transition: 0.2s;}
-.nmn-seal:hover{ transform: scale(1.1); box-shadow:0 0 30px var(--gold); border-color: #FFF;}
-.nmn-seal img{width:100%;height:100%;object-fit:cover; image-rendering: pixelated;}
+.forge-status { max-width: 700px; margin: 3rem auto 0; text-align: left; background: #111; padding: 1.5rem; border: 4px solid #333;}
+.forge-label { font-size: 10px; color: var(--cream); margin-bottom: 15px; display: flex; justify-content: space-between; }
+.forge-bar { height: 24px; background: #000; border: 4px solid #555; padding: 2px;}
+.forge-fill { width: 65%; height: 100%; background: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); }
 
+/* ─── DESCENT OVERLAY ─── */
 #descent-overlay { position: fixed; inset: 0; background: #000; z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
 .descent-active { opacity: 1 !important; pointer-events: all !important; }
 .elevator-shaft { width: 8px; height: 100vh; background: linear-gradient(to bottom, transparent, var(--gold), transparent); animation: drop 0.5s infinite linear; }
-.descent-text { color: var(--gold); font-size: 1rem; position: absolute; text-shadow: 0 0 15px var(--gold); animation: pulse 1s infinite; }
+.descent-text { color: var(--gold); font-size: 16px; position: absolute; text-shadow: 0 0 15px var(--gold); animation: pulse 1s infinite; }
 @keyframes drop { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* ─── MOBILE HUB DOCK & GAUGE ─── */
+.depth-gauge {
+  position:fixed!important; bottom:15px!important; left:50%!important; transform:translateX(-50%)!important;
+  width:auto!important; max-width:95%!important; height:46px!important; background:#000!important;
+  border:4px solid var(--gd)!important; padding:0 20px!important;
+  z-index:9999!important; display:flex!important; align-items:center!important;
+  justify-content:center!important; gap:1.5rem!important; box-shadow: 4px 4px 0 #000!important;
+}
+.dg-stat { font-size: 10px; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
+.dg-val { color: var(--gold); font-size: 14px; }
+
+@media (max-width: 768px) {
+  .depth-gauge { bottom: 85px !important; } 
+  .mobile-hub-nav {
+      position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
+      background: #000; border-top: 4px solid var(--gd);
+      display: flex; justify-content: space-around; align-items: center;
+      z-index: 99999; padding-bottom: env(safe-area-inset-bottom);
+  }
+  .hub-tab { color: var(--muted); text-align: center; flex: 1; font-size: 8px; text-decoration: none; padding: 10px;}
+  .hub-tab.active, .hub-tab:hover { color: var(--gold); }
+  .hub-icon { font-size: 20px; display: block; margin-bottom: 5px; }
+}
+@media (min-width: 769px) { .mobile-hub-nav { display: none; } }
 
 /* FADE IN */
 .fade-in{opacity:0;transform:translateY(30px);transition:opacity 0.5s ease, transform 0.5s ease}
@@ -225,6 +275,7 @@ section { padding: 5rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
 <body>
 
 <script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
 
 <nav>
   <div class="nav-container">
@@ -274,11 +325,13 @@ section { padding: 5rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
 
 <section>
   <div class="section-tag">NMN BROADCAST LOG</div>
-  <div class="signal-log fade-in">
-    <img src="goldmine_stable.jpg" id="current-transmission-img" class="signal-img">
+  <div class="signal-log signal-stable fade-in" id="signalContainer">
+    <div class="signal-img-wrap">
+      <img src="goldmine_stable.jpg" id="signalImg" class="signal-img">
+    </div>
     <div class="signal-text-box">
-        <h3 class="signal-title">[ STATUS: SIGNAL ACQUIRED ]</h3>
-        <p class="signal-body">
+        <h3 class="signal-title" id="signalTitle">[ STATUS: SIGNAL ACQUIRED ]</h3>
+        <p class="signal-body" id="signalText">
             [04.07.2026] > THE ARCHITECT HAS TAPPED THE OBSIDIAN VEIN.<br>
             [04.07.2026] > THE OBSIDIAN VEIN IS EXPANDING INTO 7 LANGUAGES.<br>
             [04.05.2026] > NEW 16-BIT RENDERS ARE BEING ARCHIVED.<br>
@@ -290,45 +343,7 @@ section { padding: 5rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
   </div>
 </section>
 
-<section id="guardians">
-  <div class="section-tag">GUARDIANS OF THE MINE</div>
-  <h2 class="glitch-text" data-text="The souls that inhabit the tunnels.">The souls that inhabit the tunnels.</h2>
-  
-  <div class="guardian-grid fade-in">
-      <div class="guardian-card">
-          <div class="guardian-img"><img src="nayla_avatar.jpg" alt="Nayla"></div>
-          <div class="g-name">NAYLA</div>
-          <div class="g-title">THE LIONESS</div>
-          <div class="g-desc">She didn't ask if the world was safe. She asked if it was real.</div>
-      </div>
-      <div class="guardian-card">
-          <div class="guardian-img"><img src="juni_avatar.jpg" alt="Juni"></div>
-          <div class="g-name">JUNI</div>
-          <div class="g-title">THE IMMORTAL</div>
-          <div class="g-desc">You choose which griefs to keep open, and which to keep sealed.</div>
-      </div>
-      <div class="guardian-card">
-          <div class="guardian-img"><img src="felik_avatar.jpg" alt="Felik"></div>
-          <div class="g-name">FELIK</div>
-          <div class="g-title">TWO SOULS</div>
-          <div class="g-desc">The blade doesn't choose the hand. Duality is a choice.</div>
-      </div>
-      <div class="guardian-card">
-          <div class="guardian-img"><img src="pyro_avatar.jpg" alt="Pyro"></div>
-          <div class="g-name">PYRO & HELIOS</div>
-          <div class="g-title">THE FIRE</div>
-          <div class="g-desc">Some fires are meant to be carried, not put out.</div>
-      </div>
-      <div class="guardian-card">
-          <div class="guardian-img"><img src="tora_avatar.jpg" alt="Tora"></div>
-          <div class="g-name">TORA</div>
-          <div class="g-title">THE VÖLVA</div>
-          <div class="g-desc">The runes do not predict. They illuminate what is already true.</div>
-      </div>
-  </div>
-</section>
-
-<section id="works">
+<section id="works" style="padding-top: 0;">
   <div class="section-tag">THE LIBRARY</div>
   <h2 class="glitch-text" data-text="12 TITLES. 5 LANGUAGES.">12 TITLES. 5 LANGUAGES.</h2>
 
@@ -340,125 +355,106 @@ section { padding: 5rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
           <div class="vessel-label-title">GOLDMINE COLLECTION</div>
           <div class="vessel-label-sub">Full Novels & Localizations</div>
         </div>
-        <span style="font-size: 1.5rem;">▶</span>
+        <span style="font-size: 24px;">▶</span>
       </div>
     </div>
     <div class="vessel-anchor-wrap" id="vessel-obsidian" onclick="filterVessel('obsidian')">
-      <img src="obsidian_anchor.jpeg" alt="The Obsidian Extractions">
+      <img src="obsidian_anchor.jpeg" alt="The Obsidian Extractions" onerror="this.src='minewars_cover.jpg'">
       <div class="vessel-label">
         <div>
           <div class="vessel-label-title">OBSIDIAN EXTRACTIONS</div>
           <div class="vessel-label-sub">Shorts & Lore Fragments</div>
         </div>
-        <span style="font-size: 1.5rem;">▶</span>
+        <span style="font-size: 24px;">▶</span>
       </div>
     </div>
   </div>
 
   <div id="panel-gold" class="filter-panel" style="display:block;">
     <div class="works-grid">
-      <div class="work-card"><img src="pyro_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="g-name">PYRO & HELIOS</h3><a href="https://amzn.to/4uOpLpA" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/meW9gA" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
-      <div class="work-card"><img src="outbreak_ja.jpg" class="work-img"><div class="work-overlay"><h3 class="g-name">パイロとヘリオス (JA)</h3><a href="https://books2read.com/u/bMLwXB" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
-      <div class="work-card"><img src="juni_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="g-name">JUNI IMMORTAL</h3><a href="https://amzn.to/4tfhJoc" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/4EOxZ0" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
-      <div class="work-card"><img src="Outbreak_from_the_stars_cover_art_final_1.jpeg" class="work-img"><div class="work-overlay"><h3 class="g-name">OUTBREAK (EN)</h3><a href="https://amzn.to/3NIeQ08" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/31NrLw" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
-      <div class="work-card"><img src="tabbies_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="g-name">ALL TABBIES</h3><a href="https://amzn.to/4bNAQ1y" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/brzavW" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
-      <div class="work-card"><img src="tabbies_es.jpg" class="work-img"><div class="work-overlay"><h3 class="g-name">TODOS LOS GATOS</h3><a href="https://amzn.to/47qbOUT" target="_blank" class="store-link available">AMAZON</a></div></div>
-      <div class="work-card"><img src="tabbies_ja.jpg" class="work-img"><div class="work-overlay"><h3 class="g-name">猫にも居場所がある</h3><a href="https://amzn.to/3PPrJG9" target="_blank" class="store-link available">AMAZON</a></div></div>
-      <div class="work-card"><img src="tabbies_ko.jpeg" class="work-img"><div class="work-overlay"><h3 class="g-name">모든 고양이는...</h3><div class="store-link available">GOOGLE PLAY</div></div></div>
+      <div class="work-card"><img src="pyro_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="work-title">PYRO & HELIOS</h3><a href="https://amzn.to/4uOpLpA" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/meW9gA" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="outbreak_ja.jpg" class="work-img"><div class="work-overlay"><h3 class="work-title">パイロとヘリオス (JA)</h3><a href="https://books2read.com/u/bMLwXB" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="juni_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="work-title">JUNI IMMORTAL</h3><a href="https://amzn.to/4tfhJoc" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/4EOxZ0" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="outbreak_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="work-title">OUTBREAK (EN)</h3><a href="https://amzn.to/3NIeQ08" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/31NrLw" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="tabbies_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="work-title">ALL TABBIES</h3><a href="https://amzn.to/4bNAQ1y" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/brzavW" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="tabbies_es.jpg" class="work-img"><div class="work-overlay"><h3 class="work-title">TODOS LOS GATOS</h3><a href="https://amzn.to/47qbOUT" target="_blank" class="store-link available">AMAZON</a></div></div>
+      <div class="work-card"><img src="tabbies_ja.jpg" class="work-img"><div class="work-overlay"><h3 class="work-title">猫にも居場所がある</h3><a href="https://amzn.to/3PPrJG9" target="_blank" class="store-link available">AMAZON</a></div></div>
+      <div class="work-card"><img src="tabbies_ko.jpeg" class="work-img"><div class="work-overlay"><h3 class="work-title">모든 고양이는...</h3><div class="store-link available">GOOGLE PLAY</div></div></div>
     </div>
   </div>
 
   <div id="panel-obsidian" class="filter-panel">
     <div class="works-grid">
-      <div class="work-card" style="border-color:#FF4444;"><img src="minewars_cover.jpg" class="work-img"><div class="work-overlay" style="background:rgba(30,0,0,0.9);"><h3 class="g-name" style="color:#FF4444;">MINE WARS</h3><a href="#" onclick="interceptDescent(event, 'MINE WARS', 'minewars.html')" class="store-link available" style="border-color:#FF4444; color:#FF4444;">DECRYPT ARCHIVE</a></div></div>
-      <div class="work-card"><img src="swimmer_en.jpg" class="work-img"><div class="work-overlay"><h3 class="g-name" style="color:var(--neon-green);">THE SWIMMER</h3><a href="https://books2read.com/u/3ndXGR" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
-      <div class="work-card"><img src="wanderer_cover.jpg" class="work-img"><div class="work-overlay"><h3 class="g-name" style="color:var(--neon-green);">WANDERER (EN)</h3><div class="store-link">PENDING</div></div></div>
+      <div class="work-card" style="border-color:#FF4444;"><img src="minewars_cover.jpg" class="work-img"><div class="work-overlay" style="background:rgba(30,0,0,0.9);"><h3 class="work-title" style="color:#FF4444;">MINE WARS</h3><a href="#" onclick="interceptDescent(event, 'MINE WARS', 'minewars.html')" class="store-link available" style="border-color:#FF4444; color:#FF4444;">DECRYPT ARCHIVE</a></div></div>
+      <div class="work-card"><img src="swimmer_en.jpg" class="work-img"><div class="work-overlay"><h3 class="work-title" style="color:var(--neon-green);">THE SWIMMER</h3><a href="https://books2read.com/u/3ndXGR" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="wanderer_cover.jpg" class="work-img"><div class="work-overlay"><h3 class="work-title" style="color:var(--neon-green);">WANDERER (EN)</h3><div class="store-link">PENDING</div></div></div>
     </div>
   </div>
 </section>
 
 <section id="sections">
-  <div class="section-tag">NAVIGATE THE MINE</div>
-  <h2 class="glitch-text" data-text="The mine has many rooms.">The mine has many rooms.</h2>
-
-  <div class="map-grid fade-in">
-    <div class="map-sector">
-      <div class="sector-overlay"></div>
-      <div class="sector-body">
-        <span class="s-label">SECTOR 1</span>
-        <h2 class="s-title">RECREATION HALL</h2>
-        <p class="s-desc">The initial vein. High speed, high reaction testing. Digger protocols and the Brawler engine are active here.</p>
-        <a href="#" onclick="interceptDescent(event, 'RECREATION HALL', 'games.html')" class="s-link">ENTER FORGE ▶</a>
-      </div>
-    </div>
-    
-    <div class="map-sector">
-      <div class="sector-overlay"></div>
-      <div class="sector-body">
-        <span class="s-label">SECTOR 2</span>
-        <h2 class="s-title">THE ARCHIVES</h2>
-        <p class="s-desc">Where the mine keeps its stories. Card dungeons and ancient words are locked here. Access your Lore Fragments.</p>
-        <a href="#" onclick="interceptDescent(event, 'THE ARCHIVES', 'archives.html')" class="s-link">ENTER ARCHIVES ▶</a>
-      </div>
-    </div>
-
-    <div class="map-sector">
-      <div class="sector-overlay"></div>
-      <div class="sector-body">
-        <span class="s-label">SECTOR 3</span>
-        <h2 class="s-title">ORACLE'S CHAMBER</h2>
-        <p class="s-desc">The path grows harder. Tora's Chamber is open to those who trust the Tarot and seek the deep lore.</p>
-        <a href="#" onclick="interceptDescent(event, 'THE ORACLE', 'oracle.html')" class="s-link">SEEK ORACLE ▶</a>
-      </div>
-    </div>
-    
-    <div class="map-sector classified">
-      <div class="sector-overlay" style="background:rgba(0,0,0,0.9);"></div>
-      <div class="sector-body">
-        <span class="s-label" style="color:#555;">?? CLASSIFIED ??</span>
-        <h2 class="s-title" style="color:#555;">[ CLEARANCE REQ. ]</h2>
-        <p class="s-desc" style="color:#333;">The Board's private tunnels. Access denied. Secure the Trigger in the Oracle Chamber to bypass visual locks.</p>
-      </div>
-    </div>
-  </div> 
-</section>
-
-<section>
   <div class="section-tag">MASTER DIRECTORY</div>
+  <h2 class="glitch-text" data-text="Navigate the entire network.">Navigate the entire network.</h2>
+
   <div class="dir-grid fade-in">
-      <div>
-          <div class="dir-header">SECTOR 1: FORGE</div>
-          <a href="games.html" class="dir-link">Recreation Hall Hub</a>
-          <a href="orebreaker.html" class="dir-link">Ore Breaker (Arcade)</a>
-          <a href="oreracer.html" class="dir-link">Ore Racer (Cup Protocol)</a>
-          <a href="silverquill.html" class="dir-link">The Silver Quill</a>
-          <a href="tablet.html" class="dir-link">Deciphered Tablet</a>
+      
+      <div class="dir-card">
+          <div class="dir-bg" style="background-image: url('image_0.jpg');"></div>
+          <div class="dir-content">
+              <h2 class="dir-header">SECTOR 1: FORGE</h2>
+              <div class="dir-links">
+                  <a href="#" onclick="interceptDescent(event, 'RECREATION HALL', 'games.html')" class="dir-link">Recreation Hall Hub</a>
+                  <a href="#" onclick="interceptDescent(event, 'ORE BREAKER', 'orebreaker.html')" class="dir-link">Ore Breaker (Arcade)</a>
+                  <a href="#" onclick="interceptDescent(event, 'ORE RACER', 'oreracer.html')" class="dir-link">Ore Racer (Cup Protocol)</a>
+                  <a href="#" onclick="interceptDescent(event, 'SILVER QUILL', 'silverquill.html')" class="dir-link">The Silver Quill</a>
+                  <a href="#" onclick="interceptDescent(event, 'THE TABLET', 'tablet.html')" class="dir-link">Deciphered Tablet</a>
+              </div>
+          </div>
       </div>
-      <div>
-          <div class="dir-header">SECTOR 3: ORACLE</div>
-          <a href="oracle.html" class="dir-link">Oracle's Chamber Hub</a>
-          <a href="toradomain.html" class="dir-link">Tora's Domain</a>
-          <a href="tora.html" class="dir-link">Tora's Codex Reading</a>
-          <a href="well.html" class="dir-link">The Echoing Well</a>
-          <a href="starmap.html" class="dir-link">The Star Map</a>
-          <a href="reliquary.html" class="dir-link">The Reliquary</a>
+
+      <div class="dir-card">
+          <div class="dir-bg" style="background-image: url('image_1.jpg');"></div>
+          <div class="dir-content">
+              <h2 class="dir-header">SECTOR 2: ARCHIVES</h2>
+              <div class="dir-links">
+                  <a href="#" onclick="interceptDescent(event, 'THE ARCHIVES', 'archives.html')" class="dir-link">The Archives Hub</a>
+                  <a href="#" onclick="interceptDescent(event, 'HALL OF ORIGINS', 'origins.html')" class="dir-link">Hall of Origins</a>
+                  <a href="#" onclick="interceptDescent(event, 'SCRAP HEAP', 'scrapheap.html')" class="dir-link">The Scrap Heap</a>
+                  <a href="#" onclick="interceptDescent(event, 'SOUND SHAFT', 'soundshaft.html')" class="dir-link">The Sound Shaft</a>
+                  <a href="#" onclick="interceptDescent(event, 'TRANSMISSION', 'transmission.html')" class="dir-link">The Transmission</a>
+                  <a href="#" onclick="interceptDescent(event, 'PROJECTION ROOM', 'shorts.html')" class="dir-link">The Projection Room</a>
+              </div>
+          </div>
       </div>
-      <div>
-          <div class="dir-header">LORE & AUDIO VISUAL</div>
-          <a href="archives.html" class="dir-link">The Archives Hub</a>
-          <a href="origins.html" class="dir-link">Hall of Origins</a>
-          <a href="scrapheap.html" class="dir-link">The Scrap Heap</a>
-          <a href="soundshaft.html" class="dir-link">The Sound Shaft</a>
-          <a href="transmission.html" class="dir-link">The Transmission</a>
-          <a href="shorts.html" class="dir-link">The Projection Room</a>
+
+      <div class="dir-card">
+          <div class="dir-bg" style="background-image: url('image_2.jpg');"></div>
+          <div class="dir-content">
+              <h2 class="dir-header">SECTOR 3: ORACLE</h2>
+              <div class="dir-links">
+                  <a href="#" onclick="interceptDescent(event, 'THE ORACLE', 'oracle.html')" class="dir-link">Oracle's Chamber Hub</a>
+                  <a href="#" onclick="interceptDescent(event, 'TORA DOMAIN', 'toradomain.html')" class="dir-link">Tora's Domain</a>
+                  <a href="#" onclick="interceptDescent(event, 'THE CODEX', 'tora.html')" class="dir-link">Tora's Codex Reading</a>
+                  <a href="#" onclick="interceptDescent(event, 'ECHOING WELL', 'well.html')" class="dir-link">The Echoing Well</a>
+                  <a href="#" onclick="interceptDescent(event, 'STAR MAP', 'starmap.html')" class="dir-link">The Star Map</a>
+                  <a href="#" onclick="interceptDescent(event, 'RELIQUARY', 'reliquary.html')" class="dir-link">The Reliquary</a>
+              </div>
+          </div>
       </div>
-      <div>
-          <div class="dir-header">NETWORK LEGAL</div>
-          <a href="privacy.html" class="dir-link">Privacy Protocol</a>
-          <a href="terms.html" class="dir-link">Terms of Service</a>
-          <a href="gemshop.html" class="dir-link">The Gemshop</a>
-          <a href="lorevault.html" class="dir-link">Your Lore Vault</a>
+
+      <div class="dir-card">
+          <div class="dir-bg" style="background-image: url('image_3.jpg'); filter: grayscale(1) brightness(0.5);"></div>
+          <div class="dir-content">
+              <h2 class="dir-header" style="color: #888;">NETWORK LEGAL</h2>
+              <div class="dir-links">
+                  <a href="privacy.html" class="dir-link" style="color:#aaa; border-color:#444;">Privacy Protocol</a>
+                  <a href="terms.html" class="dir-link" style="color:#aaa; border-color:#444;">Terms of Service</a>
+                  <a href="gemshop.html" class="dir-link" style="color:#aaa; border-color:#444;">The Gemshop</a>
+                  <a href="lorevault.html" class="dir-link" style="color:#aaa; border-color:#444;">Your Lore Vault</a>
+              </div>
+          </div>
       </div>
+
   </div>
 </section>
 
@@ -471,15 +467,26 @@ section { padding: 5rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
         <a href="https://gofund.me/e643a8283" target="_blank" class="btn-retro btn-m-ghost">GOFUNDME FUND</a>
     </div>
 
-    <div class="forge-status" style="margin: 3rem auto 0; background: #000; border: 4px solid #333; padding: 1.5rem; text-align: left; max-width: 700px;">
-        <div style="font-size: 0.6rem; color: var(--cream); margin-bottom: 15px; display: flex; justify-content: space-between;"><span>BRAWLER ENGINE V2.0</span> <span>65%</span></div>
-        <div style="height: 20px; background: #111; border: 4px solid #444; padding: 2px;"><div style="width: 65%; height: 100%; background: var(--neon-green); box-shadow: 0 0 10px var(--neon-green);"></div></div>
+    <div class="forge-status">
+        <div class="forge-label"><span>BRAWLER ENGINE V2.0</span> <span>65%</span></div>
+        <div class="forge-bar"><div class="forge-fill"></div></div>
     </div>
 </section>
 
-<a href="#" onclick="window.scrollTo(0,0)" class="nmn-seal" title="Return to Top">
-  <img src="lord_oro_emblem.jpg" alt="NMN Emblem">
-</a>
+<div class="mobile-hub-nav">
+    <a href="#" onclick="interceptDescent(event, 'THE FORGE', 'games.html')" class="hub-tab active">
+        <span class="hub-icon">⚔️</span> FORGE
+    </a>
+    <a href="oracle.html" class="hub-tab">
+        <span class="hub-icon">🔮</span> ORACLE
+    </a>
+    <a href="#works" class="hub-tab">
+        <span class="hub-icon">📖</span> LORE
+    </a>
+    <a href="https://gofund.me/e643a8283" target="_blank" class="hub-tab">
+        <span class="hub-icon">🏮</span> FUND
+    </a>
+</div>
 
 <script>
 // Particles
@@ -498,6 +505,7 @@ function syncGauges() {
     if(typeof NMNWallet !== 'undefined') {
         const w = NMNWallet.get();
         const gold = w.gold || 0;
+        
         const hG = document.getElementById('gold-disp');
         if(hG) hG.textContent = gold.toLocaleString();
         const lD = document.getElementById('lvl-disp');
@@ -528,6 +536,32 @@ document.addEventListener('mouseup', function(){
   const r = document.getElementById('pickaxe-glow');
   if(r) { r.style.width = '140px'; r.style.height = '140px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.35) 0%,rgba(232,184,75,.15) 30%,transparent 70%)'; }
 });
+
+// Glitching Signal Log Engine
+let isObsidian = false;
+setInterval(() => {
+    isObsidian = !isObsidian;
+    const container = document.getElementById('signalContainer');
+    const img = document.getElementById('signalImg');
+    const title = document.getElementById('signalTitle');
+    const text = document.getElementById('signalText');
+
+    if(isObsidian) {
+        container.classList.remove('signal-stable');
+        container.classList.add('signal-obsidian');
+        // Assuming you have an obsidian glitch image, otherwise it falls back to CSS filters
+        img.src = 'obsidian_glitch.jpg'; 
+        img.onerror = () => { img.src = 'goldmine_stable.jpg'; }; // Fallback
+        title.textContent = "[ WARNING: OBSIDIAN INTERFERENCE ]";
+        text.innerHTML = "ERR // CONNECTION UNSTABLE<br>ERR // THE VEIN IS BLEEDING<br>ERR // TRACE SIGNAL LOST";
+    } else {
+        container.classList.add('signal-stable');
+        container.classList.remove('signal-obsidian');
+        img.src = 'goldmine_stable.jpg';
+        title.textContent = "[ STATUS: SIGNAL ACQUIRED ]";
+        text.innerHTML = "[04.07.2026] > THE ARCHITECT HAS TAPPED THE OBSIDIAN VEIN.<br>[04.07.2026] > THE OBSIDIAN VEIN IS EXPANDING INTO 7 LANGUAGES.<br>[04.05.2026] > NEW 16-BIT RENDERS ARE BEING ARCHIVED.<br>[04.02.2026] > TRANSMISSIONS ARE PREPARING FOR EXTRACTION.<br>[03.28.2026] > THE ARCHITECT HAS DECLASSIFIED THE MINE WARS.";
+    }
+}, 8000); // Swaps every 8 seconds
 
 // Text Scrambler
 const glyphs=['로','드','오','금','광','g','u','l','v','o','r','金','鉱','夢','光','魂','炎'];
@@ -606,7 +640,7 @@ function interceptDescent(event, locationName, targetUrl) {
     
     const overlay = document.getElementById('descent-overlay');
     const text = document.getElementById('descent-target-text');
-    text.innerText = `DESCENDING: ${locationName}`;
+    text.innerText = `DESCENDING TO: ${locationName}...`;
     overlay.classList.add('descent-active');
 
     setTimeout(() => { if(targetUrl) window.location.href = targetUrl; }, 1500);
