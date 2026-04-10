@@ -13,26 +13,21 @@
   gtag('config', 'G-P5WL9XNDY8');
 </script>
 
-<link rel="icon" type="image/jpeg" href="brawler/logo.jpg">
+<link rel="icon" type="image/jpeg" href="lord_oro_emblem.jpg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <link rel="stylesheet" href="nmn-theme.css">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
 <style>
 :root {
   --gold: #FFD700; --gb: #e8b84b; --gd: #8B6914;
-  --coal: #050308; 
-  --shaft: #08060A; --rock: #0A080C;
-  --cream: #E8E0D0; --neon-green: #00FF88;
+  --coal: #050308; --cream: #E8E0D0; --neon-green: #00FF88;
+  --pu: #AA55FF; --dp: #440066;
   --font-pixel: 'Press Start 2P', monospace;
-  --font-text: 'VT323', monospace;
-  
-  /* Map Variables */
-  --sector-border: 1px solid rgba(255, 215, 0, 0.25);
-  --sector-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
 }
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; background: var(--coal); }
 
@@ -42,263 +37,189 @@ body {
   color: var(--cream);
   overflow-x: hidden;
   padding-top: 70px; 
-  padding-bottom: 80px; 
+  padding-bottom: 90px; 
   background-image: 
     radial-gradient(2px 2px at 40px 60px, #FFD700 50%, transparent 100%),
     radial-gradient(2px 2px at 120px 180px, #e8b84b 50%, transparent 100%),
-    radial-gradient(1px 1px at 180px 40px, #FFF 50%, transparent 100%),
     linear-gradient(rgba(20, 15, 25, 0.8) 2px, transparent 2px),
     linear-gradient(90deg, rgba(20, 15, 25, 0.8) 2px, transparent 2px);
-  background-size: 200px 200px, 200px 200px, 200px 200px, 32px 32px, 32px 32px;
+  background-size: 200px 200px, 200px 200px, 32px 32px, 32px 32px;
   line-height: 1.8;
 }
 
 h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
 a { text-decoration: none; color: inherit; }
 
-/* ─── GLASS MONITOR / CRT SCANLINES ─── */
-body::after{
-  content:""; position:fixed; top:0;left:0; width:100vw;height:100vh;
-  background:
-    linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.08) 50%),
-    linear-gradient(90deg,rgba(232,184,75,0.015),rgba(197,146,0,0.008),rgba(255,215,0,0.015));
-  background-size:100% 3px,3px 100%; pointer-events:none; z-index:10000; opacity:0.18;
-}
-body::before{
-  content:""; position:fixed; top:0;left:0; width:100vw;height:100vh;
-  background:radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.55) 100%);
-  pointer-events:none; z-index:9999;
-}
-
 /* ─── CUSTOM CURSOR & GLOW ─── */
-body, * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24'%3E%3Crect x='10' y='2' width='4' height='2' fill='%238B6914'/%3E%3Crect x='8' y='4' width='8' height='2' fill='%238B6914'/%3E%3Crect x='6' y='6' width='12' height='2' fill='%231a1000'/%3E%3Crect x='6' y='8' width='2' height='10' fill='%238B6914'/%3E%3Crect x='16' y='8' width='2' height='10' fill='%238B6914'/%3E%3Crect x='8' y='8' width='8' height='10' fill='%23FF8C00' opacity='0.8'/%3E%3Crect x='10' y='10' width='4' height='6' fill='%23FFD700'/%3E%3Crect x='6' y='18' width='12' height='4' fill='%238B6914'/%3E%3C/svg%3E") 12 12, auto !important; }
+body, a, button, .vessel-anchor-wrap, .work-card, .map-sector { 
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18 4 C20 2 28 2 30 4 C28 6 24 8 22 10 C20 12 20 12 18 12 C16 12 16 10 18 8 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; 
+}
 #pickaxe-glow {
     position: fixed; width: 140px; height: 140px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,215,0,0.35) 0%, rgba(232,184,75,0.15) 30%, transparent 70%);
+    background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, rgba(232,184,75,0.1) 30%, transparent 70%);
     pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
     mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
 }
 
-/* ─── NAV ─── */
+/* ─── CRT SCANLINES ─── */
+body::after{
+  content:""; position:fixed; inset:0;
+  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.1) 50%);
+  background-size:100% 4px; pointer-events:none; z-index:10000; opacity:0.3;
+}
+body::before{
+  content:""; position:fixed; inset:0;
+  background:radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
+  pointer-events:none; z-index:9999;
+}
+
+/* ─── FAST NAV BANNER ─── */
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 10001;
-  background: rgba(7,6,5,.98);
-  border-bottom: 2px solid var(--gd);
-  backdrop-filter: blur(10px);
+  background: rgba(5,3,2,.98); border-bottom: 4px solid var(--gd);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.8);
 }
 .nav-container {
   display: flex; justify-content: space-between; align-items: center;
-  max-width: 1200px; margin: 0 auto; padding: 1rem 2rem; width: 100%;
+  max-width: 1200px; margin: 0 auto; padding: 1rem; width: 100%;
+  overflow-x: auto; white-space: nowrap;
 }
-.nav-logo { font-size: 0.85rem; color: var(--gold); flex-shrink: 0; letter-spacing: 2px; text-shadow: 0 0 15px rgba(255,215,0,0.4); }
-.nav-links { display: flex; gap: 2.5rem; align-items: center; justify-content: flex-end; flex-grow: 1; }
-.nav-link { color: var(--cream); font-size: 0.5rem; letter-spacing: .15em; text-transform: uppercase; transition: color .3s; }
-.nav-link:hover { color: var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.4); }
+.nav-container::-webkit-scrollbar { display: none; }
+.nav-logo { font-size: 1rem; color: var(--gold); letter-spacing: 2px; text-shadow: 4px 4px 0 #553300; margin-right: 2rem;}
+.nav-links { display: flex; gap: 1.5rem; align-items: center; }
+.nav-link { color: var(--cream); font-size: 0.6rem; letter-spacing: 2px; transition: 0.2s; }
+.nav-link:hover { color: var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.5); }
 
-@media(max-width:768px){ 
-  .nav-container { padding: 1rem; justify-content: center; }
-  .nav-links { display:none; } 
-  .nav-logo { font-size: 0.75rem; } 
-}
-
-/* PARTICLES */
-#particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.particle{position:absolute;width:2px;height:2px;background:var(--gold);border-radius:50%;opacity:0;animation:driftUp linear infinite}
-@keyframes driftUp{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:.4}90%{opacity:.1}100%{transform:translateY(-5vh) rotate(360deg);opacity:0}}
-
-.divider{height:20px;background:#1a1208;border-top:2px solid rgba(255,215,0,.1);border-bottom:2px solid rgba(255,215,0,.04)}
-section{position:relative;z-index:1;padding:5rem 3rem}
-section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1px;background:linear-gradient(to right,transparent,rgba(255,215,0,.1),transparent)}
-.section-tag{font-size:.55rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gd);margin-bottom:3rem;display:flex;align-items:center;gap:1rem}
-.section-tag::after{content:'';height:1px;flex:1;background:linear-gradient(to right,var(--gd),transparent)}
-@media(max-width:768px){section{padding:4rem 1.5rem}}
-
-/* ── HALL HERO ── */
+/* ─── HERO & GOLDEN EYES ─── */
 .hall-hero {
-  text-align: center; padding: 5rem 2rem 3rem;
-  position: relative; overflow: hidden;
-  border-bottom: 2px solid var(--gd);
-  background-image: url('oros_game_eyes.jpg');
-  background-size: cover; background-position: center 20%;
+  text-align: center; padding: 6rem 1rem 4rem; position: relative;
+  border-bottom: 4px solid var(--gd);
+  background-image: url('oros_game_eyes.jpg'); background-size: cover; background-position: center 30%;
   min-height: 80vh; display: flex; flex-direction: column; justify-content: flex-end;
 }
-.hall-hero::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.65); z-index: 1; }
+.hall-hero::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 1; }
 .hall-hero-content { position: relative; z-index: 10; width: 100%; max-width: 800px; margin: 0 auto; }
 
-.hall-eyes{display:flex;gap:44px;justify-content:center;margin-bottom:1.5rem}
-.hall-eye{width:20px;height:14px;background:radial-gradient(ellipse at 40% 40%,#FFD700,#FF8C00);border-radius:50%;box-shadow:0 0 18px rgba(255,215,0,.8);animation:eyeBlink 5s infinite;position:relative}
-.hall-eye::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6px;height:6px;background:#000;border-radius:50%}
-@keyframes eyeBlink{0%,85%,100%{transform:scaleY(1)}90%{transform:scaleY(.05)}}
+.hall-eyes { display: flex; gap: 40px; justify-content: center; margin-bottom: 2rem; }
+.hall-eye { width: 28px; height: 18px; background: radial-gradient(ellipse at center, #FFD700, #FF8C00); border-radius: 50%; box-shadow: 0 0 25px rgba(255,215,0,1); animation: eyeBlink 5s infinite; position: relative; border: 2px solid #fff; }
+.hall-eye::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 8px; height: 8px; background: #000; border-radius: 50%; }
+@keyframes eyeBlink { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
 
-/* Wallet bar */
-.wallet-bar{ display:flex;align-items:center;justify-content:center;gap:1.5rem; padding:.65rem 2rem;background:rgba(0,0,0,.8); border-bottom:2px solid var(--gd);flex-wrap:wrap; position: relative; z-index: 10; }
-.w-item{text-align:center}
-.w-val{font-size:.6rem;color:var(--gold);text-shadow:2px 2px 0 #553300;display:block}
-.w-lbl{font-size:.3rem;color:var(--muted);letter-spacing:.1em}
-.gem-row{display:flex;gap:4px}
-.gem-pip{width:14px;height:14px;border:1px solid rgba(255,215,0,.25);background:#1a1500;font-size:7px;display:flex;align-items:center;justify-content:center;transition:all .2s;color:transparent;}
-.gem-pip.lit{border-color:var(--gold);background:var(--gold);box-shadow:0 0 5px var(--gold);color:#000;}
-.convert-btn{font-size:.4rem;background:#000;border:2px solid var(--gd);color:var(--gold);padding:.4rem 1rem;letter-spacing:.08em;transition:all .2s;cursor:pointer;}
-.convert-btn:hover{background:var(--gold);color:#000;border-color:#FFF;transform:translateY(-2px);}
+.hero-title { font-size: clamp(1.8rem, 6vw, 3.5rem); line-height: 1.4; color: var(--cream); margin-bottom: 1.5rem; text-shadow: 4px 4px 0 #000; }
+.hero-title em { color: var(--gold); display: block; font-style: normal; text-shadow: 4px 4px 0 #553300; }
+.hero-tagline-box { border: 4px solid var(--gold); background: rgba(0,0,0,0.8); padding: 1.5rem; margin: 0 auto 1rem; max-width: 650px; box-shadow: 8px 8px 0 #553300; }
+.hero-tagline { font-size: 0.7rem; line-height: 1.8; color: var(--gold); text-transform: uppercase; }
+.hero-whisper { font-size: 0.5rem; color: var(--muted); margin-bottom: 2rem; }
 
-.hero-title{ font-size:clamp(1.5rem,5vw,3rem); line-height:1.4; color:var(--cream); margin-bottom:1.5rem; text-shadow:4px 4px 0 #000; letter-spacing:2px; }
-.hero-title em{ color:var(--gold); display:block; text-shadow:4px 4px 0 #553300; font-style: normal;}
-.hero-tagline-box { border: 2px solid var(--gold); background: rgba(0,0,0,0.8); padding: 1rem; margin: 0 auto 0.5rem; max-width: 650px; box-shadow: 4px 4px 0 #000; }
-.hero-tagline { font-size:.45rem; letter-spacing:.05em; line-height:2.2; color:var(--gold); }
-.hero-whisper-box { border: 1px solid var(--gd); background: rgba(0,0,0,0.7); padding: 0.5rem; margin: 0 auto 2rem; max-width: 500px; }
-.hero-whisper { font-size: 0.35rem; color: var(--muted); letter-spacing: 0.1em; font-family: var(--font-text)!important; font-style: italic;}
-.hero-quote-box { border: 2px dashed var(--gold); background: var(--coal); padding: 1.5rem; max-width: 600px; margin: 0 auto 2.5rem; }
-.hero-quote-box p { font-size: 0.5rem; color: var(--cream); line-height: 2; }
+/* ─── STATUS WALLET BAR ─── */
+.wallet-bar {
+  display: flex; align-items: center; justify-content: center; gap: 1.5rem;
+  padding: 1.5rem; background: #0a0806; border-bottom: 4px solid #333;
+  flex-wrap: wrap; position: relative; z-index: 10; box-shadow: inset 0 0 20px #000;
+}
+.w-item { text-align: center; background: #000; border: 4px solid #222; padding: 1rem; min-width: 150px; }
+.w-val { font-size: 1.2rem; color: var(--gold); text-shadow: 3px 3px 0 #553300; display: block; margin-bottom: 0.5rem; }
+.w-lbl { font-size: 0.5rem; color: var(--muted); }
+.gem-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 0.5rem; }
+.gem-pip { width: 16px; height: 16px; border: 2px solid #553300; background: #1a0a00; color: transparent; font-size: 10px; display: flex; align-items: center; justify-content: center; }
+.gem-pip.lit { border-color: #FFF; background: var(--gold); color: #000; box-shadow: 0 0 10px var(--gold); }
+.convert-btn { background: #000; border: 4px solid var(--gd); color: var(--gold); padding: 1rem; font-size: 0.6rem; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+.convert-btn:hover { background: var(--gd); color: #000; border-color: #FFF; transform: translateY(-4px); box-shadow: 4px 4px 0 #000;}
 
-.hero-actions{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center}
-.btn{padding:.85rem 2rem;font-size:.45rem;letter-spacing:.15em;text-transform:uppercase;text-decoration:none;display:inline-block;transition:all .3s;cursor:pointer;border:2px solid;}
-.btn-primary{background:#000;border-color:var(--gold);color:var(--gold);box-shadow:4px 4px 0 #553300;}
-.btn-primary:hover{background:var(--gold);color:#000;transform:translateY(-4px);box-shadow:6px 6px 0 #553300;}
-.btn-green{background:#000;border-color:var(--neon-green);color:var(--neon-green);box-shadow:4px 4px 0 #003300;}
-.btn-green:hover{background:var(--neon-green);color:#000;transform:translateY(-4px);box-shadow:6px 6px 0 #003300;}
-.btn-patreon{background:#000;border-color:#FF5555;color:#FF5555;box-shadow:4px 4px 0 #330000;}
-.btn-patreon:hover{background:#FF5555;color:#000;transform:translateY(-4px);box-shadow:6px 6px 0 #330000;}
+/* ─── GENERAL SECTIONS ─── */
+section { padding: 5rem 1.5rem; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+.section-tag { font-size: 0.8rem; color: var(--gold); margin-bottom: 3rem; text-shadow: 3px 3px 0 #553300; text-align: center; border-bottom: 4px solid #333; padding-bottom: 1.5rem; }
+.glitch-text { font-size: 1.2rem; color: var(--cream); line-height: 1.6; margin-bottom: 1.5rem; text-align: center; min-height: 40px; }
 
-/* ABOUT */
-.about-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:3rem;align-items:start; max-width: 1200px; margin: 0 auto;}
-@media(max-width:768px){.about-grid{grid-template-columns:1fr;gap:2.5rem}}
-.about-headline{font-size:1.2rem;line-height:1.5;color:var(--cream);margin-bottom:1.5rem; text-shadow: 2px 2px 0 #000;}
-.about-headline em{color:var(--gold);font-style:normal;}
-.about-body{font-size:.5rem;line-height:2.2;color:var(--muted);margin-bottom:1.25rem;letter-spacing:.02em; font-family: var(--font-text)!important;}
-.quote-box{margin-top:2rem;padding:1.5rem;background:#000;border:2px solid var(--gd); box-shadow: 4px 4px 0 #000;}
-.quote-box p{font-size:.5rem;color:var(--gold);line-height:1.8; font-family: var(--font-text)!important;}
-.pillars{display:flex;flex-direction:column; gap: 1rem;}
-.pillar{padding:1.5rem;border:2px solid #333;background:#000;transition:transform .2s;}
-.pillar:hover{transform:translateX(10px);border-color:var(--gd);}
-.pillar-num{font-size:.45rem;letter-spacing:.2em;color:var(--gd);margin-bottom:.4rem}
-.pillar h3{font-size:.7rem;color:var(--cream);margin-bottom:.5rem}
-.pillar p{font-size:.4rem;color:var(--faint);line-height:1.8; font-family: var(--font-text)!important;}
+/* ─── ABOUT & SIGNAL LOG ─── */
+.signal-log { border: 4px solid var(--gd); background: #000; padding: 2rem; margin-bottom: 4rem; box-shadow: 8px 8px 0 #000; display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; }
+.signal-img { width: 100%; min-width: 250px; border: 4px solid var(--gold); image-rendering: pixelated; flex: 1; }
+.signal-text-box { flex: 2; min-width: 280px; }
+.signal-title { color: var(--gold); font-size: 0.9rem; margin-bottom: 1.5rem; text-shadow: 2px 2px 0 #553300;}
+.signal-body { font-size: 0.6rem; color: var(--neon-green); line-height: 2; max-height: 150px; overflow-y: auto; padding-right: 10px; }
+.signal-live { margin-top: 1.5rem; color: var(--gold); font-size: 0.6rem; animation: pulse 1s infinite; }
 
-/* ─── DUAL VESSEL COLLECTION SYSTEM ─── */
-.collection-gateway { display: flex; gap: 2rem; justify-content: center; align-items: stretch; margin-bottom: 3rem; flex-wrap: wrap; max-width: 1200px; margin: 0 auto 3rem;}
-.vessel-anchor-wrap { flex: 1; min-width: 280px; max-width: 100%; width: 100%; cursor: pointer; position: relative; border: 4px solid var(--gd); overflow: hidden; transition: all .3s; background: #0a0806; aspect-ratio: 16 / 9; box-shadow: 4px 4px 0 #000;}
-.vessel-anchor-wrap:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 6px 6px 0 var(--gold);}
-.vessel-anchor-wrap.active { border-color: var(--gold); box-shadow: 0 0 20px rgba(255,215,0,.5); }
-.vessel-anchor-wrap img { display: block; width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; filter: brightness(.6) contrast(1.2); transition: filter .3s; }
+/* ─── DUAL VESSEL LIBRARY (THE BOOKS) ─── */
+.collection-gateway { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem; }
+.vessel-anchor-wrap { flex: 1; min-width: 280px; border: 4px solid var(--gd); background: #000; cursor: pointer; transition: 0.2s; position: relative; aspect-ratio: 16/9; overflow: hidden; box-shadow: 6px 6px 0 #000; }
+.vessel-anchor-wrap:hover, .vessel-anchor-wrap.active { border-color: var(--gold); transform: translateY(-5px); box-shadow: 6px 10px 0 var(--gold); }
+.vessel-anchor-wrap img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); transition: 0.3s; image-rendering: pixelated; }
 .vessel-anchor-wrap:hover img, .vessel-anchor-wrap.active img { filter: brightness(1); }
-.vessel-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.9); padding: 1rem; font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); display: flex; justify-content: space-between; align-items: flex-end; border-top: 2px solid var(--gd);}
-.vessel-sublabel { font-size: .35rem; color: var(--muted); margin-top: 5px;}
-.vessel-chevron { font-size: 1rem; color: var(--gold); }
+.vessel-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.9); padding: 1rem; border-top: 4px solid var(--gd); display: flex; justify-content: space-between; align-items: center; }
+.vessel-label-title { font-size: 0.7rem; color: var(--gold); }
+.vessel-label-sub { font-size: 0.4rem; color: var(--muted); margin-top: 8px; }
+
+#vessel-obsidian { border-color: var(--pu); }
+#vessel-obsidian:hover, #vessel-obsidian.active { box-shadow: 6px 10px 0 var(--pu); border-color: #FFF; }
+#vessel-obsidian .vessel-label { border-color: var(--pu); }
+#vessel-obsidian .vessel-label-title { color: var(--pu); }
 
 .filter-panel { display: none; }
-#panel-gold { display: block; } /* Default open */
-
-#vessel-obsidian { border-color: #440066; }
-#vessel-obsidian:hover, #vessel-obsidian.active { border-color: #AA55FF; box-shadow: 6px 6px 0 #AA55FF;}
-#vessel-obsidian .vessel-label { color: #AA55FF; border-color: #440066;}
-
-.works-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
-.work-card { position: relative; aspect-ratio: 2/3; background: #000; border: 4px solid var(--gd); overflow: hidden; transition: transform 0.3s ease; cursor: pointer; box-shadow: 4px 4px 0 #000;}
-.work-card:hover { transform: translateY(-6px); border-color: var(--gold); box-shadow: 6px 6px 0 var(--gold);}
-.work-img { width: 100%; height: 100%; object-fit: cover; transition: filter 0.3s ease; image-rendering: pixelated;}
+.works-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+.work-card { aspect-ratio: 2/3; background: #000; border: 4px solid var(--gd); position: relative; cursor: pointer; overflow: hidden; transition: 0.2s; box-shadow: 6px 6px 0 #000; }
+.work-card:hover { transform: translateY(-5px); border-color: var(--gold); }
+.work-img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; image-rendering: pixelated;}
 .work-card:hover .work-img { filter: brightness(0.2); }
-.work-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; opacity: 0; transition: opacity 0.3s ease; background: rgba(0, 0, 0, 0.85); }
+.work-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; text-align: center; opacity: 0; background: rgba(0,0,0,0.9); transition: 0.3s; }
 .work-card:hover .work-overlay { opacity: 1; }
-.store-link { display: block; width: 90%; padding: 10px; margin: 5px 0; font-size: 0.4rem; text-decoration: none; border: 2px solid #444; color: #888; transition: all 0.2s;}
-.store-link.available { border-color: var(--gold); color: var(--gold); background: #111; }
-.store-link.available:hover { background: var(--gold); color: #000; }
+.store-link { display: block; width: 100%; padding: 12px; margin: 6px 0; font-size: 0.5rem; text-decoration: none; border: 4px solid #444; color: #888; background: #111; transition: 0.2s; }
+.store-link.available { border-color: var(--gold); color: var(--gold); }
+.store-link.available:hover { background: var(--gold); color: #000; border-color: #FFF;}
 
-/* ─── MAP GRID & BACKGROUND SECTORS ─── */
-.map-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
-.map-sector {
-  position: relative; border: 4px solid var(--gd); box-shadow: 6px 6px 0 #000;
-  background-color: var(--coal); background-size: cover; background-position: center;
-  display: flex; flex-direction: column; transition: all 0.3s; min-height: 380px; overflow: hidden;
-  image-rendering: pixelated;
+/* ─── MAP SECTORS & GUARDIANS ─── */
+.map-grid, .guardian-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
+.map-sector, .guardian-card { 
+    background: #000; border: 4px solid var(--gd); padding: 2rem; text-align: center; 
+    box-shadow: 8px 8px 0 #000; transition: 0.2s; display: flex; flex-direction: column;
 }
-.map-sector:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 8px 8px 0 var(--gold);}
-.sector-overlay { position: absolute; inset: 0; background: rgba(0,0,0, 0.85); z-index: 1; transition: background 0.3s; }
-.map-sector:hover .sector-overlay { background: rgba(0,0,0, 0.5); }
-.sector-body { position: relative; z-index: 2; padding: 2rem; flex-grow: 1; display: flex; flex-direction: column; }
-.sector-label { font-size: 0.4rem; color: var(--gd); margin-bottom: 0.8rem; }
-.sector-title { font-size: 1.2rem; color: var(--gold); margin-bottom: 1rem; text-shadow: 2px 2px 0 #000; line-height: 1.4; }
-.sector-desc { font-size: 0.5rem; color: #FFF; line-height: 1.8; margin-bottom: 1.5rem; text-shadow: 1px 1px 0 #000; font-family: var(--font-text)!important;}
+.map-sector:hover, .guardian-card:hover { transform: translateY(-5px); border-color: var(--gold); box-shadow: 8px 12px 0 var(--gold); }
 
-.sector-links { display: flex; flex-direction: column; gap: 12px; margin-top: auto; }
-.map-link {
-  font-size: 0.45rem; color: var(--cream); text-decoration: none; text-transform: uppercase;
-  background: #000; border: 2px solid var(--gd); padding: 12px; transition: all 0.2s;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.map-link:hover { background: var(--gold); color: #000; border-color: #FFF; transform: translateX(5px); }
-.map-link::after { content: '▶'; font-size: 0.5rem; color: inherit; }
+/* Guardian Specifics */
+.guardian-img { width: 120px; height: 120px; margin: 0 auto 1.5rem; border: 4px solid var(--gold); border-radius: 50%; overflow: hidden; background: #111; }
+.guardian-img img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; filter: sepia(0.4); }
+.g-name { font-size: 1rem; color: var(--cream); margin-bottom: 0.5rem; }
+.g-title { font-size: 0.5rem; color: var(--pu); margin-bottom: 1rem; }
+.g-desc { font-size: 0.6rem; color: var(--muted); line-height: 1.8; }
 
-.classified { opacity: 0.6; pointer-events: none; }
-.classified .sector-title { color: #8a7654; }
+/* Sector Specifics */
+.s-label { font-size: 0.5rem; color: var(--gd); margin-bottom: 1rem; }
+.s-title { font-size: 1.4rem; color: var(--gold); margin-bottom: 1rem; text-shadow: 2px 2px 0 #553300; }
+.s-desc { font-size: 0.6rem; color: var(--cream); line-height: 1.8; margin-bottom: 2rem; flex-grow: 1; }
+.s-link { background: #111; border: 4px solid var(--gd); color: var(--gold); padding: 1rem; font-size: 0.6rem; text-decoration: none; transition: 0.2s; }
+.s-link:hover { background: var(--gold); color: #000; border-color: #FFF; }
 
-/* ─── MANIFESTO CTA ─── */
-.manifesto-section {
-    max-width: 1000px; margin: 4rem auto; border: 4px solid var(--gold); background: #000;
-    padding: 3rem 2rem; text-align: center; box-shadow: 8px 8px 0 #553300;
-}
-.manifesto-title { font-size: 1.2rem; color: var(--gold); margin-bottom: 1.5rem; text-shadow: 3px 3px 0 #553300; line-height: 1.4;}
-.manifesto-text { font-size: 0.6rem; color: var(--cream); max-width: 800px; margin: 0 auto 2rem; line-height: 2; font-family: var(--font-text)!important;}
+/* ─── DIRECTORY & MANIFESTO CTA ─── */
+.dir-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; padding: 2rem; border: 4px solid #333; background: #0a0806; }
+.dir-header { font-size: 0.7rem; color: var(--pu); margin-bottom: 1.5rem; border-bottom: 4px dashed #333; padding-bottom: 1rem; }
+.dir-link { display: block; font-size: 0.5rem; color: var(--muted); margin-bottom: 1rem; text-decoration: none; transition: 0.2s; }
+.dir-link:hover { color: var(--gold); transform: translateX(5px); }
+.dir-link::before { content: '>'; color: var(--gd); margin-right: 10px; }
+
+.manifesto-section { margin: 5rem auto; border: 4px solid var(--gold); background: #000; padding: 4rem 2rem; text-align: center; box-shadow: 10px 10px 0 #553300; }
+.manifesto-title { font-size: 1.8rem; color: var(--gold); margin-bottom: 1.5rem; text-shadow: 4px 4px 0 #553300; line-height: 1.4;}
+.manifesto-text { font-size: 0.7rem; color: var(--cream); max-width: 800px; margin: 0 auto 3rem; line-height: 2; }
 .manifesto-actions { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+.btn-manifesto { padding: 1.2rem 2rem; font-size: 0.7rem; border: 4px solid; text-decoration: none; transition: 0.2s; }
+.btn-m-primary { background: var(--gold); color: #000; border-color: #FFF; box-shadow: 6px 6px 0 #553300; }
+.btn-m-primary:hover { transform: translateY(-4px); background: #FFF; box-shadow: 6px 10px 0 #553300; }
+.btn-m-ghost { background: #111; color: var(--gold); border-color: var(--gd); box-shadow: 6px 6px 0 #000; }
+.btn-m-ghost:hover { transform: translateY(-4px); background: var(--gd); color: #000; }
 
-.forge-status { max-width: 600px; margin: 3rem auto 0; text-align: left; background: #111; padding: 1rem; border: 2px solid #333;}
-.forge-label { font-size: 0.4rem; color: var(--cream); margin-bottom: 10px; display: flex; justify-content: space-between; }
-.forge-bar { height: 16px; background: #000; border: 2px solid #555; padding: 2px;}
-.forge-fill { width: 65%; height: 100%; background: var(--lg); box-shadow: 0 0 10px var(--lg); }
+/* ─── OVERLAYS & UI ─── */
+.nmn-seal{ position:fixed; bottom:20px; right:20px; width:64px; height:64px; border-radius:50%; border:4px solid var(--gold); box-shadow:0 0 20px rgba(255,215,0,0.5); z-index:9998; cursor:pointer; background: #000; overflow: hidden; transition: 0.2s;}
+.nmn-seal:hover{ transform: scale(1.1); box-shadow:0 0 30px var(--gold); border-color: #FFF;}
+.nmn-seal img{width:100%;height:100%;object-fit:cover; image-rendering: pixelated;}
 
-/* FADE IN */
-.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease, transform 0.6s ease}
-.fade-in.visible{opacity:1;transform:none}
-
-/* ─── EMBLEM SEAL ─── */
-.nmn-seal{ position:fixed; bottom:1.25rem; right:1.25rem; width:56px; height:56px; border-radius:50%; overflow:hidden; border:2px solid rgba(255,215,0,.35); box-shadow:0 0 18px rgba(255,215,0,.25),0 0 4px rgba(0,0,0,.9); z-index:9998; opacity:.7; transition:opacity .25s,box-shadow .25s,transform .25s; cursor:pointer; }
-.nmn-seal:hover{ opacity:1; box-shadow:0 0 28px rgba(255,215,0,.6),0 0 8px rgba(0,0,0,.9); transform:scale(1.08); }
-.nmn-seal img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated;}
-
-/* MOBILE HUB DOCK */
-@media (max-width: 768px) {
-  .collection-gateway { flex-direction: column; align-items: center; gap: 1rem; }
-  .vessel-anchor-wrap { max-width: 95%; }
-  .mobile-hub-nav {
-      position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
-      background: #111; border-top: 2px solid #FFD700;
-      display: flex; justify-content: space-around; align-items: center;
-      z-index: 99999; padding-bottom: env(safe-area-inset-bottom);
-  }
-  .hub-tab {
-      color: #888; text-align: center; flex: 1; font-size: 8px; text-decoration: none; transition: color 0.2s;
-  }
-  .hub-tab.active, .hub-tab:hover { color: #FFD700; }
-  .hub-icon { font-size: 18px; display: block; margin-bottom: 5px; }
-  
-  .nmn-seal { display: none; } /* Hide on mobile so it doesn't block the nav */
-}
-@media (min-width: 769px) { .mobile-hub-nav { display: none; } }
-
-/* THE DESCENT OVERLAY */
-#descent-overlay {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000;
-    z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-}
+#descent-overlay { position: fixed; inset: 0; background: #000; z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
 .descent-active { opacity: 1 !important; pointer-events: all !important; }
 .elevator-shaft { width: 8px; height: 100vh; background: linear-gradient(to bottom, transparent, var(--gold), transparent); animation: drop 0.5s infinite linear; }
-.descent-text { color: var(--gold); font-size: 14px; position: absolute; text-shadow: 0 0 10px var(--gold); animation: pulse 1s infinite; }
-
+.descent-text { color: var(--gold); font-size: 1rem; position: absolute; text-shadow: 0 0 15px var(--gold); animation: pulse 1s infinite; }
 @keyframes drop { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-/* DEPTH GAUGE */
-.depth-gauge {
-  position:fixed!important; bottom:12px!important; left:50%!important; transform:translateX(-50%)!important;
-  width:auto!important; max-width:92%!important; height:42px!important; background:#000!important;
-  border:4px solid var(--gd)!important; padding:0 18px!important;
-  z-index:9999!important; display:flex!important; align-items:center!important;
-  justify-content:center!important; gap:1.2rem!important; box-shadow:4px 4px 0 #000!important;
-}
-.dg-stat { font-size: 0.4rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
-.dg-val { color: var(--gold); font-size: 0.6rem; }
-.dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; pointer-events: auto!important;}
-.dg-link:hover { color: var(--gold); }
+/* FADE IN */
+.fade-in{opacity:0;transform:translateY(30px);transition:opacity 0.5s ease, transform 0.5s ease}
+.fade-in.visible{opacity:1;transform:none}
 </style>
 </head>
 <body>
@@ -307,9 +228,9 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 
 <nav>
   <div class="nav-container">
-    <a href="index.html" class="nav-logo">⛏ NMN</a>
+    <a href="index.html" class="nav-logo">⛏ NMN HUB</a>
     <div class="nav-links">
-      <a href="games.html" class="nav-link">GAMES</a>
+      <a href="games.html" class="nav-link">FORGE</a>
       <a href="oracle.html" class="nav-link">ORACLE</a>
       <a href="gemshop.html" class="nav-link">GEMSHOP</a>
       <a href="https://patreon.com/lordoro" target="_blank" class="nav-link">PATREON</a>
@@ -328,25 +249,11 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
 <div class="hall-hero">
   <div class="hall-hero-content fade-in">
     <div class="hall-eyes"><div class="hall-eye"></div><div class="hall-eye"></div></div>
-    <h1 class="hero-title" style="margin-bottom: 1.5rem;">The goldmine<br><em>is within.</em></h1>
-    
+    <h1 class="hero-title">The goldmine<br><em>is within.</em></h1>
     <div class="hero-tagline-box">
-      <p class="hero-tagline">Descend deeper into madness, find gold in the goldmine, beware of the stained obsidian...</p>
+      <p class="hero-tagline">DESCEND DEEPER. FIND GOLD. BEWARE THE OBSIDIAN.</p>
     </div>
-    
-    <div class="hero-whisper-box">
-      <p class="hero-whisper">...and don't put anything in your pocket on the way out.</p>
-    </div>
-    
-    <div class="hero-quote-box">
-      <p>"My sword is my pen, the world is my playground." <br><span style="font-size: 0.4rem; color: var(--gd); display:block; margin-top: 10px;">— Lord Oro</span></p>
-    </div>
-
-    <div class="hero-actions" style="margin-top: 2rem;">
-      <a href="#works" class="btn btn-primary">Enter the Mine</a>
-      <a href="https://gofund.me/e643a8283" target="_blank" class="btn btn-green">Support on GoFundMe</a>
-      <a href="https://patreon.com/Lordminadeoro" target="_blank" class="btn btn-patreon">Join on Patreon</a>
-    </div>
+    <p class="hero-whisper">...and don't put anything in your pocket on the way out.</p>
   </div>
 </div>
 
@@ -360,392 +267,199 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
       <div class="gem-pip" id="gp2">◆</div><div class="gem-pip" id="gp3">◆</div>
       <div class="gem-pip" id="gp4">◆</div>
     </div>
-    <span class="w-lbl" style="display:block;margin-top:3px">GEMS</span>
+    <span class="w-lbl">GEMS</span>
   </div>
   <button class="convert-btn" onclick="if(typeof NMNWallet!=='undefined'){ NMNWallet.convertGems(); }">⚗ CONVERT GEMS</button>
 </div>
 
-<div class="divider"></div>
-
-<section id="about">
-  <div class="section-tag">About Lord Oro</div>
-  <div class="about-grid fade-in">
-    <div>
-      <h2 class="about-headline">A lord leads people to victory<br><em>in their minds.</em></h2>
-      <p class="about-body">Lord Oro is the creative identity of a Brooklyn-born storyteller building a transmedia empire from the inside out. The name carries its own mythology — born at 17 as Mina De Oro, refined through years of living, creating, and surviving.</p>
-      <p class="about-body">Nonsense Media Network is the home of that empire. Books, music, games, experiences — all channels tunneling into the same goldmine. Every story connected. Every world inhabited by the same quiet observer.</p>
-      <div class="quote-box">
-        <p>The sword is the pen. The kingdom is the human interior world. Gold is not what you find — it's what you become when you stop running from yourself.</p>
-      </div>
-    </div>
-    <div class="pillars">
-      <div class="pillar"><div class="pillar-num">01 — Books</div><h3>The Written Universe</h3><p>Fantasy novels, novellas, serialized fiction. Lord Oro woven as a silent observer across every world.</p></div>
-      <div class="pillar"><div class="pillar-num">02 — Music</div><h3>Lord Oro's Allegory</h3><p>A concept album tracing awakening, temptation, shadow work, and enlightenment.</p></div>
-      <div class="pillar"><div class="pillar-num">03 — Games</div><h3>The Micro Games Collection</h3><p>12 games built inside the mine shaft by the Excavation Committee.</p></div>
-      <div class="pillar"><div class="pillar-num">04 — Experiences</div><h3>The Oracle's Chamber</h3><p>Tora, the Echoing Well, the Star Map, the Vigil. Corners of the mine that reward curiosity.</p></div>
+<section>
+  <div class="section-tag">NMN BROADCAST LOG</div>
+  <div class="signal-log fade-in">
+    <img src="goldmine_stable.jpg" id="current-transmission-img" class="signal-img">
+    <div class="signal-text-box">
+        <h3 class="signal-title">[ STATUS: SIGNAL ACQUIRED ]</h3>
+        <p class="signal-body">
+            [04.07.2026] > THE ARCHITECT HAS TAPPED THE OBSIDIAN VEIN.<br>
+            [04.07.2026] > THE OBSIDIAN VEIN IS EXPANDING INTO 7 LANGUAGES.<br>
+            [04.05.2026] > NEW 16-BIT RENDERS ARE BEING ARCHIVED.<br>
+            [04.02.2026] > TRANSMISSIONS ARE PREPARING FOR EXTRACTION.<br>
+            [03.28.2026] > THE ARCHITECT HAS DECLASSIFIED THE MINE WARS.
+        </p>
+        <div class="signal-live">● LIVE UPDATES ACTIVE</div>
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
+<section id="guardians">
+  <div class="section-tag">GUARDIANS OF THE MINE</div>
+  <h2 class="glitch-text" data-text="The souls that inhabit the tunnels.">The souls that inhabit the tunnels.</h2>
+  
+  <div class="guardian-grid fade-in">
+      <div class="guardian-card">
+          <div class="guardian-img"><img src="nayla_avatar.jpg" alt="Nayla"></div>
+          <div class="g-name">NAYLA</div>
+          <div class="g-title">THE LIONESS</div>
+          <div class="g-desc">She didn't ask if the world was safe. She asked if it was real.</div>
+      </div>
+      <div class="guardian-card">
+          <div class="guardian-img"><img src="juni_avatar.jpg" alt="Juni"></div>
+          <div class="g-name">JUNI</div>
+          <div class="g-title">THE IMMORTAL</div>
+          <div class="g-desc">You choose which griefs to keep open, and which to keep sealed.</div>
+      </div>
+      <div class="guardian-card">
+          <div class="guardian-img"><img src="felik_avatar.jpg" alt="Felik"></div>
+          <div class="g-name">FELIK</div>
+          <div class="g-title">TWO SOULS</div>
+          <div class="g-desc">The blade doesn't choose the hand. Duality is a choice.</div>
+      </div>
+      <div class="guardian-card">
+          <div class="guardian-img"><img src="pyro_avatar.jpg" alt="Pyro"></div>
+          <div class="g-name">PYRO & HELIOS</div>
+          <div class="g-title">THE FIRE</div>
+          <div class="g-desc">Some fires are meant to be carried, not put out.</div>
+      </div>
+      <div class="guardian-card">
+          <div class="guardian-img"><img src="tora_avatar.jpg" alt="Tora"></div>
+          <div class="g-name">TORA</div>
+          <div class="g-title">THE VÖLVA</div>
+          <div class="g-desc">The runes do not predict. They illuminate what is already true.</div>
+      </div>
+  </div>
+</section>
 
 <section id="works">
-  <div id="signal-log" style="border: 4px solid var(--gd); background: #000; margin-bottom: 4rem; padding: 20px; position: relative; z-index: 2; box-shadow: 6px 6px 0 #553300;">
-    <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center;">
-        <div style="flex: 1; min-width: 200px;">
-            <img src="goldmine_stable.jpg" id="current-transmission-img" style="width: 100%; border: 4px solid var(--gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); image-rendering: pixelated;">
+  <div class="section-tag">THE LIBRARY</div>
+  <h2 class="glitch-text" data-text="12 TITLES. 5 LANGUAGES.">12 TITLES. 5 LANGUAGES.</h2>
+
+  <div class="collection-gateway fade-in">
+    <div class="vessel-anchor-wrap active" id="vessel-gold" onclick="filterVessel('gold')">
+      <img src="goldmine_anchor.jpeg" alt="The Goldmine Collection">
+      <div class="vessel-label">
+        <div>
+          <div class="vessel-label-title">GOLDMINE COLLECTION</div>
+          <div class="vessel-label-sub">Full Novels & Localizations</div>
         </div>
-        <div style="flex: 2; min-width: 300px;">
-            <h3 style="color: var(--gold); font-size: 0.8rem; margin-bottom: 15px;">[ STATUS: SIGNAL ACQUIRED ]</h3>
-            <p style="font-size: 0.5rem; color: var(--neon-green); line-height: 2.5; max-height: 120px; overflow-y: auto; padding-right: 10px;">
-                [04.07.2026] > THE ARCHITECT HAS TAPPED THE OBSIDIAN VEIN.<br>
-                [04.07.2026] > THE OBSIDIAN VEIN IS EXPANDING INTO 7 LANGUAGES.<br>
-                [04.05.2026] > NEW 16-BIT RENDERS ARE BEING ARCHIVED IN THE LOG.<br>
-                [04.02.2026] > TRANSMISSIONS (STORIES) ARE PREPARING FOR EXTRACTION.<br>
-                [03.28.2026] > THE ARCHITECT HAS DECLASSIFIED THE MINE WARS.
-            </p>
-            <div style="margin-top: 20px;">
-                <span style="color: var(--gold); font-size: 0.5rem; animation: pulse 1s infinite;">● LIVE UPDATES ACTIVE</span>
-            </div>
+        <span style="font-size: 1.5rem;">▶</span>
+      </div>
+    </div>
+    <div class="vessel-anchor-wrap" id="vessel-obsidian" onclick="filterVessel('obsidian')">
+      <img src="obsidian_anchor.jpeg" alt="The Obsidian Extractions">
+      <div class="vessel-label">
+        <div>
+          <div class="vessel-label-title">OBSIDIAN EXTRACTIONS</div>
+          <div class="vessel-label-sub">Shorts & Lore Fragments</div>
         </div>
+        <span style="font-size: 1.5rem;">▶</span>
+      </div>
     </div>
   </div>
 
-  <div class="section-tag">The Combat Frequency</div>
-  <div class="brawler-hero-container fade-in" style="margin-bottom: 4rem;">
-      <a href="#" onclick="interceptDescent(event, 'THE FORGE', 'brawler/index.html')" class="vessel-anchor-wrap" style="max-width: 900px; margin: 0 auto; display: block; border: 4px solid #FFD700; box-shadow: 6px 6px 0 #553300;">
-          <img src="brawler_promo.jpg" alt="Nonsensical Brawlers" style="width: 100%; aspect-ratio: 21/9; object-fit: cover;">
-          <div class="vessel-label">
-              <div>
-                  <div style="font-size: 1rem; margin-bottom: 5px;">NONSENSICAL BRAWLERS</div>
-                  <div class="vessel-sublabel">Sector 1: The Forge — Playable Beta</div>
-              </div>
-              <span class="vessel-chevron" style="font-size: 1.5rem;">⚔️</span>
-          </div>
-      </a>
-      <p style="font-size:.4rem; color:var(--muted); text-align:center; margin-top: 1.5rem; line-height: 2;">
-          Nela · Juni · Olydia · Pyro · Helios<br>
-          <span style="color:var(--gold)">THE MULTIVERSE COLLIDES IN THE MINE.</span>
-      </p>
+  <div id="panel-gold" class="filter-panel" style="display:block;">
+    <div class="works-grid">
+      <div class="work-card"><img src="pyro_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="g-name">PYRO & HELIOS</h3><a href="https://amzn.to/4uOpLpA" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/meW9gA" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="outbreak_ja.jpg" class="work-img"><div class="work-overlay"><h3 class="g-name">パイロとヘリオス (JA)</h3><a href="https://books2read.com/u/bMLwXB" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="juni_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="g-name">JUNI IMMORTAL</h3><a href="https://amzn.to/4tfhJoc" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/4EOxZ0" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="outbreak_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="g-name">OUTBREAK (EN)</h3><a href="https://amzn.to/3NIeQ08" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/31NrLw" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="tabbies_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="g-name">ALL TABBIES</h3><a href="https://amzn.to/4bNAQ1y" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/brzavW" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="tabbies_es.jpg" class="work-img"><div class="work-overlay"><h3 class="g-name">TODOS LOS GATOS</h3><a href="https://amzn.to/47qbOUT" target="_blank" class="store-link available">AMAZON</a></div></div>
+      <div class="work-card"><img src="tabbies_ja.jpg" class="work-img"><div class="work-overlay"><h3 class="g-name">猫にも居場所がある</h3><a href="https://amzn.to/3PPrJG9" target="_blank" class="store-link available">AMAZON</a></div></div>
+      <div class="work-card"><img src="tabbies_ko.jpeg" class="work-img"><div class="work-overlay"><h3 class="g-name">모든 고양이는...</h3><div class="store-link available">GOOGLE PLAY</div></div></div>
+    </div>
   </div>
 
-  <div class="section-tag">The Mine Library</div>
-  <div class="fade-in">
-    <p style="font-size:.4rem;color:var(--muted);letter-spacing:.1em;margin-bottom:2rem;line-height:2.4;text-align:center">SELECT YOUR COLLECTION — 12 TITLES — 5 LANGUAGES</p>
-
-    <div class="collection-gateway">
-      <div class="vessel-anchor-wrap active" id="vessel-gold" onclick="filterVessel('gold')" role="button" tabindex="0">
-        <img src="goldmine_anchor.jpeg" alt="The Goldmine Collection">
-        <div class="vessel-label">
-          <div>
-            <div>The Goldmine Collection</div>
-            <div class="vessel-sublabel">Full Novels &amp; Multilingual Pillars</div>
-          </div>
-          <span class="vessel-chevron">&#9656;</span>
-        </div>
-      </div>
-      <div class="vessel-anchor-wrap" id="vessel-obsidian" onclick="filterVessel('obsidian')" role="button" tabindex="0">
-        <img src="obsidian_anchor.jpeg" alt="The Obsidian Extractions">
-        <div class="vessel-label">
-          <div>
-            <div>The Obsidian Extractions</div>
-            <div class="vessel-sublabel">Short Transmissions &amp; Lore Fragments</div>
-          </div>
-          <span class="vessel-chevron">&#9656;</span>
-        </div>
-      </div>
-    </div>
-
-    <div id="panel-gold" class="filter-panel visible" style="display:block;">
-      <div class="works-grid">
-        
-        <div class="work-card">
-          <img src="pyro_en.jpeg" class="work-img">
-          <div class="work-overlay">
-            <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">PYRO & HELIOS</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">The primary novel of fire and identity.</p>
-            <a href="https://amzn.to/4uOpLpA" target="_blank" class="store-link available">AMAZON [LIT]</a>
-            <a href="https://books2read.com/u/meW9gA" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
-            <div class="store-link">GOOGLE [PENDING]</div>
-          </div>
-        </div>
-
-        <div class="work-card">
-          <img src="outbreak_ja.jpg" class="work-img">
-          <div class="work-overlay">
-            <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">パイロとヘリオス (JA)</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">日本語版。The primary novel of fire.</p>
-            <div class="store-link">AMAZON [PENDING]</div>
-            <a href="https://books2read.com/u/bMLwXB" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
-            <div class="store-link">GOOGLE [PENDING]</div>
-          </div>
-        </div>
-
-        <div class="work-card">
-          <img src="juni_en.jpeg" class="work-img">
-          <div class="work-overlay">
-            <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">JUNI THE IMMORTAL</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">The observer who lived too long.</p>
-            <a href="https://amzn.to/4tfhJoc" target="_blank" class="store-link available">AMAZON [LIT]</a>
-            <a href="https://books2read.com/u/4EOxZ0" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
-            <div class="store-link">GOOGLE [PENDING]</div>
-          </div>
-        </div>
-
-        <div class="work-card">
-          <img src="outbreak_en.jpeg" class="work-img">
-          <div class="work-overlay">
-            <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">OUTBREAK (EN)</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">Found-footage cosmic horror.</p>
-            <a href="https://amzn.to/3NIeQ08" target="_blank" class="store-link available">AMAZON [LIT]</a>
-            <a href="https://books2read.com/u/31NrLw" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
-            <div class="store-link">GOOGLE [PENDING]</div>
-          </div>
-        </div>
-
-        <div class="work-card">
-          <img src="outbreak_es.jpeg" class="work-img">
-          <div class="work-overlay">
-            <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">BROTE (ES)</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">Edición en Español.</p>
-            <div class="store-link">AMAZON [PENDING]</div>
-            <div class="store-link">UNIVERSAL [PENDING]</div>
-            <div class="store-link">GOOGLE [PENDING]</div>
-          </div>
-        </div>
-        
-        <div class="work-card">
-          <img src="outbreak_pt.jpeg" class="work-img">
-          <div class="work-overlay">
-            <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">OUTBREAK (PT)</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">Edição Portuguesa.</p>
-            <div class="store-link">AMAZON [PENDING]</div>
-            <div class="store-link">UNIVERSAL [PENDING]</div>
-            <div class="store-link">GOOGLE [PENDING]</div>
-          </div>
-        </div>
-        
-        <div class="work-card">
-          <img src="outbreak_ko.jpg" class="work-img">
-          <div class="work-overlay">
-            <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">OUTBREAK (KO)</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">한국어판.</p>
-            <div class="store-link">AMAZON [PENDING]</div>
-            <div class="store-link">UNIVERSAL [PENDING]</div>
-            <div class="store-link">GOOGLE [PENDING]</div>
-          </div>
-        </div>
-
-        <div class="work-card">
-          <img src="tabbies_en.jpeg" class="work-img">
-          <div class="work-overlay">
-            <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">ALL TABBIES (EN)</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">A story about belonging in the unlikeliest places.</p>
-            <a href="https://amzn.to/4bNAQ1y" target="_blank" class="store-link available">AMAZON [LIT]</a>
-            <a href="https://books2read.com/u/brzavW" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
-            <div class="store-link">GOOGLE [PENDING]</div>
-          </div>
-        </div>
-
-        <div class="work-card">
-          <img src="tabbies_es.jpg" class="work-img">
-          <div class="work-overlay">
-            <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">TODOS LOS GATOS (ES)</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">Edición en Español.</p>
-            <a href="https://amzn.to/47qbOUT" target="_blank" class="store-link available">AMAZON [LIT]</a>
-            <div class="store-link">UNIVERSAL [PENDING]</div>
-            <div class="store-link">GOOGLE [PENDING]</div>
-          </div>
-        </div>
-        
-        <div class="work-card">
-          <img src="tabbies_pt.jpeg" class="work-img">
-          <div class="work-overlay">
-            <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">TODOS OS GATOS (PT)</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">Edição Portuguesa.</p>
-            <div class="store-link">AMAZON [PENDING]</div>
-            <div class="store-link">UNIVERSAL [PENDING]</div>
-            <div class="store-link">GOOGLE [PENDING]</div>
-          </div>
-        </div>
-
-        <div class="work-card">
-          <img src="tabbies_ja.jpg" class="work-img">
-          <div class="work-overlay">
-            <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">猫にも居場所がある (JA)</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">日本語版。Available on Amazon Japan.</p>
-            <a href="https://amzn.to/3PPrJG9" target="_blank" class="store-link available">AMAZON [LIT]</a>
-            <div class="store-link">UNIVERSAL [PENDING]</div>
-            <div class="store-link">GOOGLE [PENDING]</div>
-          </div>
-        </div>
-
-        <div class="work-card">
-          <img src="tabbies_ko.jpeg" class="work-img">
-          <div class="work-overlay">
-            <h3 style="color:var(--gold); font-size:0.6rem; margin-bottom:10px;">모든 고양이는... (KO)</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">한국어판. Extraction complete.</p>
-            <div class="store-link">AMAZON [PENDING]</div>
-            <div class="store-link">UNIVERSAL [PENDING]</div>
-            <div class="store-link available">GOOGLE PLAY [LIT]</div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <div id="panel-obsidian" class="filter-panel" style="display:none;">
-      <div class="works-grid">
-        
-        <div class="work-card" style="border-color:#FF4444;">
-          <img src="minewars_cover.jpg" class="work-img">
-          <div class="work-overlay" style="background:rgba(30,0,0,0.85);">
-            <h3 style="color:#FF4444; font-size:0.6rem; margin-bottom:10px;">THE MINE WARS</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">Full Manuscript declassified.</p>
-            <a href="#" onclick="interceptDescent(event, 'MINE WARS', 'minewars.html')" class="store-link available" style="border-color:#FF4444; color:#FF4444; background:#330000;">READ FREE [LIT]</a>
-          </div>
-        </div>
-
-        <div class="work-card" style="border-color:var(--pu);">
-          <img src="wanderer_cover.jpg" class="work-img">
-          <div class="work-overlay" style="background:rgba(30,0,40,0.85);">
-            <h3 style="color:var(--pu); font-size:0.6rem; margin-bottom:10px;">THE WANDERER (EN)</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">A cosmic walkabout. Live Extraction.</p>
-            <div class="store-link">AMAZON [PENDING]</div>
-            <div class="store-link">UNIVERSAL [PENDING]</div>
-            <div class="store-link">GOOGLE [PENDING]</div>
-          </div>
-        </div>
-        
-        <div class="work-card" style="border-color:var(--pu);">
-          <img src="wanderer_DE.jpg" class="work-img">
-          <div class="work-overlay" style="background:rgba(30,0,40,0.85);">
-            <h3 style="color:var(--pu); font-size:0.6rem; margin-bottom:10px;">DER WANDERER (DE)</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">Deutsche Ausgabe.</p>
-            <div class="store-link">AMAZON [PENDING]</div>
-            <div class="store-link">UNIVERSAL [PENDING]</div>
-            <div class="store-link">GOOGLE [PENDING]</div>
-          </div>
-        </div>
-        
-        <div class="work-card" style="border-color:var(--pu);">
-          <img src="wanderer_fr.jpg" class="work-img">
-          <div class="work-overlay" style="background:rgba(30,0,40,0.85);">
-            <h3 style="color:var(--pu); font-size:0.6rem; margin-bottom:10px;">LE VOYAGEUR (FR)</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">Édition Française.</p>
-            <div class="store-link">AMAZON [PENDING]</div>
-            <div class="store-link">UNIVERSAL [PENDING]</div>
-            <div class="store-link">GOOGLE [PENDING]</div>
-          </div>
-        </div>
-
-        <div class="work-card" style="border-color:var(--neon-green);">
-          <img src="swimmer_en.jpg" class="work-img">
-          <div class="work-overlay" style="background:rgba(0,30,0,0.85);">
-            <h3 style="color:var(--neon-green); font-size:0.6rem; margin-bottom:10px;">THE SWIMMER (EN)</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">Abigail's Log. Lore Fragment.</p>
-            <div class="store-link">AMAZON [PENDING]</div>
-            <a href="https://books2read.com/u/3ndXGR" target="_blank" class="store-link available">UNIVERSAL [LIT]</a>
-            <div class="store-link">GOOGLE [PENDING]</div>
-          </div>
-        </div>
-        
-        <div class="work-card" style="border-color:var(--neon-green);">
-          <img src="swimmer_de.jpg" class="work-img">
-          <div class="work-overlay" style="background:rgba(0,30,0,0.85);">
-            <h3 style="color:var(--neon-green); font-size:0.6rem; margin-bottom:10px;">DER SCHWIMMER (DE)</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">Abigails Logbuch. Lore-Fragment.</p>
-            <div class="store-link">AMAZON [PENDING]</div>
-            <div class="store-link">UNIVERSAL [PENDING]</div>
-            <div class="store-link">GOOGLE [PENDING]</div>
-          </div>
-        </div>
-        
-        <div class="work-card" style="border-color:var(--neon-green);">
-          <img src="swimmer_fr.jpg" class="work-img">
-          <div class="work-overlay" style="background:rgba(0,30,0,0.85);">
-            <h3 style="color:var(--neon-green); font-size:0.6rem; margin-bottom:10px;">LE NAGEUR (FR)</h3>
-            <p style="font-size:0.4rem; color:#ccc; margin-bottom:5px; font-family:var(--font-text)!important;">Le journal d'Abigail.</p>
-            <div class="store-link">AMAZON [PENDING]</div>
-            <div class="store-link">UNIVERSAL [PENDING]</div>
-            <div class="store-link">GOOGLE [PENDING]</div>
-          </div>
-        </div>
-
-      </div>
+  <div id="panel-obsidian" class="filter-panel">
+    <div class="works-grid">
+      <div class="work-card" style="border-color:#FF4444;"><img src="minewars_cover.jpg" class="work-img"><div class="work-overlay" style="background:rgba(30,0,0,0.9);"><h3 class="g-name" style="color:#FF4444;">MINE WARS</h3><a href="#" onclick="interceptDescent(event, 'MINE WARS', 'minewars.html')" class="store-link available" style="border-color:#FF4444; color:#FF4444;">DECRYPT ARCHIVE</a></div></div>
+      <div class="work-card"><img src="swimmer_en.jpg" class="work-img"><div class="work-overlay"><h3 class="g-name" style="color:var(--neon-green);">THE SWIMMER</h3><a href="https://books2read.com/u/3ndXGR" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="wanderer_cover.jpg" class="work-img"><div class="work-overlay"><h3 class="g-name" style="color:var(--neon-green);">WANDERER (EN)</h3><div class="store-link">PENDING</div></div></div>
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
-
 <section id="sections">
-  <div class="section-tag">Explore the Mine</div>
-  <div class="fade-in">
-    <div style="margin-bottom: 3rem;">
-      <h2 class="about-headline">The mine has many <em>rooms.</em></h2>
-      <p style="font-size:.6rem; color:var(--muted); line-height:1.8; font-family: var(--font-text)!important;">Games, tarot, lore, music, books, history, ritual. You don't have to play to belong here. You just have to descend.</p>
-    </div>
+  <div class="section-tag">NAVIGATE THE MINE</div>
+  <h2 class="glitch-text" data-text="The mine has many rooms.">The mine has many rooms.</h2>
 
-  <div class="map-grid">
-
+  <div class="map-grid fade-in">
     <div class="map-sector">
-      <div class="sector-bg" style="background-image: url('image_0.jpg'); position:absolute; inset:0; opacity:0.3; filter:grayscale(0.8); background-size:cover;"></div>
       <div class="sector-overlay"></div>
       <div class="sector-body">
-        <span class="sector-label">SECTOR 1 / PROVEN ORE</span>
-        <h2 class="sector-title">THE FORGE & ARCADE</h2>
-        <p class="sector-desc">The initial vein. High speed, high reaction testing. Digger protocols active. The main Games Hall link is in the Hero above.</p>
-        <div class="sector-links">
-          <a href="#" onclick="interceptDescent(event, 'RECREATION HALL', 'games.html')" class="map-link">Recreation Hall</a>
-          <a href="#" onclick="interceptDescent(event, 'SOUND SHAFT', 'soundshaft.html')" class="map-link">Sound Shaft</a>
-          <a href="#" onclick="interceptDescent(event, 'DEEP MINE', 'lantern.html')" class="map-link">The Deep Mine</a>
-        </div>
+        <span class="s-label">SECTOR 1</span>
+        <h2 class="s-title">RECREATION HALL</h2>
+        <p class="s-desc">The initial vein. High speed, high reaction testing. Digger protocols and the Brawler engine are active here.</p>
+        <a href="#" onclick="interceptDescent(event, 'RECREATION HALL', 'games.html')" class="s-link">ENTER FORGE ▶</a>
+      </div>
+    </div>
+    
+    <div class="map-sector">
+      <div class="sector-overlay"></div>
+      <div class="sector-body">
+        <span class="s-label">SECTOR 2</span>
+        <h2 class="s-title">THE ARCHIVES</h2>
+        <p class="s-desc">Where the mine keeps its stories. Card dungeons and ancient words are locked here. Access your Lore Fragments.</p>
+        <a href="#" onclick="interceptDescent(event, 'THE ARCHIVES', 'archives.html')" class="s-link">ENTER ARCHIVES ▶</a>
       </div>
     </div>
 
     <div class="map-sector">
-      <div class="sector-bg" style="background-image: url('image_1.jpg'); position:absolute; inset:0; opacity:0.3; filter:grayscale(0.8); background-size:cover;"></div>
       <div class="sector-overlay"></div>
       <div class="sector-body">
-        <span class="sector-label">SECTOR 2 / STRATEGY</span>
-        <h2 class="sector-title">THE ARCHIVES & VAULT</h2>
-        <p class="sector-desc">Where the mine keeps its stories. Card dungeons and ancient words are locked here. Access your personal Lore Fragments.</p>
-        <div class="sector-links">
-          <a href="#" onclick="interceptDescent(event, 'THE ARCHIVES', 'archives.html')" class="map-link">The Archives</a>
-          <a href="#" onclick="interceptDescent(event, 'PROJECTION ROOM', 'shorts.html')" class="map-link">Projection Room</a>
-          <a href="#" onclick="interceptDescent(event, 'THE GOLDMINE', 'newsletter.html')" class="map-link">The Goldmine (Newsletter)</a>
-        </div>
+        <span class="s-label">SECTOR 3</span>
+        <h2 class="s-title">ORACLE'S CHAMBER</h2>
+        <p class="s-desc">The path grows harder. Tora's Chamber is open to those who trust the Tarot and seek the deep lore.</p>
+        <a href="#" onclick="interceptDescent(event, 'THE ORACLE', 'oracle.html')" class="s-link">SEEK ORACLE ▶</a>
       </div>
     </div>
-
-    <div class="map-sector">
-      <div class="sector-bg" style="background-image: url('image_2.jpg'); position:absolute; inset:0; opacity:0.3; filter:grayscale(0.8); background-size:cover;"></div>
-      <div class="sector-overlay"></div>
-      <div class="sector-body">
-        <span class="sector-label">SECTOR 3 / LORE SECRETS</span>
-        <h2 class="sector-title">THE DEEP VEIN</h2>
-        <p class="sector-desc">The path grows harder. Tora's Chamber is open to those who trust the Tarot. Locate hidden ciphers to unlock deeper sections.</p>
-        <div class="sector-links">
-          <a href="#" onclick="interceptDescent(event, 'THE ORACLE', 'oracle.html')" class="map-link">The Oracle's Tarot</a>
-          <a href="#" onclick="interceptDescent(event, 'TORA\'S DOMAIN', 'toradomain.html')" class="map-link">Tora's Domain</a>
-          <a href="#" onclick="interceptDescent(event, 'IVY\'S TUNNEL', 'ivytunnel.html')" class="map-link">Ivy's Tunnel</a>
-        </div>
-      </div>
-    </div>
-
+    
     <div class="map-sector classified">
-      <div class="sector-bg" style="background-image: url('image_3.jpg'); position:absolute; inset:0; opacity:0.1; filter:grayscale(1); background-size:cover;"></div>
-      <div class="sector-overlay"></div>
+      <div class="sector-overlay" style="background:rgba(0,0,0,0.9);"></div>
       <div class="sector-body">
-        <span class="sector-label">?? CLASSIFIED ??</span>
-        <h2 class="sector-title">[ SECURITY CLEARANCE REQUIRED ]</h2>
-        <p class="sector-desc">The Board's private tunnels. Access denied. Secure the Trigger in the Oracle Chamber to bypass visual locks.</p>
+        <span class="s-label" style="color:#555;">?? CLASSIFIED ??</span>
+        <h2 class="s-title" style="color:#555;">[ CLEARANCE REQ. ]</h2>
+        <p class="s-desc" style="color:#333;">The Board's private tunnels. Access denied. Secure the Trigger in the Oracle Chamber to bypass visual locks.</p>
       </div>
     </div>
+  </div> 
+</section>
 
-  </div> 
-  </div> 
+<section>
+  <div class="section-tag">MASTER DIRECTORY</div>
+  <div class="dir-grid fade-in">
+      <div>
+          <div class="dir-header">SECTOR 1: FORGE</div>
+          <a href="games.html" class="dir-link">Recreation Hall Hub</a>
+          <a href="orebreaker.html" class="dir-link">Ore Breaker (Arcade)</a>
+          <a href="oreracer.html" class="dir-link">Ore Racer (Cup Protocol)</a>
+          <a href="silverquill.html" class="dir-link">The Silver Quill</a>
+          <a href="tablet.html" class="dir-link">Deciphered Tablet</a>
+      </div>
+      <div>
+          <div class="dir-header">SECTOR 3: ORACLE</div>
+          <a href="oracle.html" class="dir-link">Oracle's Chamber Hub</a>
+          <a href="toradomain.html" class="dir-link">Tora's Domain</a>
+          <a href="tora.html" class="dir-link">Tora's Codex Reading</a>
+          <a href="well.html" class="dir-link">The Echoing Well</a>
+          <a href="starmap.html" class="dir-link">The Star Map</a>
+          <a href="reliquary.html" class="dir-link">The Reliquary</a>
+      </div>
+      <div>
+          <div class="dir-header">LORE & AUDIO VISUAL</div>
+          <a href="archives.html" class="dir-link">The Archives Hub</a>
+          <a href="origins.html" class="dir-link">Hall of Origins</a>
+          <a href="scrapheap.html" class="dir-link">The Scrap Heap</a>
+          <a href="soundshaft.html" class="dir-link">The Sound Shaft</a>
+          <a href="transmission.html" class="dir-link">The Transmission</a>
+          <a href="shorts.html" class="dir-link">The Projection Room</a>
+      </div>
+      <div>
+          <div class="dir-header">NETWORK LEGAL</div>
+          <a href="privacy.html" class="dir-link">Privacy Protocol</a>
+          <a href="terms.html" class="dir-link">Terms of Service</a>
+          <a href="gemshop.html" class="dir-link">The Gemshop</a>
+          <a href="lorevault.html" class="dir-link">Your Lore Vault</a>
+      </div>
+  </div>
 </section>
 
 <section class="manifesto-section fade-in">
@@ -753,61 +467,22 @@ section::before{content:'';position:absolute;top:0;left:3rem;right:3rem;height:1
     <p class="manifesto-text">Every tunnel, game, and word is forged by hand. To expand the servers, build the high-fidelity Brawler engine, and keep the mine independent, we need Founding Architects. If you believe in the vision, fund the extraction.</p>
     
     <div class="manifesto-actions">
-        <a href="https://patreon.com/lordoro" target="_blank" class="btn-retro btn-primary">JOIN PATREON</a>
-        <a href="https://gofund.me/e643a8283" target="_blank" class="btn-retro btn-ghost">GOFUNDME FUND</a>
+        <a href="https://patreon.com/lordoro" target="_blank" class="btn-retro btn-m-primary">JOIN PATREON</a>
+        <a href="https://gofund.me/e643a8283" target="_blank" class="btn-retro btn-m-ghost">GOFUNDME FUND</a>
     </div>
 
-    <div class="forge-status">
-        <div class="forge-label"><span>BRAWLER ENGINE V2.0</span> <span>65%</span></div>
-        <div class="forge-bar"><div class="forge-fill"></div></div>
+    <div class="forge-status" style="margin: 3rem auto 0; background: #000; border: 4px solid #333; padding: 1.5rem; text-align: left; max-width: 700px;">
+        <div style="font-size: 0.6rem; color: var(--cream); margin-bottom: 15px; display: flex; justify-content: space-between;"><span>BRAWLER ENGINE V2.0</span> <span>65%</span></div>
+        <div style="height: 20px; background: #111; border: 4px solid #444; padding: 2px;"><div style="width: 65%; height: 100%; background: var(--neon-green); box-shadow: 0 0 10px var(--neon-green);"></div></div>
     </div>
 </section>
 
-<section id="contact" style="background:#000; padding:5rem 3rem; border-top: 4px solid var(--gd);">
-  <div class="section-tag">Contact</div>
-  <div class="fade-in">
-    <h2 class="about-headline" style="color:var(--gold);">A new tunnel is always<br><em>being dug.</em></h2>
-    <p style="font-size:.6rem;color:var(--muted);line-height:2;max-width:480px;margin-bottom:2.5rem; font-family: var(--font-text)!important;">Collaborations, media inquiries, and transmedia opportunities. The network is always expanding.</p>
-    
-    <div style="display:flex;flex-direction:column;max-width:600px;border:4px solid #333;">
-      <a href="mailto:doradoyoro@gmail.com" style="display:flex;align-items:center;padding:1.1rem 1.4rem;border-bottom:2px solid #222;transition:background .3s;gap:1.25rem;"><span style="font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gd);width:80px;flex-shrink:0;">Email</span><span style="font-size:.6rem;color:var(--muted);">doradoyoro@gmail.com</span></a>
-      <a href="https://nonsensemedianetwork.com" style="display:flex;align-items:center;padding:1.1rem 1.4rem;border-bottom:2px solid #222;transition:background .3s;gap:1.25rem;"><span style="font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gd);width:80px;flex-shrink:0;">Web</span><span style="font-size:.6rem;color:var(--muted);">nonsensemedianetwork.com</span></a>
-      <a href="https://twitter.com/LordOroNMN" target="_blank" style="display:flex;align-items:center;padding:1.1rem 1.4rem;border-bottom:2px solid #222;transition:background .3s;gap:1.25rem;"><span style="font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gd);width:80px;flex-shrink:0;">Twitter</span><span style="font-size:.6rem;color:var(--muted);">@LordOroNMN</span></a>
-      <a href="https://www.tiktok.com/@orominade" target="_blank" style="display:flex;align-items:center;padding:1.1rem 1.4rem;border-bottom:2px solid #222;transition:background .3s;gap:1.25rem;"><span style="font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gd);width:80px;flex-shrink:0;">TikTok</span><span style="font-size:.6rem;color:var(--muted);">@orominade</span></a>
-      <a href="https://www.youtube.com/@LordOroNMN" target="_blank" style="display:flex;align-items:center;padding:1.1rem 1.4rem;border-bottom:2px solid #222;transition:background .3s;gap:1.25rem;"><span style="font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gd);width:80px;flex-shrink:0;">YouTube</span><span style="font-size:.6rem;color:var(--muted);">Lord Oro / NMN</span></a>
-      <div style="display:flex;align-items:center;padding:1.1rem 1.4rem;gap:1.25rem;"><span style="font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gd);width:80px;flex-shrink:0;">Press</span><span style="font-size:.6rem;color:var(--muted); font-family: var(--font-text)!important;">Nonsense Media Network LLC — Est. 2026</span></div>
-    </div>
-  </div>
-</section>
-
-<div class="mobile-hub-nav">
-    <a href="#" onclick="interceptDescent(event, 'THE FORGE', 'brawler/index.html')" class="hub-tab active">
-        <span class="hub-icon">⚔️</span> FORGE
-    </a>
-    <a href="https://www.youtube.com/@LordOroNMN" target="_blank" class="hub-tab">
-        <span class="hub-icon">📺</span> LIVE
-    </a>
-    <a href="#works" class="hub-tab">
-        <span class="hub-icon">📖</span> LORE
-    </a>
-    <a href="https://gofund.me/e643a8283" target="_blank" class="hub-tab">
-        <span class="hub-icon">🏮</span> SUPPORT
-    </a>
-</div>
-
-<a href="#" onclick="window.scrollTo(0,0)" class="nmn-seal" title="Nonsense Media Network — Lord Oro">
+<a href="#" onclick="window.scrollTo(0,0)" class="nmn-seal" title="Return to Top">
   <img src="lord_oro_emblem.jpg" alt="NMN Emblem">
 </a>
 
-<div class="depth-gauge" id="depthGauge">
-  <div class="dg-stat"><span class="dg-val" id="dgGold">0</span> Gold Collected</div>
-  <span class="dg-sep" style="color:var(--faint);">⬡</span>
-  <a href="lorevault.html" class="dg-link">📜 Vault</a>
-  <a href="lantern.html" class="dg-link">🕯️ Lantern</a>
-</div>
-
 <script>
-// Create Stars
+// Particles
 const particles = document.getElementById('particles');
 for(let i=0; i<30; i++){
     let p = document.createElement('div');
@@ -823,11 +498,8 @@ function syncGauges() {
     if(typeof NMNWallet !== 'undefined') {
         const w = NMNWallet.get();
         const gold = w.gold || 0;
-        const dG = document.getElementById('dgGold');
-        if(dG) dG.textContent = gold;
-        
         const hG = document.getElementById('gold-disp');
-        if(hG) hG.textContent = gold;
+        if(hG) hG.textContent = gold.toLocaleString();
         const lD = document.getElementById('lvl-disp');
         if(lD) lD.textContent = w.level || 1;
         const xD = document.getElementById('xp-disp');
@@ -843,29 +515,52 @@ function syncGauges() {
 window.addEventListener('nmn_wallet_update', syncGauges);
 window.onload = syncGauges;
 
-// Glow Cursor
+// Glow Cursor Tracking
 document.addEventListener('mousemove', function(e){
   const r = document.getElementById('pickaxe-glow');
   if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
 });
 document.addEventListener('mousedown', function(){
   const r = document.getElementById('pickaxe-glow');
-  if(r) { r.style.width = '150px'; r.style.height = '150px'; r.style.background = 'radial-gradient(circle,rgba(232,184,75,.4) 0%,transparent 70%)'; }
+  if(r) { r.style.width = '180px'; r.style.height = '180px'; r.style.background = 'radial-gradient(circle,rgba(232,184,75,.4) 0%,transparent 70%)'; }
 });
 document.addEventListener('mouseup', function(){
   const r = document.getElementById('pickaxe-glow');
-  if(r) { r.style.width = '140px'; r.style.height = '140px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.3) 0%,rgba(232,184,75,.15) 30%,transparent 70%)'; }
+  if(r) { r.style.width = '140px'; r.style.height = '140px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.35) 0%,rgba(232,184,75,.15) 30%,transparent 70%)'; }
 });
 
-// Fade In Observer
+// Text Scrambler
+const glyphs=['로','드','오','금','광','g','u','l','v','o','r','金','鉱','夢','光','魂','炎'];
+function shuffleText(el){
+  if(el.dataset.shuffled)return;
+  el.dataset.shuffled='1';
+  const orig = el.dataset.text || el.innerText;
+  el.dataset.text = orig;
+  let iter=0;
+  const iv=setInterval(()=>{
+    el.innerText=orig.split('').map((c,i)=>{
+      if(c===' ')return c;
+      if(iter>i*1.2)return orig[i];
+      return glyphs[Math.floor(Math.random()*glyphs.length)];
+    }).join('');
+    iter++;
+    if(iter>=20){clearInterval(iv);el.innerText=orig;}
+  },50);
+}
+
+// Fade In & Scramble Observer
 const obs = new IntersectionObserver(entries => {
     entries.forEach(e => {
-        if(e.isIntersecting) e.target.classList.add('visible');
+        if(e.isIntersecting) {
+            e.target.classList.add('visible');
+            const h = e.target.querySelector('.glitch-text');
+            if(h) setTimeout(() => shuffleText(h), 100);
+        }
     });
 }, {threshold: 0.1});
-document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+document.querySelectorAll('.fade-in, .section-tag').forEach(el => obs.observe(el));
 
-// Vessel Filter (FIXED)
+// Vessel Filter
 window.filterVessel = function(vessel) {
   const goldWrap = document.getElementById('vessel-gold');
   const obsidianWrap = document.getElementById('vessel-obsidian');
@@ -886,16 +581,6 @@ window.filterVessel = function(vessel) {
     goldPanel.style.display = 'none';
   }
 };
-
-// Ensure default visibility on load
-window.addEventListener('DOMContentLoaded', () => {
-    const obPanel = document.getElementById('panel-obsidian');
-    const gPanel = document.getElementById('panel-gold');
-    if (obPanel && gPanel) {
-        obPanel.style.display = 'none';
-        gPanel.style.display = 'block';
-    }
-});
 
 // Descent Protocol Audio
 const NMNAudioEngine = {
@@ -921,10 +606,10 @@ function interceptDescent(event, locationName, targetUrl) {
     
     const overlay = document.getElementById('descent-overlay');
     const text = document.getElementById('descent-target-text');
-    text.innerText = `DESCENDING TO: ${locationName}...`;
+    text.innerText = `DESCENDING: ${locationName}`;
     overlay.classList.add('descent-active');
 
-    setTimeout(() => { if(targetUrl) window.location.href = targetUrl; }, 1600);
+    setTimeout(() => { if(targetUrl) window.location.href = targetUrl; }, 1500);
 }
 </script>
 
