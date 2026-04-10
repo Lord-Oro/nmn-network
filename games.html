@@ -4,219 +4,164 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Recreation Hall — NMN</title>
+
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
+
 <style>
-body{padding-top:56px;background:var(--coal)}
-
-/* ── HALL HERO ── */
-.hall-hero{
-  text-align:center;padding:3rem 2rem 1.5rem;
-  position:relative;overflow:hidden;
-  border-bottom:1px solid rgba(255,215,0,.06);
-}
-.hall-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(255,215,0,.06),transparent 55%);pointer-events:none}
-.hall-eyes{display:flex;gap:44px;justify-content:center;margin-bottom:1.2rem}
-.hall-eye{width:20px;height:14px;background:radial-gradient(ellipse at 40% 40%,#FFD700,#FF8C00);border-radius:50%;box-shadow:0 0 18px rgba(255,215,0,.8);animation:eyeBlink 5s infinite;position:relative}
-.hall-eye::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6px;height:6px;background:#000;border-radius:50%}
-@keyframes eyeBlink{0%,85%,100%{transform:scaleY(1)}90%{transform:scaleY(.05)}}
-.hall-title{font-family:var(--font-display);font-size:clamp(1.8rem,5vw,3rem);color:var(--gold);text-shadow:0 0 30px rgba(255,215,0,.35);margin-bottom:.4rem}
-.hall-sub{font-family:var(--font-pixel);font-size:.38rem;color:var(--muted);letter-spacing:.2em}
-
-/* ── WALLET BAR ── */
-.wallet-bar{
-  display:flex;align-items:center;justify-content:center;gap:1.5rem;
-  padding:.65rem 2rem;background:rgba(0,0,0,.45);
-  border-bottom:1px solid rgba(255,215,0,.07);flex-wrap:wrap;
-}
-.w-item{text-align:center}
-.w-val{font-family:var(--font-pixel);font-size:.52rem;color:var(--gold);text-shadow:0 0 8px rgba(255,215,0,.4);display:block}
-.w-lbl{font-family:var(--font-pixel);font-size:.28rem;color:var(--muted);letter-spacing:.1em}
-.gem-row{display:flex;gap:4px}
-.gem-pip{width:14px;height:14px;border:1px solid rgba(255,215,0,.25);background:var(--stone2);font-size:7px;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.gem-pip.lit{border-color:var(--gold);background:#1a1500;box-shadow:0 0 5px var(--gold)}
-.convert-btn{font-family:var(--font-pixel);font-size:.38rem;background:transparent;border:1px solid rgba(255,215,0,.25);color:var(--gold);padding:.4rem 1rem;letter-spacing:.08em;transition:all .2s;cursor:pointer;}
-.convert-btn:hover{background:rgba(255,215,0,.06);border-color:var(--gold)}
-
-/* ── MAIN LAYOUT ── */
-.hall-layout{display:grid;grid-template-columns:1fr 260px;gap:0;max-width:1200px;margin:0 auto}
-@media(max-width:900px){.hall-layout{grid-template-columns:1fr}}
-
-/* ── SPIRAL MINE SHAFT ── */
-.mine-shaft{padding:2rem 1.5rem}
-.shaft-label{font-family:var(--font-pixel);font-size:.42rem;color:var(--gd);letter-spacing:.3em;text-transform:uppercase;margin-bottom:2rem;display:flex;align-items:center;gap:.75rem}
-.shaft-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(255,215,0,.15),transparent)}
-
-/* THE SPIRAL — nuggets dug from the wall */
-.gold-spiral{
-  display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
-  gap:20px;
-  position:relative;
-}
-.gold-spiral::before{
-  content:'';
-  position:absolute;
-  left:50%;top:0;bottom:0;
-  width:1px;
-  background:linear-gradient(to bottom,transparent,rgba(255,215,0,.08) 20%,rgba(255,215,0,.08) 80%,transparent);
-  transform:translateX(-50%);
-  pointer-events:none;
+:root {
+  --gold: #FFD700;
+  --gb: #e8b84b;
+  --gd: #AA7700;
+  --bg-color: #000000;
+  --panel-bg: #111111;
+  --cream: #f0e6cc;
+  --muted: #aaaaaa;
+  --lg: #55FF55; 
+  --pu: #AA55FF; 
+  --dp: #440066; 
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-text: 'VT323', monospace;
 }
 
-/* NUGGET GAME CARD */
-.nugget{
-  background:var(--stone);
-  border:1px solid rgba(255,215,0,.12);
-  border-radius:12px;
-  overflow:hidden;
-  text-decoration:none;
-  display:flex;flex-direction:column;
-  position:relative;
-  transition:all .35s cubic-bezier(.4,0,.2,1);
-  min-height: 140px; /* Give it some bulk without the canvas */
-}
-.nugget:nth-child(odd){transform:rotate(-.4deg)}
-.nugget:nth-child(even){transform:rotate(.4deg)}
-.nugget:hover{
-  transform:rotate(0) translateY(-6px) scale(1.02) !important;
-  border-color:rgba(255,215,0,.5);
-  box-shadow:0 12px 40px rgba(0,0,0,.6),0 0 25px rgba(255,215,0,.12),inset 0 1px 0 rgba(255,215,0,.15);
-}
-/* Gold seam top */
-.nugget::before{
-  content:'';position:absolute;top:0;left:10%;right:10%;height:2px;
-  background:linear-gradient(90deg,transparent,rgba(255,215,0,.6),transparent);
-  border-radius:0 0 2px 2px;
-  transform:scaleX(0);transition:transform .3s;
-}
-.nugget:hover::before{transform:scaleX(1)}
-/* Gold dust corner */
-.nugget::after{
-  content:'';position:absolute;bottom:8px;right:8px;
-  width:8px;height:8px;border-radius:50%;
-  background:rgba(255,215,0,.15);
-  box-shadow:0 0 6px rgba(255,215,0,.2);
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; }
+
+body {
+  font-family: var(--font-text);
+  color: var(--cream);
+  background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
+  padding-top: 56px;
+  font-size: 1.2rem;
 }
 
-.nugget-body{padding: 1.5rem 1.2rem; display: flex; flex-direction: column; justify-content: center; height: 100%;}
-.nugget-name{font-family:var(--font-pixel);font-size:.42rem;color:var(--cream);display:block;margin-bottom:.4rem;letter-spacing:.04em}
-.nugget-desc{font-family:var(--font-pixel);font-size:.3rem;color:var(--muted);line-height:2;margin-bottom:.8rem}
-.nugget-tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:auto;}
-.ntag{font-family:var(--font-pixel);font-size:.26rem;padding:2px 5px;border-radius:2px}
-.ntag-arc{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.18);color:var(--gold)}
-.ntag-rpg{background:rgba(153,34,204,.1);border:1px solid rgba(153,34,204,.25);color:#cc88ff}
-.ntag-pzl{background:rgba(34,136,255,.1);border:1px solid rgba(34,136,255,.25);color:#88aaff}
-.ntag-idl{background:rgba(34,204,68,.1);border:1px solid rgba(34,204,68,.25);color:#88ffaa}
-.ntag-new{background:var(--gold);color:var(--coal)}
-.ntag-cls{background:rgba(255,215,0,.04);border:1px solid rgba(255,215,0,.08);color:rgba(255,215,0,.3)}
-
-/* Classified nugget */
-.nugget.classified{opacity:.55;pointer-events:none}
-.nugget.classified .nugget-name{color:rgba(255,215,0,.3)}
-
-/* ── SIDEBAR ── */
-.hall-sidebar{
-  border-left:1px solid rgba(255,215,0,.06);
-  padding:1.5rem 1rem;
-  display:flex;flex-direction:column;gap:1.5rem;
-  background:rgba(0,0,0,.2);
+/* HEADER */
+header {
+  padding: 1rem 2rem; border-bottom: 4px solid var(--pu);
+  display: flex; justify-content: space-between; align-items: center;
+  background: #000; z-index: 1000; position: fixed; top: 0; left: 0; right: 0;
 }
-@media(max-width:900px){.hall-sidebar{border-left:none;border-top:1px solid rgba(255,215,0,.06)}}
+.logo { font-family: var(--font-pixel); color: var(--gold); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #553300; }
+.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.back:hover { color: var(--gold); }
 
-/* ── RETRO TV ── */
-.tv-module-label{font-family:var(--font-pixel);font-size:.38rem;color:var(--gd);letter-spacing:.25em;margin-bottom:.75rem;display:block}
-.retro-tv{
-  background:#1a1208;
-  border:3px solid var(--gd);
-  border-radius:8px;padding:10px;
-  box-shadow:0 0 20px rgba(139,105,20,.3),inset 0 0 15px rgba(0,0,0,.5);
-}
-.tv-ants{display:flex;justify-content:space-between;padding:0 8px;margin-bottom:6px}
-.ant-rod{width:3px;height:16px;background:var(--gd);transform-origin:bottom center}
-.ant-rod:first-child{transform:rotate(-22deg)}
-.ant-rod:last-child{transform:rotate(22deg)}
-.ant-ball{width:5px;height:5px;border-radius:50%;background:var(--gold);margin:0 auto;box-shadow:0 0 5px var(--gold);animation:antP 2s infinite}
-@keyframes antP{0%,100%{opacity:1}50%{opacity:.3}}
-.tv-bezel{background:#100c04;border:3px solid #2a1a08;border-radius:3px;padding:3px;margin-bottom:6px;position:relative}
-#tv-screen{display:block;width:100%;height:140px;image-rendering:pixelated}
-#tv-screen.glitch{animation:glitch .15s steps(2) forwards}
-@keyframes glitch{0%{filter:brightness(3) saturate(0);transform:translateX(-3px)}50%{filter:brightness(.2) saturate(5);transform:translateX(3px)}100%{filter:none;transform:none}}
-.tv-scanlines{position:absolute;inset:3px;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.2) 3px,rgba(0,0,0,.2) 4px);pointer-events:none;border-radius:2px}
-.tv-glare{position:absolute;top:6px;left:6px;width:24px;height:14px;background:linear-gradient(135deg,rgba(255,255,255,.07),transparent);border-radius:2px;pointer-events:none}
-.tv-chbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
-.tv-chlbl{font-family:var(--font-pixel);font-size:.3rem;color:var(--muted)}
-.tv-chname{font-family:var(--font-pixel);font-size:.3rem;color:var(--gold);text-align:right}
-.tv-controls{display:flex;align-items:center;gap:5px;margin-bottom:6px}
-.ch-btn{
-  flex:1;font-family:var(--font-pixel);font-size:.32rem;
-  background:linear-gradient(180deg,#3a2808,#1a0f04);
-  border-top:2px solid #8B6914;border-left:2px solid #8B6914;
-  border-right:2px solid #2a1000;border-bottom:2px solid #0a0400;
-  color:var(--gold);padding:4px 6px;cursor:pointer;
-  box-shadow:1px 1px 0 #050200;transition:all .1s;text-align:center;letter-spacing:.05em;
-}
-.ch-btn:hover{background:linear-gradient(180deg,#4a3810,#2a1f08);box-shadow:1px 1px 0 #050200,0 0 8px rgba(255,215,0,.3)}
-.ch-btn:active{border-top-color:#1a0800;border-left-color:#1a0800;border-right-color:#8B6914;border-bottom-color:#8B6914;transform:translate(1px,1px)}
-.ch-display{background:#030200;border:1px solid #2a1a08;color:var(--gold);font-family:var(--font-pixel);font-size:.4rem;padding:3px 6px;min-width:44px;text-align:center;box-shadow:inset 0 0 5px rgba(255,215,0,.1);text-shadow:0 0 6px var(--gold)}
-.tv-knobs{display:flex;justify-content:space-between;align-items:center;padding:0 4px;margin-bottom:6px}
-.knob{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#5a4a28,#2a1a08);border:2px solid var(--gd)}
-.knob.pwr{background:radial-gradient(circle at 35% 35%,#3a2808,#1a0f04);border-color:var(--copper,#B87333)}
-.tv-brand{font-family:var(--font-pixel);font-size:.28rem;color:var(--gd)}
-.tv-stand{background:#100c04;border:2px solid #2a1a08;border-top:none;border-radius:0 0 5px 5px;padding:6px 8px;text-align:center}
-.stand-lbl{color:var(--gold);font-family:var(--font-pixel);font-size:.3rem;letter-spacing:.1em;margin-bottom:4px;display:flex;align-items:center;justify-content:center;gap:4px}
-.stand-lbl::before,.stand-lbl::after{content:'';flex:1;height:1px;background:var(--gd)}
-.ad-slot{
-  min-height:90px;background:#050300;border:1px dashed rgba(139,105,20,.3);
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-pixel);color:rgba(139,105,20,.4);font-size:.28rem;
-  text-align:center;line-height:2;padding:4px;
-}
-.tv-legs{display:flex;justify-content:space-around;padding:0 18px;margin-top:4px}
-.tv-leg{width:5px;height:8px;background:var(--gd);border-radius:0 0 3px 3px}
-#real-video{display:none}
+/* HALL HERO */
+.hall-hero { text-align: center; background: #000; padding: 3rem 2rem; border-bottom: 4px solid #333; position: relative; }
+.hall-eyes { display: flex; gap: 40px; justify-content: center; margin-bottom: 1.5rem; }
+.hall-eye { width: 24px; height: 16px; background: var(--gold); border: 4px solid #fff; box-shadow: 0 0 20px var(--gold); animation: eyeBlink 5s infinite; position: relative; }
+.hall-eye::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 8px; height: 8px; background: #000; }
+@keyframes eyeBlink { 0%, 85%, 100% { transform: scaleY(1); } 90% { transform: scaleY(0.1); } }
+.hall-title { font-family: var(--font-pixel); font-size: 2rem; color: var(--gold); text-shadow: 4px 4px 0 #553300; margin-bottom: 1rem; }
+.hall-sub { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); letter-spacing: 2px; }
 
-/* ── PATREON TIERS ── */
-.tiers-module-label{font-family:var(--font-pixel);font-size:.38rem;color:var(--gd);letter-spacing:.25em;margin-bottom:.75rem;display:block}
-.tier-mini{
-  padding:10px 12px;margin-bottom:8px;border:1px solid;
-  border-radius:4px;font-size:.28rem;line-height:1.9;
-  transition:all .2s;text-decoration:none;display:block;
+/* WALLET BAR (JRPG STYLE) */
+.wallet-bar {
+  display: flex; align-items: center; justify-content: center; gap: 2rem;
+  padding: 1.5rem; background: var(--panel-bg); border-bottom: 4px solid var(--gd);
+  flex-wrap: wrap; box-shadow: inset 0 0 0 4px #000;
 }
-.tier-mini:hover{transform:translateX(3px)}
-.tier-mini.copper{border-color:var(--copper,#B87333);color:var(--copper,#B87333);background:rgba(15,8,0,.6)}
-.tier-mini.silver{border-color:#aaa;color:#ccc;background:rgba(10,10,10,.6)}
-.tier-mini.gold-t{border-color:var(--gold);color:var(--gold);background:rgba(15,14,0,.6);box-shadow:0 0 10px rgba(255,215,0,.06)}
-.tier-name-mini{font-family:var(--font-pixel);font-size:.38rem;margin-bottom:3px;display:block}
+.w-item { text-align: center; background: #000; border: 4px solid #333; padding: 0.8rem 1.5rem; min-width: 140px; }
+.w-val { font-family: var(--font-pixel); font-size: 1.2rem; color: var(--gold); display: block; margin-bottom: 0.5rem; text-shadow: 2px 2px 0 #553300;}
+.w-lbl { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--muted); }
+.gem-row { display: flex; gap: 6px; justify-content: center; margin-bottom: 0.5rem; }
+.gem-pip { width: 16px; height: 16px; border: 2px solid #553300; background: #221100; display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; }
+.gem-pip.lit { border-color: #FFF; background: var(--gold); color: #000; box-shadow: 0 0 10px var(--gold); }
+.convert-btn { font-family: var(--font-pixel); font-size: 0.6rem; background: #000; border: 4px solid var(--gd); color: var(--gold); padding: 1rem; cursor: pointer; transition: transform 0.1s; text-transform: uppercase; }
+.convert-btn:hover { background: var(--gd); color: #000; border-color: #FFF; transform: translateY(-3px); }
 
-/* ── GEMSHOP QUICK ── */
-.shop-module-label{font-family:var(--font-pixel);font-size:.38rem;color:var(--gd);letter-spacing:.25em;margin-bottom:.75rem;display:block}
-.shop-mini-item{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:6px 8px;border-bottom:1px solid rgba(255,215,0,.05);
-  transition:background .2s;
+/* MAIN LAYOUT */
+.hall-layout { display: grid; grid-template-columns: 1fr 320px; gap: 0; max-width: 1300px; margin: 0 auto; }
+@media (max-width: 900px) { .hall-layout { grid-template-columns: 1fr; } }
+
+/* GAMES GRID */
+.mine-shaft { padding: 3rem 2rem; }
+.shaft-label { font-family: var(--font-pixel); font-size: 0.8rem; color: var(--pu); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 2rem; border-bottom: 4px solid #333; padding-bottom: 0.5rem; text-shadow: 2px 2px 0 #000; }
+
+.gold-spiral { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
+
+.nugget { 
+    background: #000; border: 4px solid #444; padding: 1.5rem; 
+    display: flex; flex-direction: column; text-decoration: none; 
+    transition: transform 0.1s; position: relative;
 }
-.shop-mini-item:hover{background:rgba(255,215,0,.03)}
-.shop-mini-name{font-family:var(--font-pixel);font-size:.3rem;color:var(--muted)}
-.shop-mini-cost{font-family:var(--font-pixel);font-size:.32rem;color:var(--gold)}
-.shop-mini-btn{font-family:var(--font-pixel);font-size:.28rem;background:var(--gd);color:var(--coal);border:none;padding:4px 9px;transition:all .2s;cursor:pointer;}
-.shop-mini-btn:hover{background:var(--gold)}
+.nugget:hover { transform: translateY(-4px); box-shadow: 6px 6px 0 var(--gd); border-color: var(--gold); background: #111; }
 
-/* ── FOOTER ── */
-.hall-footer{max-width:1200px;margin:0 auto}
+.nugget-name { font-family: var(--font-pixel); font-size: 1rem; color: var(--cream); display: block; margin-bottom: 0.8rem; line-height: 1.4; text-shadow: 2px 2px 0 #000; }
+.nugget-desc { font-size: 1.2rem; color: var(--muted); line-height: 1.5; margin-bottom: 1.5rem; flex-grow: 1; }
+.nugget-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
+
+.ntag { font-family: var(--font-pixel); font-size: 0.5rem; padding: 0.4rem 0.6rem; border: 2px solid; text-transform: uppercase; }
+.ntag-arc { background: rgba(255,215,0,0.1); border-color: var(--gold); color: var(--gold); }
+.ntag-rpg { background: rgba(170,85,255,0.1); border-color: var(--pu); color: var(--pu); }
+.ntag-pzl { background: rgba(85,170,255,0.1); border-color: #55AAFF; color: #55AAFF; }
+.ntag-idl { background: rgba(85,255,85,0.1); border-color: var(--lg); color: var(--lg); }
+.ntag-new { background: var(--gold); border-color: #FFF; color: #000; }
+.ntag-cls { background: #111; border-color: #333; color: #666; }
+
+.nugget.classified { opacity: 0.5; pointer-events: none; border-style: dashed; }
+.nugget.classified .nugget-name { color: #666; }
+
+/* SIDEBAR */
+.hall-sidebar { border-left: 4px solid #333; padding: 3rem 1.5rem; display: flex; flex-direction: column; gap: 3rem; background: #050505; }
+@media(max-width:900px) { .hall-sidebar { border-left: none; border-top: 4px solid #333; } }
+
+/* RETRO TV */
+.tv-module-label { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); margin-bottom: 1rem; display: block; text-shadow: 2px 2px 0 #000;}
+.retro-tv { background: #1a1208; border: 4px solid var(--gd); border-radius: 8px; padding: 12px; box-shadow: 6px 6px 0 #000; }
+.tv-ants { display: flex; justify-content: space-between; padding: 0 8px; margin-bottom: 8px; }
+.ant-rod { width: 4px; height: 20px; background: var(--gd); transform-origin: bottom center; }
+.ant-rod:first-child { transform: rotate(-25deg); }
+.ant-rod:last-child { transform: rotate(25deg); }
+.ant-ball { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); margin: 0 auto; box-shadow: 0 0 5px var(--gold); }
+.tv-bezel { background: #100c04; border: 4px solid #2a1a08; border-radius: 4px; padding: 4px; margin-bottom: 8px; position: relative; }
+#tv-screen { display: block; width: 100%; height: 160px; image-rendering: pixelated; background: #000; }
+.tv-scanlines { position: absolute; inset: 4px; background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.4) 3px, rgba(0,0,0,0.4) 6px); pointer-events: none; }
+.tv-chbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.tv-chlbl { font-family: var(--font-pixel); font-size: 0.4rem; color: var(--muted); }
+.tv-chname { font-family: var(--font-pixel); font-size: 0.4rem; color: var(--gold); text-align: right; }
+.tv-controls { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.ch-btn { flex: 1; font-family: var(--font-pixel); font-size: 0.45rem; background: #222; border: 2px solid #555; color: var(--gold); padding: 8px; cursor: pointer; text-align: center; }
+.ch-btn:hover { background: #444; border-color: var(--gold); }
+.ch-display { background: #000; border: 2px solid #333; color: var(--gold); font-family: var(--font-pixel); font-size: 0.5rem; padding: 6px; text-align: center; }
+.tv-stand { background: #100c04; border: 4px solid #2a1a08; border-top: none; padding: 8px; text-align: center; }
+.stand-lbl { color: var(--gold); font-family: var(--font-pixel); font-size: 0.4rem; margin-bottom: 6px; }
+
+/* MODULES */
+.shop-module-label { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); margin-bottom: 1rem; display: block; }
+.shop-mini-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; border: 4px solid #333; margin-bottom: 8px; background: #000; }
+.shop-mini-item:hover { border-color: var(--gd); }
+.shop-mini-name { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--cream); }
+.shop-mini-cost { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gold); }
+.shop-mini-btn { font-family: var(--font-pixel); font-size: 0.4rem; background: var(--pu); color: #000; border: 2px solid #FFF; padding: 6px 12px; cursor: pointer; }
+.shop-mini-btn:hover { background: var(--gold); }
+
+/* FOOTER */
+.nmn-footer { text-align: center; padding: 3rem; border-top: 4px solid #333; background: #000; }
+.nmn-footer-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.nmn-footer-link { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--muted); text-decoration: none; border: 2px solid transparent; padding: 0.5rem; }
+.nmn-footer-link:hover { color: var(--gold); border-color: var(--gold); }
+.nmn-footer-copy { font-family: var(--font-pixel); font-size: 0.4rem; color: #555; }
 </style>
-
-<script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://inklinkor.com/tag.min.js',10763810,document.body||document.documentElement)</script>
-
 </head>
 <body>
+
 <script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
-<video id="real-video" muted playsinline loop crossorigin="anonymous"></video>
+<video id="real-video" muted playsinline loop crossorigin="anonymous" style="display:none;"></video>
+
+<header>
+  <a href="index.html" class="logo">RECREATION HALL</a>
+  <a href="index.html" class="back">← TO MINE</a>
+</header>
 
 <div class="hall-hero">
   <div class="hall-eyes"><div class="hall-eye"></div><div class="hall-eye"></div></div>
-  <p class="hall-title">Recreation Hall</p>
-  <p class="hall-sub">⛏ EVERY GAME IS A TUNNEL · EVERY TUNNEL LEADS DEEPER ⛏</p>
+  <h1 class="hall-title">Recreation Hall</h1>
+  <p class="hall-sub">EVERY GAME IS A TUNNEL. EVERY TUNNEL LEADS DEEPER.</p>
 </div>
 
 <div class="wallet-bar">
@@ -229,7 +174,7 @@ body{padding-top:56px;background:var(--coal)}
       <div class="gem-pip" id="gp2">◆</div><div class="gem-pip" id="gp3">◆</div>
       <div class="gem-pip" id="gp4">◆</div>
     </div>
-    <span class="w-lbl" style="display:block;margin-top:3px">GEMS</span>
+    <span class="w-lbl">GEMS</span>
   </div>
   <button class="convert-btn" onclick="if(window.NMNWallet) { NMNWallet.convertGems(); syncWallet(); }">⚗ CONVERT GEMS</button>
 </div>
@@ -238,171 +183,135 @@ body{padding-top:56px;background:var(--coal)}
 
   <div class="mine-shaft">
 
-    <div class="shaft-label">⛏ THE ARCADE VEIN — PROVEN ORE</div>
+    <div class="shaft-label">⛏ THE ARCADE VEIN</div>
     <div class="gold-spiral" id="spiral-arcade">
 
       <a href="collector.html" class="nugget">
-        <div class="nugget-body">
-          <span class="nugget-name">THE COLLECTOR</span>
-          <p class="nugget-desc">Catch falling ore. Bombs drop alongside gold. Chain combos.</p>
-          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span><span class="ntag ntag-new">REBUILT</span></div>
-        </div>
+        <span class="nugget-name">THE COLLECTOR</span>
+        <p class="nugget-desc">Catch falling ore. Bombs drop alongside gold. Chain combos to survive.</p>
+        <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span><span class="ntag ntag-new">REBUILT</span></div>
       </a>
 
       <a href="orebreaker.html" class="nugget">
-        <div class="nugget-body">
-          <span class="nugget-name">ORE BREAKER</span>
-          <p class="nugget-desc">Brick-breaker in the mine shaft. Break the veins. Don't lose the pick.</p>
-          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
-        </div>
+        <span class="nugget-name">ORE BREAKER</span>
+        <p class="nugget-desc">Brick-breaker in the mine shaft. Break the veins. Don't lose the pick.</p>
+        <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
       </a>
       
       <a href="oreracer.html" class="nugget">
-        <div class="nugget-body">
-          <span class="nugget-name">ORE RACER</span>
-          <p class="nugget-desc">Pilot the cart through the static. High speed reaction testing.</p>
-          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span><span class="ntag ntag-new">NEW</span></div>
-        </div>
+        <span class="nugget-name">ORE RACER</span>
+        <p class="nugget-desc">Pilot the cart through the static. High speed reaction testing.</p>
+        <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span><span class="ntag ntag-new">NEW</span></div>
       </a>
 
       <a href="descent.html" class="nugget">
-        <div class="nugget-body">
-          <span class="nugget-name">THE DESCENT</span>
-          <p class="nugget-desc">Pilot your miner down the shaft. Dodge the walls. Survive.</p>
-          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
-        </div>
+        <span class="nugget-name">THE DESCENT</span>
+        <p class="nugget-desc">Pilot your miner down the shaft. Dodge the walls. Survive.</p>
+        <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
       </a>
 
       <a href="digger.html" class="nugget">
-        <div class="nugget-body">
-          <span class="nugget-name">THE DIGGER</span>
-          <p class="nugget-desc">Drill through pixel rock. Find rare ore. Avoid cave-ins.</p>
-          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
-        </div>
+        <span class="nugget-name">THE DIGGER</span>
+        <p class="nugget-desc">Drill through pixel rock. Find rare ore. Avoid cave-ins.</p>
+        <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
       </a>
 
       <a href="battle.html" class="nugget">
-        <div class="nugget-body">
-          <span class="nugget-name">MINE SIEGE</span>
-          <p class="nugget-desc">Pixel artillery. Angle your shot. Destroy the enemy miner.</p>
-          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
-        </div>
+        <span class="nugget-name">MINE SIEGE</span>
+        <p class="nugget-desc">Pixel artillery. Angle your shot. Destroy the enemy miner.</p>
+        <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
       </a>
 
       <a href="labyrinth.html" class="nugget">
-        <div class="nugget-body">
-          <span class="nugget-name">LORD ORO'S LABYRINTH</span>
-          <p class="nugget-desc">Navigate the endless mine maze. Collect lore. Find the exit.</p>
-          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
-        </div>
+        <span class="nugget-name">LORD ORO'S LABYRINTH</span>
+        <p class="nugget-desc">Navigate the endless mine maze. Collect lore. Find the exit.</p>
+        <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
       </a>
 
     </div>
 
-    <div class="shaft-label" style="margin-top:2.5rem">🔮 THE DEEP VEIN — STRATEGY & LORE</div>
+    <div class="shaft-label" style="margin-top:4rem">🔮 THE DEEP VEIN</div>
     <div class="gold-spiral">
 
       <a href="depths.html" class="nugget">
-        <div class="nugget-body">
-          <span class="nugget-name">DEPTHS OF THE MINE</span>
-          <p class="nugget-desc">Card dungeon. Build your deck. Face what lives below.</p>
-          <div class="nugget-tags"><span class="ntag ntag-rpg">RPG</span></div>
-        </div>
+        <span class="nugget-name">DEPTHS OF THE MINE</span>
+        <p class="nugget-desc">Card dungeon. Build your deck. Face what lives below.</p>
+        <div class="nugget-tags"><span class="ntag ntag-rpg">RPG</span></div>
       </a>
 
       <a href="loom.html" class="nugget">
-        <div class="nugget-body">
-          <span class="nugget-name">WEAVER'S LOOM</span>
-          <p class="nugget-desc">Match ore veins. Chain combos. 6 distinct colors.</p>
-          <div class="nugget-tags"><span class="ntag ntag-pzl">PUZZLE</span><span class="ntag ntag-new">REBUILT</span></div>
-        </div>
+        <span class="nugget-name">WEAVER'S LOOM</span>
+        <p class="nugget-desc">Match ore veins. Chain combos. 6 distinct colors.</p>
+        <div class="nugget-tags"><span class="ntag ntag-pzl">PUZZLE</span><span class="ntag ntag-new">REBUILT</span></div>
       </a>
       
       <a href="tablet.html" class="nugget">
-        <div class="nugget-body">
-          <span class="nugget-name">DECIPHERED TABLET</span>
-          <p class="nugget-desc">Match the ancient words across 4 languages to unlock gold.</p>
-          <div class="nugget-tags"><span class="ntag ntag-pzl">PUZZLE</span></div>
-        </div>
+        <span class="nugget-name">DECIPHERED TABLET</span>
+        <p class="nugget-desc">Match ancient words across 4 languages to unlock gold.</p>
+        <div class="nugget-tags"><span class="ntag ntag-pzl">PUZZLE</span></div>
       </a>
 
       <a href="motherlode.html" class="nugget">
-        <div class="nugget-body">
-          <span class="nugget-name">THE MOTHERLODE</span>
-          <p class="nugget-desc">Idle miner. Buy upgrades. Let the gold flow.</p>
-          <div class="nugget-tags"><span class="ntag ntag-idl">IDLE</span></div>
-        </div>
+        <span class="nugget-name">THE MOTHERLODE</span>
+        <p class="nugget-desc">Idle miner. Buy upgrades. Let the gold flow.</p>
+        <div class="nugget-tags"><span class="ntag ntag-idl">IDLE</span></div>
       </a>
 
       <a href="gemslots.html" class="nugget">
-        <div class="nugget-body">
-          <span class="nugget-name">GEM SLOTS</span>
-          <p class="nugget-desc">Spin the ore reels. Lord Oro's Eye = 500x. Bet smart.</p>
-          <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
-        </div>
+        <span class="nugget-name">GEM SLOTS</span>
+        <p class="nugget-desc">Spin the ore reels. Lord Oro's Eye = 500x. Bet smart.</p>
+        <div class="nugget-tags"><span class="ntag ntag-arc">ARCADE</span></div>
       </a>
 
       <a href="gemshop.html" class="nugget">
-        <div class="nugget-body">
-          <span class="nugget-name">IVY'S GEMSHOP</span>
-          <p class="nugget-desc">Spend your gold. Unlock stories, lore, and star map names.</p>
-          <div class="nugget-tags"><span class="ntag ntag-idl">SHOP</span></div>
-        </div>
+        <span class="nugget-name">IVY'S GEMSHOP</span>
+        <p class="nugget-desc">Spend your gold. Unlock stories, lore, and star map names.</p>
+        <div class="nugget-tags"><span class="ntag ntag-idl">SHOP</span></div>
       </a>
 
       <a href="ivysmine.html" class="nugget">
-        <div class="nugget-body">
-          <span class="nugget-name">IVY'S MINE</span>
-          <p class="nugget-desc">Ivy's corner of the shaft. Her rules. Her vibes.</p>
-          <div class="nugget-tags"><span class="ntag ntag-idl">LIFE SIM</span></div>
-        </div>
+        <span class="nugget-name">IVY'S MINE</span>
+        <p class="nugget-desc">Ivy's corner of the shaft. Her rules. Her vibes.</p>
+        <div class="nugget-tags"><span class="ntag ntag-idl">SIM</span></div>
       </a>
       
       <a href="shorts.html" class="nugget">
-        <div class="nugget-body">
-          <span class="nugget-name">PROJECTION ROOM</span>
-          <p class="nugget-desc">The broadcast signal. Cinematic trailers, shorts, and Veo clips.</p>
-          <div class="nugget-tags"><span class="ntag ntag-idl" style="background:rgba(255,215,0,0.1); border-color:rgba(255,215,0,0.4); color:var(--gold);">CINEMA</span><span class="ntag ntag-new">NEW</span></div>
-        </div>
+        <span class="nugget-name">PROJECTION ROOM</span>
+        <p class="nugget-desc">The broadcast signal. Cinematic trailers and shorts.</p>
+        <div class="nugget-tags"><span class="ntag ntag-pu" style="background:var(--pu); color:#000;">CINEMA</span><span class="ntag ntag-new">NEW</span></div>
       </a>
 
     </div>
 
-    <div class="shaft-label" style="margin-top:2.5rem">👁 CLASSIFIED — THE BOARD'S TUNNELS</div>
+    <div class="shaft-label" style="margin-top:4rem">👁 CLASSIFIED TUNNELS</div>
     <div class="gold-spiral">
       <div class="nugget classified">
-        <div class="nugget-body">
-          <span class="nugget-name" style="color:rgba(255,215,0,.3)">??? — FLINT ARCHITECT</span>
-          <p class="nugget-desc" style="color:rgba(139,105,20,.4)">The mine goes deeper than the maps show.</p>
-          <div class="nugget-tags"><span class="ntag ntag-cls">CLASSIFIED</span></div>
-        </div>
+        <span class="nugget-name">??? — FLINT ARCHITECT</span>
+        <p class="nugget-desc">The mine goes deeper than the maps show.</p>
+        <div class="nugget-tags"><span class="ntag ntag-cls">LOCKED</span></div>
       </div>
       <div class="nugget classified">
-        <div class="nugget-body">
-          <span class="nugget-name" style="color:rgba(204,136,255,.3)">??? — SILVER QUILL</span>
-          <p class="nugget-desc" style="color:rgba(106,58,138,.4)">The Ledger has pages no one was supposed to find.</p>
-          <div class="nugget-tags"><span class="ntag ntag-cls">CLASSIFIED</span></div>
-        </div>
-      </div>
-      <div style="grid-column:3;display:flex;align-items:center;justify-content:center;padding:1rem">
-        <p style="font-family:var(--font-pixel);font-size:.3rem;color:rgba(139,105,20,.25);text-align:center;line-height:2.2;letter-spacing:.1em">⬡ FIND THE<br>TRIGGER IN<br>THE ORACLE ⬡</p>
+        <span class="nugget-name">??? — SILVER QUILL</span>
+        <p class="nugget-desc">The Ledger has pages no one was supposed to find.</p>
+        <div class="nugget-tags"><span class="ntag ntag-cls">LOCKED</span></div>
       </div>
     </div>
 
-  </div><div class="hall-sidebar">
+  </div>
+
+  <div class="hall-sidebar">
 
     <div class="tv-module">
       <span class="tv-module-label">📡 NMN BROADCAST</span>
       <div class="retro-tv">
         <div class="tv-ants">
           <div><div class="ant-rod"></div><div class="ant-ball"></div></div>
-          <div style="text-align:center"><div class="ant-ball" style="margin-bottom:2px"></div></div>
+          <div style="text-align:center"><div class="ant-ball" style="margin-bottom:4px"></div></div>
           <div><div class="ant-rod"></div><div class="ant-ball"></div></div>
         </div>
         <div class="tv-bezel">
           <canvas id="tv-screen" width="220" height="140"></canvas>
           <div class="tv-scanlines"></div>
-          <div class="tv-glare"></div>
         </div>
         <div class="tv-chbar">
           <span class="tv-chlbl" id="tv-chlbl">◈ CH.01</span>
@@ -413,52 +322,36 @@ body{padding-top:56px;background:var(--coal)}
           <div class="ch-display">CH <span id="ch-num">01</span></div>
           <button class="ch-btn" onclick="changeChannel(1)">NEXT ▶</button>
         </div>
-        <div class="tv-knobs">
-          <div class="knob pwr"></div>
-          <div class="tv-brand">NMN-TV</div>
-          <div class="knob"></div>
-          <div class="knob"></div>
-        </div>
         <div class="tv-stand">
-          <div class="stand-lbl">SPONSORED SIGNAL</div>
-          <div class="ad-slot" id="adsense-slot">
-            📡 ADSENSE<br>UNIT HERE
-          </div>
+          <div class="stand-lbl">NO SIGNAL FOUND</div>
         </div>
-        <div class="tv-legs"><div class="tv-leg"></div><div class="tv-leg"></div></div>
       </div>
-      <a href="shorts.html" style="display:block;margin-top:12px;font-family:var(--font-pixel);font-size:.32rem;color:var(--gold);text-align:center;text-decoration:none;letter-spacing:.1em;border:1px solid rgba(255,215,0,0.3);padding:8px;transition:all .2s;">▶ ENTER PROJECTION ROOM</a>
-    </div>
-
-    <div class="tiers-module">
-      <span class="tiers-module-label">🚪 THE VAULT</span>
-      <a href="https://patreon.com/lordoro" target="_blank" class="tier-mini copper">
-        <span class="tier-name-mini">🪨 COPPER — $5/mo</span>
-        25+ Stories · Lore Stickers
-      </a>
-      <a href="https://patreon.com/lordoro" target="_blank" class="tier-mini silver">
-        <span class="tier-name-mini">🪙 SILVER — $10/mo</span>
-        AD-FREE · Sizzle Reels · Pre-Drop
-      </a>
-      <a href="https://patreon.com/lordoro" target="_blank" class="tier-mini gold-t">
-        <span class="tier-name-mini">🏅 GOLD — $25/mo</span>
-        Full Vault · ⭐ Star Map Soul
-      </a>
-      <a href="https://gofund.me/e643a8283" target="_blank" style="display:block;margin-top:8px;font-family:var(--font-pixel);font-size:.32rem;color:rgba(34,204,68,.7);text-align:center;border:1px solid rgba(34,204,68,.2);padding:6px;text-decoration:none;transition:all .2s">
-        🙏 SUPPORT ON GOFUNDME →
-      </a>
     </div>
 
     <div class="shop-module">
-      <span class="shop-module-label">💎 GEMSHOP</span>
-      <div class="shop-mini-item"><span class="shop-mini-name">📖 SHORT STORY</span><span class="shop-mini-cost">50💎</span><button class="shop-mini-btn" onclick="NMNWallet.get().gold>=50?window.location.href='gemshop.html':nmnToast('NOT ENOUGH GOLD')">BUY</button></div>
-      <div class="shop-mini-item"><span class="shop-mini-name">📜 LORE FRAGMENT</span><span class="shop-mini-cost">120💎</span><button class="shop-mini-btn" onclick="window.location.href='gemshop.html'">BUY</button></div>
-      <div class="shop-mini-item"><span class="shop-mini-name">⭐ STAR MAP</span><span class="shop-mini-cost">500💎</span><button class="shop-mini-btn" onclick="window.location.href='gemshop.html'">BUY</button></div>
-      <a href="gemshop.html" style="display:block;margin-top:8px;font-family:var(--font-pixel);font-size:.3rem;color:var(--gd);text-align:center;text-decoration:none;letter-spacing:.1em">ALL ITEMS IN THE GEMSHOP →</a>
+      <span class="shop-module-label">💎 GEMSHOP QUICK BUY</span>
+      <div class="shop-mini-item">
+          <span class="shop-mini-name">📖 SHORT STORY</span>
+          <span class="shop-mini-cost">50💎</span>
+          <button class="shop-mini-btn" onclick="if(window.NMNWallet && NMNWallet.get().gold>=50){window.location.href='gemshop.html'}else{if(window.nmnToast)nmnToast('NOT ENOUGH GOLD')}">BUY</button>
+      </div>
+      <div class="shop-mini-item">
+          <span class="shop-mini-name">📜 LORE FRAGMENT</span>
+          <span class="shop-mini-cost">120💎</span>
+          <button class="shop-mini-btn" onclick="window.location.href='gemshop.html'">BUY</button>
+      </div>
+      <div class="shop-mini-item">
+          <span class="shop-mini-name">⭐ STAR MAP</span>
+          <span class="shop-mini-cost">500💎</span>
+          <button class="shop-mini-btn" onclick="window.location.href='gemshop.html'">BUY</button>
+      </div>
     </div>
 
-  </div></div><div class="nmn-footer hall-footer" style="padding:2rem 1.5rem">
-  <p class="nmn-footer-brand">Recreation Hall</p>
+  </div>
+</div>
+
+<div class="nmn-footer">
+  <p style="font-family:var(--font-pixel); font-size:0.8rem; color:var(--gd); margin-bottom:1.5rem;">RECREATION HALL</p>
   <div class="nmn-footer-links">
     <a href="index.html" class="nmn-footer-link">HOME</a>
     <a href="oracle.html" class="nmn-footer-link">ORACLE</a>
@@ -481,20 +374,15 @@ const CHANNELS=[
   {name:'PIVOT AVOIDED',      file:'assets/videos/Video_Generation_Successful_Pivot_Avoided.mp4',ch:'CH.06'},
   {name:'JOIN THE VAULT',     file:'__ch07_patreon__',                                 ch:'CH.07'},
 ];
-const TVC=document.getElementById('tv-screen'),TVCTX=TVC.getContext('2d');
+const TVC=document.getElementById('tv-screen'), TVCTX=TVC.getContext('2d');
 const VEL=document.getElementById('real-video');
-let curCh=0,tvAF=null,tvVid=false;
+let curCh=0, tvAF=null, tvVid=false;
 
 function changeChannel(dir){
-  TVC.classList.add('glitch');
-  if(tvAF){cancelAnimationFrame(tvAF);tvAF=null;}
+  if(tvAF){cancelAnimationFrame(tvAF); tvAF=null;}
   VEL.pause();
-  curCh=(curCh+dir+CHANNELS.length)%CHANNELS.length;
-  setTimeout(()=>{
-    TVC.classList.remove('glitch');
-    loadCh(curCh);
-    try{(window.adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
-  },150);
+  curCh = (curCh + dir + CHANNELS.length) % CHANNELS.length;
+  loadCh(curCh);
 }
 
 function loadCh(idx){
@@ -502,80 +390,45 @@ function loadCh(idx){
   document.getElementById('ch-num').textContent=(idx+1).toString().padStart(2,'0');
   document.getElementById('tv-chlbl').textContent='◈ '+ch.ch;
   document.getElementById('tv-chname').textContent=ch.name;
-  if(ch.file==='__ch07_patreon__'){tvVid=false;startPatreonSignal();return;}
-  VEL.src=ch.file;VEL.load();
-  VEL.play().then(()=>{tvVid=true;startVidDraw();}).catch(()=>{tvVid=false;startFallback(idx);});
+  if(ch.file==='__ch07_patreon__'){tvVid=false; startPatreonSignal(); return;}
+  VEL.src=ch.file; VEL.load();
+  VEL.play().then(()=>{tvVid=true; startVidDraw();}).catch(()=>{tvVid=false; startFallback(idx);});
 }
 
 function startVidDraw(){
-  if(tvAF){cancelAnimationFrame(tvAF);tvAF=null;}
-  const W=TVC.width,H=TVC.height;
+  if(tvAF){cancelAnimationFrame(tvAF); tvAF=null;}
+  const W=TVC.width, H=TVC.height;
   const f=()=>{
     if(VEL.readyState>=2){
       TVCTX.drawImage(VEL,0,0,W,H);
-      const v=TVCTX.createRadialGradient(W/2,H/2,H*.3,W/2,H/2,H*.8);v.addColorStop(0,'transparent');v.addColorStop(1,'rgba(10,8,0,.45)');TVCTX.fillStyle=v;TVCTX.fillRect(0,0,W,H);
     }
     tvAF=requestAnimationFrame(f);
-  };tvAF=requestAnimationFrame(f);
+  }; tvAF=requestAnimationFrame(f);
 }
 
 function startFallback(idx){
-  if(tvAF){cancelAnimationFrame(tvAF);tvAF=null;}
-  const W=TVC.width,H=TVC.height;
-  const scenes=[fbEyes,fbStampede,fbLedger,fbMine,fbNausicaa,fbArchive];
-  const sc=scenes[idx%scenes.length];
-  const f=()=>{sc(W,H);tvAF=requestAnimationFrame(f);};tvAF=requestAnimationFrame(f);
+  if(tvAF){cancelAnimationFrame(tvAF); tvAF=null;}
+  const W=TVC.width, H=TVC.height;
+  const f=()=>{
+    TVCTX.fillStyle='#000'; TVCTX.fillRect(0,0,W,H);
+    TVCTX.fillStyle='#333'; TVCTX.font='10px "Press Start 2P"'; TVCTX.textAlign='center';
+    TVCTX.fillText('NO SIGNAL', W/2, H/2);
+    tvAF=requestAnimationFrame(f);
+  }; tvAF=requestAnimationFrame(f);
 }
 
 function startPatreonSignal(){
-  if(tvAF){cancelAnimationFrame(tvAF);tvAF=null;}
-  const W=TVC.width,H=TVC.height;
-  const MSGS=['...SIGNAL LOST...','UPGRADE YOUR FEED','GO AD-FREE','JOIN THE MINE','PATREON MEMBERS','GET FULL ACCESS'];
-  let phase='static',timer=0,msgIdx=0;
-  const DUR={static:16,message:90,glitch:8};
+  if(tvAF){cancelAnimationFrame(tvAF); tvAF=null;}
+  const W=TVC.width, H=TVC.height;
   const f=()=>{
-    timer++;
-    if(phase==='static'){
-      const id=TVCTX.createImageData(W,H);const d=id.data;
-      for(let i=0;i<d.length;i+=4){const v=Math.random()>.55?Math.floor(Math.random()*160+30):8;d[i]=v;d[i+1]=v*.8;d[i+2]=v*.25;d[i+3]=255;}
-      TVCTX.putImageData(id,0,0);
-      if(timer>=DUR.static){timer=0;phase='message';}
-    } else if(phase==='message'){
-      const p=timer/DUR.message;
-      TVCTX.fillStyle='#040300';TVCTX.fillRect(0,0,W,H);
-      const b=.5+.5*Math.sin(Date.now()*.0015);
-      const fa=Math.min(1,p*3);
-      TVCTX.fillStyle=`rgba(255,215,0,${fa})`;TVCTX.font='8px "Press Start 2P"';TVCTX.textAlign='center';
-      TVCTX.fillText(MSGS[msgIdx],W/2,H/2+10);
-      TVCTX.fillStyle=`rgba(184,115,51,${fa*.8})`;TVCTX.font='5px "Press Start 2P"';
-      TVCTX.fillText('PATREON.COM/NMN',W/2,H/2+28);
-      TVCTX.fillStyle=`rgba(139,105,20,${fa*.6})`;TVCTX.font='4px "Press Start 2P"';
-      TVCTX.fillText('$5 · $10 · $25 / MONTH',W/2,H/2+44);
-      TVCTX.textAlign='left';
-      if(timer>=DUR.message){timer=0;phase='glitch';}
-    } else {
-      const sh=(Math.random()-.5)*14;TVCTX.save();TVCTX.drawImage(TVC,sh,0);TVCTX.restore();
-      if(timer>=DUR.glitch){timer=0;phase='static';msgIdx=(msgIdx+1)%MSGS.length;}
-    }
+    TVCTX.fillStyle='#000'; TVCTX.fillRect(0,0,W,H);
+    TVCTX.fillStyle='#FFD700'; TVCTX.font='8px "Press Start 2P"'; TVCTX.textAlign='center';
+    TVCTX.fillText('PATREON.COM/NMN', W/2, H/2);
     tvAF=requestAnimationFrame(f);
-  };tvAF=requestAnimationFrame(f);
+  }; tvAF=requestAnimationFrame(f);
 }
 
-function fbEyes(W,H){
-  TVCTX.fillStyle='#050400';TVCTX.fillRect(0,0,W,H);
-  const b=.5+.5*Math.sin(Date.now()*.002);
-  const blink=(Date.now()%5000)<200;
-  [-20,20].forEach(ox=>{const ex=W/2+ox,ey=H/2+6;if(!blink){const g=TVCTX.createRadialGradient(ex,ey,0,ex,ey,14);g.addColorStop(0,`rgba(255,215,0,${.5+b*.3})`);g.addColorStop(1,'transparent');TVCTX.fillStyle=g;TVCTX.beginPath();TVCTX.arc(ex,ey,14,0,Math.PI*2);TVCTX.fill();TVCTX.fillStyle=`rgba(255,${160+Math.floor(b*55)},0,.95)`;TVCTX.beginPath();TVCTX.ellipse(ex,ey,9,6,0,0,Math.PI*2);TVCTX.fill();TVCTX.fillStyle='#000';TVCTX.beginPath();TVCTX.arc(ex,ey,3,0,Math.PI*2);TVCTX.fill();}else{TVCTX.strokeStyle='#FFD700';TVCTX.lineWidth=2;TVCTX.beginPath();TVCTX.moveTo(ex-9,ey);TVCTX.lineTo(ex+9,ey);TVCTX.stroke();}});
-  TVCTX.fillStyle=`rgba(139,105,20,${.25+b*.2})`;TVCTX.font='4px "Press Start 2P"';TVCTX.textAlign='center';TVCTX.fillText('LORD ORO',W/2,H-10);TVCTX.textAlign='left';
-}
-function fbStampede(W,H){const t=Date.now()*.001;const sk=TVCTX.createLinearGradient(0,0,0,H);sk.addColorStop(0,'#050a14');sk.addColorStop(1,'#0a1a0f');TVCTX.fillStyle=sk;TVCTX.fillRect(0,0,W,H);for(let i=0;i<7;i++){const tx=((i*30+t*25)%(W+28)-14);TVCTX.fillStyle=['#0a3a0a','#0f4a10','#1a6020'][i%3];TVCTX.fillRect(tx,H-40+i%2*8,16,40);TVCTX.fillStyle='#22CC44';TVCTX.fillRect(tx-5,H-52+i%2*8,26,16);}TVCTX.fillStyle='#0a1a08';TVCTX.fillRect(0,H-16,W,16);[[40,'#FF4422'],[65,'#FFD700']].forEach(([ox,col],fi)=>{const fx=(ox+t*35)%W;const bob=Math.sin(t*6+fi)*2;TVCTX.fillStyle=col;TVCTX.fillRect(fx,H-35+bob,9,12);TVCTX.fillStyle='#fff';TVCTX.fillRect(fx+1,H-41+bob,6,7);});}
-function fbLedger(W,H){const t=Date.now()*.001;TVCTX.fillStyle='#0a0600';TVCTX.fillRect(0,0,W,H);TVCTX.strokeStyle='rgba(180,120,30,.15)';TVCTX.lineWidth=1;for(let y=16;y<H;y+=12){TVCTX.beginPath();TVCTX.moveTo(12,y);TVCTX.lineTo(W-12,y);TVCTX.stroke();}const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789⛏💎';TVCTX.font='4px "Press Start 2P"';TVCTX.fillStyle='rgba(255,200,80,.55)';for(let r=0;r<6;r++){let line='';const ll=Math.floor((t*3+r*2)%18);for(let c=0;c<ll;c++)line+=chars[Math.floor((r*18+c+t*4)%chars.length)];TVCTX.fillText(line,10,20+r*13);}const sa=.3+Math.sin(t)*.18;TVCTX.strokeStyle=`rgba(255,215,0,${sa})`;TVCTX.lineWidth=1;TVCTX.beginPath();TVCTX.arc(W/2,H-22,12,0,Math.PI*2);TVCTX.stroke();TVCTX.font='8px serif';TVCTX.textAlign='center';TVCTX.fillStyle=`rgba(255,215,0,${sa})`;TVCTX.fillText('👁',W/2,H-17);TVCTX.textAlign='left';}
-function fbMine(W,H){const t=Date.now()*.001;TVCTX.fillStyle='#050400';TVCTX.fillRect(0,0,W,H);const ws=Math.sin(t*.5)*3;TVCTX.fillStyle='#1a1a10';TVCTX.beginPath();TVCTX.moveTo(0,0);TVCTX.lineTo(W*.36+ws,0);TVCTX.lineTo(W*.42+ws,H);TVCTX.lineTo(0,H);TVCTX.fill();TVCTX.beginPath();TVCTX.moveTo(W,0);TVCTX.lineTo(W*.64-ws,0);TVCTX.lineTo(W*.58-ws,H);TVCTX.lineTo(W,H);TVCTX.fill();const lg=TVCTX.createRadialGradient(W/2,H/2,0,W/2,H/2,40);const p=.1+Math.sin(t*1.5)*.04;lg.addColorStop(0,`rgba(255,200,50,${p})`);lg.addColorStop(1,'transparent');TVCTX.fillStyle=lg;TVCTX.fillRect(0,0,W,H);const ea=.35+Math.sin(t*.8)*.25;[-9,9].forEach(ox=>{const eg=TVCTX.createRadialGradient(W/2+ox,H/2,0,W/2+ox,H/2,8);eg.addColorStop(0,`rgba(255,215,0,${ea})`);eg.addColorStop(1,'transparent');TVCTX.fillStyle=eg;TVCTX.beginPath();TVCTX.arc(W/2+ox,H/2,8,0,Math.PI*2);TVCTX.fill();});}
-function fbNausicaa(W,H){const t=Date.now()*.001;const sk=TVCTX.createLinearGradient(0,0,0,H);sk.addColorStop(0,'#050a0e');sk.addColorStop(1,'#0a1a0f');TVCTX.fillStyle=sk;TVCTX.fillRect(0,0,W,H);TVCTX.fillStyle='#0f2015';TVCTX.fillRect(0,H-20,W,20);for(let i=0;i<7;i++){const px2=((i*25+t*4)%W);const col=['#FFD700','#88FFCC','#DDAAFF'][i%3];TVCTX.fillStyle=col;TVCTX.beginPath();TVCTX.arc(px2,H-32+Math.sin(t+i)*3,4+i%3*2,0,Math.PI*2);TVCTX.fill();}}
-function fbArchive(W,H){const t=Date.now()*.001;TVCTX.fillStyle='#050408';TVCTX.fillRect(0,0,W,H);for(let i=0;i<9;i++){const a=.15+Math.sin(t+i)*.2;TVCTX.fillStyle=`rgba(255,215,0,${a})`;TVCTX.beginPath();TVCTX.arc((i*W/9+W/18),(i%3*H/4+H/8),2,0,Math.PI*2);TVCTX.fill();TVCTX.strokeStyle=`rgba(255,215,0,${a*.25})`;TVCTX.lineWidth=1;TVCTX.beginPath();TVCTX.moveTo(i*W/9+W/18,i%3*H/4+H/8);TVCTX.lineTo(W/2,H/2);TVCTX.stroke();}TVCTX.font='4px "Press Start 2P"';TVCTX.fillStyle='rgba(255,215,0,.45)';TVCTX.textAlign='center';TVCTX.fillText('STAR MAP',W/2,H-8);TVCTX.textAlign='left';}
-
-// Start TV idle
-setTimeout(()=>startFallback(0),1000);
+setTimeout(()=>startFallback(0), 500);
 
 // ════════════ WALLET SYNC ════════════
 function syncWallet(){
@@ -588,27 +441,15 @@ function syncWallet(){
   const gemCount = w.gems || 0;
   for(let i=0; i<5; i++){
     const p = document.getElementById('gp'+i);
-    if(p) p.classList.toggle('lit', i < gemCount);
+    if(p) {
+        if(i < gemCount) { p.classList.add('lit'); p.textContent = "◆"; }
+        else { p.classList.remove('lit'); p.textContent = "◇"; }
+    }
   }
 }
 
-// Listen for global wallet updates so we don't need setInterval
 window.addEventListener('nmn_wallet_update', syncWallet);
-
-// Initial sync on load
-syncWallet();
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(function(registration) {
-      console.log('NMN SW registered with scope:', registration.scope);
-    })
-    .catch(function(err){
-      console.log('NMN SW error:', err);
-    });
-}
+window.onload = syncWallet;
 </script>
 
 </body>
