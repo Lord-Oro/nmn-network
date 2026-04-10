@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>NMN: BRAWLERS — Golden Ore Edition v1.0 Final</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P5WL9XNDY8"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-P5WL9XNDY8');</script>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{background:#050308;width:100%;height:100%;overflow:hidden;}
+    #gc{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;}
+    #mc{display:none;position:fixed;bottom:0;left:0;right:0;height:220px;pointer-events:none;z-index:999;}
+    #mc.on{display:block;}
+    .mb{position:absolute;border-radius:50%;border:3px solid #FFD700;background:rgba(0,0,0,0.88);color:#FFD700;font-weight:bold;display:flex;align-items:center;justify-content:center;pointer-events:all;user-select:none;-webkit-user-select:none;box-shadow:0 0 12px rgba(255,215,0,0.45);}
+    #ma{width:80px;height:80px;right:20px;bottom:24px;font-size:26px;}
+    #ms{width:65px;height:65px;right:115px;bottom:32px;font-size:22px;}
+    #mf{width:50px;height:50px;right:38px;bottom:118px;font-size:18px;}
+    #mb{width:50px;height:50px;right:100px;bottom:112px;font-size:18px;border-color:#00FF88;color:#00FF88;}
+  </style>
+<style id="nmn-cursor-global">body,*{cursor:none!important}</style>
+</head>
+<body>
+<div id="gc"></div>
+<div id="mc">
+  <div id="joy" style="position:absolute;left:20px;bottom:20px;width:120px;height:120px;border-radius:50%;border:3px solid #FFD700;background:rgba(0,0,0,0.5);pointer-events:all;display:flex;align-items:center;justify-content:center;touch-action:none;">
+    <div id="stick" style="width:46px;height:46px;border-radius:50%;background:#FFD700;opacity:0.85;pointer-events:none;transition:transform 0.04s;"></div>
+  </div>
+  <div class="mb" id="ma">🥊</div>
+  <div class="mb" id="ms">⚡</div>
+  <div class="mb" id="mf">🛡</div>
+  <div class="mb" id="mb">☆</div>
+</div>
+<script>
+
+const GW=800,GH=450,MAIN_PLAT_Y=GH-55;
+const SPAWN={p1:{x:250,y:MAIN_PLAT_Y-75},p2:{x:550,y:MAIN_PLAT_Y-75}};
+const BLAST={minX:-280,maxX:1080,minY:-280,maxY:880};
+const Match={p1:"Juni",p2:"Pyro",p1Pct:0,p2Pct:0,p1Lives:3,p2Lives:3,map:"mana_forest",paused:false,winner:null,difficulty:"NORMAL",maxHealth:250};
+const BOOK_LINKS={juni_en:"https://books2read.com/u/4EOxZ0",outbreak_en:"https://books2read.com/u/31NrLw",tabbies_en:"https://a.co/d/06X2Jjee",pyro_en:"https://a.co/d/036X5lJP"};
+const LINKTREE="https://linktr.ee/NMN_LordOro";
+const BOOK_LIST=["juni_en","outbreak_en","tabbies_en","pyro_en"];
+const STAGE_BG={mana_forest:{key:"deep_forest_img",tint:null,alpha:1.0},glitch_mines:{key:"forest_edge_img",tint:null,alpha:1.0},obsidian_pit:{key:"bg_eyes",tint:0xFFD700,alpha:0.45}};
+const FRAMES={juni:{idle:[0,1,2,3],jump:5,melee:12,range:10,proj:10,burst:16,shield:18,knock:15,dmg:[19,20,21]},pyro:{idle:[0,1,2,3],jump:4,melee:11,range:15,proj:15,burst:6,shield:20,knock:23,dmg:[21,22]}};
+const MP={l:false,r:false,j:false,a:false,s:false,f:false,b:false};
+const JOY={active:false,vx:0,vy:0};
+
+(function(){
+  window.IS_TOUCH="ontouchstart" in window||navigator.maxTouchPoints>0;
+  const joy=document.getElementById("joy"),stick=document.getElementById("stick");
+  if(joy){
+    const upd=e=>{
+      const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+      const px=e.clientX!=null?e.clientX:(e.touches&&e.touches[0]?e.touches[0].clientX:cx);
+      const py=e.clientY!=null?e.clientY:(e.touches&&e.touches[0]?e.touches[0].clientY:cy);
+      const dx=px-cx,dy=py-cy,max=r.width/2-18,dist=Math.min(Math.hypot(dx,dy),max),ang=Math.atan2(dy,dx);
+      JOY.vx=Math.cos(ang)*(dist/max);JOY.vy=Math.sin(ang)*(dist/max);
+      if(stick)stick.style.transform=`translate(${Math.cos(ang)*dist}px,${Math.sin(ang)*dist}px)`;
+    };
+    const end=e=>{e.preventDefault();JOY.active=false;JOY.vx=0;JOY.vy=0;if(stick)stick.style.transform="translate(0px,0px)";};
+    joy.onpointerdown=e=>{e.preventDefault();JOY.active=true;upd(e);};
+    joy.onpointermove=e=>{if(!JOY.active)return;e.preventDefault();upd(e);};
+    joy.onpointerup=end;joy.onpointercancel=end;joy.onpointerleave=end;
+  }
+  const bind=(id,k)=>{const el=document.getElementById(id);if(!el)return;el.onpointerdown=e=>{e.preventDefault();MP[k]=true;};el.onpointerup=e=>{e.preventDefault();MP[k]=false;};};
+  bind("ma","a");bind("ms","s");bind("mf","f");bind("mb","b");
+})();
+
+function goldSpark(scene,x,y){
+  const g=scene.add.graphics().setDepth(600);
+  [0xFFD700,0xFF8800,0xFFFF88,0xFF5500].forEach(col=>{for(let i=0;i<4;i++){const ang=Math.random()*Math.PI*2,len=4+Math.random()*16;g.fillStyle(col,1);g.fillRect(x+Math.cos(ang)*len,y+Math.sin(ang)*len,3+Math.random()*3,3);}});
+  scene.tweens.add({targets:g,alpha:0,duration:220,onComplete:()=>g.destroy()});
+}
+
+function arcSlash(scene,x,y,dir,isJuni){
+  const g=scene.add.graphics().setDepth(580);
+  const col=isJuni?0x00FF88:0xFF4400,col2=isJuni?0xAAFFCC:0xFFAA00;
+  const sa=dir===1?-70:110,ea=dir===1?70:250,si=dir===1?-50:130,ei=dir===1?50:230;
+  g.lineStyle(5,col,0.9);g.beginPath();g.arc(x+dir*36,y-8,28,Phaser.Math.DegToRad(sa),Phaser.Math.DegToRad(ea),false);g.strokePath();
+  g.lineStyle(2,col2,0.6);g.beginPath();g.arc(x+dir*36,y-8,19,Phaser.Math.DegToRad(si),Phaser.Math.DegToRad(ei),false);g.strokePath();
+  for(let i=0;i<7;i++){const ang=Phaser.Math.DegToRad(Phaser.Math.Between(sa,ea)),r=Phaser.Math.Between(18,32),px=x+dir*36+Math.cos(ang)*r,py=y-8+Math.sin(ang)*r;const dot=scene.add.rectangle(px,py,isJuni?5:4,isJuni?4:6,isJuni?0x00FF88:0xFF6600,0.9).setDepth(581);scene.tweens.add({targets:dot,x:px+dir*(Math.random()*18),y:py-Math.random()*12,alpha:0,duration:isJuni?180:120,onComplete:()=>dot.destroy()});}
+  scene.tweens.add({targets:g,alpha:0,duration:110,onComplete:()=>g.destroy()});
+}
+
+class StartScreen extends Phaser.Scene{
+  constructor(){super("StartScreen");}
+  preload(){
+    this.load.image("promo","title_screen_NB.jpg");this.load.image("bg_eyes","oros_game_eyes.jpg");
+    this.load.image("deep_forest_img","bg_deep_forest.jpg");this.load.image("forest_edge_img","forest_bg.jpg");
+    this.load.image("hub_bg","logo.jpg");this.load.image("link_tree","link_tree.jpg");this.load.image("signal_lost","signal_lost.jpg");
+    this.load.spritesheet("j_sheet","juni_sheet.png",{frameWidth:128,frameHeight:128});
+    this.load.spritesheet("p_sheet","pyro_sheet.png",{frameWidth:128,frameHeight:128});
+    ["juni_en","outbreak_en","tabbies_en","pyro_en"].forEach(b=>this.load.image(b,b+".jpeg"));
+    ["wanderer","olydia","orid","helios"].forEach(n=>this.load.image(n+"_beta",n+"_beta.jpg"));
+    this.load.on("loaderror",f=>console.warn("Fallback:",f.key));
+    const trk=this.add.rectangle(GW/2,GH/2+20,404,10,0x222222).setDepth(0);
+    const bar=this.add.rectangle(GW/2-200,GH/2+20,0,8,0xFFD700).setOrigin(0,0.5).setDepth(1);
+    this.load.on("progress",v=>{bar.width=400*v;});
+    this.load.on("complete",()=>{bar.destroy();trk.destroy();});
+  }
+  create(){
+    document.getElementById("mc").classList.remove("on");
+    if(this.textures.exists("promo")&&this.textures.get("promo").source[0].width>1)
+      this.add.image(GW/2,GH/2,"promo").setDisplaySize(GW,GH);
+    else this.add.rectangle(0,0,GW,GH,0x050308).setOrigin(0);
+    this.add.text(GW/2,GH/2+50,"GOLDEN ORE EDITION v1.0",{fontFamily:"Press Start 2P",fontSize:"14px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
+    const b=this.add.text(GW/2,GH/2+90,"CLICK / TAP TO START",{fontFamily:"Press Start 2P",fontSize:"10px",color:"#FFF"}).setOrigin(0.5);
+    this.tweens.add({targets:b,alpha:0,duration:600,yoyo:true,repeat:-1});
+    this.input.once("pointerdown",()=>this.scene.start("BrawlerScene"));
+  }
+}
+
+class InstructionsScene extends Phaser.Scene {
+  constructor(){super("InstructionsScene");}
+  create(){
+    this.add.image(GW/2,GH/2,"bg_eyes").setDisplaySize(GW,GH).setAlpha(0.4);
+    this.add.text(GW/2,45,"HOW TO PLAY",{fontFamily:"Press Start 2P",fontSize:"15px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
+    const t = `GOAL:\nDeplete opponent's health to knock out a life. 3 lives wins!\n\nKEYBOARD:\nA / D : Move Left / Right\nW : Jump (Up to 2x)\nS / DOWN : Shield (Blocks damage)\nJ : Melee Attack\nK : Fire Projectile (Flat trajectory, dodge by jumping)\n; : Burst AOE (3x per match)\n\nMOBILE:\nJoystick : Move & Jump (Swipe Up)\n🥊 : Melee Attack   ⚡ : Fire Projectile\n🛡 : Shield         ☆ : Burst AOE`;
+    this.add.text(GW/2, GH/2 + 20, t, {fontFamily:"Press Start 2P",fontSize:"8px",color:"#E8E0D0",align:"center",lineSpacing:8}).setOrigin(0.5);
+    this.add.text(30,30,"◀ BACK",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#AAA"}).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("BrawlerScene"));
+  }
+}
+
+class BrawlerScene extends Phaser.Scene{
+  constructor(){super("BrawlerScene");}
+  create(){
+    Match.p1="Juni";Match.p2="Pyro";Match.p1Pct=0;Match.p2Pct=0;Match.p1Lives=3;Match.p2Lives=3;Match.paused=false;Match.winner=null;
+    document.getElementById("mc").classList.remove("on");
+    this.add.image(GW/2,GH/2,"bg_eyes").setDisplaySize(GW,GH).setAlpha(0.5);
+    this.add.text(GW/2,30,"SELECT CHARACTER",{fontFamily:"Press Start 2P",fontSize:"14px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
+    this.scoutIdx=-1;
+    this.add.rectangle(GW/2,62,GW-16,24,0x111111).setOrigin(0.5);
+    this.intelTxt=this.add.text(GW/2,62,"Scout a warrior — click once to learn, again to fight.",{fontFamily:"Press Start 2P",fontSize:"5px",color:"#888",align:"center",wordWrap:{width:GW-24}}).setOrigin(0.5);
+    const roster=[
+      {name:"Juni",img:"j_sheet",frame:0,active:true,color:"#00FF88",url:BOOK_LINKS.juni_en},
+      {name:"Pyro",img:"p_sheet",frame:0,active:true,color:"#FF6600",url:BOOK_LINKS.pyro_en},
+      {name:"Wanderer",img:"wanderer_beta",frame:null,active:false,color:"#336699",url:LINKTREE},
+      {name:"Olydia",img:"olydia_beta",frame:null,active:false,color:"#9933CC",url:BOOK_LINKS.outbreak_en},
+      {name:"Orid",img:"orid_beta",frame:null,active:false,color:"#884422",url:BOOK_LINKS.juni_en},
+      {name:"Helios",img:"helios_beta",frame:null,active:false,color:"#FFD700",url:BOOK_LINKS.juni_en},
+    ];
+    roster.forEach((c,i)=>{
+      const col=i%3,row=Math.floor(i/3),x=150+col*250,y=175+row*130;
+      const bc=c.active?0xFFD700:0x444444;
+      const panel=this.add.rectangle(x,y,120,110,0x111111).setStrokeStyle(2,bc).setInteractive({useHandCursor:true});
+      const icon=c.frame!==null?this.add.image(x,y-10,c.img,c.frame).setDisplaySize(80,80):this.add.image(x,y-10,c.img).setDisplaySize(80,80);
+      if(!c.active)icon.setTint(0x444444);
+      this.add.text(x,y+48,c.name.toUpperCase(),{fontFamily:"Press Start 2P",fontSize:"6px",color:c.active?c.color:"#555"}).setOrigin(0.5);
+      if(!c.active)this.add.text(x,y+62,"LOCKED",{fontFamily:"Press Start 2P",fontSize:"5px",color:"#FF4444"}).setOrigin(0.5);
+      panel.on("pointerover",()=>panel.setStrokeStyle(2,0xFFFFFF));
+      panel.on("pointerout",()=>panel.setStrokeStyle(2,bc));
+      panel.on("pointerdown",()=>{
+        if(!c.active){if(this.scoutIdx===i)window.open(c.url,"_blank");else{this.scoutIdx=i;this.intelTxt.setText("🔒 "+c.name+": LOCKED — click again to unlock.").setColor("#FF8888");}return;}
+        if(this.scoutIdx!==i){this.scoutIdx=i;this.intelTxt.setText(c.name.toUpperCase()+" — "+this.getLore(c.name)).setColor(c.color);return;}
+        Match.p1=c.name;Match.p2=c.name==="Juni"?"Pyro":"Juni";this.scene.start("StageSelectScene");
+      });
+    });
+    this.add.text(GW/2-180,GH-20,"📖 ORIGIN HUB",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#050308",backgroundColor:"#FFD700",padding:{x:8,y:4}}).setOrigin(0.5).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("OriginHub"));
+    this.add.text(GW/2,GH-20,"📜 CONTROLS",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#FFF",backgroundColor:"#333",padding:{x:8,y:4}}).setOrigin(0.5).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("InstructionsScene"));
+    this.add.text(GW/2+180,GH-20,"⚙ DIFFICULTY",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#FFD700",backgroundColor:"#111",padding:{x:8,y:4}}).setOrigin(0.5).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("DifficultyScene"));
+  }
+  getLore(name){
+    return {
+      "Juni":"Enter if you dare; face Anubis in the endless expanse of the sands of time.",
+      "Pyro":"⭐ Born from the forge. He's fire undying as long as the forge deep within the mine is going as it has for eons."
+    }[name]||"A warrior from the mine.";
+  }
+}
+
+class DifficultyScene extends Phaser.Scene{
+  constructor(){super("DifficultyScene");}
+  create(){
+    this.add.image(GW/2,GH/2,"bg_eyes").setDisplaySize(GW,GH).setAlpha(0.4);
+    this.add.text(GW/2,60,"SELECT DIFFICULTY",{fontFamily:"Press Start 2P",fontSize:"13px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
+    const opts=[
+      {label:"EASY",desc:"100% Max Health. CPU is slow and hesitant.",color:"#00FF88",val:"EASY",hp:100},
+      {label:"NORMAL",desc:"250% Max Health. Balanced tracking and tension.",color:"#FFD700",val:"NORMAL",hp:250},
+      {label:"HARD",desc:"500% Max Health. CPU is relentless. No mercy.",color:"#FF4444",val:"HARD",hp:500},
+    ];
+    opts.forEach((o,i)=>{
+      const y=180+i*80,sel=Match.difficulty===o.val;
+      const hx=sel?parseInt(o.color.replace("#","0x")):0x444444;
+      const panel=this.add.rectangle(GW/2,y,460,60,sel?0x1a1a0a:0x0d0d0d).setStrokeStyle(sel?3:2,hx).setInteractive({useHandCursor:true});
+      this.add.text(GW/2,y-10,o.label,{fontFamily:"Press Start 2P",fontSize:"11px",color:o.color}).setOrigin(0.5);
+      this.add.text(GW/2,y+12,o.desc,{fontFamily:"Press Start 2P",fontSize:"6px",color:"#888",align:"center"}).setOrigin(0.5);
+      panel.on("pointerdown",()=>{Match.difficulty=o.val;Match.maxHealth=o.hp;this.scene.start("BrawlerScene");});
+    });
+    this.add.text(30,30,"◀ BACK",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#AAA"}).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("BrawlerScene"));
+  }
+}
+
+class StageSelectScene extends Phaser.Scene{
+  constructor(){super("StageSelectScene");}
+  create(){
+    this.add.image(GW/2,GH/2,"bg_eyes").setDisplaySize(GW,GH).setAlpha(0.45);
+    this.add.text(GW/2,40,"SELECT EXTRACTION SECTOR",{fontFamily:"Press Start 2P",fontSize:"13px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
+    const stages=[
+      {key:"mana_forest",label:"DEEP FOREST",sub:"Verdant / Ancient",bgKey:"deep_forest_img"},
+      {key:"glitch_mines",label:"FOREST EDGE",sub:"Stable / Calm",bgKey:"forest_edge_img"},
+      {key:"obsidian_pit",label:"THE MINE",sub:"Narrow / Brutal",bgKey:"bg_eyes"},
+    ];
+    stages.forEach((stage,i)=>{
+      const x=GW/2+(i===0?-240:i===1?0:240),y=GH/2+20;
+      const bg=this.add.rectangle(x,y,210,150,0x111111).setStrokeStyle(2,0x555555);
+      const preview=this.add.image(x,y,stage.bgKey).setDisplaySize(210,150).setAlpha(0.3);
+      const panel=this.add.rectangle(x,y,210,150,0x000000,0).setInteractive({useHandCursor:true});
+      this.add.text(x,y-30,stage.label,{fontFamily:"Press Start 2P",fontSize:"9px",color:"#FFD700",stroke:"#000",strokeThickness:2}).setOrigin(0.5);
+      this.add.text(x,y-6,stage.sub,{fontFamily:"Press Start 2P",fontSize:"6px",color:"#AAA"}).setOrigin(0.5);
+      panel.on("pointerover",()=>{bg.setStrokeStyle(3,0xFFD700);preview.setAlpha(0.65);});
+      panel.on("pointerout",()=>{bg.setStrokeStyle(2,0x555555);preview.setAlpha(0.3);});
+      panel.on("pointerdown",()=>{Match.map=stage.key;this.scene.start("BattleScene");});
+    });
+    this.add.text(30,30,"◀ BACK",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#AAA"}).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("BrawlerScene"));
+  }
+}
+
+class OriginHub extends Phaser.Scene{
+  constructor(){super("OriginHub");}
+  create(){
+    this.add.image(GW/2,GH/2,"bg_eyes").setDisplaySize(GW,GH).setAlpha(0.4);
+    this.add.text(GW/2,36,"HERO'S ORIGIN HUB",{fontFamily:"Press Start 2P",fontSize:"12px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
+    this.add.text(GW/2,62,"Where do all the brawlers come from? From Lord Oro's mine or mind...",{fontFamily:"Press Start 2P",fontSize:"5px",color:"#AAA",align:"center",wordWrap:{width:GW-40}}).setOrigin(0.5);
+    [{key:"juni_en",title:"JUNI THE IMMORTAL",url:BOOK_LINKS.juni_en},{key:"outbreak_en",title:"OUTBREAK FROM THE STARS",url:BOOK_LINKS.outbreak_en},{key:"tabbies_en",title:"ALL TABBIES HAVE A PLACE",url:BOOK_LINKS.tabbies_en},{key:"pyro_en",title:"PYRO & HELIOS",url:BOOK_LINKS.pyro_en}].forEach((b,i)=>{
+      const x=110+i*185,y=220;
+      const img=this.add.image(x,y,b.key).setDisplaySize(140,200).setInteractive({useHandCursor:true});
+      img.on("pointerover",()=>img.setTint(0xFFD700));img.on("pointerout",()=>img.clearTint());img.on("pointerdown",()=>window.open(b.url,"_blank"));
+      this.add.text(x,y+112,b.title,{fontFamily:"Press Start 2P",fontSize:"5px",color:"#FFD700",align:"center",wordWrap:{width:140}}).setOrigin(0.5);
+    });
+    this.add.image(GW-70,GH-36,"link_tree").setDisplaySize(100,50).setInteractive({useHandCursor:true}).on("pointerdown",()=>window.open(LINKTREE,"_blank"));
+    this.add.text(GW/2,GH-16,"ABOUT LORD ORO",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#FFD700"}).setOrigin(0.5).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("CreatorBio"));
+    this.add.text(30,30,"◀ BACK",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#AAA"}).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("BrawlerScene"));
+  }
+}
+
+class CreatorBio extends Phaser.Scene{
+  constructor(){super("CreatorBio");}
+  create(){
+    this.add.image(GW/2,GH/2,"bg_eyes").setDisplaySize(GW,GH).setAlpha(0.35);
+    const vgfx=this.add.graphics();vgfx.fillGradientStyle(0xFF0000,0xFF0000,0x000000,0x000000,0.18,0.18,0,0);vgfx.fillRect(0,0,GW,GH);
+    this.add.text(GW/2,40,"[ Transmission Recovered — Origin Unknown ]",{fontFamily:"Press Start 2P",fontSize:"6px",color:"#FF4444"}).setOrigin(0.5);
+    this.add.text(GW/2,62,"THE ARCHITECT: LORD ORO",{fontFamily:"Press Start 2P",fontSize:"11px",color:"#FFD700",stroke:"#000",strokeThickness:3}).setOrigin(0.5);
+    const bio="They say the mine was empty when he found it.\nThe shadows here have teeth.\nThe ore bleeds gold when you aren't watching.\n\nLord Oro doesn't build worlds.\nHe excavates them from a void\nthat was never meant to be opened.\n\nThe characters in his books\nknow things they shouldn't.\nThey remember you.\n\nHe calls it Nonsense Media Network.\nThe name is a misdirection.\n\nHe is watching.\nHe has always been watching.\n\nIf you are reading this —\nyou are already inside the mine.";
+    const bioText=this.add.text(55,210,bio,{fontFamily:"Press Start 2P",fontSize:"7px",color:"#E8E0D0",align:"left",lineSpacing:6,wordWrap:{width:390}}).setOrigin(0,0.5);
+    this.input.on("wheel",(pointer,gameObjects,deltaX,deltaY)=>{bioText.y-=deltaY*0.5;bioText.y=Phaser.Math.Clamp(bioText.y,80,300);});
+    let ty0=0;
+    this.input.on("pointerdown",p=>{ty0=p.y;});
+    this.input.on("pointermove",p=>{if(p.isDown){bioText.y+=(p.y-ty0)*0.4;bioText.y=Phaser.Math.Clamp(bioText.y,80,300);ty0=p.y;}});
+    const cursor=this.add.text(310,350,"█",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#FF4444"}).setOrigin(0.5);
+    this.tweens.add({targets:cursor,alpha:0,duration:500,yoyo:true,repeat:-1});
+    this.add.image(GW-155,GH/2,"link_tree").setDisplaySize(220,100).setInteractive({useHandCursor:true}).on("pointerdown",()=>window.open(LINKTREE,"_blank"));
+    this.add.text(GW-155,GH/2+68,"[ ENTER THE NETWORK ]",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#55AAFF"}).setOrigin(0.5).setInteractive({useHandCursor:true}).on("pointerdown",()=>window.open(LINKTREE,"_blank"));
+    this.add.text(30,30,"◀ BACK",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#AAA"}).setInteractive({useHandCursor:true}).on("pointerdown",()=>this.scene.start("OriginHub"));
+  }
+}
+
+class BattleScene extends Phaser.Scene{
+  constructor(){super("BattleScene");}
+  create(){
+    if(window.IS_TOUCH)document.getElementById("mc").classList.add("on");
+    const stageCfg=STAGE_BG[Match.map]||STAGE_BG.mana_forest;
+    const bgImg=this.add.image(GW/2,GH/2,stageCfg.key).setDisplaySize(GW,GH).setAlpha(stageCfg.alpha).setScrollFactor(0);
+    if(stageCfg.tint)bgImg.setTint(stageCfg.tint);
+    this.physics.world.gravity.y=1400;
+    this.platforms=this.physics.add.staticGroup();
+    const mkP=(px,py,pw,ph=18,col=0x3a2a0a)=>{
+      const p=this.add.rectangle(px,py,pw,ph,col);
+      this.add.rectangle(px,py-ph/2-1,pw,3,0xFFD700,0.35);
+      this.physics.add.existing(p,true);p.body.checkCollision.down=false;
+      this.platforms.add(p);return p;
+    };
+    mkP(GW/2,MAIN_PLAT_Y,700,20);
+    mkP(150,GH-180,200);mkP(650,GH-180,200);
+    
+    const jAnims=[{key:"j_idle",start:0,end:3,rate:6,loop:true},{key:"j_jump",start:4,end:6,rate:8,loop:false},{key:"j_melee",frames:[12,14,13],rate:14,loop:false},{key:"j_range",start:7,end:9,rate:12,loop:false},{key:"j_burst",start:15,end:17,rate:10,loop:false},{key:"j_shield",frames:[18],rate:1,loop:false},{key:"j_dmg",start:19,end:21,rate:12,loop:false},{key:"j_launch",start:15,end:17,rate:10,loop:false}];
+    const pAnims=[{key:"p_idle",start:0,end:3,rate:8,loop:true},{key:"p_jump",frames:[4,4,5],rate:8,loop:false},{key:"p_melee",frames:[10,11,12],rate:14,loop:false},{key:"p_range",start:7,end:9,rate:12,loop:false},{key:"p_burst",frames:[6],rate:1,loop:false},{key:"p_shield",frames:[20],rate:1,loop:false},{key:"p_dmg",start:21,end:22,rate:12,loop:false},{key:"p_launch",start:23,end:24,rate:10,loop:false}];
+    const makeAnim=(sheet,def)=>{if(this.anims.exists(def.key))return;if(def.frames)this.anims.create({key:def.key,frames:def.frames.map(f=>({key:sheet,frame:f})),frameRate:def.rate,repeat:def.loop?-1:0});else this.anims.create({key:def.key,frames:this.anims.generateFrameNumbers(sheet,{start:def.start,end:def.end}),frameRate:def.rate,repeat:def.loop?-1:0});};
+    jAnims.forEach(d=>makeAnim("j_sheet",d));pAnims.forEach(d=>makeAnim("p_sheet",d));
+    
+    this.p1Pre=Match.p1==="Juni"?"j":"p";this.p2Pre=Match.p1==="Juni"?"p":"j";
+    this.p1=this.physics.add.sprite(SPAWN.p1.x,SPAWN.p1.y,Match.p1==="Juni"?"j_sheet":"p_sheet");
+    this.p2=this.physics.add.sprite(SPAWN.p2.x,SPAWN.p2.y,Match.p1==="Juni"?"p_sheet":"j_sheet").setFlipX(true);
+    [this.p1,this.p2].forEach(sp=>{sp.setDisplaySize(80,80).setCollideWorldBounds(false).setBounce(0).setDragX(700);sp.body.setSize(24,46).setOffset((sp.width-24)/2,sp.height-46);sp.body.setMaxVelocity(600,1000);});
+    this.physics.add.collider([this.p1,this.p2],this.platforms);
+    this.p1.play(this.p1Pre+"_idle");this.p2.play(this.p2Pre+"_idle");
+
+    this.S={state:"STARTING",p1Stun:false,p2Stun:false,p1AtkCD:false,p2AtkCD:false,p1Jumps:0,p2Jumps:0,gameOver:false,p1ShieldHp:5,p2ShieldHp:5,p1Bursts:3,p2Bursts:3,p1BurstBuff:false,p2BurstBuff:false,p1ProjReady:true,p1ProjCharge:1.0, p2ProjReady:true, p2ProjCharge:1.0};
+    this.cpuSpeed=Match.difficulty==="EASY"?90:Match.difficulty==="HARD"?260:170;
+    this.cpuAtkFreq=Match.difficulty==="EASY"?0.02:Match.difficulty==="HARD"?0.25:0.10;
+    this.cpuFireFreq=Match.difficulty==="EASY"?0.005:Match.difficulty==="HARD"?0.10:0.03;
+    
+    this.meleeGrp=this.physics.add.group({allowGravity: false});
+    this.projGrp=this.physics.add.group({allowGravity: false});
+
+    // LOG 010 FIX: Hard-coded, explicit overlap checks to guarantee physics hit detection
+    this.physics.add.overlap(this.p1, this.meleeGrp, (p, h) => { if(h.getData("owner") === "p2") { goldSpark(this, p.x, p.y); this.resolveHit("p2", "p1", h, false); } });
+    this.physics.add.overlap(this.p2, this.meleeGrp, (p, h) => { if(h.getData("owner") === "p1") { goldSpark(this, p.x, p.y); this.resolveHit("p1", "p2", h, false); } });
+    this.physics.add.overlap(this.p1, this.projGrp, (p, h) => { if(h.getData("owner") === "p2") { goldSpark(this, p.x, p.y); this.resolveHit("p2", "p1", h, true); } });
+    this.physics.add.overlap(this.p2, this.projGrp, (p, h) => { if(h.getData("owner") === "p1") { goldSpark(this, p.x, p.y); this.resolveHit("p1", "p2", h, true); } });
+    
+    this.buildHUD();this.refreshHUD();
+    this.keys=this.input.keyboard.addKeys({W:"W",A:"A",S:"S",D:"D",DOWN:"DOWN",J:"J",K:"K",L:"L",SEMI:"SEMICOLON",P:"P"});
+    this.buildPauseMenu();
+    this.camX=GW/2;
+    this.cameras.main.centerOn(GW/2,GH/2);
+    
+    const bText=this.add.text(GW/2,GH/2,"BRAWL!",{fontFamily:"Press Start 2P",fontSize:"42px",color:"#FFD700",stroke:"#000",strokeThickness:6}).setOrigin(0.5).setDepth(20000).setScrollFactor(0);
+    this.tweens.add({targets:bText,scaleX:1.25,scaleY:1.25,yoyo:true,repeat:-1,duration:280});
+    this.time.delayedCall(1500,()=>{bText.destroy();this.S.state="PLAYING";});
+  }
+
+  buildHUD(){
+    this.hudContainer=this.add.container(0,0).setDepth(10000).setScrollFactor(0);
+    const p1c=Match.p1==="Juni"?"#00FF88":"#FF6600",p2c=Match.p1==="Juni"?"#FF6600":"#00FF88";
+    
+    const bg1=this.add.rectangle(0,0,240,64,0x050308,0.92).setOrigin(0);
+    const t1=this.add.text(10,5,Match.p1.toUpperCase(),{fontFamily:"Press Start 2P",fontSize:"7px",color:p1c});
+    const h1b=this.add.rectangle(14,18,200,10,0x333333).setOrigin(0);
+    this.p1Bar=this.add.rectangle(14,18,200,10,parseInt(p1c.replace("#","0x"))).setOrigin(0);
+    const p1pb=this.add.rectangle(14,30,200,4,0x222244).setOrigin(0);
+    this.p1ProjBar=this.add.rectangle(14,30,200,4,0x55AAFF).setOrigin(0);
+    this.p1DT=this.add.text(10,37,"0%",{fontFamily:"Press Start 2P",fontSize:"11px",color:"#FFF"});
+    this.p1HT=this.add.text(10,51,"♥♥♥",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#FF4444"});
+    this.p1BurstsHUD=this.add.text(68,51,"☆x3",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#00FF88"});
+    
+    const bg2=this.add.rectangle(GW,0,240,64,0x050308,0.92).setOrigin(1,0);
+    const t2=this.add.text(GW-10,5,"CPU: "+Match.p2.toUpperCase(),{fontFamily:"Press Start 2P",fontSize:"7px",color:p2c}).setOrigin(1,0);
+    const h2b=this.add.rectangle(GW-214,18,200,10,0x333333).setOrigin(0);
+    this.p2Bar=this.add.rectangle(GW-214,18,200,10,parseInt(p2c.replace("#","0x"))).setOrigin(0);
+    const p2pb=this.add.rectangle(GW-214,30,200,4,0x222244).setOrigin(0);
+    this.p2ProjBar=this.add.rectangle(GW-214,30,200,4,0x55AAFF).setOrigin(0);
+    this.p2DT=this.add.text(GW-10,37,"0%",{fontFamily:"Press Start 2P",fontSize:"11px",color:"#FFF"}).setOrigin(1,0);
+    this.p2HT=this.add.text(GW-10,51,"♥♥♥",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#FF4444"}).setOrigin(1,0);
+    this.p2BurstsHUD=this.add.text(GW-68,51,"☆x3",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#FF4444"}).setOrigin(1,0);
+    
+    const hP=this.add.text(GW/2,6,"P / TAP = PAUSE",{fontFamily:"Press Start 2P",fontSize:"5px",color:"#888"}).setOrigin(0.5,0).setInteractive({useHandCursor:true});
+    hP.on('pointerdown', () => { this.togglePause(); });
+    
+    this.hudContainer.add([bg1,t1,h1b,this.p1Bar,p1pb,this.p1ProjBar,this.p1DT,this.p1HT,this.p1BurstsHUD,bg2,t2,h2b,this.p2Bar,p2pb,this.p2ProjBar,this.p2DT,this.p2HT,this.p2BurstsHUD,hP]);
+  }
+
+  refreshHUD(){
+    const mh=Match.maxHealth;
+    this.p1Bar.scaleX=Math.max(0,1-Math.min(Match.p1Pct,mh)/mh);
+    this.p2Bar.scaleX=Math.max(0,1-Math.min(Match.p2Pct,mh)/mh);
+    const clr=p=>p>(mh*0.8)?"#FF4444":p>(mh*0.4)?"#FFAA00":"#FFFFFF";
+    this.p1DT.setText(Match.p1Pct+"%").setColor(clr(Match.p1Pct));
+    this.p2DT.setText(Match.p2Pct+"%").setColor(clr(Match.p2Pct));
+    const h=n=>"♥".repeat(Math.max(0,n))+"♡".repeat(Math.max(0,3-n));
+    this.p1HT.setText(h(Match.p1Lives));this.p2HT.setText(h(Match.p2Lives));
+    this.p1BurstsHUD.setText("☆x"+this.S.p1Bursts);
+    this.p2BurstsHUD.setText("☆x"+this.S.p2Bursts);
+  }
+
+  buildPauseMenu(){
+    this.pauseContainer=this.add.container(GW/2,GH/2).setDepth(25000).setVisible(false).setScrollFactor(0); 
+    const pBg=this.add.rectangle(0,0,440,270,0x050308,0.97).setStrokeStyle(3,0xFFD700);
+    const pTxt=this.add.text(0,-108,"⏸  PAUSED",{fontFamily:"Press Start 2P",fontSize:"15px",color:"#FFD700"}).setOrigin(0.5);
+    
+    const codeTxt=this.add.text(0,-75,"FOLLOW THE CODE...",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#00FF88"}).setOrigin(0.5);
+    this.pauseBookHint=this.add.text(0,50,"📖 SEARCH FOR CLUES IN THE BOOKS →",{fontFamily:"Press Start 2P",fontSize:"8px",color:"#55AAFF"}).setOrigin(0.5).setInteractive({useHandCursor:true});
+    
+    const bKey=BOOK_LIST[0];
+    this.pauseBookImg=this.add.image(0,-16,bKey).setDisplaySize(72,108).setInteractive({useHandCursor:true});
+    this.pauseBookUrl = BOOK_LINKS[bKey];
+
+    this.pauseBookImg.on("pointerdown",()=>window.open(this.pauseBookUrl,"_blank"));
+    this.pauseBookHint.on("pointerdown",()=>window.open(this.pauseBookUrl,"_blank"));
+    
+    const rBtn=this.add.text(-96,100,"🔄 RESTART",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#00FF88",backgroundColor:"#111",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
+    // LOG 010 FIX: Absolute Hard Reset via Scene Start
+    rBtn.on("pointerdown",()=>{
+        Match.paused=false;
+        this.physics.world.isPaused=false;
+        if(window.IS_TOUCH) document.getElementById("mc").classList.add("on");
+        this.scene.start("BattleScene");
+    });
+    
+    const qBtn=this.add.text(96,100,"◀ QUIT",{fontFamily:"Press Start 2P",fontSize:"9px",color:"#050308",backgroundColor:"#FFD700",padding:{x:12,y:8}}).setOrigin(0.5).setInteractive({useHandCursor:true});
+    qBtn.on("pointerdown",()=>{
+        Match.paused=false;
+        this.physics.world.isPaused=false;
+        if(window.IS_TOUCH) document.getElementById("mc").classList.add("on");
+        this.scene.start("BrawlerScene");
+    });
+    
+    this.pauseContainer.add([pBg,pTxt,codeTxt,this.pauseBookImg,this.pauseBookHint,rBtn,qBtn]);
+  }
+
+  togglePause() {
+    const S = this.S;
+    if(S.gameOver) return;
+    Match.paused = !Match.paused;
+    this.physics.world.isPaused = Match.paused;
+    
+    if(Match.paused) {
+        const nextKey = BOOK_LIST[Math.floor(Math.random() * BOOK_LIST.length)];
+        this.pauseBookImg.setTexture(nextKey);
+        this.pauseBookUrl = BOOK_LINKS[nextKey];
+        document.getElementById("mc").classList.remove("on"); 
+    } else {
+        if(window.IS_TOUCH) document.getElementById("mc").classList.add("on"); 
+    }
+    
+    this.pauseContainer.setVisible(Match.paused);
+  }
+
+  resolveHit(atkId,tgtId,hit,isProjectile){
+    const S=this.S;if(S.gameOver||!hit||!hit.active||atkId===tgtId)return; 
+    const isP1Tgt=tgtId==="p1";
+    const shielding=isP1Tgt?(this.keys.S.isDown||this.keys.DOWN.isDown||this.keys.L.isDown||MP.f||JOY.vy>0.6):false;
+    const shieldHp=isP1Tgt?S.p1ShieldHp:S.p2ShieldHp;
+    if(isProjectile){const vis=hit.getData("vis");if(vis&&vis.active)vis.destroy();}
+    hit.destroy();
+    
+    const tgt=tgtId==="p2"?this.p2:this.p1,atk=atkId==="p1"?this.p1:this.p2;
+    if(!tgt.active||!tgt.body)return;
+    
+    if(shielding&&shieldHp>0){if(isP1Tgt)S.p1ShieldHp--;else S.p2ShieldHp--;goldSpark(this,tgt.x,tgt.y);return;}
+    
+    let power=isProjectile?Phaser.Math.Between(5,9):Phaser.Math.Between(3,7);
+    if(atkId==="p1"&&S.p1BurstBuff)power*=2;
+    if(atkId==="p2"&&S.p2BurstBuff)power*=2;
+    
+    if(tgtId==="p2")Match.p2Pct+=power;else Match.p1Pct+=power;
+    const pct=tgtId==="p2"?Match.p2Pct:Match.p1Pct;
+    
+    if(pct >= Match.maxHealth) {
+        goldSpark(this, tgt.x, tgt.y);
+        goldSpark(this, tgt.x-20, tgt.y-10);
+        goldSpark(this, tgt.x+20, tgt.y-10);
+        this.respawnOrEnd(tgtId);
+        return;
+    }
+
+    const tPre=tgtId==="p2"?this.p2Pre:this.p1Pre;
+    const kbScale=Math.min(4,1+(pct*0.015)),dir=tgt.x>=atk.x?1:-1;
+    tgt.body.setVelocity(dir*170*kbScale,-210*kbScale);
+    
+    const fHit=FRAMES[tPre==="j"?"juni":"pyro"],lt=pct>(Match.maxHealth*0.35);
+    tgt.setFrame(lt?fHit.knock:fHit.dmg[0]);
+    if(this.anims.exists(tPre+(lt?"_launch":"_dmg")))this.time.delayedCall(30,()=>{if(tgt.active)tgt.play(tPre+(lt?"_launch":"_dmg"),true);});
+    if(tgtId==="p2")S.p2Stun=true;else S.p1Stun=true;
+    this.time.delayedCall(150,()=>{if(!S.gameOver){if(tgtId==="p2")S.p2Stun=false;else S.p1Stun=false;}});
+    this.refreshHUD();
+  }
+
+  spawnMelee(id){
+    const sp=id==="p1"?this.p1:this.p2,pre=id==="p1"?this.p1Pre:this.p2Pre;
+    if(!sp.active||!sp.body)return;
+    const dir=sp.flipX?-1:1;
+    arcSlash(this,sp.x,sp.y,dir,pre==="j");
+    sp.setFrame(FRAMES[pre==="j"?"juni":"pyro"].melee);
+    if(this.anims.exists(pre+"_melee"))this.time.delayedCall(30,()=>sp.play(pre+"_melee",true));
+    
+    const hit = this.add.rectangle(sp.x + dir * 35, sp.y - 6, 60, 40, 0xFFD700, 0);
+    this.physics.add.existing(hit);
+    hit.body.allowGravity = false;
+    hit.body.moves = false;
+    hit.setData("owner", id);
+    hit.setData("isProj", false);
+    hit.life = 0;
+    this.meleeGrp.add(hit);
+  }
+
+  spawnProjectile(id){
+    const sp=id==="p1"?this.p1:this.p2,pre=id==="p1"?this.p1Pre:this.p2Pre;
+    if(!sp.active||!sp.body)return;
+    const dir=sp.flipX?-1:1,isJuni=pre==="j",fReg=FRAMES[isJuni?"juni":"pyro"];
+    sp.setFrame(fReg.range);
+    if(this.anims.exists(pre+"_range"))this.time.delayedCall(30,()=>{if(sp.active)sp.play(pre+"_range",true);});
+    const vis=this.add.sprite(sp.x+dir*45,sp.y-8,isJuni?"j_sheet":"p_sheet",fReg.proj).setDisplaySize(38,38).setDepth(50).setFlipX(dir===-1);
+    
+    // LOG 010 FIX: Explicit creation -> physics enable -> body config -> add to group
+    const hit = this.add.rectangle(sp.x + dir * 45, sp.y - 8, 40, 40, 0xFFFFFF, 0);
+    this.physics.add.existing(hit);
+    hit.body.allowGravity = false; 
+    hit.body.setVelocity(dir * 500, 0);
+    hit.setData("owner", id);
+    hit.setData("vis", vis);
+    hit.setData("isProj", true);
+    hit.life = 0;
+    this.projGrp.add(hit);
+  }
+
+  spawnBurst(id){
+    const sp=id==="p1"?this.p1:this.p2,pre=id==="p1"?this.p1Pre:this.p2Pre;
+    if(!sp.active||!sp.body)return;
+    const fReg=FRAMES[pre==="j"?"juni":"pyro"];
+    sp.setFrame(fReg.burst);if(this.anims.exists(pre+"_burst"))this.time.delayedCall(60,()=>sp.play(pre+"_burst",true));
+    const isJuni=pre==="j",col=isJuni?0x00FF88:0xFF2200;
+    const ring=this.add.circle(sp.x,sp.y,90,col,0.2).setDepth(49);
+    this.tweens.add({targets:ring,scaleX:1.6,scaleY:1.6,alpha:0,duration:420,onComplete:()=>ring.destroy()});
+    
+    const tgt = id==="p1" ? this.p2 : this.p1;
+    if(tgt.active && Phaser.Math.Distance.Between(sp.x,sp.y,tgt.x,tgt.y)<95){
+      const burstHit = this.add.rectangle(tgt.x, tgt.y, 1, 1);
+      burstHit.active = true;
+      this.resolveHit(id, id==="p1"?"p2":"p1", burstHit, false);
+    }
+  }
+
+  runCPU(dt){
+    const S=this.S,sp=this.p2;
+    if(S.state!=="PLAYING"||!sp.active||S.p2Stun||!sp.body)return;
+    if(sp.body.blocked.down)S.p2Jumps=0;
+    const dx=this.p1.x-sp.x,absX=Math.abs(dx);
+    if(absX>40){sp.body.setVelocityX(dx>0?this.cpuSpeed:-this.cpuSpeed);sp.setFlipX(dx<0);}
+    else sp.body.setVelocityX(sp.body.velocity.x*0.6);
+    if(absX>60&&S.p2Jumps<2&&Math.random()<0.022){sp.body.setVelocityY(-600);S.p2Jumps++;}
+    if(absX<75&&Math.random()<this.cpuAtkFreq&&!this.cpuAtkCD){this.cpuAtkCD=true;this.spawnMelee("p2");this.time.delayedCall(480,()=>this.cpuAtkCD=false);}
+    
+    if(absX>90&&absX<300&&Math.random()<this.cpuFireFreq&&!this.cpuAtkCD&&S.p2ProjReady){
+      this.cpuAtkCD=true;
+      S.p2ProjReady=false;
+      S.p2ProjCharge=0;
+      this.spawnProjectile("p2");
+      this.time.delayedCall(360,()=>this.cpuAtkCD=false);
+      this.time.delayedCall(1500,()=>{S.p2ProjReady=true;S.p2ProjCharge=1.0;});
+    }
+    
+    if(S.p2Bursts>0 && absX<80 && Math.random()<0.008 && !this.cpuAtkCD){
+      this.cpuAtkCD=true;
+      S.p2Bursts--;
+      this.spawnBurst("p2");
+      S.p2BurstBuff=true;
+      this.time.delayedCall(5000,()=>S.p2BurstBuff=false);
+      this.time.delayedCall(500,()=>this.cpuAtkCD=false);
+      this.refreshHUD();
+    }
+  }
+
+  moveP1(){
+    const S=this.S,sp=this.p1,pre=this.p1Pre,k=this.keys;
+    if(S.state!=="PLAYING"||!sp.active||!sp.body)return;
+    if(sp.body.blocked.down)S.p1Jumps=0;
+    const isShielding=(k.S.isDown||k.DOWN.isDown||k.L.isDown||MP.f||JOY.vy>0.6)&&S.p1ShieldHp>0;
+    if(isShielding){sp.body.setVelocityX(0);sp.setFrame(FRAMES[pre==="j"?"juni":"pyro"].shield);return;}
+    if(!S.p1Stun){
+      const gL=k.A.isDown||MP.l||JOY.vx<-0.25,gR=k.D.isDown||MP.r||JOY.vx>0.25;
+      if(gL){sp.body.setVelocityX(-260);sp.setFlipX(true);}else if(gR){sp.body.setVelocityX(260);sp.setFlipX(false);}else sp.body.setVelocityX(sp.body.velocity.x*0.7);
+      if(Phaser.Input.Keyboard.JustDown(k.W)||MP.j||JOY.vy<-0.6){if(S.p1Jumps<2){sp.body.setVelocityY(-600);S.p1Jumps++;sp.play(pre+"_jump",true);}MP.j=false;}
+      if((Phaser.Input.Keyboard.JustDown(k.J)||MP.a)&&!S.p1AtkCD){S.p1AtkCD=true;this.spawnMelee("p1");this.time.delayedCall(210,()=>S.p1AtkCD=false);MP.a=false;}
+      if((Phaser.Input.Keyboard.JustDown(k.K)||MP.s)&&S.p1ProjReady&&!S.p1AtkCD){
+        S.p1ProjReady=false;S.p1ProjCharge=0;this.spawnProjectile("p1");
+        this.time.delayedCall(1500,()=>{S.p1ProjReady=true;S.p1ProjCharge=1.0;});MP.s=false;
+      }
+      if((Phaser.Input.Keyboard.JustDown(k.SEMI)||MP.b)&&S.p1Bursts>0){S.p1Bursts--;this.spawnBurst("p1");S.p1BurstBuff=true;this.time.delayedCall(5000,()=>S.p1BurstBuff=false);this.refreshHUD();MP.b=false;}
+    }
+  }
+
+  updateCamera(){
+    const p1x=this.p1.active?this.p1.x:GW/2,p2x=this.p2.active?this.p2.x:GW/2;
+    this.camX+=(((p1x+p2x)/2)-this.camX)*0.08;
+    this.camX = Phaser.Math.Clamp(this.camX, GW/2 - 150, GW/2 + 150);
+    this.cameras.main.centerOn(this.camX, GH/2);
+  }
+
+  respawnOrEnd(id){
+    const S=this.S;if(S.gameOver)return;
+    const isP1=id==="p1",sp=isP1?this.p1:this.p2,spX=isP1?SPAWN.p1.x:SPAWN.p2.x,spY=isP1?SPAWN.p1.y:SPAWN.p2.y;
+    
+    if(isP1)Match.p1Lives--;else Match.p2Lives--;
+    
+    if((isP1?Match.p1Lives:Match.p2Lives)<=0){
+        S.gameOver=true;
+        Match.winner=isP1?"P2":"P1";
+        this.showSignalLost();
+        return;
+    }
+    
+    if(isP1)Match.p1Pct=0;else Match.p2Pct=0;
+    
+    sp.body.setVelocity(0,0);
+    sp.setPosition(spX,spY);
+    
+    if(isP1) S.p1Stun=true; else S.p2Stun=true;
+    this.time.delayedCall(800, () => {
+        if(isP1) S.p1Stun=false; else S.p2Stun=false;
+    });
+
+    this.tweens.add({targets:sp, alpha:0.2, duration:100, yoyo:true, repeat:7, onComplete:()=>sp.setAlpha(1)});
+    
+    this.refreshHUD();
+  }
+
+  showSignalLost(){
+    document.getElementById("mc").classList.remove("on");
+    const sl=this.add.rectangle(GW/2,GH/2,GW,GH,0x050308,0.9).setDepth(30000).setScrollFactor(0);
+    this.add.text(GW/2,GH/2-30,"SIGNAL LOST",{fontFamily:"Press Start 2P",fontSize:"22px",color:"#FF2222"}).setDepth(30001).setOrigin(0.5).setScrollFactor(0);
+    this.time.delayedCall(2000,()=>this.scene.start("ResultsScene"));
+  }
+
+  update(time,dt){
+    const S=this.S;
+    if(Phaser.Input.Keyboard.JustDown(this.keys.P)){ this.togglePause(); }
+    if(Match.paused||S.gameOver)return;
+    
+    this.meleeGrp.children.iterate(h=>{if(!h)return;h.life+=dt;if(h.life>200)h.destroy();});
+    
+    this.projGrp.children.iterate(h=>{
+      if(!h||!h.active)return;h.life+=dt;
+      const vis=h.getData("vis");if(vis&&vis.active){vis.x=h.x;vis.y=h.y;}
+      if(h.life>1600||h.x<BLAST.minX||h.x>BLAST.maxX){ if(vis&&vis.active)vis.destroy(); h.destroy(); }
+    });
+
+    this.moveP1();this.runCPU(dt);
+    if(this.p1.y>GH+100)this.respawnOrEnd("p1");if(this.p2.y>GH+100)this.respawnOrEnd("p2");
+    this.updateCamera();
+    
+    if(!S.p1ProjReady&&this.p1ProjBar.active){S.p1ProjCharge=Math.min(1,S.p1ProjCharge+dt/1500);this.p1ProjBar.scaleX=S.p1ProjCharge;}
+    if(!S.p2ProjReady&&this.p2ProjBar.active){S.p2ProjCharge=Math.min(1,S.p2ProjCharge+dt/1500);this.p2ProjBar.scaleX=S.p2ProjCharge;}
+    
+    [this.p1, this.p2].forEach(sp => {
+        if(!sp.active || !sp.body) return;
+        const isP1 = sp === this.p1;
+        const pre = isP1 ? this.p1Pre : this.p2Pre;
+        
+        const shielding = isP1 && ((this.keys.S.isDown||this.keys.DOWN.isDown||this.keys.L.isDown||MP.f||JOY.vy>0.6) && S.p1ShieldHp>0);
+        if(shielding) return;
+        
+        const animState = sp.anims.currentAnim ? sp.anims.currentAnim.key : "";
+        const isCombat = ["_melee","_range","_burst","_launch","_dmg"].some(s => animState.includes(s));
+        
+        if(!isCombat || !sp.anims.isPlaying) {
+            if(!sp.body.blocked.down) {
+                sp.setFrame(FRAMES[pre==="j"?"juni":"pyro"].jump);
+                if(sp.anims.isPlaying) sp.anims.stop();
+            } else if(Math.abs(sp.body.velocity.x) < 10) {
+                sp.play(pre+"_idle", true);
+            } else {
+                sp.play(pre+"_idle", true); 
+            }
+        }
+    });
+  }
+}
+
+class ResultsScene extends Phaser.Scene{
+  constructor(){super("ResultsScene");}
+  create(){
+    this.add.image(GW/2,GH/2,"bg_eyes").setDisplaySize(GW,GH).setAlpha(0.35);
+    
+    // NOTE: This line adds the Victory Image (just uncomment it when the image is ready and loaded in preload)
+    // this.add.image(GW/2, GH/2 - 40, "victory_img").setDisplaySize(200, 150);
+    
+    this.add.text(GW/2,GH/2,"SECTOR CLEARED",{fontFamily:"Press Start 2P",fontSize:"17px",color:"#FFD700"}).setOrigin(0.5);
+    this.add.text(GW/2,GH/2+40,"ANY KEY TO REMATCH",{fontFamily:"Press Start 2P",fontSize:"7px",color:"#888"}).setOrigin(0.5);
+    this.input.keyboard.on("keydown",()=>this.scene.start("BattleScene"));
+    this.input.on("pointerdown",()=>this.scene.start("BattleScene"));
+  }
+}
+
+new Phaser.Game({
+  type:Phaser.AUTO,width:GW,height:GH,parent:"gc",backgroundColor:"#050308",
+  scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},
+  physics:{default:"arcade",arcade:{gravity:{y:0},debug:false}},
+  scene:[StartScreen,InstructionsScene,BrawlerScene,DifficultyScene,StageSelectScene,OriginHub,CreatorBio,BattleScene,ResultsScene]
+});
+
+</script>
+</body>
+</html>
