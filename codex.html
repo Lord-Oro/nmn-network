@@ -34,7 +34,7 @@ html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex
 
 /* ─── PURE CURSOR OVERRIDE ─── */
 body, body *, a, button, .choice, .btn { 
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; 
+  cursor: none !important; 
 }
 
 /* ─── FLASHLIGHT BEAM ─── */
@@ -130,17 +130,18 @@ main { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; flex: 1; position: 
 .hud-link { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); text-decoration: none; text-transform: uppercase; margin-left: 10px; border: 2px solid var(--gd); padding: 0.4rem; transition: all 0.1s;}
 .hud-link:hover { color: #000; background: var(--gd); }
 </style>
+<style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
 </head>
 <body>
 
 <div id="pickaxe-glow"></div>
 
-<script src="nmn-nav.js"></script>
 <script src="nmn-wallet.js"></script>
+<script src="nmn-nav.js"></script>
 
 <header>
-  <a href="index.html" class="logo">NMN CODEX</a>
-  <a href="index.html" class="back">← RETURN TO MINE</a>
+  <a href="oracle.html" class="logo">NMN CODEX</a>
+  <a href="oracle.html" class="back">← RETURN TO CHAMBER</a>
 </header>
 
 <main>
@@ -199,7 +200,7 @@ main { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; flex: 1; position: 
 </div>
 
 <script>
-// ─── COSMIC AUDIO ENGINE (Mystic Codex Tune) ───
+// ─── COSMIC AUDIO ENGINE (Mystic Codex Tune & 8-Bit Blips) ───
 const CosmicAudio = {
   ctx: null, running: false, masterGain: null,
   init() {
@@ -220,13 +221,24 @@ const CosmicAudio = {
     osc.connect(filter).connect(g).connect(this.masterGain);
     osc.start();
   },
+  playBlip() {
+    if (!this.ctx) return;
+    const osc = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(800 + Math.random()*200, this.ctx.currentTime);
+    g.gain.setValueAtTime(0.02, this.ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
+    osc.connect(g).connect(this.masterGain);
+    osc.start(); osc.stop(this.ctx.currentTime + 0.05);
+  },
   startAll() {
     if (this.running) return;
     this.init(); this.running = true; this.playHum();
   }
 };
 
-// ─── UNIFIED FLASHLIGHT TRACKING (MOUSE + TOUCH) ───
+// ─── UNIFIED FLASHLIGHT TRACKING ───
 function moveGlow(e) {
     const r = document.getElementById('pickaxe-glow');
     if(!r) return;
@@ -256,6 +268,14 @@ window.addEventListener('mousedown', function(){
 window.addEventListener('mouseup', function(){
   const r = document.getElementById('pickaxe-glow');
   if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(170,85,255,.4) 0%,rgba(255,215,0,0.15) 40%,transparent 70%)'; }
+});
+
+// BFCache Fix
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        const overlay = document.getElementById('descent-overlay');
+        if(overlay) overlay.classList.remove('descent-active');
+    }
 });
 
 // ── PROCEDURAL ICON GENERATOR ──
@@ -434,6 +454,7 @@ function typeText(elId, text, speed=25) {
   let i = 0;
   typeTimer = setInterval(() => {
     el.textContent += text.charAt(i++);
+    if (i % 2 === 0) CosmicAudio.playBlip(); // 8-Bit type sound
     if (i >= text.length) clearInterval(typeTimer);
   }, speed);
 }
@@ -474,7 +495,7 @@ function renderQuestion(idx) {
 
   setTimeout(() => {
     drawSprite(`q-avatar-${idx}`, `LordOroQuestion${idx}`, q.color);
-    typeText(`qText-${idx}`, q.text, 20);
+    typeText(`qText-${idx}`, q.text, 25);
   }, 50);
 }
 
