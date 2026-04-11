@@ -32,6 +32,37 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
+/* ─── PURE CURSOR OVERRIDE (INVISIBLE) ─── */
+body, body *, a, button, canvas, .q-btn, .btn { 
+  cursor: none !important; 
+}
+
+/* ─── FLASHLIGHT BEAM (DUAL SOULS TUNE) ─── */
+body::after {
+    content: "";
+    position: fixed;
+    width: 4px;
+    height: 32px;
+    background: linear-gradient(to bottom, var(--soul1), var(--soul2));
+    box-shadow: 0 0 10px rgba(255,215,0,0.8), 0 0 20px rgba(85,85,255,0.6);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    top: var(--cursor-y, -100px);
+    left: var(--cursor-x, -100px);
+    z-index: 999999;
+    will-change: top, left;
+}
+
+#pickaxe-glow {
+    position: fixed; width: 160px; height: 160px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(85,85,255,0.2) 0%, rgba(255,215,0,0.15) 40%, transparent 70%);
+    pointer-events: none; z-index: 999998; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; 
+    top: var(--cursor-y, -100px);
+    left: var(--cursor-x, -100px);
+    will-change: top, left;
+}
+
 body {
   font-family: var(--font-ancient);
   color: var(--cream);
@@ -135,11 +166,11 @@ main { max-width: 900px; margin: 0 auto; padding: 3rem 1rem; flex: 1; width: 100
 .dg-link:hover { color:var(--gold); }
 .dg-sep { color:var(--faint); font-size:0.6rem; }
 </style>
-
-<style id="nmn-cursor-global">body,*{cursor:none!important}</style>
 <style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
 </head>
 <body>
+
+<div id="pickaxe-glow"></div>
 
 <script src="nmn-nav.js"></script>
 
@@ -208,6 +239,79 @@ main { max-width: 900px; margin: 0 auto; padding: 3rem 1rem; flex: 1; width: 100
 </div>
 
 <script>
+// ─── BEAM TRACKING SCRIPT ───
+document.addEventListener("mousemove", e => {
+    document.body.style.setProperty("--cursor-x", e.clientX + "px");
+    document.body.style.setProperty("--cursor-y", e.clientY + "px");
+});
+document.addEventListener("touchmove", e => {
+    if(e.touches.length > 0) {
+        document.body.style.setProperty("--cursor-x", e.touches[0].clientX + "px");
+        document.body.style.setProperty("--cursor-y", e.touches[0].clientY + "px");
+    }
+}, {passive: true});
+
+document.addEventListener('mousedown', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '190px'; r.style.height = '190px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.4) 0%,transparent 70%)'; }
+});
+document.addEventListener('mouseup', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(85,85,255,.2) 0%,rgba(255,215,0,0.15) 40%,transparent 70%)'; }
+});
+document.addEventListener('touchend', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(85,85,255,.2) 0%,rgba(255,215,0,0.15) 40%,transparent 70%)'; }
+}, {passive: true});
+
+// BFCache Fix
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        const overlay = document.getElementById('descent-overlay');
+        if(overlay) overlay.classList.remove('descent-active');
+    }
+});
+
+// ─── COSMIC AUDIO ENGINE (DUAL SOULS HUM & BLIPS) ───
+const CosmicAudio = {
+  ctx: null, running: false, masterGain: null,
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  },
+  playHum() {
+    const osc = this.ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(50, this.ctx.currentTime); 
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass'; filter.frequency.value = 150;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.05, this.ctx.currentTime);
+    osc.connect(filter).connect(g).connect(this.masterGain);
+    osc.start();
+  },
+  playBlip() {
+    if (!this.ctx) return;
+    const osc = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(600 + Math.random()*200, this.ctx.currentTime);
+    g.gain.setValueAtTime(0.02, this.ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
+    osc.connect(g).connect(this.masterGain);
+    osc.start(); osc.stop(this.ctx.currentTime + 0.05);
+  },
+  startAll() {
+    if (this.running) return;
+    this.init(); this.running = true; this.playHum();
+  }
+};
+document.addEventListener('click', () => { CosmicAudio.startAll(); }, { once: true });
+document.addEventListener('touchstart', () => { CosmicAudio.startAll(); }, { once: true, passive: true });
+
 // ── PROCEDURAL SPRITE GENERATOR ──
 function drawSprite(canvasId, seedStr, colorHex) {
   const canvas = document.getElementById(canvasId);
@@ -317,6 +421,7 @@ function typeText(text, speed=15) {
   let i = 0;
   typeTimer = setInterval(() => {
     el.textContent += text.charAt(i++);
+    if (i % 2 === 0) CosmicAudio.playBlip();
     if (i >= text.length) clearInterval(typeTimer);
   }, speed);
 }
@@ -353,6 +458,7 @@ function answer(side) {
   if(typeTimer) clearInterval(typeTimer);
   document.getElementById('qLeft').style.pointerEvents = 'none';
   document.getElementById('qRight').style.pointerEvents = 'none';
+  CosmicAudio.playBlip();
   
   answers[side]++;
   updateBalance();
@@ -421,7 +527,6 @@ function updateGlobalHUD() {
 
 renderQuestion();
 </script>
-
 
 <div class="nmn-global-cta" style="border-top:2px solid rgba(255,215,0,.2);background:rgba(5,3,8,.98);padding:2rem 1.5rem;text-align:center;margin-top:3rem;">
   <p style="font-family:'Press Start 2P',cursive;font-size:.4rem;color:#8B6914;letter-spacing:.2em;margin-bottom:1.2rem;">⬡ MINE YOUR COPY ⬡</p>
