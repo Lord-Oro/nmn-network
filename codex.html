@@ -32,8 +32,8 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; }
 
-/* CURSOR CONTROL */
-body, * { cursor: none !important; }
+/* CURSOR CONTROL: Force default cursor so user can click, but keep glow */
+body, a, button, .choice { cursor: default !important; }
 
 body {
   font-family: var(--font-text);
@@ -45,30 +45,31 @@ body {
 
 /* ─── THEATRICAL CURTAIN INTRO ─── */
 #curtain-wrapper {
-    position: fixed; inset: 0; z-index: 999999;
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 999999;
     display: flex; justify-content: center; align-items: center;
-    pointer-events: all;
+    background: transparent; pointer-events: none;
 }
 .curtain-half {
     position: absolute; top: 0; width: 50vw; height: 100vh;
-    background: #1a053a; /* Deep mystic purple */
-    overflow: hidden; transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+    background: #1a053a; 
+    transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
     background-image: 
       radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),
       radial-gradient(2px 2px at 70px 90px, #AA55FF, rgba(0,0,0,0)),
       radial-gradient(1px 1px at 150px 160px, #FFD700, rgba(0,0,0,0)),
       radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0));
     background-size: 200px 200px;
+    pointer-events: all;
 }
-.curtain-left { left: 0; border-right: 2px solid var(--gold); }
-.curtain-right { right: 0; border-left: 2px solid var(--gold); }
+.curtain-left { left: 0; border-right: 4px solid var(--gold); }
+.curtain-right { right: 0; border-left: 4px solid var(--gold); }
 
 .curtain-left.open { transform: translateX(-100%); }
 .curtain-right.open { transform: translateX(100%); }
 
 .curtain-text {
     position: relative; z-index: 1000000;
-    font-family: var(--font-pixel); color: var(--gold); font-size: 2.5rem; 
+    font-family: var(--font-pixel); color: var(--gold); font-size: clamp(2rem, 5vw, 4rem); 
     text-shadow: 0 0 20px rgba(170,85,255,0.8), 4px 4px 0 #000;
     letter-spacing: 0.2em; animation: pulseWelcome 2s infinite; transition: opacity 0.5s;
     text-align: center;
@@ -81,8 +82,8 @@ body {
 }
 
 /* FADE IN CONTENT */
-body.content-hidden main, body.content-hidden header, body.content-hidden .hud, body.content-hidden .nmn-global-cta { opacity: 0; }
-body.content-visible main, body.content-visible header, body.content-visible .hud, body.content-visible .nmn-global-cta { opacity: 1; transition: opacity 1.5s ease-in; }
+#main-content { opacity: 0; transition: opacity 1.5s ease-in; }
+#main-content.visible { opacity: 1; }
 
 /* ─── FLASHLIGHT BEAM ─── */
 #pickaxe-glow {
@@ -171,7 +172,7 @@ main { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; flex: 1; position: 
 </style>
 <style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
 </head>
-<body class="content-hidden">
+<body>
 
 <div id="curtain-wrapper">
     <div class="curtain-half curtain-left" id="curtainLeft"></div>
@@ -181,52 +182,70 @@ main { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; flex: 1; position: 
 
 <div id="pickaxe-glow"></div>
 
-<script src="nmn-nav.js"></script>
-<script src="nmn-wallet.js"></script>
+<div id="main-content">
+  <script src="nmn-nav.js"></script>
+  <script src="nmn-wallet.js"></script>
 
-<header>
-  <a href="index.html" class="logo">NMN CODEX</a>
-  <a href="index.html" class="back">← RETURN TO MINE</a>
-</header>
+  <header>
+    <a href="index.html" class="logo">NMN CODEX</a>
+    <a href="index.html" class="back">← RETURN TO MINE</a>
+  </header>
 
-<main>
-  <div id="introSection" class="intro retro-box">
-    <div class="intro-eyebrow">THE EXCAVATION COMMITTEE PRESENTS</div>
-    <canvas id="oro-avatar-main" class="q-avatar-canvas" width="16" height="16" style="margin: 0 auto 1.5rem auto; display: block;"></canvas>
-    <h1 class="intro-title">THE MADMAN'S <em>CODEX</em></h1>
-    <p class="intro-sub">Lord Oro has 7 questions. Your answers will reveal what kind of miner lives inside you — and generate a lore fragment specifically for your soul.</p>
-    <div class="intro-lore">
-      "Every person carries a mine within them. Most never dig. This is for the ones who do."<br><br>— Lord Oro
-    </div>
-    <button class="btn btn-gold" onclick="startCodex()">INITIATE CODEX</button>
-  </div>
-
-  <div class="progress-hud" id="progressHud">
-    <div>QUESTION: <span id="q-counter" style="color:#FFF">1/7</span></div>
-    <div>SIGNAL: <span style="color:var(--lg)">STRONG</span></div>
-  </div>
-  <div class="progress-bar-bg" id="progressBarBg">
-    <div class="progress-bar-fill" id="progressBarFill"></div>
-  </div>
-
-  <div id="questionsContainer"></div>
-
-  <div id="resultSection" class="result-section retro-box">
-    <canvas id="resultCanvas" class="r-icon-canvas" width="16" height="16"></canvas>
-    <div class="result-title" id="resultTitle"></div>
-    <div class="result-type" id="resultType"></div>
-    <div class="result-desc" id="resultDesc"></div>
-    <div class="lore-fragment" id="resultLore"></div>
-    <div class="result-extra" id="resultExtra"></div>
-    <div class="share-section" id="shareSection">
+  <main>
+    <div id="introSection" class="intro retro-box">
+      <div class="intro-eyebrow">THE EXCAVATION COMMITTEE PRESENTS</div>
+      <canvas id="oro-avatar-main" class="q-avatar-canvas" width="16" height="16" style="margin: 0 auto 1.5rem auto; display: block;"></canvas>
+      <h1 class="intro-title">THE MADMAN'S <em>CODEX</em></h1>
+      <p class="intro-sub">Lord Oro has 7 questions. Your answers will reveal what kind of miner lives inside you — and generate a lore fragment specifically for your soul.</p>
+      <div class="intro-lore">
+        "Every person carries a mine within them. Most never dig. This is for the ones who do."<br><br>— Lord Oro
       </div>
-  </div>
-</main>
+      <button class="btn btn-gold" onclick="startCodex()">INITIATE CODEX</button>
+    </div>
 
-<div class="hud">
-  <div class="hud-stat">GOLD: <span class="hud-val" id="dgGold">0</span></div>
-  <div class="hud-stat">LORE: <span class="hud-val" id="dgLore">0</span></div>
-  <a href="lorevault.html" class="hud-link">VAULT</a>
+    <div class="progress-hud" id="progressHud">
+      <div>QUESTION: <span id="q-counter" style="color:#FFF">1/7</span></div>
+      <div>SIGNAL: <span style="color:var(--lg)">STRONG</span></div>
+    </div>
+    <div class="progress-bar-bg" id="progressBarBg">
+      <div class="progress-bar-fill" id="progressBarFill"></div>
+    </div>
+
+    <div id="questionsContainer"></div>
+
+    <div id="resultSection" class="result-section retro-box">
+      <canvas id="resultCanvas" class="r-icon-canvas" width="16" height="16"></canvas>
+      <div class="result-title" id="resultTitle"></div>
+      <div class="result-type" id="resultType"></div>
+      <div class="result-desc" id="resultDesc"></div>
+      <div class="lore-fragment" id="resultLore"></div>
+      <div class="result-extra" id="resultExtra"></div>
+      <div class="share-section" id="shareSection">
+        </div>
+    </div>
+  </main>
+
+  <div class="hud">
+    <div class="hud-stat">GOLD: <span class="hud-val" id="dgGold">0</span></div>
+    <div class="hud-stat">LORE: <span class="hud-val" id="dgLore">0</span></div>
+    <a href="lorevault.html" class="hud-link">VAULT</a>
+  </div>
+
+  <div class="nmn-global-cta" style="border-top:2px solid rgba(255,215,0,.2);background:rgba(5,3,8,.98);padding:2rem 1.5rem;text-align:center;margin-top:3rem;">
+    <p style="font-family:'Press Start 2P',cursive;font-size:.4rem;color:#8B6914;letter-spacing:.2em;margin-bottom:1.2rem;">⬡ MINE YOUR COPY ⬡</p>
+    <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:1.2rem;">
+      <a href="https://books2read.com/u/3LPyjw" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE WANDERER $2.99</a>
+      <a href="https://books2read.com/u/3ndXGR" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE SWIMMER $2.99</a>
+      <a href="https://books2read.com/u/4EOxZ0" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">JUNI $9.99</a>
+      <a href="https://books2read.com/u/31NrLw" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">OUTBREAK $9.99</a>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;">
+      <a href="brawler/index.html" style="padding:.55rem 1rem;background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.3);color:#e8b84b;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⚔️ PLAY FREE</a>
+      <a href="https://gofund.me/e643a8283" target="_blank" style="padding:.55rem 1rem;background:rgba(0,169,92,.1);border:1px solid #02a95c;color:#02a95c;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⛏ SUPPORT NMN</a>
+      <a href="https://patreon.com/Lordminadeoro" target="_blank" style="padding:.55rem 1rem;background:rgba(197,146,0,.1);border:1px solid #C59200;color:#C59200;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">🏮 PATREON</a>
+      <a href="index.html" style="padding:.55rem 1rem;background:transparent;border:1px solid rgba(255,215,0,.15);color:#8B6914;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">← HUB</a>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -238,11 +257,11 @@ window.addEventListener('load', () => {
     setTimeout(() => {
         document.getElementById('curtainLeft').classList.add('open');
         document.getElementById('curtainRight').classList.add('open');
-        document.body.classList.replace('content-hidden', 'content-visible');
-        CosmicAudio.startAll(); // Start the drone as the curtains part
+        document.getElementById('main-content').classList.add('visible');
     }, 2000);
     setTimeout(() => {
-        document.getElementById('curtain-wrapper').style.display = 'none';
+        const wrapper = document.getElementById('curtain-wrapper');
+        wrapper.parentNode.removeChild(wrapper); // Remove from DOM entirely so it can't block clicks
     }, 3500);
 });
 
@@ -299,20 +318,6 @@ function moveGlow(e) {
 document.addEventListener('mousemove', moveGlow);
 document.addEventListener('touchmove', moveGlow, {passive: true});
 document.addEventListener('touchstart', moveGlow, {passive: true});
-
-document.addEventListener('mousedown', function(){
-  CosmicAudio.startAll();
-  const r = document.getElementById('pickaxe-glow');
-  if(r) { r.style.width = '190px'; r.style.height = '190px'; r.style.background = 'radial-gradient(circle,rgba(170,85,255,.5) 0%,transparent 70%)'; }
-});
-document.addEventListener('mouseup', function(){
-  const r = document.getElementById('pickaxe-glow');
-  if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(170,85,255,.3) 0%,rgba(255,215,0,0.15) 40%,transparent 70%)'; }
-});
-document.addEventListener('touchend', function(){
-  const r = document.getElementById('pickaxe-glow');
-  if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(170,85,255,.3) 0%,rgba(255,215,0,0.15) 40%,transparent 70%)'; }
-}, {passive: true});
 
 // ── PROCEDURAL ICON GENERATOR ──
 function drawSprite(canvasId, seedStr, colorHex) {
@@ -495,6 +500,7 @@ function typeText(elId, text, speed=25) {
 }
 
 function startCodex() {
+  CosmicAudio.startAll(); // Triggers Audio safely on user click
   document.getElementById('introSection').style.display = 'none';
   document.getElementById('progressHud').style.display = 'flex';
   document.getElementById('progressBarBg').style.display = 'block';
@@ -620,20 +626,5 @@ function updateGlobalHUD() {
 }
 </script>
 
-<div class="nmn-global-cta" style="border-top:2px solid rgba(255,215,0,.2);background:rgba(5,3,8,.98);padding:2rem 1.5rem;text-align:center;margin-top:3rem;">
-  <p style="font-family:'Press Start 2P',cursive;font-size:.4rem;color:#8B6914;letter-spacing:.2em;margin-bottom:1.2rem;">⬡ MINE YOUR COPY ⬡</p>
-  <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:1.2rem;">
-    <a href="https://books2read.com/u/3LPyjw" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE WANDERER $2.99</a>
-    <a href="https://books2read.com/u/3ndXGR" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE SWIMMER $2.99</a>
-    <a href="https://books2read.com/u/4EOxZ0" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">JUNI $9.99</a>
-    <a href="https://books2read.com/u/31NrLw" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">OUTBREAK $9.99</a>
-  </div>
-  <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;">
-    <a href="brawler/index.html" style="padding:.55rem 1rem;background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.3);color:#e8b84b;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⚔️ PLAY FREE</a>
-    <a href="https://gofund.me/e643a8283" target="_blank" style="padding:.55rem 1rem;background:rgba(0,169,92,.1);border:1px solid #02a95c;color:#02a95c;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⛏ SUPPORT NMN</a>
-    <a href="https://patreon.com/Lordminadeoro" target="_blank" style="padding:.55rem 1rem;background:rgba(197,146,0,.1);border:1px solid #C59200;color:#C59200;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">🏮 PATREON</a>
-    <a href="index.html" style="padding:.55rem 1rem;background:transparent;border:1px solid rgba(255,215,0,.15);color:#8B6914;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">← HUB</a>
-  </div>
-</div>
 </body>
 </html>
