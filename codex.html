@@ -613,6 +613,8 @@ function updateGlobalHUD() {
     document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]').length;
     if (typeof NMNWallet !== 'undefined') {
         document.getElementById('dgGold').textContent = NMNWallet.get().gold.toLocaleString();
+    } else {
+        document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold') || '0';
     }
   } catch(e) {}
 }
