@@ -257,21 +257,21 @@ function moveGlow(e) {
         r.style.top = y + 'px';
     }
 }
-window.addEventListener('mousemove', moveGlow);
-window.addEventListener('touchmove', moveGlow, {passive: true});
-window.addEventListener('touchstart', moveGlow, {passive: true});
+document.addEventListener('mousemove', moveGlow);
+document.addEventListener('touchmove', moveGlow, {passive: true});
+document.addEventListener('touchstart', moveGlow, {passive: true});
 
-window.addEventListener('mousedown', function(){
+document.addEventListener('mousedown', function(){
   const r = document.getElementById('pickaxe-glow');
   if(r) { r.style.width = '190px'; r.style.height = '190px'; r.style.background = 'radial-gradient(circle,rgba(170,85,255,.5) 0%,transparent 70%)'; }
 });
-window.addEventListener('mouseup', function(){
+document.addEventListener('mouseup', function(){
   const r = document.getElementById('pickaxe-glow');
   if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(170,85,255,.4) 0%,rgba(255,215,0,0.15) 40%,transparent 70%)'; }
 });
 
 // BFCache Fix
-window.addEventListener('pageshow', function(event) {
+document.addEventListener('pageshow', function(event) {
     if (event.persisted) {
         const overlay = document.getElementById('descent-overlay');
         if(overlay) overlay.classList.remove('descent-active');
@@ -304,7 +304,7 @@ function drawSprite(canvasId, seedStr, colorHex) {
   ctx.shadowBlur = 0;
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
   drawSprite('oro-avatar-main', 'LordOroEyeGold', '#FFD700');
   updateGlobalHUD();
 });
