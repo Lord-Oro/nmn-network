@@ -88,33 +88,45 @@ header {
 .game-area { flex: 1; position: relative; overflow: hidden; background: transparent; display: flex; flex-direction: column; }
 canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
 
-/* MINE SELECT SCREEN */
+/* MINE SELECT SCREEN - COMPACTED FOR MOBILE */
 .mine-select {
   position: absolute; inset: 0; background: rgba(5,3,8,0.98);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   z-index: 100; padding: 1rem; overflow-y: auto;
 }
-.select-title { font-size: 1.2rem; color: var(--gold); margin-bottom: 1rem; text-shadow: 0 0 20px rgba(255,215,0,0.4); text-align: center; line-height: 1.5; }
-.select-sub { font-size: 0.45rem; color: var(--gd); margin-bottom: 2.5rem; text-align: center; line-height: 1.8; max-width: 600px; }
-.mine-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; max-width: 900px; }
-.mine-card {
-  padding: 1.5rem; text-align: center; border: 2px solid var(--gd);
-  background: #000; transition: all 0.2s;
-  width: 160px; display: flex; flex-direction: column; align-items: center; gap: 0.8rem;
+.select-title { font-size: 1rem; color: var(--gold); margin-bottom: 0.5rem; text-shadow: 0 0 20px rgba(255,215,0,0.4); text-align: center; line-height: 1.5; }
+.select-sub { font-size: 0.4rem; color: var(--gd); margin-bottom: 1.5rem; text-align: center; line-height: 1.6; max-width: 500px; }
+
+.mine-grid { 
+  display: flex; flex-wrap: wrap; justify-content: center; 
+  gap: 0.5rem; width: 100%; max-width: 500px; 
 }
-.mine-card:hover { border-color: var(--gold); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.8), inset 0 0 15px rgba(255,215,0,0.2); }
-.mine-card.selected { border-color: var(--neon-green); background: rgba(0,255,136,0.05); box-shadow: 0 0 20px rgba(0,255,136,0.3); }
-.mine-icon { font-size: 2.5rem; }
-.mine-name { font-size: 0.55rem; color: var(--cream); }
-.mine-type { font-size: 0.4rem; }
-.mine-bonus { font-size: 0.35rem; color: var(--muted); line-height: 1.5; }
+.mine-card {
+  padding: 0.8rem 0.5rem; text-align: center; border: 2px solid var(--gd);
+  background: #000; transition: all 0.2s;
+  width: calc(33.333% - 0.5rem); min-width: 100px; flex-grow: 1;
+  display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+}
+.mine-card:hover { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.8), inset 0 0 10px rgba(255,215,0,0.2); }
+.mine-card.selected { border-color: var(--neon-green); background: rgba(0,255,136,0.05); box-shadow: 0 0 15px rgba(0,255,136,0.3); }
+.mine-icon { font-size: 1.6rem; margin-bottom: 0.2rem;}
+.mine-name { font-size: 0.4rem; color: var(--cream); }
+.mine-type { font-size: 0.35rem; }
+.mine-bonus { font-size: 0.3rem; color: var(--muted); line-height: 1.4; }
 
 .start-btn {
-  margin-top: 3rem; padding: 1rem 2rem; background: var(--gold); color: #000;
-  font-size: 0.6rem; border: none; transition: all 0.3s;
+  margin-top: 1.5rem; padding: 1.2rem 1rem; background: var(--gold); color: #000;
+  font-size: 0.55rem; border: none; transition: all 0.3s; width: 90%; max-width: 400px;
 }
 .start-btn:hover { background: #fff; box-shadow: 0 0 20px rgba(255,215,0,0.6); transform: scale(1.05); }
 .start-btn:disabled { opacity: 0.3; transform: none; box-shadow: none; }
+
+@media (max-width: 400px) {
+  .mine-card { padding: 0.6rem 0.4rem; width: calc(50% - 0.5rem); min-width: 90px; }
+  .mine-icon { font-size: 1.4rem; }
+  .mine-bonus { font-size: 0.25rem; line-height: 1.2;}
+  .select-title { font-size: 0.8rem; }
+}
 
 /* ─── HUD CONTROLS & FIRE BUTTON ─── */
 .controls-wrapper {
@@ -251,31 +263,31 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
         <span class="mine-icon">⬡</span>
         <div class="mine-name">GOLDMINE</div>
         <div class="mine-type" style="color:#FFD700">METAL</div>
-        <div class="mine-bonus">Balanced. Extra Ammo.</div>
+        <div class="mine-bonus">Balanced.</div>
       </div>
       <div class="mine-card" onclick="selectMine(1)">
         <span class="mine-icon">💎</span>
         <div class="mine-name">DIAMOND</div>
         <div class="mine-type" style="color:#88ccff">CRYSTAL</div>
-        <div class="mine-bonus">Piercing. High Damage.</div>
+        <div class="mine-bonus">Piercing.</div>
       </div>
       <div class="mine-card" onclick="selectMine(2)">
         <span class="mine-icon">❤️</span>
         <div class="mine-name">RUBY</div>
         <div class="mine-type" style="color:#ff4444">FLAME</div>
-        <div class="mine-bonus">Incendiary. Burns target.</div>
+        <div class="mine-bonus">Incendiary.</div>
       </div>
       <div class="mine-card" onclick="selectMine(3)">
         <span class="mine-icon">⚪</span>
         <div class="mine-name">SILVER</div>
         <div class="mine-type" style="color:#aaaacc">SHADOW</div>
-        <div class="mine-bonus">Homing. Hard to dodge.</div>
+        <div class="mine-bonus">Homing.</div>
       </div>
       <div class="mine-card" onclick="selectMine(4)">
         <span class="mine-icon">🖤</span>
         <div class="mine-name">OBSIDIAN</div>
         <div class="mine-type" style="color:#886688">VOID</div>
-        <div class="mine-bonus">Heavy impact. Explosive.</div>
+        <div class="mine-bonus">Explosive.</div>
       </div>
     </div>
     <button class="start-btn" id="startBtn" onclick="startBattle()" disabled>AWAITING SELECTION</button>
