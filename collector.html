@@ -49,21 +49,35 @@ body {
   font-size: 1.2rem;
 }
 
+/* ─── PURE CURSOR OVERRIDE: INVISIBLE ─── */
+body, body *, a, button, .tab-btn, .action-btn, .buy-btn, .dpad-btn, .node { 
+  cursor: none !important; 
+}
+
+/* ─── FLASHLIGHT BEAM (EMERALD DUNGEON TUNE) ─── */
+#pickaxe-glow {
+    position: fixed; width: 160px; height: 160px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,255,136,0.3) 0%, rgba(255,215,0,0.1) 40%, transparent 70%);
+    pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
+}
+
 .retro-box {
   background: var(--panel-bg);
   border: 4px solid #FFF;
   box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
 }
 
-header { padding: 1rem 2rem; background: #000; border-bottom: 4px solid var(--lg); display: flex; justify-content: space-between; align-items: center; }
+header { padding: 1rem 2rem; background: #000; border-bottom: 4px solid var(--lg); display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 100;}
 .logo { font-family: var(--font-pixel); color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
 .back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase;}
 .back:hover { color: var(--gold); }
 
-#gameScreen { max-width: 900px; margin: 1rem auto; padding: 0 1rem; }
+#gameScreen { max-width: 900px; margin: 1rem auto; padding: 0 1rem; position: relative; z-index: 10;}
 
 .tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;}
-.tab-btn { flex: 1; padding: 1rem; background: #000; border: 4px solid #444; color: var(--muted); font-family: var(--font-pixel); font-size: 0.6rem; cursor: pointer; text-transform: uppercase; min-width: 120px;}
+.tab-btn { flex: 1; padding: 1rem; background: #000; border: 4px solid #444; color: var(--muted); font-family: var(--font-pixel); font-size: 0.6rem; transition: 0.2s; text-transform: uppercase; min-width: 120px;}
+.tab-btn:hover { border-color: var(--lg); color: var(--cream); }
 .tab-btn.active { border-color: #FFF; color: var(--gold); box-shadow: 4px 4px 0 #000; background: #111; }
 
 .view-section { display: none; }
@@ -82,7 +96,8 @@ header { padding: 1rem 2rem; background: #000; border-bottom: 4px solid var(--lg
 .radar-title { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); margin-bottom: 1rem; text-align: center; }
 .radar { display: grid; grid-template-columns: repeat(3, 45px); grid-template-rows: repeat(3, 45px); gap: 5px; }
 
-.node { background: #222; border: 4px solid #111; display: flex; align-items: center; justify-content: center; }
+.node { background: #222; border: 4px solid #111; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
+.node:hover:not(.empty):not(.player) { border-color: var(--gold); transform: scale(1.05); }
 .node.empty { background: transparent; border: none; }
 .node.player { background: #000; border-color: #FFF; box-shadow: inset 0 0 10px #FFF; }
 .node.player::after { content: ''; width: 16px; height: 16px; background: var(--gold); }
@@ -94,9 +109,10 @@ header { padding: 1rem 2rem; background: #000; border-bottom: 4px solid var(--lg
 .dialog-box { padding: 1.5rem; font-size: 1.5rem; line-height: 1.5; min-height: 150px; }
 
 .dpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; max-width: 220px; margin: 0 auto; }
-.dpad-btn { padding: 1rem; background: #000; border: 4px solid var(--muted); color: var(--cream); font-family: var(--font-pixel); cursor: pointer; transition: transform 0.1s; }
+.dpad-btn { padding: 1rem; background: #000; border: 4px solid var(--muted); color: var(--cream); font-family: var(--font-pixel); transition: transform 0.1s, border-color 0.2s; }
+.dpad-btn:hover { border-color: var(--lg); }
 .dpad-btn.active, .dpad-btn:active { border-color: var(--gold); background: #222; transform: scale(0.95); }
-.dpad-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+.dpad-btn:disabled { opacity: 0.2; pointer-events: none; }
 .dpad-btn.up { grid-column: 2; grid-row: 1; }
 .dpad-btn.left { grid-column: 1; grid-row: 2; }
 .dpad-btn.right { grid-column: 3; grid-row: 2; }
@@ -123,13 +139,14 @@ header { padding: 1rem 2rem; background: #000; border-bottom: 4px solid var(--lg
 .hp-bar-fill { height: 100%; background: var(--lg); transition: width 0.3s; }
 
 .action-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
-.action-btn { background: #000; border: 4px solid #FFF; color: var(--cream); font-family: var(--font-pixel); font-size: 0.65rem; padding: 1rem; cursor: pointer; text-align: left; line-height: 1.5;}
-.action-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); padding-left: 1.5rem; }
-.action-btn:disabled { border-color: #444; color: #444; cursor: not-allowed;}
+.action-btn { background: #000; border: 4px solid #FFF; color: var(--cream); font-family: var(--font-pixel); font-size: 0.65rem; padding: 1rem; text-align: left; line-height: 1.5; transition: 0.2s;}
+.action-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); padding-left: 1.5rem; background: #111;}
+.action-btn:disabled { border-color: #444; color: #444; pointer-events: none;}
 
 /* ── GRIMOIRE VIEW ── */
 .grimoire-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
-.g-card { background: #000; border: 4px solid #444; padding: 1rem; text-align: center; display: flex; flex-direction: column; align-items: center;}
+.g-card { background: #000; border: 4px solid #444; padding: 1rem; text-align: center; display: flex; flex-direction: column; align-items: center; transition: 0.2s;}
+.g-card:hover { border-color: var(--lg); transform: translateY(-3px);}
 .g-card.caught { background: #1a1500; border-color: var(--gold); box-shadow: 4px 4px 0 #553300;}
 .g-canvas { width: 80px; height: 80px; image-rendering: pixelated; margin-bottom: 0.5rem; opacity: 0.1; }
 .g-card.caught .g-canvas { opacity: 1; }
@@ -152,15 +169,16 @@ header { padding: 1rem 2rem; background: #000; border-bottom: 4px solid var(--lg
 .shop-icon { font-size: 3rem; margin-bottom: 1rem; filter: drop-shadow(4px 4px 0 #000); }
 .shop-title { font-family: var(--font-pixel); font-size: 0.7rem; color: var(--cream); margin-bottom: 0.5rem; }
 .shop-desc { font-family: var(--font-text); font-size: 1.2rem; color: var(--muted); margin-bottom: 1.5rem; }
-.buy-btn { background: var(--gold); border: 4px solid #FFF; padding: 0.8rem; font-family: var(--font-pixel); font-size: 0.6rem; color: #000; cursor: pointer; text-transform: uppercase; width: 100%; box-shadow: 4px 4px 0 #000;}
-.buy-btn:hover { background: #FFF; }
-.buy-btn:disabled { background: #444; color: #888; border-color: #666; box-shadow: none; cursor: not-allowed; }
+.buy-btn { background: var(--gold); border: 4px solid #FFF; padding: 0.8rem; font-family: var(--font-pixel); font-size: 0.6rem; color: #000; text-transform: uppercase; width: 100%; box-shadow: 4px 4px 0 #000; transition: 0.2s;}
+.buy-btn:hover:not(:disabled) { background: #FFF; transform: translateY(-2px); box-shadow: 6px 6px 0 #000;}
+.buy-btn:disabled { background: #444; color: #888; border-color: #666; box-shadow: none; pointer-events: none; }
 
 </style>
-<style id="nmn-cursor-global">body,*{cursor:none!important}</style>
 <style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
 </head>
 <body>
+
+<div id="pickaxe-glow"></div>
 
 <script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
@@ -190,13 +208,13 @@ header { padding: 1rem 2rem; background: #000; border-bottom: 4px solid var(--lg
       <div class="radar-container retro-box">
         <div class="radar-title">RADAR COMPASS</div>
         <div class="radar">
-          <div class="node empty"></div><div class="node" id="node-n"></div><div class="node empty"></div>
-          <div class="node" id="node-w"></div><div class="node player"></div><div class="node" id="node-e"></div>
-          <div class="node empty"></div><div class="node" id="node-s"></div><div class="node empty"></div>
+          <div class="node empty"></div><div class="node" id="node-n" onclick="move('n')"></div><div class="node empty"></div>
+          <div class="node" id="node-w" onclick="move('w')"></div><div class="node player"></div><div class="node" id="node-e" onclick="move('e')"></div>
+          <div class="node empty"></div><div class="node" id="node-s" onclick="move('s')"></div><div class="node empty"></div>
         </div>
       </div>
       <div class="dialog-box retro-box" id="explore-dialog">
-        The stone is shifting... check the radar. Use W, A, S, D or Arrows to move. Red nodes contain hostile Duelers.
+        The stone is shifting... check the radar. Use W, A, S, D, tap the radar, or use the D-Pad below.
       </div>
     </div>
     
@@ -268,6 +286,85 @@ header { padding: 1rem 2rem; background: #000; border-bottom: 4px solid var(--lg
 </div>
 
 <script>
+// ─── COSMIC AUDIO ENGINE (8-Bit Dungeon Tune + SFX) ───
+const CosmicAudio = {
+  ctx: null, running: false, masterGain: null,
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  },
+  playHum() {
+    const osc = this.ctx.createOscillator();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(65, this.ctx.currentTime); 
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass'; filter.frequency.value = 200;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.03, this.ctx.currentTime);
+    osc.connect(filter).connect(g).connect(this.masterGain);
+    osc.start();
+  },
+  startAll() {
+    if (this.running) return;
+    this.init(); this.running = true; this.playHum();
+  }
+};
+
+const SFX = {
+  play(freq, type, dur, vol = 0.1) {
+    if (!CosmicAudio.ctx) return;
+    const osc = CosmicAudio.ctx.createOscillator();
+    const gain = CosmicAudio.ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, CosmicAudio.ctx.currentTime);
+    gain.gain.setValueAtTime(0, CosmicAudio.ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(vol, CosmicAudio.ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, CosmicAudio.ctx.currentTime + dur);
+    osc.connect(gain);
+    gain.connect(CosmicAudio.masterGain);
+    osc.start();
+    osc.stop(CosmicAudio.ctx.currentTime + dur);
+  },
+  blip() { this.play(800 + Math.random()*200, 'square', 0.05, 0.015); }, // Reduced volume so it isn't annoying
+  hit() { this.play(150, 'sawtooth', 0.3, 0.1); setTimeout(() => this.play(100, 'square', 0.4, 0.1), 100); },
+  catch() { this.play(600, 'sine', 0.2, 0.1); setTimeout(() => this.play(800, 'sine', 0.4, 0.1), 200); },
+  flee() { this.play(300, 'triangle', 0.3, 0.05); setTimeout(() => this.play(200, 'triangle', 0.4, 0.05), 150); }
+};
+
+// ─── UNIFIED FLASHLIGHT TRACKING (MOUSE + TOUCH) ───
+function moveGlow(e) {
+    const r = document.getElementById('pickaxe-glow');
+    if(!r) return;
+    let x = e.clientX;
+    let y = e.clientY;
+    if(e.touches && e.touches.length > 0) {
+        x = e.touches[0].clientX;
+        y = e.touches[0].clientY;
+    }
+    if(x !== undefined && y !== undefined) {
+        r.style.left = x + 'px';
+        r.style.top = y + 'px';
+    }
+}
+document.addEventListener('mousemove', moveGlow);
+document.addEventListener('touchmove', moveGlow, {passive: true});
+document.addEventListener('touchstart', moveGlow, {passive: true});
+
+// Init Audio on first interaction
+document.addEventListener('mousedown', () => { CosmicAudio.startAll(); }, { once: true });
+document.addEventListener('touchstart', () => { CosmicAudio.startAll(); }, { once: true, passive: true });
+
+// BFCache Fix
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        const overlay = document.getElementById('descent-overlay');
+        if(overlay) overlay.classList.remove('descent-active');
+    }
+});
+
 // ── PROCEDURAL SPRITE GENERATOR (NEON LIGHTING FIX) ──
 function drawSprite(canvasId, seedStr, colorHex) {
   const canvas = document.getElementById(canvasId);
@@ -296,7 +393,6 @@ function drawSprite(canvasId, seedStr, colorHex) {
       }
     }
   }
-  // Reset shadow for performance
   ctx.shadowBlur = 0;
 }
 
@@ -442,8 +538,9 @@ function typeText(elId, text, callback) {
   let i = 0;
   const timer = setInterval(() => {
     el.textContent += text.charAt(i++);
+    if (i % 3 === 0) SFX.blip(); // The 8-bit sound hook
     if (i >= text.length) { clearInterval(timer); setTimeout(() => { STATE.isAnimating = false; if(callback) callback(); }, 300); }
-  }, 15); // SPED UP TEXT
+  }, 20); // Sped up but with a slight delay so the audio blips resolve
 }
 
 // ── RADAR ──
@@ -486,7 +583,7 @@ function updateShopButtons() {
 
 function buyItem(type, cost) {
   if (STATE.gold >= cost) {
-    if (typeof NMNWallet !== 'undefined') NMNWallet.addGold(-cost); // Deduct gold globally
+    if (typeof NMNWallet !== 'undefined') NMNWallet.addGold(-cost); 
     if (type === 'potion') STATE.potions++;
     if (type === 'sigil') STATE.sigils++;
     updateHUD();
@@ -534,6 +631,7 @@ function battleAttack() {
   if(STATE.isAnimating) return; tBM(false);
   typeText('battle-dialog', `Miner swings Pickaxe!`, () => {
     STATE.currentEnemy.currentHp = Math.max(0, STATE.currentEnemy.currentHp - (Math.floor(Math.random()*15)+5));
+    SFX.hit(); // Play Attack Sound
     updateBattleHUD();
     document.getElementById('b-enemy-sprite').classList.add('anim-blink');
     setTimeout(() => { document.getElementById('b-enemy-sprite').classList.remove('anim-blink'); checkWin(); }, 600);
@@ -573,6 +671,7 @@ function battleCatch() {
     setTimeout(() => {
       if(Math.random() < chance) {
         document.getElementById('b-enemy-sprite').className = 'b-sprite enemy anim-capture';
+        SFX.catch(); // Play Capture Sound
         typeText('battle-dialog', `Gotcha! ${STATE.currentEnemy.name} bound!`, () => {
           if (!STATE.grimoire.includes(STATE.currentEnemy.id)) {
             STATE.grimoire.push(STATE.currentEnemy.id);
@@ -605,6 +704,7 @@ function battleCatch() {
 
 function battleFlee() {
   if(STATE.isAnimating) return; tBM(false);
+  SFX.flee(); // Play Escape Sound
   typeText('battle-dialog', `Escaped into the dark.`, () => setTimeout(() => endBattle(), 1000));
 }
 
@@ -612,6 +712,7 @@ function enemyTurn() {
   const moveUsed = STATE.currentEnemy.moves[Math.floor(Math.random() * 2)];
   typeText('battle-dialog', `${STATE.currentEnemy.name} uses ${moveUsed}!`, () => {
     STATE.hp = Math.max(0, STATE.hp - (Math.floor(Math.random()*8) + (STATE.depth*3)));
+    SFX.hit(); // Play Hit Sound for enemy attack
     updateHUD(); updateBattleHUD();
     if (STATE.hp <= 0) typeText('battle-dialog', `Miner blacked out...`, () => setTimeout(() => location.reload(), 2000));
     else typeText('battle-dialog', `What will you do?`, () => tBM(true));
