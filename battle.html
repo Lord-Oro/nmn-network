@@ -20,7 +20,7 @@
   --cream: #E8E0D0; --neon-green: #00FF88;
   --font-pixel: 'Press Start 2P', cursive;
 }
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; } /* Prevents pull-to-refresh on mobile */
 html, body { height: 100%; overflow: hidden; background: var(--coal); }
 
 body {
@@ -33,16 +33,16 @@ body {
   background-size: 32px 32px;
 }
 
-/* OVERRIDE ALL OLD FONTS */
 h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
 
-/* ─── CUSTOM CURSOR & GLOW ─── */
-body, a, button, canvas { 
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, crosshair !important; 
-}
+/* ─── CURSOR CONTROL ─── */
+body, a, button { cursor: none !important; }
+canvas { cursor: crosshair !important; }
+
+/* ─── FLASHLIGHT BEAM (COMBAT RED/GOLD TUNE) ─── */
 #pickaxe-glow {
-    position: fixed; width: 140px; height: 140px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, rgba(232,184,75,0.1) 30%, transparent 70%);
+    position: fixed; width: 160px; height: 160px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,68,68,0.4) 0%, rgba(255,215,0,0.15) 40%, transparent 70%);
     pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
     mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
 }
@@ -82,7 +82,6 @@ header {
 .hp-bar-bg { width: 100%; height: 12px; background: #222; border: 2px solid var(--gd); position: relative; }
 .hp-bar-fill { height: 100%; background: var(--gold); transition: width 0.3s, background-color 0.3s; }
 .right .hp-bar-fill { margin-left: auto; background: #ff4444; }
-
 .round-info { text-align: center; color: var(--gold); font-size: 0.6rem; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
 
 /* GAME CANVAS */
@@ -100,7 +99,7 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
 .mine-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; max-width: 900px; }
 .mine-card {
   padding: 1.5rem; text-align: center; border: 2px solid var(--gd);
-  background: #000; cursor: pointer; transition: all 0.2s;
+  background: #000; transition: all 0.2s;
   width: 160px; display: flex; flex-direction: column; align-items: center; gap: 0.8rem;
 }
 .mine-card:hover { border-color: var(--gold); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.8), inset 0 0 15px rgba(255,215,0,0.2); }
@@ -112,20 +111,32 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
 
 .start-btn {
   margin-top: 3rem; padding: 1rem 2rem; background: var(--gold); color: #000;
-  font-size: 0.6rem; border: none; cursor: pointer; transition: all 0.3s;
+  font-size: 0.6rem; border: none; transition: all 0.3s;
 }
 .start-btn:hover { background: #fff; box-shadow: 0 0 20px rgba(255,215,0,0.6); transform: scale(1.05); }
-.start-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+.start-btn:disabled { opacity: 0.3; transform: none; box-shadow: none; }
 
-/* HUD ELEMENTS */
-.ammo-bar {
-  position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
-  display: flex; gap: 10px; z-index: 15; background: rgba(5,3,8,0.9);
-  padding: 10px; border: 2px solid var(--gd);
+/* ─── HUD CONTROLS & FIRE BUTTON ─── */
+.controls-wrapper {
+  position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 15;
 }
+.fire-btn {
+  background: #ff4444; color: #000; border: 3px solid #fff;
+  padding: 15px 40px; font-size: 0.8rem; font-family: var(--font-pixel);
+  cursor: none; text-shadow: 0 0 5px rgba(255,255,255,0.8);
+  box-shadow: 0 0 20px rgba(255,68,68,0.6);
+  animation: firePulse 1s infinite alternate; transition: 0.1s;
+}
+.fire-btn:active { transform: scale(0.95); background: #fff; color: #ff4444; border-color: #ff4444; }
+.fire-btn:disabled { background: #333; border-color: #555; color: #555; animation: none; box-shadow: none; }
+
+@keyframes firePulse { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
+
+.ammo-bar { display: flex; gap: 10px; background: rgba(5,3,8,0.9); padding: 10px; border: 2px solid var(--gd); }
 .ammo-btn {
   width: 45px; height: 45px; border: 2px solid var(--gd); background: #000;
-  cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
   font-size: 1.2rem; position: relative; transition: 0.2s;
 }
 .ammo-btn.active { border-color: var(--neon-green); background: rgba(0,255,136,0.1); }
@@ -141,7 +152,7 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
 
 .arena-bar {
   position: absolute; top: 15px; left: 20px;
-  background: rgba(5,3,8,0.9); border: 2px solid var(--gd); cursor: pointer;
+  background: rgba(5,3,8,0.9); border: 2px solid var(--gd);
   padding: 8px 15px; font-size: 0.5rem; color: var(--cream); z-index: 15; transition: border-color 0.2s;
 }
 .arena-bar:hover { border-color: var(--gold); }
@@ -162,7 +173,7 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
 .overlay-title { font-size: 2rem; color: var(--gold); margin-bottom: 1rem; text-shadow: 0 0 20px rgba(255,215,0,0.5); }
 .overlay-sub { font-size: 0.6rem; color: var(--cream); margin-bottom: 2rem; text-align: center; line-height: 1.8; }
 .btn-group { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
-.btn-outline { background: transparent; border: 2px solid var(--gold); color: var(--gold); padding: 0.8rem 1.5rem; font-size: 0.5rem; cursor: pointer; text-decoration: none; transition: background 0.2s;}
+.btn-outline { background: transparent; border: 2px solid var(--gold); color: var(--gold); padding: 0.8rem 1.5rem; font-size: 0.5rem; text-decoration: none; transition: background 0.2s;}
 .btn-outline:hover { background: rgba(255,215,0,0.1); }
 
 /* GLOBAL CTA BOTTOM */
@@ -175,12 +186,9 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
 .cta-row { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-bottom: 1rem; }
 .cta-link { padding: .5rem 1rem; font-family: 'Press Start 2P', cursive; font-size: .3rem; letter-spacing: .08em; text-decoration: none; transition: 0.2s; }
 .cta-link:hover { transform: translateY(-2px); }
-
 .cta-gold { background: rgba(255,215,0,.1); border: 1px solid #FFD700; color: #FFD700; }
 .cta-green { background: rgba(0,255,136,.08); border: 1px solid #00FF88; color: #00FF88; }
 .cta-faint { background: transparent; border: 1px solid rgba(255,215,0,.15); color: #8B6914; }
-.cta-patreon { background: rgba(197,146,0,.1); border: 1px solid #C59200; color: #C59200; }
-
 </style>
 </head>
 <body>
@@ -217,18 +225,21 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
   </div>
   <div class="turn-indicator" id="turnIndicator" style="display:none">YOUR TURN</div>
 
-  <div class="ammo-bar" id="ammoBar" style="display:none">
-    <div class="ammo-btn active" data-ammo="0" onclick="selectAmmo(0)">
-      <span id="ammoIcon0">⬡</span><span class="ammo-count" id="ammoCount0">∞</span>
-    </div>
-    <div class="ammo-btn" data-ammo="1" onclick="selectAmmo(1)">
-      <span id="ammoIcon1">🔥</span><span class="ammo-count" id="ammoCount1">5</span>
-    </div>
-    <div class="ammo-btn" data-ammo="2" onclick="selectAmmo(2)">
-      <span id="ammoIcon2">💎</span><span class="ammo-count" id="ammoCount2">3</span>
-    </div>
-    <div class="ammo-btn" data-ammo="3" onclick="selectAmmo(3)">
-      <span id="ammoIcon3">💣</span><span class="ammo-count" id="ammoCount3">2</span>
+  <div class="controls-wrapper" id="controlsWrapper" style="display:none">
+    <button class="fire-btn" id="fireBtn">FIRE!</button>
+    <div class="ammo-bar" id="ammoBar">
+      <div class="ammo-btn active" data-ammo="0" onclick="selectAmmo(0)">
+        <span id="ammoIcon0">⬡</span><span class="ammo-count" id="ammoCount0">∞</span>
+      </div>
+      <div class="ammo-btn" data-ammo="1" onclick="selectAmmo(1)">
+        <span id="ammoIcon1">🔥</span><span class="ammo-count" id="ammoCount1">5</span>
+      </div>
+      <div class="ammo-btn" data-ammo="2" onclick="selectAmmo(2)">
+        <span id="ammoIcon2">💎</span><span class="ammo-count" id="ammoCount2">3</span>
+      </div>
+      <div class="ammo-btn" data-ammo="3" onclick="selectAmmo(3)">
+        <span id="ammoIcon3">💣</span><span class="ammo-count" id="ammoCount3">2</span>
+      </div>
     </div>
   </div>
 
@@ -288,11 +299,6 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
     <a href="https://books2read.com/u/4EOxZ0" target="_blank" class="cta-link cta-green">JUNI $9.99</a>
     <a href="https://books2read.com/u/31NrLw" target="_blank" class="cta-link cta-green">OUTBREAK $9.99</a>
   </div>
-  <div class="cta-row" style="margin-bottom: 0;">
-    <a href="brawler/index.html" class="cta-link cta-faint">⚔️ PLAY FREE</a>
-    <a href="https://gofund.me/e643a8283" target="_blank" class="cta-link cta-green">⛏ SUPPORT NMN</a>
-    <a href="https://patreon.com/Lordminadeoro" target="_blank" class="cta-link cta-patreon">🏮 PATREON</a>
-  </div>
 </div>
 
 <div id="pickaxe-glow"></div>
@@ -302,6 +308,14 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
 document.addEventListener('mousemove', function(e){
   const r = document.getElementById('pickaxe-glow');
   if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
+});
+
+// BFCache Fix
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        const overlay = document.getElementById('descent-overlay');
+        if(overlay) overlay.classList.remove('descent-active');
+    }
 });
 
 window.NMN_CONTEXT = "mine";
@@ -360,7 +374,6 @@ const SFX = {
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
 
-// MINE & AMMO DATA
 const MINES = [
   { name: 'Goldmine', icon: '⬡', color: '#c9962a', type: 'Metal' },
   { name: 'Diamond', icon: '💎', color: '#88ccff', type: 'Crystal' },
@@ -384,7 +397,6 @@ const MATCHUPS = {
   'Void': { strong: ['Crystal'], weak: ['Shadow'] }
 };
 
-// ARENA BACKGROUND LOGIC
 const ARENAS = [
   { name: 'DEEP MINE', img: null },
   { name: 'SECTOR ZERO', img: new Image() },
@@ -405,7 +417,6 @@ ARENAS[6].img.src = 'Olydia elephant beta.jpg';
 ARENAS[7].img.src = 'Wanderer elephant beta.jpg';
 
 let currentArena = 0;
-
 function toggleArena() {
   currentArena = (currentArena + 1) % ARENAS.length;
   document.getElementById('arenaStr').textContent = ARENAS[currentArena].name;
@@ -415,13 +426,16 @@ let W, H, gameRunning = false;
 let p1, p2, projectiles = [], particles = [], floatTexts = [];
 let wind = { x: 0, str: 'CALM' }, turn = 'player', round = 1;
 let selectedMine = -1, selectedAmmo = 0, ammoStock = [];
-let mouseX = 0, mouseY = 0;
 let screenShake = 0;
 let centerWall = { x: 0, y: 0, w: 40, h: 0 };
+
+// NEW AIMING SYSTEM
+let aimX = 0, aimY = 0;
 
 function resize() {
   W = canvas.width = canvas.parentElement.clientWidth;
   H = canvas.height = canvas.parentElement.clientHeight;
+  if (!gameRunning) { aimX = W/2; aimY = H/4; }
   if(gameRunning) {
       p1.y = H - 80;
       p2.y = H - 80;
@@ -430,15 +444,25 @@ function resize() {
   }
 }
 window.addEventListener('resize', resize);
-// Initial resize wait for layout
 setTimeout(resize, 100);
 
-// MOUSE TRACKING FOR AIMING
-canvas.addEventListener('mousemove', (e) => {
+// UNIFIED TOUCH & MOUSE TRACKING FOR AIMING
+function updateAim(e) {
+  if(!gameRunning || turn !== 'player') return;
   const rect = canvas.getBoundingClientRect();
-  mouseX = e.clientX - rect.left;
-  mouseY = e.clientY - rect.top;
-});
+  // Support both touch and mouse events seamlessly
+  let clientX = e.clientX;
+  let clientY = e.clientY;
+  if(e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+  }
+  aimX = clientX - rect.left;
+  aimY = clientY - rect.top;
+}
+canvas.addEventListener('mousemove', updateAim);
+canvas.addEventListener('touchmove', (e) => { e.preventDefault(); updateAim(e); }, {passive: false});
+canvas.addEventListener('touchstart', (e) => { updateAim(e); }, {passive: true});
 
 function selectMine(idx) {
   selectedMine = idx;
@@ -453,7 +477,7 @@ function startBattle() {
   document.getElementById('mineSelect').style.display = 'none';
   document.getElementById('windBar').style.display = 'flex';
   document.getElementById('turnIndicator').style.display = 'block';
-  document.getElementById('ammoBar').style.display = 'flex';
+  document.getElementById('controlsWrapper').style.display = 'flex';
   document.getElementById('arenaBar').style.display = 'block';
 
   let aiMine = selectedMine;
@@ -464,12 +488,14 @@ function startBattle() {
   p1 = { x: Math.min(W*0.15, 150), y: H - 80, w: 60, h: 60, hp: 100, maxHp: 100, mine: selectedMine, burn: 0 };
   p2 = { x: Math.max(W*0.85 - 60, W - 200), y: H - 80, w: 60, h: 60, hp: 100, maxHp: 100, mine: aiMine, burn: 0 };
 
+  aimX = W/2; aimY = H/4; // Reset aim point
   projectiles = []; particles = []; floatTexts = [];
   randomizeWind(); 
   generateWall();
   
   turn = 'player'; round = 1; gameRunning = true; screenShake = 0;
-
+  
+  document.getElementById('fireBtn').disabled = false;
   updateHUD(); updateAmmoBar();
   requestAnimationFrame(loop);
 }
@@ -494,8 +520,8 @@ function selectAmmo(idx) {
   document.querySelectorAll('.ammo-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
 }
 
-// FIRE MECHANIC
-canvas.addEventListener('click', () => {
+// ── NEW DEDICATED FIRE BUTTON ──
+document.getElementById('fireBtn').addEventListener('click', () => {
   if (!gameRunning || turn !== 'player' || projectiles.length > 0) return;
   if (ammoStock[selectedAmmo].remaining <= 0) { selectAmmo(0); return; }
   
@@ -503,8 +529,8 @@ canvas.addEventListener('click', () => {
   const startX = p1.x + p1.w/2;
   const startY = p1.y;
   
-  const dx = mouseX - startX;
-  const dy = mouseY - startY;
+  const dx = aimX - startX;
+  const dy = aimY - startY;
   
   const maxPower = 20;
   const dist = Math.min(Math.sqrt(dx*dx + dy*dy) * 0.05, maxPower);
@@ -522,10 +548,10 @@ canvas.addEventListener('click', () => {
   if (ammoStock[selectedAmmo].remaining !== Infinity) ammoStock[selectedAmmo].remaining--;
   updateAmmoBar();
   document.getElementById('turnIndicator').style.display = 'none'; 
+  document.getElementById('fireBtn').disabled = true; // Disable button while firing
   turn = 'flight'; 
 });
 
-// ENEMY AI
 function aiShoot() {
   if(!gameRunning || p2.hp <= 0) return;
   const ammo = { ...AMMOS[Math.floor(Math.random() * 2)] }; 
@@ -598,7 +624,6 @@ function checkGameOver() {
     gameRunning = false;
     const won = p2.hp <= 0;
     
-    // Deposit Gold if Won
     if (won && typeof NMNWallet !== 'undefined') {
         const goldEarned = 150 + (round * 10);
         NMNWallet.addGold(goldEarned);
@@ -610,6 +635,7 @@ function checkGameOver() {
 
     document.getElementById('goTitle').textContent = won ? 'EXTRACTION COMPLETE' : 'SYSTEM FAILURE';
     document.getElementById('goTitle').style.color = won ? 'var(--gold)' : '#ff4444';
+    document.getElementById('controlsWrapper').style.display = 'none';
     setTimeout(() => document.getElementById('gameOverOv').style.display = 'flex', 1500);
   }
 }
@@ -645,6 +671,7 @@ function endTurn() {
   } else {
     document.getElementById('turnIndicator').style.display = 'block';
     document.getElementById('turnIndicator').textContent = 'YOUR TURN';
+    document.getElementById('fireBtn').disabled = false;
   }
 }
 
@@ -679,7 +706,6 @@ function drawMine(mine, x, y, isEnemy) {
 }
 
 function draw() {
-  // BACKGROUND RENDERING
   if (currentArena === 0) {
     ctx.fillStyle = '#050308'; ctx.fillRect(0, 0, W, H);
   } else {
@@ -700,13 +726,11 @@ function draw() {
     if (screenShake < 0.5) screenShake = 0;
   }
 
-  // Draw Ground Line
   ctx.strokeStyle = '#8B6914'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(0, H - 20); ctx.lineTo(W, H - 20); ctx.stroke();
 
   if (!p1 || !p2) { ctx.restore(); return; }
 
-  // Draw Wall
   ctx.fillStyle = '#110a11';
   ctx.fillRect(centerWall.x, centerWall.y, centerWall.w, centerWall.h);
   ctx.strokeStyle = 'rgba(255,215,0,0.2)';
@@ -715,9 +739,10 @@ function draw() {
   drawMine(p1, p1.x, p1.y, false);
   drawMine(p2, p2.x, p2.y, true);
 
+  // DRAW AIMING TRAJECTORY ALWAYS DURING PLAYER TURN
   if (turn === 'player' && gameRunning && projectiles.length === 0) {
     const startX = p1.x + p1.w/2, startY = p1.y;
-    const dx = mouseX - startX, dy = mouseY - startY;
+    const dx = aimX - startX, dy = aimY - startY;
     const maxPower = 20;
     const dist = Math.min(Math.sqrt(dx*dx + dy*dy) * 0.05, maxPower);
     const angle = Math.atan2(dy, dx);
@@ -725,7 +750,7 @@ function draw() {
     let simX = startX, simY = startY;
     let simVx = Math.cos(angle) * dist, simVy = Math.sin(angle) * dist;
     
-    ctx.strokeStyle = 'rgba(255,215,0,0.4)'; ctx.setLineDash([5, 5]);
+    ctx.strokeStyle = 'rgba(255,215,0,0.6)'; ctx.setLineDash([5, 5]); ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(simX, simY);
     for (let i = 0; i < 30; i++) {
       simVx += wind.x; simVy += 0.3; 
@@ -735,6 +760,10 @@ function draw() {
       ctx.lineTo(simX, simY);
     }
     ctx.stroke(); ctx.setLineDash([]);
+    
+    // Draw target crosshair
+    ctx.fillStyle = 'rgba(255,68,68,0.8)';
+    ctx.beginPath(); ctx.arc(aimX, aimY, 4, 0, Math.PI*2); ctx.fill();
   }
 
   let projectileDied = false;
@@ -799,7 +828,7 @@ function resetGame() {
   document.getElementById('mineSelect').style.display = 'flex';
   document.getElementById('windBar').style.display = 'none';
   document.getElementById('turnIndicator').style.display = 'none';
-  document.getElementById('ammoBar').style.display = 'none';
+  document.getElementById('controlsWrapper').style.display = 'none';
   document.getElementById('arenaBar').style.display = 'none';
   gameRunning = false;
   ctx.clearRect(0,0,W,H);
