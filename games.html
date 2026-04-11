@@ -31,6 +31,38 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; }
 
+/* ─── RESTORED BEAM CURSOR (PURPLE & GOLD ARCADE TUNE) ─── */
+body, body *, a, button, canvas, .nugget, .ch-btn, .shop-mini-btn, .convert-btn {
+    cursor: none !important; /* hide default cursor */
+}
+
+/* Custom Beam Cursor */
+body::after {
+    content: "";
+    position: fixed;
+    width: 4px;
+    height: 32px;
+    background: linear-gradient(to bottom, var(--gold), var(--pu));
+    box-shadow: 0 0 10px rgba(255,215,0,0.8), 0 0 20px rgba(170,85,255,0.6);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    top: var(--cursor-y, -100px);
+    left: var(--cursor-x, -100px);
+    z-index: 999999;
+    will-change: top, left;
+}
+
+/* Ambient Radial Glow attached to the beam */
+#pickaxe-glow {
+    position: fixed; width: 160px; height: 160px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(170,85,255,0.2) 0%, rgba(255,215,0,0.1) 40%, transparent 70%);
+    pointer-events: none; z-index: 999998; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; 
+    top: var(--cursor-y, -100px);
+    left: var(--cursor-x, -100px);
+    will-change: top, left;
+}
+
 body {
   font-family: var(--font-text);
   color: var(--cream);
@@ -46,11 +78,11 @@ header {
   background: #000; z-index: 1000; position: fixed; top: 0; left: 0; right: 0;
 }
 .logo { font-family: var(--font-pixel); color: var(--gold); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #553300; }
-.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: 0.2s;}
 .back:hover { color: var(--gold); }
 
 /* HALL HERO */
-.hall-hero { text-align: center; background: #000; padding: 3rem 2rem; border-bottom: 4px solid #333; position: relative; }
+.hall-hero { text-align: center; background: #000; padding: 3rem 2rem; border-bottom: 4px solid #333; position: relative; margin-top: 20px;}
 .hall-eyes { display: flex; gap: 40px; justify-content: center; margin-bottom: 1.5rem; }
 .hall-eye { width: 24px; height: 16px; background: var(--gold); border: 4px solid #fff; box-shadow: 0 0 20px var(--gold); animation: eyeBlink 5s infinite; position: relative; }
 .hall-eye::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 8px; height: 8px; background: #000; }
@@ -70,7 +102,7 @@ header {
 .gem-row { display: flex; gap: 6px; justify-content: center; margin-bottom: 0.5rem; }
 .gem-pip { width: 16px; height: 16px; border: 2px solid #553300; background: #221100; display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; }
 .gem-pip.lit { border-color: #FFF; background: var(--gold); color: #000; box-shadow: 0 0 10px var(--gold); }
-.convert-btn { font-family: var(--font-pixel); font-size: 0.6rem; background: #000; border: 4px solid var(--gd); color: var(--gold); padding: 1rem; cursor: pointer; transition: transform 0.1s; text-transform: uppercase; }
+.convert-btn { font-family: var(--font-pixel); font-size: 0.6rem; background: #000; border: 4px solid var(--gd); color: var(--gold); padding: 1rem; transition: transform 0.1s; text-transform: uppercase; }
 .convert-btn:hover { background: var(--gd); color: #000; border-color: #FFF; transform: translateY(-3px); }
 
 /* MAIN LAYOUT */
@@ -124,7 +156,7 @@ header {
 .tv-chlbl { font-family: var(--font-pixel); font-size: 0.4rem; color: var(--muted); }
 .tv-chname { font-family: var(--font-pixel); font-size: 0.4rem; color: var(--gold); text-align: right; }
 .tv-controls { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.ch-btn { flex: 1; font-family: var(--font-pixel); font-size: 0.45rem; background: #222; border: 2px solid #555; color: var(--gold); padding: 8px; cursor: pointer; text-align: center; }
+.ch-btn { flex: 1; font-family: var(--font-pixel); font-size: 0.45rem; background: #222; border: 2px solid #555; color: var(--gold); padding: 8px; text-align: center; }
 .ch-btn:hover { background: #444; border-color: var(--gold); }
 .ch-display { background: #000; border: 2px solid #333; color: var(--gold); font-family: var(--font-pixel); font-size: 0.5rem; padding: 6px; text-align: center; }
 .tv-stand { background: #100c04; border: 4px solid #2a1a08; border-top: none; padding: 8px; text-align: center; }
@@ -132,24 +164,25 @@ header {
 
 /* MODULES */
 .shop-module-label { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--gd); margin-bottom: 1rem; display: block; }
-.shop-mini-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; border: 4px solid #333; margin-bottom: 8px; background: #000; }
+.shop-mini-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; border: 4px solid #333; margin-bottom: 8px; background: #000; transition: border-color 0.2s;}
 .shop-mini-item:hover { border-color: var(--gd); }
 .shop-mini-name { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--cream); }
 .shop-mini-cost { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gold); }
-.shop-mini-btn { font-family: var(--font-pixel); font-size: 0.4rem; background: var(--pu); color: #000; border: 2px solid #FFF; padding: 6px 12px; cursor: pointer; }
+.shop-mini-btn { font-family: var(--font-pixel); font-size: 0.4rem; background: var(--pu); color: #000; border: 2px solid #FFF; padding: 6px 12px; transition: 0.2s;}
 .shop-mini-btn:hover { background: var(--gold); }
 
 /* FOOTER */
 .nmn-footer { text-align: center; padding: 3rem; border-top: 4px solid #333; background: #000; }
 .nmn-footer-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-.nmn-footer-link { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--muted); text-decoration: none; border: 2px solid transparent; padding: 0.5rem; }
+.nmn-footer-link { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--muted); text-decoration: none; border: 2px solid transparent; padding: 0.5rem; transition: color 0.2s;}
 .nmn-footer-link:hover { color: var(--gold); border-color: var(--gold); }
 .nmn-footer-copy { font-family: var(--font-pixel); font-size: 0.4rem; color: #555; }
 </style>
-<style id="nmn-cursor-global">body,*{cursor:none!important}</style>
 <style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
 </head>
 <body>
+
+<div id="pickaxe-glow"></div>
 
 <script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
@@ -366,6 +399,56 @@ header {
 </div>
 
 <script>
+// ─── BEAM TRACKING SCRIPT ───
+document.addEventListener("mousemove", e => {
+    document.body.style.setProperty("--cursor-x", e.clientX + "px");
+    document.body.style.setProperty("--cursor-y", e.clientY + "px");
+});
+document.addEventListener("touchmove", e => {
+    if(e.touches.length > 0) {
+        document.body.style.setProperty("--cursor-x", e.touches[0].clientX + "px");
+        document.body.style.setProperty("--cursor-y", e.touches[0].clientY + "px");
+    }
+}, {passive: true});
+
+// ─── COSMIC AUDIO ENGINE (ARCADE HUM) ───
+const CosmicAudio = {
+  ctx: null, running: false, masterGain: null,
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  },
+  playHum() {
+    const osc = this.ctx.createOscillator();
+    osc.type = 'square'; // Arcade feel
+    osc.frequency.setValueAtTime(60, this.ctx.currentTime); 
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass'; filter.frequency.value = 180;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.02, this.ctx.currentTime);
+    osc.connect(filter).connect(g).connect(this.masterGain);
+    osc.start();
+  },
+  startAll() {
+    if (this.running) return;
+    this.init(); this.running = true; this.playHum();
+  }
+};
+
+document.addEventListener('click', () => { CosmicAudio.startAll(); }, { once: true });
+document.addEventListener('touchstart', () => { CosmicAudio.startAll(); }, { once: true, passive: true });
+
+// BFCache Fix
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        const overlay = document.getElementById('descent-overlay');
+        if(overlay) overlay.classList.remove('descent-active');
+    }
+});
+
 // ════════════ TV ════════════
 const CHANNELS=[
   {name:'MINE ENTRANCE',      file:'assets/videos/Videos_Are_Ready_To_View.mp4',       ch:'CH.01'},
