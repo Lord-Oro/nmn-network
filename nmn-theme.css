@@ -46,13 +46,10 @@ body {
   line-height: 1.6;
 }
 
-/* CURSOR FIX: Ensure the lantern cursor works across all pages */
+/* CURSOR FIX: Strip native cursor globally on desktop so flashlight beam works perfectly */
 @media (hover: hover) and (pointer: fine) {
-  body, a, button, .mine-cart, .action-btn { cursor: none !important; }
+  body, a, button, input, .mine-cart, .action-btn { cursor: none !important; }
 }
-
-#nmn-cursor { position: fixed; pointer-events: none; z-index: 200000; transform: translate(-50%, -50%); transition: transform 0.1s; }
-#nmn-halo { position: fixed; pointer-events: none; z-index: 199999; width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%); transform: translate(-50%, -50%); }
 
 /* ── EMPIRE AESTHETIC CLASSES ── */
 
