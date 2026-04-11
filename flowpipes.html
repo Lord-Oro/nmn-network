@@ -23,6 +23,20 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { height: 100%; overflow-x: hidden; background: var(--coal); }
 
+/* ─── PURE CURSOR OVERRIDE (INVISIBLE) ─── */
+body, body *, a, button, canvas, .lvl-btn, .btn { 
+  cursor: none !important; 
+}
+
+/* ─── FLASHLIGHT BEAM (NEON GREEN/GOLD TUNE) ─── */
+#pickaxe-glow {
+    position: fixed; width: 160px; height: 160px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,255,136,0.3) 0%, rgba(255,215,0,0.15) 40%, transparent 70%);
+    pointer-events: none; z-index: 999999; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
+    will-change: left, top;
+}
+
 body {
   font-family: var(--font-pixel);
   color: var(--cream);
@@ -78,14 +92,14 @@ header {
 .level-select { display: flex; gap: .5rem; margin: 0 auto 1.5rem; flex-wrap: wrap; justify-content: center; position: relative; z-index: 2; max-width: 900px; }
 .lvl-btn {
   font-size: .4rem; padding: .6rem 1rem; background: rgba(0,0,0,0.8);
-  border: 1px solid rgba(255,215,0,.2); color: var(--gd); cursor: pointer; transition: all .2s;
+  border: 1px solid rgba(255,215,0,.2); color: var(--gd); transition: all .2s;
 }
 .lvl-btn:hover, .lvl-btn.active { border-color: var(--neon-green); color: var(--neon-green); background: rgba(0,255,136,.05); box-shadow: 0 0 15px rgba(0,255,136,0.2); }
 
 /* CANVAS AREA */
 .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; padding-bottom: 2rem; }
 .canvas-wrap { position: relative; padding: 4px; background: #000; border: 2px solid var(--gd); box-shadow: inset 0 0 30px rgba(0,0,0,1), 0 0 40px rgba(255,215,0,0.1); }
-#gameCanvas { display: block; image-rendering: pixelated; cursor: crosshair; touch-action: none; background: #050306; }
+#gameCanvas { display: block; image-rendering: pixelated; touch-action: none; background: #050306; }
 
 /* OVERLAYS */
 .overlay {
@@ -98,7 +112,7 @@ header {
 .ov-gold { font-size: .8rem; color: var(--gold); margin: 1rem 0; text-shadow: 0 0 15px rgba(255,215,0,0.4); }
 
 .btn {
-  font-size: .45rem; padding: .8rem 1.5rem; letter-spacing: .1em; cursor: pointer; border: none; transition: all .2s; text-decoration: none;
+  font-size: .45rem; padding: .8rem 1.5rem; letter-spacing: .1em; border: none; transition: all .2s; text-decoration: none;
 }
 .btn-gold { background: var(--gold); color: #000; }
 .btn-gold:hover { background: #fff; box-shadow: 0 0 20px rgba(255,215,0,.6); transform: scale(1.05); }
@@ -120,10 +134,11 @@ header {
 .dg-link { font-size: 0.4rem; color: var(--gd); text-decoration: none; text-transform: uppercase; transition: color 0.3s; pointer-events: auto!important;}
 .dg-link:hover { color: var(--gold); }
 </style>
-<style id="nmn-cursor-global">body,*{cursor:none!important}</style>
 <style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
 </head>
 <body>
+
+<div id="pickaxe-glow"></div>
 
 <script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
@@ -174,6 +189,51 @@ header {
 </div>
 
 <script>
+// ─── UNIFIED FLASHLIGHT TRACKING ───
+function moveGlow(e) {
+    const r = document.getElementById('pickaxe-glow');
+    if(!r) return;
+    let x, y;
+    if(e.type.includes('touch')) {
+        if(e.touches && e.touches.length > 0) {
+            x = e.touches[0].clientX;
+            y = e.touches[0].clientY;
+        }
+    } else {
+        x = e.clientX;
+        y = e.clientY;
+    }
+    if(x !== undefined && y !== undefined) {
+        r.style.left = x + 'px';
+        r.style.top = y + 'px';
+    }
+}
+document.addEventListener('mousemove', moveGlow);
+document.addEventListener('touchmove', moveGlow, {passive: true});
+document.addEventListener('touchstart', moveGlow, {passive: true});
+
+document.addEventListener('mousedown', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '190px'; r.style.height = '190px'; r.style.background = 'radial-gradient(circle,rgba(0,255,136,.5) 0%,transparent 70%)'; }
+});
+document.addEventListener('mouseup', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(0,255,136,.3) 0%,rgba(255,215,0,0.15) 40%,transparent 70%)'; }
+});
+document.addEventListener('touchend', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(0,255,136,.3) 0%,rgba(255,215,0,0.15) 40%,transparent 70%)'; }
+}, {passive: true});
+
+// BFCache Fix
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        const overlay = document.getElementById('descent-overlay');
+        if(overlay) overlay.classList.remove('descent-active');
+    }
+});
+
+// ─── GAME LOGIC ───
 window.NMN_CONTEXT = "mine";
 const NMN_Audio = {
   ctx: null, running: false, masterGain: null,
@@ -196,6 +256,7 @@ const NMN_Audio = {
   }
 };
 document.addEventListener('click', () => { if (!NMN_Audio.running) NMN_Audio.startAll(); }, { once: true });
+document.addEventListener('touchstart', () => { if (!NMN_Audio.running) NMN_Audio.startAll(); }, { once: true, passive: true });
 
 const SFX = {
   play(freq, type, dur, vol = 0.1) {
@@ -212,9 +273,7 @@ const SFX = {
   connect() { this.play(1200, 'triangle', 0.3, 0.1); setTimeout(()=>this.play(1600, 'triangle', 0.4, 0.1), 100); },
   win() { this.play(400, 'square', 0.2); setTimeout(()=>this.play(600, 'square', 0.2), 150); setTimeout(()=>this.play(800, 'square', 0.6), 300); }
 };
-</script>
 
-<script>
 let CELL = 56;
 const MAX_BOARD_SIZE = 500;
 const COLORS = ['#FFD700', '#00BFFF', '#9B59B6', '#2ECC71', '#E74C3C', '#FF8C00', '#E8F0F0', '#FF69B4'];
