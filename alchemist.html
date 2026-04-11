@@ -46,10 +46,10 @@ body {
 
 h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
 
-/* ─── FLASHLIGHT BEAM ─── */
+/* ─── FLASHLIGHT BEAM (BRIGHTNESS INCREASED) ─── */
 #pickaxe-glow {
-    position: fixed; width: 150px; height: 150px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(85,255,85,0.15) 0%, rgba(255,215,0,0.05) 40%, transparent 70%);
+    position: fixed; width: 160px; height: 160px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(85,255,85,0.4) 0%, rgba(255,215,0,0.15) 40%, transparent 70%);
     pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
     mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
 }
@@ -226,7 +226,7 @@ main { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem; position: relati
 </main>
 
 <script>
-// COSMIC AUDIO ENGINE (Adds the hum and twinkle to the alchemist table)
+// COSMIC AUDIO ENGINE
 const CosmicAudio = {
   ctx: null, running: false, masterGain: null,
   init() {
@@ -239,7 +239,7 @@ const CosmicAudio = {
   playHum() {
     const osc = this.ctx.createOscillator();
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(65, this.ctx.currentTime); // Slightly higher pitch for Alchemy
+    osc.frequency.setValueAtTime(65, this.ctx.currentTime); 
     const filter = this.ctx.createBiquadFilter();
     filter.type = 'lowpass'; filter.frequency.value = 250;
     const g = this.ctx.createGain();
@@ -253,7 +253,7 @@ const CosmicAudio = {
   }
 };
 
-// Glow Cursor Tracking
+// Glow Cursor Tracking (Brighter Beam)
 document.addEventListener('mousemove', function(e){
   const r = document.getElementById('pickaxe-glow');
   if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
@@ -261,11 +261,11 @@ document.addEventListener('mousemove', function(e){
 document.addEventListener('mousedown', function(){
   CosmicAudio.startAll();
   const r = document.getElementById('pickaxe-glow');
-  if(r) { r.style.width = '180px'; r.style.height = '180px'; r.style.background = 'radial-gradient(circle,rgba(85,255,85,.25) 0%,transparent 70%)'; }
+  if(r) { r.style.width = '190px'; r.style.height = '190px'; r.style.background = 'radial-gradient(circle,rgba(85,255,85,.6) 0%,transparent 70%)'; }
 });
 document.addEventListener('mouseup', function(){
   const r = document.getElementById('pickaxe-glow');
-  if(r) { r.style.width = '150px'; r.style.height = '150px'; r.style.background = 'radial-gradient(circle,rgba(85,255,85,.15) 0%,rgba(255,215,0,0.05) 40%,transparent 70%)'; }
+  if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(85,255,85,.4) 0%,rgba(255,215,0,0.15) 40%,transparent 70%)'; }
 });
 
 const ELEMENTS = [
@@ -382,7 +382,6 @@ function showElement(i) {
 function addToSynth(i) {
   const el = ELEMENTS[i];
   
-  // Shift slots: Slot B becomes Slot A, New element becomes Slot B
   if (synthSlots[0] !== null && synthSlots[1] !== null) {
     synthSlots[0] = synthSlots[1];
   } else if (synthSlots[0] === null) {
@@ -408,7 +407,6 @@ function updateSynthUI() {
     slotB.innerHTML = `<div class="s-sym" style="color:${synthSlots[1].color}">${synthSlots[1].sym}</div><div>${synthSlots[1].name}</div>`;
   }
   
-  // Reset crucible
   crucible.className = 'fusion-crucible';
   crucible.innerHTML = '?';
   crucible.style.background = '#000';
@@ -432,7 +430,6 @@ function synthesize() {
   const syms = [synthSlots[0].sym, synthSlots[1].sym].sort().join('+');
   let resultText = "";
 
-  // Fusion Logic Matrix
   if (syms === 'Lx+Px') {
     resultText = "FUSION SUCCESS: Pyrexite and Lumexite form a perfect binary loop. Helios and Pyro are unified.";
   } else if (syms === 'Au+Vd') {
@@ -447,24 +444,20 @@ function synthesize() {
     resultText = `REACTION UNSTABLE: ${synthSlots[0].name} and ${synthSlots[1].name} repel each other. They belong to different worlds.`;
   }
 
-  // Visual Crucible Generation
   crucible.classList.add('active');
   crucible.innerHTML = '';
   
-  // Create hybrid color gradient
   const c1 = synthSlots[0].color;
   const c2 = synthSlots[1].color;
   crucible.style.background = `linear-gradient(45deg, ${c1}, ${c2})`;
   
-  // Randomize shape to represent "new element"
   const shapes = [
-      'circle(50% at 50% 50%)', // Orb
-      'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)', // Diamond
-      'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)' // Hexagon
+      'circle(50% at 50% 50%)', 
+      'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)', 
+      'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)' 
   ];
   const randomShape = shapes[Math.floor(Math.random() * shapes.length)];
   
-  // If it's a compound of the same element, make it a perfect square
   if(synthSlots[0].sym === synthSlots[1].sym) {
       crucible.style.clipPath = 'none';
       crucible.style.borderRadius = '8px';
@@ -472,11 +465,9 @@ function synthesize() {
       crucible.style.clipPath = randomShape;
   }
 
-  // Log Result
   log.style.color = (syms === 'Au+Vd') ? "#FF5555" : "var(--lg)";
   log.textContent = resultText;
 
-  // Save to Lore Vault
   try {
     const vault = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]');
     vault.push({ 
