@@ -220,7 +220,6 @@ main{max-width:1200px;margin:0 auto;padding:3rem 1.5rem; position: relative; z-i
         <a href="#email-terminal" style="display:inline-block;padding:.5rem 1rem;background:rgba(255,215,0,.1);border:1px solid var(--gold);color:var(--gold);font-family:'Press Start 2P',cursive;font-size:.28rem;text-decoration:none;letter-spacing:.08em;">SUBMIT NOMINATION →</a>
       </div>
     </div>
-
   </div>
 
   <div class="bracket-section">
@@ -338,6 +337,22 @@ const CosmicAudio = {
 
 document.addEventListener('mousedown', () => { CosmicAudio.startAll(); });
 
+// ── ROSTER FILTER SYSTEM ──
+function filterRoster(sport, btnElement) {
+    const buttons = document.querySelectorAll('.filter-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    if(btnElement) btnElement.classList.add('active');
+
+    const cards = document.querySelectorAll('.scout-card');
+    cards.forEach(card => {
+        if (sport === 'all' || card.getAttribute('data-sport') === sport || card.getAttribute('data-sport') === 'all') {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
 // ── DETERMINISTIC ATHLETE HASH ENGINE ──
 const MINER_CLASSES = [
   { title:"THE ORE BREAKER",    color:"#FF5555", book:"The Wanderer", url:"https://books2read.com/u/3LPyjw", price:"$2.99",
@@ -379,28 +394,11 @@ function scanAthlete() {
   box.scrollIntoView({behavior:'smooth',block:'center'});
 }
 
-// Trigger scan on Enter key
 document.getElementById('athleteInput').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
         scanAthlete();
     }
 });
-
-// ── ROSTER FILTER SYSTEM ──
-function filterRoster(sport, btnElement) {
-    const buttons = document.querySelectorAll('.filter-btn');
-    buttons.forEach(btn => btn.classList.remove('active'));
-    if(btnElement) btnElement.classList.add('active');
-
-    const cards = document.querySelectorAll('.scout-card');
-    cards.forEach(card => {
-        if (sport === 'all' || card.getAttribute('data-sport') === sport || card.getAttribute('data-sport') === 'all') {
-            card.style.display = 'block';
-        } else {
-            card.style.display = 'none';
-        }
-    });
-}
 
 // ── BRACKET PICKS ──
 let selectedPick = null;
@@ -412,10 +410,9 @@ function selectPick(btn, team) {
 }
 
 // ── EMAIL SUBMIT (Google Forms backend) ──
-// REPLACE THESE 3 VALUES BEFORE THE FESTIVAL!
-const GOOGLE_FORM_ACTION = 'https://docs.google.com/forms/d/e/REPLACE_WITH_YOUR_FORM_ID/formResponse';
-const EMAIL_FIELD = 'entry.REPLACE_EMAIL_FIELD';
-const ATHLETE_FIELD = 'entry.REPLACE_ATHLETE_FIELD';
+const GOOGLE_FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSchvRnGzpQK9QyMvVNf922VKpjHhZCtRc2f-7nKss1xUL6QkQ/formResponse';
+const EMAIL_FIELD = 'entry.1941782966';
+const ATHLETE_FIELD = 'entry.1688261920';
 
 function submitEmail(e) {
   e.preventDefault();
