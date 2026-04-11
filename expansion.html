@@ -31,6 +31,20 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden;}
 
+/* ─── PURE CURSOR OVERRIDE (INVISIBLE) ─── */
+body, body *, a, button, .coming-item, .cta-btn, canvas { 
+  cursor: none !important; 
+}
+
+/* ─── FLASHLIGHT BEAM (BLUE RADIANT TUNE) ─── */
+#pickaxe-glow {
+    position: fixed; width: 160px; height: 160px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(85,170,255,0.4) 0%, rgba(0,85,255,0.15) 40%, transparent 70%);
+    pointer-events: none; z-index: 999999; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
+    will-change: left, top;
+}
+
 body {
   font-family: var(--font-text);
   color: var(--cream);
@@ -125,10 +139,11 @@ main { max-width: 950px; margin: 0 auto; padding: 3rem 1rem 4rem 1rem; width: 10
 .dg-link:hover { color:var(--gold); }
 .dg-sep { color:var(--faint); font-size:0.6rem; }
 </style>
-<style id="nmn-cursor-global">body,*{cursor:none!important}</style>
 <style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
 </head>
 <body>
+
+<div id="pickaxe-glow"></div>
 
 <script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
@@ -230,6 +245,46 @@ main { max-width: 950px; margin: 0 auto; padding: 3rem 1rem 4rem 1rem; width: 10
 </div>
 
 <script>
+// ─── UNIFIED FLASHLIGHT TRACKING ───
+function moveGlow(e) {
+    const r = document.getElementById('pickaxe-glow');
+    if(!r) return;
+    let x = e.clientX;
+    let y = e.clientY;
+    if(e.touches && e.touches.length > 0) {
+        x = e.touches[0].clientX;
+        y = e.touches[0].clientY;
+    }
+    if(x !== undefined && y !== undefined) {
+        r.style.left = x + 'px';
+        r.style.top = y + 'px';
+    }
+}
+document.addEventListener('mousemove', moveGlow);
+document.addEventListener('touchmove', moveGlow, {passive: true});
+document.addEventListener('touchstart', moveGlow, {passive: true});
+
+document.addEventListener('mousedown', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '190px'; r.style.height = '190px'; r.style.background = 'radial-gradient(circle,rgba(85,170,255,.6) 0%,transparent 70%)'; }
+});
+document.addEventListener('mouseup', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(85,170,255,.4) 0%,rgba(0,85,255,.15) 40%,transparent 70%)'; }
+});
+document.addEventListener('touchend', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(85,170,255,.4) 0%,rgba(0,85,255,.15) 40%,transparent 70%)'; }
+}, {passive: true});
+
+// BFCache Fix
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        const overlay = document.getElementById('descent-overlay');
+        if(overlay) overlay.classList.remove('descent-active');
+    }
+});
+
 // HUD SYNC
 (function(){
   try{
