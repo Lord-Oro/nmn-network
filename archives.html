@@ -29,6 +29,9 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { min-height: 100vh; background: var(--bg-color); scroll-behavior: smooth;}
 
+/* CURSOR CONTROL: Invisible cursor so the flashlight beam and nmn-nav lantern do the work */
+body, * { cursor: none !important; }
+
 body {
   font-family: var(--font-pixel);
   color: var(--cream);
@@ -43,13 +46,10 @@ body {
 
 h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
 
-/* ─── CUSTOM CURSOR & GLOW ─── */
-body, a, button, .book-card { 
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; 
-}
+/* ─── FLASHLIGHT BEAM (BRIGHT GOLD ARCHIVES TUNE) ─── */
 #pickaxe-glow {
-    position: fixed; width: 140px; height: 140px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, transparent 70%);
+    position: fixed; width: 160px; height: 160px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, rgba(232,184,75,0.15) 40%, transparent 70%);
     pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
     mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
 }
@@ -72,7 +72,8 @@ body::after{
 header {
   padding: 1rem 2rem; border-bottom: 4px solid var(--gd);
   display: flex; justify-content: space-between; align-items: center;
-  background: rgba(5,3,2,.98); z-index: 999; position: sticky; top: 70px;
+  background: rgba(5,3,2,.98); z-index: 999; position: sticky; top: 0;
+  backdrop-filter: blur(5px);
 }
 .logo { color: var(--gold); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #553300; }
 .back { font-size: 0.5rem; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: 0.2s;}
@@ -490,18 +491,54 @@ main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem 1.5rem; posi
 </div>
 
 <script>
-// Glow Cursor Tracking
+// ─── COSMIC AUDIO ENGINE (Deep Archives Tune) ───
+const CosmicAudio = {
+  ctx: null, running: false, masterGain: null,
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  },
+  playHum() {
+    const osc = this.ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(45, this.ctx.currentTime); // Deep, resonant hum
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass'; filter.frequency.value = 150;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.05, this.ctx.currentTime);
+    osc.connect(filter).connect(g).connect(this.masterGain);
+    osc.start();
+  },
+  startAll() {
+    if (this.running) return;
+    this.init(); this.running = true; this.playHum();
+  }
+};
+
+// BFCache Fix: Clear the descent overlay when using the back button
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        const overlay = document.getElementById('descent-overlay');
+        if(overlay) overlay.classList.remove('descent-active');
+    }
+});
+
+// Glow Cursor Tracking (Brighter Beam)
 document.addEventListener('mousemove', function(e){
   const r = document.getElementById('pickaxe-glow');
   if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
 });
 document.addEventListener('mousedown', function(){
+  CosmicAudio.startAll();
   const r = document.getElementById('pickaxe-glow');
-  if(r) { r.style.width = '180px'; r.style.height = '180px'; r.style.background = 'radial-gradient(circle,rgba(232,184,75,.4) 0%,transparent 70%)'; }
+  if(r) { r.style.width = '190px'; r.style.height = '190px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.6) 0%,transparent 70%)'; }
 });
 document.addEventListener('mouseup', function(){
   const r = document.getElementById('pickaxe-glow');
-  if(r) { r.style.width = '140px'; r.style.height = '140px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.25) 0%,transparent 70%)'; }
+  if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.4) 0%,rgba(232,184,75,0.15) 40%,transparent 70%)'; }
 });
 
 // ── QUOTES ──
