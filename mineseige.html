@@ -121,35 +121,37 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
   .select-title { font-size: 0.8rem; }
 }
 
-/* ─── HUD CONTROLS ERGONOMICS (LEFT THUMB FIRE, RIGHT THUMB AMMO) ─── */
+/* ─── EXTERNAL CONTROL PANEL (Below Canvas) ─── */
+.control-panel {
+  display: none; /* Hidden until game starts */
+  justify-content: space-between; align-items: center;
+  padding: 10px 20px; background: rgba(5,3,8,0.98);
+  border-top: 2px solid var(--gd); flex-shrink: 0; z-index: 50;
+}
+
 .fire-btn {
-  position: absolute; bottom: 20px; left: 20px; z-index: 15;
   background: #ff4444; color: #000; border: 3px solid #fff;
-  font-size: 0.6rem; font-family: var(--font-pixel);
+  padding: 15px 30px; font-size: 0.8rem; font-family: var(--font-pixel);
   cursor: none; text-shadow: 0 0 5px rgba(255,255,255,0.8);
   box-shadow: 0 0 20px rgba(255,68,68,0.6);
   animation: firePulse 1s infinite alternate; transition: 0.1s;
-  border-radius: 50%; width: 80px; height: 80px;
-  display: none; justify-content: center; align-items: center; text-align: center;
+  border-radius: 8px; flex-shrink: 0;
 }
 .fire-btn:active { transform: scale(0.95); background: #fff; color: #ff4444; border-color: #ff4444; }
 .fire-btn:disabled { background: #333; border-color: #555; color: #555; animation: none; box-shadow: none; }
 
 @keyframes firePulse { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
 
-.ammo-bar {
-  position: absolute; bottom: 20px; right: 20px; z-index: 15;
-  display: none; flex-direction: column; gap: 10px;
-  background: rgba(5,3,8,0.9); padding: 10px; border: 2px solid var(--gd);
-}
+.ammo-bar { display: flex; gap: 10px; }
 .ammo-btn {
   width: 45px; height: 45px; border: 2px solid var(--gd); background: #000;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  font-size: 1.2rem; position: relative; transition: 0.2s;
+  font-size: 1.2rem; position: relative; transition: 0.2s; cursor: none;
 }
 .ammo-btn.active { border-color: var(--neon-green); background: rgba(0,255,136,0.1); }
 .ammo-count { font-size: 0.35rem; color: var(--gold); position: absolute; bottom: 3px; right: 3px; }
 
+/* IN-GAME HUD ELEMENTS */
 .wind-bar {
   position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
   background: rgba(5,3,8,0.9); border: 2px solid var(--gd);
@@ -235,23 +237,6 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
   </div>
   <div class="turn-indicator" id="turnIndicator" style="display:none">YOUR TURN</div>
 
-  <button class="fire-btn" id="fireBtn">FIRE</button>
-  
-  <div class="ammo-bar" id="ammoBar">
-    <div class="ammo-btn active" data-ammo="0" onclick="selectAmmo(0)">
-      <span id="ammoIcon0">⬡</span><span class="ammo-count" id="ammoCount0">∞</span>
-    </div>
-    <div class="ammo-btn" data-ammo="1" onclick="selectAmmo(1)">
-      <span id="ammoIcon1">🔥</span><span class="ammo-count" id="ammoCount1">5</span>
-    </div>
-    <div class="ammo-btn" data-ammo="2" onclick="selectAmmo(2)">
-      <span id="ammoIcon2">💎</span><span class="ammo-count" id="ammoCount2">3</span>
-    </div>
-    <div class="ammo-btn" data-ammo="3" onclick="selectAmmo(3)">
-      <span id="ammoIcon3">💣</span><span class="ammo-count" id="ammoCount3">2</span>
-    </div>
-  </div>
-
   <div class="mine-select" id="mineSelect">
     <div class="select-title">[ MINE SIEGE ]<br>SELECT PROTOCOL</div>
     <p class="select-sub" id="selectInstruct">Tap a fortress to select. Tap again to deploy.</p>
@@ -295,6 +280,24 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
     <div class="btn-group">
       <button class="btn-start-over" onclick="resetGame()">FIGHT AGAIN</button>
       <a href="minewars.html" class="btn-outline">READ ARCHIVE</a>
+    </div>
+  </div>
+</div>
+
+<div class="control-panel" id="controlPanel">
+  <button class="fire-btn" id="fireBtn">FIRE</button>
+  <div class="ammo-bar" id="ammoBar">
+    <div class="ammo-btn active" data-ammo="0" onclick="selectAmmo(0)">
+      <span id="ammoIcon0">⬡</span><span class="ammo-count" id="ammoCount0">∞</span>
+    </div>
+    <div class="ammo-btn" data-ammo="1" onclick="selectAmmo(1)">
+      <span id="ammoIcon1">🔥</span><span class="ammo-count" id="ammoCount1">5</span>
+    </div>
+    <div class="ammo-btn" data-ammo="2" onclick="selectAmmo(2)">
+      <span id="ammoIcon2">💎</span><span class="ammo-count" id="ammoCount2">3</span>
+    </div>
+    <div class="ammo-btn" data-ammo="3" onclick="selectAmmo(3)">
+      <span id="ammoIcon3">💣</span><span class="ammo-count" id="ammoCount3">2</span>
     </div>
   </div>
 </div>
@@ -486,8 +489,7 @@ function startBattle() {
   document.getElementById('mineSelect').style.display = 'none';
   document.getElementById('windBar').style.display = 'flex';
   document.getElementById('turnIndicator').style.display = 'block';
-  document.getElementById('fireBtn').style.display = 'flex';
-  document.getElementById('ammoBar').style.display = 'flex';
+  document.getElementById('controlPanel').style.display = 'flex';
   document.getElementById('arenaBar').style.display = 'block';
 
   let aiMine = selectedMine;
@@ -530,8 +532,8 @@ function selectAmmo(idx) {
   document.querySelectorAll('.ammo-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
 }
 
-// ── NEW DEDICATED FIRE BUTTON ──
-document.getElementById('fireBtn').addEventListener('click', () => {
+// ── FIRING LOGIC (Both Button & Canvas Click/Spacebar) ──
+function fireWeapon() {
   if (!gameRunning || turn !== 'player' || projectiles.length > 0) return;
   if (ammoStock[selectedAmmo].remaining <= 0) { selectAmmo(0); return; }
   
@@ -560,7 +562,21 @@ document.getElementById('fireBtn').addEventListener('click', () => {
   document.getElementById('turnIndicator').style.display = 'none'; 
   document.getElementById('fireBtn').disabled = true; // Disable button while firing
   turn = 'flight'; 
+}
+
+// Desktop: Fire on Canvas Click
+canvas.addEventListener('click', fireWeapon);
+
+// Desktop: Fire on Spacebar
+window.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') {
+        e.preventDefault();
+        fireWeapon();
+    }
 });
+
+// Mobile: Fire on Button Tap
+document.getElementById('fireBtn').addEventListener('click', fireWeapon);
 
 function aiShoot() {
   if(!gameRunning || p2.hp <= 0) return;
@@ -645,8 +661,7 @@ function checkGameOver() {
 
     document.getElementById('goTitle').textContent = won ? 'EXTRACTION COMPLETE' : 'SYSTEM FAILURE';
     document.getElementById('goTitle').style.color = won ? 'var(--gold)' : '#ff4444';
-    document.getElementById('fireBtn').style.display = 'none';
-    document.getElementById('ammoBar').style.display = 'none';
+    document.getElementById('controlPanel').style.display = 'none';
     setTimeout(() => document.getElementById('gameOverOv').style.display = 'flex', 1500);
   }
 }
@@ -839,8 +854,7 @@ function resetGame() {
   document.getElementById('mineSelect').style.display = 'flex';
   document.getElementById('windBar').style.display = 'none';
   document.getElementById('turnIndicator').style.display = 'none';
-  document.getElementById('fireBtn').style.display = 'none';
-  document.getElementById('ammoBar').style.display = 'none';
+  document.getElementById('controlPanel').style.display = 'none';
   document.getElementById('arenaBar').style.display = 'none';
   
   selectedMine = -1;
