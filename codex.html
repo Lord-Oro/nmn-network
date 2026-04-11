@@ -32,17 +32,18 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; }
 
-/* ─── PURE CURSOR OVERRIDE ─── */
+/* ─── PURE CURSOR OVERRIDE: INVISIBLE ─── */
 body, body *, a, button, .choice, .btn { 
   cursor: none !important; 
 }
 
-/* ─── FLASHLIGHT BEAM ─── */
+/* ─── FLASHLIGHT BEAM (PURPLE DUNGEON TUNE) ─── */
 #pickaxe-glow {
     position: fixed; width: 160px; height: 160px; border-radius: 50%;
     background: radial-gradient(circle, rgba(170,85,255,0.4) 0%, rgba(255,215,0,0.15) 40%, transparent 70%);
-    pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
+    pointer-events: none; z-index: 999999; transform: translate(-50%, -50%);
     mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
+    will-change: left, top;
 }
 
 body {
@@ -257,21 +258,21 @@ function moveGlow(e) {
         r.style.top = y + 'px';
     }
 }
-document.addEventListener('mousemove', moveGlow);
-document.addEventListener('touchmove', moveGlow, {passive: true});
-document.addEventListener('touchstart', moveGlow, {passive: true});
+window.addEventListener('mousemove', moveGlow);
+window.addEventListener('touchmove', moveGlow, {passive: true});
+window.addEventListener('touchstart', moveGlow, {passive: true});
 
-document.addEventListener('mousedown', function(){
+window.addEventListener('mousedown', function(){
   const r = document.getElementById('pickaxe-glow');
   if(r) { r.style.width = '190px'; r.style.height = '190px'; r.style.background = 'radial-gradient(circle,rgba(170,85,255,.5) 0%,transparent 70%)'; }
 });
-document.addEventListener('mouseup', function(){
+window.addEventListener('mouseup', function(){
   const r = document.getElementById('pickaxe-glow');
   if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(170,85,255,.4) 0%,rgba(255,215,0,0.15) 40%,transparent 70%)'; }
 });
 
 // BFCache Fix
-document.addEventListener('pageshow', function(event) {
+window.addEventListener('pageshow', function(event) {
     if (event.persisted) {
         const overlay = document.getElementById('descent-overlay');
         if(overlay) overlay.classList.remove('descent-active');
@@ -304,7 +305,7 @@ function drawSprite(canvasId, seedStr, colorHex) {
   ctx.shadowBlur = 0;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', () => {
   drawSprite('oro-avatar-main', 'LordOroEyeGold', '#FFD700');
   updateGlobalHUD();
 });
