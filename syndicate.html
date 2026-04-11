@@ -10,111 +10,101 @@
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="nmn-theme.css">
 <style>
-:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#050308;--cream:#E8E0D0;--muted:#8a7654;--green:#00FF88;--pu:#AA55FF;--red:#FF4444;--cyan:#55FFFF;}
+:root{--gold:#FFD700;--gb:#e8b84b;--gd:#8B6914;--coal:#050308;--cream:#E8E0D0;--muted:#8a7654;--green:#00FF88;--pu:#AA55FF;--red:#FF4444;}
 *{margin:0;padding:0;box-sizing:border-box;}
 
-/* ─── CURSOR CONTROL (Handled by nmn-nav.js) ─── */
-body, * { cursor: none !important; }
+/* CURSOR: handled by nmn-nav.js lantern */
+body,*{cursor:none!important;}
 
-/* ─── COSMIC STARFIELD BACKGROUND ─── */
-#starfield {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  z-index: -1; pointer-events: none; background: radial-gradient(circle at center, #0a0515 0%, #000000 100%);
-}
-.star {
-  position: absolute; background: #FFF; border-radius: 50%;
-  animation: twinkle infinite alternate;
-}
-@keyframes twinkle { 0% { opacity: 0.2; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 5px #FFF;} }
+/* STARFIELD */
+#starfield{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;background:radial-gradient(circle at center,#0a0515 0%,#000 100%);}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle infinite alternate;}
+@keyframes twinkle{0%{opacity:.2;transform:scale(.8);}100%{opacity:1;transform:scale(1.2);box-shadow:0 0 5px #fff;}}
 
-html,body{background:var(--coal);color:var(--cream);font-family:'Press Start 2P',cursive;min-height:100vh; scroll-behavior: smooth;}
-body{padding-bottom:100px;background-image:linear-gradient(rgba(20,15,25,.8) 2px,transparent 2px),linear-gradient(90deg,rgba(20,15,25,.8) 2px,transparent 2px);background-size:32px 32px,32px 32px;}
-body::after{content:"";position:fixed;top:0;left:0;width:100vw;height:100vh;background:linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,.06) 50%);background-size:100% 3px;pointer-events:none;z-index:10000;opacity:.15;}
+html,body{background:var(--coal);color:var(--cream);font-family:'Press Start 2P',cursive;min-height:100vh;}
+body{padding-bottom:100px;background-image:linear-gradient(rgba(20,15,25,.8) 2px,transparent 2px),linear-gradient(90deg,rgba(20,15,25,.8) 2px,transparent 2px);background-size:32px 32px;}
+body::after{content:"";position:fixed;inset:0;background:linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,.06) 50%);background-size:100% 3px;pointer-events:none;z-index:10000;opacity:.15;}
+
+#pickaxe-glow{position:fixed;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(255,68,68,.15) 0%,transparent 70%);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:screen;transition:width .1s,height .1s;}
 
 header{padding:1rem 2rem;border-bottom:3px solid var(--gold);display:flex;justify-content:space-between;align-items:center;background:rgba(5,3,8,.98);position:sticky;top:0;z-index:999;backdrop-filter:blur(5px);}
 .logo{color:var(--gold);font-size:.7rem;text-decoration:none;letter-spacing:.1em;}
 .back{color:var(--muted);font-size:.45rem;text-decoration:none;letter-spacing:.08em;}
 .back:hover{color:var(--gold);}
 
-main{max-width:1200px;margin:0 auto;padding:3rem 1.5rem; position: relative; z-index: 10;}
+main{max-width:1200px;margin:0 auto;padding:3rem 1.5rem;position:relative;z-index:10;}
 
-/* HERO */
-.syndicate-hero{text-align:center;padding:4rem 2rem;border:3px solid var(--gold);background:rgba(10,8,15,0.85);margin-bottom:3rem;position:relative;backdrop-filter:blur(4px);box-shadow:inset 0 0 30px #000, 0 15px 40px rgba(0,0,0,0.8);}
-.hero-eyebrow{font-size:.4rem;color:var(--gd);letter-spacing:.3em;margin-bottom:1rem;text-transform:uppercase;}
-.hero-title{font-family:var(--font-ancient);font-size:clamp(3rem,7vw,4.5rem);color:var(--gold);text-shadow:0 0 30px rgba(255,215,0,.3);margin-bottom:1rem;font-weight:600;line-height:1.2;}
+.syndicate-hero{text-align:center;padding:4rem 2rem;border:3px solid var(--gold);background:rgba(10,8,15,.85);margin-bottom:3rem;backdrop-filter:blur(4px);box-shadow:inset 0 0 30px #000,0 15px 40px rgba(0,0,0,.8);}
+.hero-eyebrow{font-size:.4rem;color:var(--gd);letter-spacing:.3em;margin-bottom:1rem;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,7vw,4.5rem);color:var(--gold);text-shadow:0 0 30px rgba(255,215,0,.3);margin-bottom:1rem;font-weight:600;line-height:1.2;}
 .hero-title em{color:var(--cream);font-style:italic;}
 .hero-sub{font-family:'VT323',monospace;font-size:1.4rem;color:var(--muted);line-height:1.6;max-width:600px;margin:0 auto 2rem;font-style:italic;}
-.live-badge{display:inline-block;background:var(--red);color:#fff;font-family:var(--font-pixel);font-size:.3rem;padding:.4rem 1rem;letter-spacing:.15em;animation:blink-badge 1.5s infinite;}
+.live-badge{display:inline-block;background:var(--red);color:#fff;font-size:.3rem;padding:.4rem 1rem;letter-spacing:.15em;animation:blink-badge 1.5s infinite;}
 @keyframes blink-badge{0%,100%{opacity:1;}50%{opacity:.4;}}
 
-/* SECTIONS */
 .section-tag{font-size:.35rem;color:var(--gd);letter-spacing:.25em;margin-bottom:1.5rem;border-bottom:1px solid rgba(255,215,0,.1);padding-bottom:.8rem;}
 
-/* FILTER TABS */
-.filter-tabs { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 2rem; }
-.filter-btn { background: #111; border: 2px solid var(--gd); color: var(--cream); font-family: var(--font-pixel); font-size: 0.4rem; padding: 0.8rem 1.2rem; transition: all 0.2s; letter-spacing: 1px; }
-.filter-btn:hover { background: var(--gd); color: #000; }
-.filter-btn.active { background: var(--gold); color: #000; border-color: #FFF; box-shadow: 0 0 15px rgba(255,215,0,0.4); }
+/* SPORT TABS */
+.sport-tab{padding:.4rem .9rem;background:rgba(255,215,0,.04);border:1px solid rgba(255,215,0,.2);color:var(--muted);font-family:'Press Start 2P',cursive;font-size:.28rem;cursor:none;letter-spacing:.08em;transition:all .2s;}
+.sport-tab:hover,.sport-tab.active{background:rgba(255,215,0,.12);border-color:var(--gold);color:var(--gold);}
 
-/* SCOUTING REPORTS */
-.roster-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.5rem;margin-bottom:4rem;}
-.scout-card{background:rgba(10,8,15,0.85);border:2px solid rgba(255,215,0,.12);padding:1.5rem;backdrop-filter:blur(4px);transition:transform 0.3s, border-color 0.3s; display: block;}
+/* ROSTER */
+.roster-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem;margin-bottom:4rem;}
+.scout-card{background:rgba(10,8,15,.85);border:2px solid rgba(255,215,0,.12);padding:1.5rem;backdrop-filter:blur(4px);transition:transform .3s,border-color .3s;}
 .scout-card:hover{transform:translateY(-5px);border-color:var(--gold);}
 .scout-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;}
-.scout-name{font-size:.45rem;color:var(--gold);line-height:1.4;}
-.scout-class{font-size:.25rem;padding:.3rem .5rem;border:1px solid;letter-spacing:.1em;text-align:center; white-space: nowrap;}
-.scout-class.breaker{color:var(--red);border-color:var(--red);background:rgba(255,68,68,.08);}
+.scout-name{font-size:.48rem;color:var(--gold);line-height:1.4;}
+.scout-class{font-size:.26rem;padding:.25rem .6rem;border:1px solid;letter-spacing:.08em;text-align:center;white-space:nowrap;}
+.scout-class.breaker{color:#FF5555;border-color:#FF5555;background:rgba(255,85,85,.08);}
 .scout-class.builder{color:var(--green);border-color:var(--green);background:rgba(0,255,136,.05);}
-.scout-class.seeker{color:var(--gold);border-color:var(--gold);background:rgba(255,215,0,.05);}
-.scout-class.wanderer{color:var(--cyan);border-color:var(--cyan);background:rgba(85,255,255,.05);}
-.scout-class.oracle{color:var(--pu);border-color:var(--pu);background:rgba(170,85,255,.05);}
+.scout-class.seeker{color:var(--pu);border-color:var(--pu);background:rgba(170,85,255,.05);}
+.scout-class.wanderer{color:#55FFFF;border-color:#55FFFF;background:rgba(85,255,255,.05);}
+.scout-class.oracle{color:#FF00FF;border-color:#FF00FF;background:rgba(255,0,255,.05);}
 .scout-class.alchemist{color:#FFB855;border-color:#FFB855;background:rgba(255,184,85,.05);}
-.scout-report{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--muted);line-height:1.7;font-style:italic;margin-bottom:1rem;}
-.scout-stats{display:flex;gap:.8rem;flex-wrap:wrap;border-top:1px dashed #333;padding-top:1rem;}
-.scout-stat{font-size:.28rem;color:var(--gd);letter-spacing:.1em;}
+.scout-report{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--muted);line-height:1.7;font-style:italic;margin-bottom:1rem;}
+.scout-stats{display:flex;gap:.8rem;flex-wrap:wrap;border-top:1px dashed #333;padding-top:.8rem;}
+.scout-stat{font-size:.26rem;color:var(--gd);letter-spacing:.08em;}
 .scout-stat span{color:var(--gold);}
-
-/* EMAIL CAPTURE */
-.email-terminal{background:rgba(10,8,15,0.9);border:3px solid var(--gold);padding:3rem 2.5rem;text-align:center;margin-bottom:4rem;box-shadow:0 0 40px rgba(255,215,0,.08);backdrop-filter:blur(4px);}
-.terminal-eyebrow{font-size:.35rem;color:var(--gd);letter-spacing:.25em;margin-bottom:1rem;}
-.terminal-title{font-size:.8rem;color:var(--gold);margin-bottom:.8rem;}
-.terminal-desc{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--cream);line-height:1.7;max-width:600px;margin:0 auto 2rem;font-style:italic;}
-.terminal-perks{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-bottom:2.5rem;}
-.perk{font-size:.28rem;color:var(--green);border:1px solid rgba(0,255,136,.2);padding:.4rem .8rem;letter-spacing:.08em;background:rgba(0,255,136,0.05);}
-.email-form{display:flex;flex-direction:column;align-items:center;gap:1rem;max-width:480px;margin:0 auto;}
-.email-input{width:100%;padding:1.2rem;background:#111;border:2px solid var(--gd);color:var(--cream);font-family:'Press Start 2P',cursive;font-size:.4rem;text-align:center;outline:none;transition:border .3s;}
-.email-input:focus{border-color:var(--gold);box-shadow:0 0 20px rgba(255,215,0,.15);}
-.email-input::placeholder{color:var(--muted);}
-.submit-btn{width:100%;padding:1.2rem;background:var(--gold);color:#000;font-family:'Press Start 2P',cursive;font-size:.45rem;border:none;letter-spacing:.1em;transition:all .3s;}
-.submit-btn:hover{background:#fff;box-shadow:0 0 20px rgba(255,215,0,.4);}
-.email-fine{font-size:.28rem;color:var(--muted);letter-spacing:.08em;margin-top:.8rem;}
-.success-msg{display:none;color:var(--green);font-size:.4rem;letter-spacing:.1em;padding:1.5rem;border:1px solid var(--green);background:rgba(0,255,136,0.1);line-height:1.6;}
-
-/* LORD ORO'S PICKS */
-.picks-section{margin-bottom:4rem;}
-.pick-card{background:rgba(10,8,15,0.85);border-left:4px solid var(--gold);padding:1.5rem 2rem;margin-bottom:1.5rem;backdrop-filter:blur(4px);box-shadow:inset 0 0 20px rgba(0,0,0,0.5);}
-.pick-week{font-size:.35rem;color:var(--gd);letter-spacing:.2em;margin-bottom:.8rem;}
-.pick-text{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--cream);line-height:1.7;font-style:italic;margin-bottom:1rem;}
-.pick-call{font-size:.4rem;color:var(--gold);letter-spacing:.05em;}
 
 /* BRACKET */
 .bracket-section{background:rgba(170,85,255,.04);border:2px solid rgba(170,85,255,.2);padding:2.5rem;margin-bottom:4rem;backdrop-filter:blur(4px);}
 .bracket-title{font-size:.6rem;color:var(--pu);margin-bottom:1rem;}
 .bracket-sub{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--muted);font-style:italic;margin-bottom:1.5rem;line-height:1.6;}
-.pick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.8rem;margin-bottom:1.5rem;}
-.pick-btn{padding:1rem;background:rgba(170,85,255,.08);border:2px solid rgba(170,85,255,.3);color:var(--cream);font-family:'Press Start 2P',cursive;font-size:.32rem;transition:all .2s;text-align:center;}
+.pick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.8rem;margin-bottom:1.5rem;}
+.pick-btn{padding:1rem;background:rgba(170,85,255,.08);border:2px solid rgba(170,85,255,.3);color:var(--cream);font-family:'Press Start 2P',cursive;font-size:.3rem;cursor:none;transition:all .2s;text-align:center;}
 .pick-btn:hover,.pick-btn.selected{background:var(--pu);color:#000;border-color:var(--pu);}
 
-.bottom-nav{border-top:2px solid rgba(255,215,0,.15);padding:2.5rem 1.5rem;text-align:center;background:rgba(10,8,15,0.9);backdrop-filter:blur(4px);}
+/* EMAIL */
+.email-terminal{background:rgba(10,8,15,.9);border:3px solid var(--gold);padding:3rem 2.5rem;text-align:center;margin-bottom:4rem;box-shadow:0 0 40px rgba(255,215,0,.08);backdrop-filter:blur(4px);}
+.terminal-eyebrow{font-size:.35rem;color:var(--gd);letter-spacing:.25em;margin-bottom:1rem;}
+.terminal-title{font-size:.8rem;color:var(--gold);margin-bottom:.8rem;}
+.terminal-desc{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--cream);line-height:1.7;max-width:600px;margin:0 auto 2rem;font-style:italic;}
+.terminal-perks{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-bottom:2.5rem;}
+.perk{font-size:.28rem;color:var(--green);border:1px solid rgba(0,255,136,.2);padding:.4rem .8rem;background:rgba(0,255,136,.05);}
+.email-form{display:flex;flex-direction:column;align-items:center;gap:1rem;max-width:480px;margin:0 auto;}
+.email-input{width:100%;padding:1.2rem;background:#111;border:2px solid var(--gd);color:var(--cream);font-family:'Press Start 2P',cursive;font-size:.38rem;text-align:center;outline:none;transition:border .3s;}
+.email-input:focus{border-color:var(--gold);box-shadow:0 0 20px rgba(255,215,0,.15);}
+.email-input::placeholder{color:var(--muted);}
+.submit-btn{width:100%;padding:1.2rem;background:var(--gold);color:#000;font-family:'Press Start 2P',cursive;font-size:.45rem;border:none;cursor:none;letter-spacing:.1em;transition:all .3s;}
+.submit-btn:hover{background:#fff;box-shadow:0 0 20px rgba(255,215,0,.4);}
+.email-fine{font-size:.28rem;color:var(--muted);letter-spacing:.08em;}
+.success-msg{display:none;color:var(--green);font-size:.4rem;letter-spacing:.1em;padding:1.5rem;border:1px solid var(--green);background:rgba(0,255,136,.08);line-height:1.6;}
+
+.pick-card{background:rgba(10,8,15,.85);border-left:4px solid var(--gold);padding:1.5rem 2rem;margin-bottom:1.5rem;backdrop-filter:blur(4px);}
+.pick-week{font-size:.32rem;color:var(--gd);letter-spacing:.2em;margin-bottom:.8rem;}
+.pick-text{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--cream);line-height:1.7;font-style:italic;margin-bottom:.8rem;}
+.pick-call{font-size:.38rem;color:var(--gold);}
+
+.bottom-nav{border-top:2px solid rgba(255,215,0,.15);padding:2.5rem 1.5rem;text-align:center;background:rgba(10,8,15,.9);backdrop-filter:blur(4px);}
 .bottom-links{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;}
-.bottom-link{padding:.6rem 1.2rem;border:1px solid rgba(255,215,0,.2);color:var(--gd);font-size:.35rem;text-decoration:none;letter-spacing:.08em;transition:all 0.3s;}
-.bottom-link:hover{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,0.05);}
+.bottom-link{padding:.6rem 1.2rem;border:1px solid rgba(255,215,0,.2);color:var(--gd);font-size:.32rem;text-decoration:none;letter-spacing:.08em;transition:all .3s;}
+.bottom-link:hover{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,.05);}
 </style>
 </head>
 <body>
 
 <div id="starfield"></div>
-
+<div id="pickaxe-glow"></div>
 <script src="nmn-nav.js"></script>
 
 <header>
@@ -123,6 +113,7 @@ main{max-width:1200px;margin:0 auto;padding:3rem 1.5rem; position: relative; z-i
 </header>
 
 <main>
+
   <div class="syndicate-hero">
     <div class="hero-eyebrow">NMN SPORTS INTELLIGENCE DIVISION</div>
     <h1 class="hero-title">THE <em>SYNDICATE</em></h1>
@@ -130,25 +121,24 @@ main{max-width:1200px;margin:0 auto;padding:3rem 1.5rem; position: relative; z-i
     <span class="live-badge">● ALL-SPORTS TRANSMISSION ACTIVE</span>
   </div>
 
-  <div class="section-tag">⬡ ATHLETE FREQUENCY SCANNER</div>
-  <div style="background:rgba(10,8,15,0.9);border:3px solid var(--red);padding:3rem 2rem;margin-bottom:4rem;text-align:center;box-shadow:0 0 40px rgba(255,68,68,.06);backdrop-filter:blur(4px);">
-    <p style="font-family:'Press Start 2P',cursive;font-size:.4rem;color:var(--red);letter-spacing:.2em;margin-bottom:1.5rem;">▶ ENTER ANY GLOBAL ATHLETE</p>
-    <p style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--muted);font-style:italic;margin-bottom:2rem;max-width:550px;margin-left:auto;margin-right:auto;">The algorithm is deterministic. The name dictates the class. The frequency does not lie.</p>
+  <div class="section-tag">⬡ ATHLETE FREQUENCY SCANNER — ANY SPORT</div>
+  <div style="background:rgba(10,8,15,.9);border:3px solid var(--red);padding:3rem 2rem;margin-bottom:4rem;text-align:center;box-shadow:0 0 40px rgba(255,68,68,.06);backdrop-filter:blur(4px);">
+    <p style="font-family:'Press Start 2P',cursive;font-size:.4rem;color:var(--red);letter-spacing:.2em;margin-bottom:1rem;">▶ NBA · NFL · F1 · UFC · PREMIER LEAGUE · TENNIS · OLYMPICS</p>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--muted);font-style:italic;margin-bottom:2rem;max-width:550px;margin-left:auto;margin-right:auto;">The algorithm is deterministic. The same name always produces the same class. The frequency does not lie.</p>
     <div style="display:flex;flex-direction:column;align-items:center;gap:.8rem;max-width:500px;margin:0 auto;">
-      <input type="text" id="athleteInput" placeholder="ENTER ATHLETE NAME..." style="width:100%;padding:1.2rem;background:#111;border:2px solid rgba(255,68,68,.4);color:var(--cream);font-family:'Press Start 2P',cursive;font-size:.4rem;text-align:center;outline:none;text-transform:uppercase;transition:border .3s;" onfocus="this.style.borderColor='#FF4444'" onblur="this.style.borderColor='rgba(255,68,68,.4)'" onkeypress="if(event.key==='Enter')scanAthlete()">
-      <button onclick="scanAthlete()" style="width:100%;padding:1.2rem;background:var(--red);color:#000;font-family:'Press Start 2P',cursive;font-size:.45rem;border:none;letter-spacing:.12em;transition:all .3s;" onmouseover="this.style.background='#fff'" onmouseout="this.style.background='var(--red)'">⚡ ANALYZE FREQUENCY</button>
+      <input type="text" id="scanInput" placeholder="ENTER ATHLETE NAME..." style="width:100%;padding:1.2rem;background:#111;border:2px solid rgba(255,68,68,.4);color:var(--cream);font-family:'Press Start 2P',cursive;font-size:.4rem;text-align:center;outline:none;text-transform:uppercase;transition:border .3s;" onfocus="this.style.borderColor='#FF4444'" onblur="this.style.borderColor='rgba(255,68,68,.4)'" onkeypress="if(event.key==='Enter')scanAthlete()">
+      <button onclick="scanAthlete()" style="width:100%;padding:1.2rem;background:var(--red);color:#000;font-family:'Press Start 2P',cursive;font-size:.45rem;border:none;cursor:none;letter-spacing:.12em;transition:all .3s;" onmouseover="this.style.background='#fff'" onmouseout="this.style.background='#FF4444'">⚡ ANALYZE FREQUENCY</button>
     </div>
-    
     <div id="scanResult" style="display:none;margin-top:2.5rem;padding-top:2.5rem;border-top:1px solid rgba(255,68,68,.2);">
-      <div id="resName" style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;color:var(--cream);margin-bottom:.5rem;"></div>
+      <div id="resName" style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;color:var(--cream);margin-bottom:.5rem;font-weight:600;"></div>
       <div id="resClass" style="font-family:'Press Start 2P',cursive;font-size:.6rem;margin-bottom:1.2rem;letter-spacing:.15em;"></div>
       <div id="resLore" style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--muted);font-style:italic;line-height:1.7;max-width:600px;margin:0 auto 1.5rem;"></div>
-      <div id="resBook" style="margin-top:1.5rem;"></div>
+      <div id="resBook"></div>
     </div>
   </div>
 
   <div class="section-tag">⬡ LORD ORO'S FREQUENCY REPORT — WEEK OF APR 10</div>
-  <div class="picks-section">
+  <div style="margin-bottom:4rem;">
     <div class="pick-card">
       <div class="pick-week">NBA PLAYOFFS — FIRST ROUND</div>
       <div class="pick-text">"The mine does not reward the team with the most gold already in their pockets. It rewards the team still digging in the fourth quarter when the shaft goes dark. Watch the team no one believes in. The stones remember underdogs."</div>
@@ -159,78 +149,94 @@ main{max-width:1200px;margin:0 auto;padding:3rem 1.5rem; position: relative; z-i
       <div class="pick-text">"European football in spring is the mine at maximum pressure. The teams that survived January are not the same teams that entered September. The one who remembers what they learned in the dark shaft wins this stage."</div>
       <div class="pick-call">— FORM OVER REPUTATION: THE MINE FAVORS THE PRESENT</div>
     </div>
+    <div class="pick-card">
+      <div class="pick-week">UFC / COMBAT SPORTS</div>
+      <div class="pick-text">"In the cage there is nowhere to hide from your own frequency. The fighter who enters carrying fear will be shattered by the one carrying silence. The Breaker wins early. The Seeker wins late. Watch which one shows up."</div>
+      <div class="pick-call">— COMBAT CALL: READ THE WEIGHT CLASS CAREFULLY</div>
+    </div>
   </div>
 
-  <div class="section-tag">⬡ THE SYNDICATE ROSTER — 28 CLASSIFIED SOULS</div>
-  <div class="filter-tabs">
-      <button class="filter-btn active" onclick="filterRoster('all', this)">ALL</button>
-      <button class="filter-btn" onclick="filterRoster('nfl', this)">🏈 NFL</button>
-      <button class="filter-btn" onclick="filterRoster('nba', this)">🏀 NBA</button>
-      <button class="filter-btn" onclick="filterRoster('mlb', this)">⚾ MLB</button>
-      <button class="filter-btn" onclick="filterRoster('nhl', this)">🏒 NHL</button>
-      <button class="filter-btn" onclick="filterRoster('soccer', this)">⚽ SOCCER</button>
-      <button class="filter-btn" onclick="filterRoster('fight', this)">🥊 COMBAT</button>
-      <button class="filter-btn" onclick="filterRoster('f1', this)">🏎 F1</button>
-      <button class="filter-btn" onclick="filterRoster('other', this)">🏆 OTHER</button>
+  <div class="section-tag">⬡ THE SYNDICATE ROSTER — ALL SPORTS · ALL SECTORS</div>
+  <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;">
+    <button class="sport-tab active" onclick="filterSport('all',this)">ALL</button>
+    <button class="sport-tab" onclick="filterSport('nfl',this)">🏈 NFL</button>
+    <button class="sport-tab" onclick="filterSport('nba',this)">🏀 NBA</button>
+    <button class="sport-tab" onclick="filterSport('mlb',this)">⚾ MLB</button>
+    <button class="sport-tab" onclick="filterSport('nhl',this)">🏒 NHL</button>
+    <button class="sport-tab" onclick="filterSport('soccer',this)">⚽ SOCCER</button>
+    <button class="sport-tab" onclick="filterSport('mma',this)">🥊 COMBAT</button>
+    <button class="sport-tab" onclick="filterSport('f1',this)">🏎 F1</button>
+    <button class="sport-tab" onclick="filterSport('other',this)">🏆 OTHER</button>
   </div>
 
   <div class="roster-grid" id="rosterGrid">
-    <div class="scout-card" data-sport="nfl"><div class="scout-header"><div class="scout-name">JALEN HURTS</div><div class="scout-class builder">BUILDER</div></div><div class="scout-report">"He doesn't need you to believe. He already decided. Every Builder has that same quiet — just picking up the pickaxe and going back down. Philadelphia found its architect."</div><div class="scout-stats"><div class="scout-stat">RESILIENCE <span>10/10</span></div><div class="scout-stat">SIGNAL <span>UNSHAKEABLE</span></div></div></div>
-    <div class="scout-card" data-sport="nfl"><div class="scout-header"><div class="scout-name">PATRICK MAHOMES</div><div class="scout-class oracle">ORACLE</div></div><div class="scout-report">"He sees the mine's hidden architecture — the cracks before they open, the tunnel before anyone else knows it exists. Mahomes plays three seconds ahead of the present moment."</div><div class="scout-stats"><div class="scout-stat">VISION <span>10/10</span></div><div class="scout-stat">SIGNAL <span>MYSTIC</span></div></div></div>
-    <div class="scout-card" data-sport="nfl"><div class="scout-header"><div class="scout-name">LAMAR JACKSON</div><div class="scout-class wanderer">WANDERER</div></div><div class="scout-report">"Impossible to contain. He flows through the defense like water through a cracked foundation. The Wanderer makes the rigid system look entirely foolish."</div><div class="scout-stats"><div class="scout-stat">MOBILITY <span>10/10</span></div><div class="scout-stat">SIGNAL <span>UNBOUND</span></div></div></div>
-    <div class="scout-card" data-sport="nfl"><div class="scout-header"><div class="scout-name">TRAVIS KELCE</div><div class="scout-class seeker">SEEKER</div></div><div class="scout-report">"He finds the soft spot in the zone because he understands the history of the defense. Knowledge before action, then devastating execution in the dark."</div><div class="scout-stats"><div class="scout-stat">IQ <span>9/10</span></div><div class="scout-stat">SIGNAL <span>TUNED</span></div></div></div>
+    <div class="scout-card" data-sport="nfl"><div class="scout-header"><div class="scout-name">JALEN HURTS</div><div class="scout-class builder">BUILDER · NFL</div></div><div class="scout-report">"He doesn't need you to believe. He already decided. Every Builder has that same quiet — the kind that doesn't announce, just picks up the pickaxe and descends. Philadelphia found its architect."</div><div class="scout-stats"><div class="scout-stat">RESILIENCE <span>9/10</span></div><div class="scout-stat">SIGNAL <span>UNSHAKEABLE</span></div></div></div>
 
-    <div class="scout-card" data-sport="nba"><div class="scout-header"><div class="scout-name">NIKOLA JOKIĆ</div><div class="scout-class seeker">SEEKER</div></div><div class="scout-report">"Three passes ahead. Always calm. He reads the court the way a Seeker reads the mine — not for what's there, but for what's about to shift."</div><div class="scout-stats"><div class="scout-stat">VISION <span>10/10</span></div><div class="scout-stat">SIGNAL <span>LEGENDARY</span></div></div></div>
-    <div class="scout-card" data-sport="nba"><div class="scout-header"><div class="scout-name">LEBRON JAMES</div><div class="scout-class oracle">ORACLE</div></div><div class="scout-report">"Twenty moves ahead. He has survived every era, every defense, and still reads the floor like ancient script. That is the Oracle path."</div><div class="scout-stats"><div class="scout-stat">LONGEVITY <span>10/10</span></div><div class="scout-stat">SIGNAL <span>ANCIENT</span></div></div></div>
-    <div class="scout-card" data-sport="nba"><div class="scout-header"><div class="scout-name">JOEL EMBIID</div><div class="scout-class breaker">BREAKER</div></div><div class="scout-report">"Pure Breaker energy. He doesn't ask the rock for permission. When the shaft is open and he strikes, nothing holds. The mine respects the force."</div><div class="scout-stats"><div class="scout-stat">POWER <span>10/10</span></div><div class="scout-stat">SIGNAL <span>VOLATILE</span></div></div></div>
-    <div class="scout-card" data-sport="nba"><div class="scout-header"><div class="scout-name">STEPH CURRY</div><div class="scout-class alchemist">ALCHEMIST</div></div><div class="scout-report">"He broke the math of the sport. The Alchemist steps across the half-court line and the defense's blueprint dissolves. He makes new gold from distance."</div><div class="scout-stats"><div class="scout-stat">RANGE <span>∞/10</span></div><div class="scout-stat">SIGNAL <span>TRANSMUTED</span></div></div></div>
-    <div class="scout-card" data-sport="nba"><div class="scout-header"><div class="scout-name">GIANNIS</div><div class="scout-class breaker">BREAKER</div></div><div class="scout-report">"Unstoppable kinetic force. A Breaker who runs downhill and shatters the structural integrity of the paint. Pure, unrelenting power in the depths."</div><div class="scout-stats"><div class="scout-stat">FORCE <span>10/10</span></div><div class="scout-stat">SIGNAL <span>EARTHQUAKE</span></div></div></div>
+    <div class="scout-card" data-sport="nfl"><div class="scout-header"><div class="scout-name">PATRICK MAHOMES</div><div class="scout-class oracle">ORACLE · NFL</div></div><div class="scout-report">"He sees the mine's hidden architecture — the cracks before they open, the tunnel before anyone else knows it exists. Mahomes plays three seconds ahead of the present moment. That's the Oracle's burden."</div><div class="scout-stats"><div class="scout-stat">VISION <span>10/10</span></div><div class="scout-stat">SIGNAL <span>FREQUENCY LOCKED</span></div></div></div>
 
-    <div class="scout-card" data-sport="mlb"><div class="scout-header"><div class="scout-name">SHOHEI OHTANI</div><div class="scout-class alchemist">ALCHEMIST</div></div><div class="scout-report">"The Alchemist doesn't choose one vein — they work all of them. Pitching and hitting in the same game is the most alchemical thing in modern sports."</div><div class="scout-stats"><div class="scout-stat">DUALITY <span>10/10</span></div><div class="scout-stat">SIGNAL <span>MYTHIC</span></div></div></div>
-    <div class="scout-card" data-sport="mlb"><div class="scout-header"><div class="scout-name">BRYCE HARPER</div><div class="scout-class breaker">BREAKER</div></div><div class="scout-report">"Philly's own Breaker. He came when the mine looked empty and swung anyway. A Breaker telling the shaft exactly who runs this section in October."</div><div class="scout-stats"><div class="scout-stat">CLUTCH <span>10/10</span></div><div class="scout-stat">SIGNAL <span>PHILLY STRONG</span></div></div></div>
-    <div class="scout-card" data-sport="mlb"><div class="scout-header"><div class="scout-name">AARON JUDGE</div><div class="scout-class builder">BUILDER</div></div><div class="scout-report">"A colossal foundation. He doesn't just hit the ball; he constructs a perimeter of fear around the batter's box. The bedrock of the lineup."</div><div class="scout-stats"><div class="scout-stat">STRENGTH <span>10/10</span></div><div class="scout-stat">SIGNAL <span>HEAVY</span></div></div></div>
+    <div class="scout-card" data-sport="nfl"><div class="scout-header"><div class="scout-name">LAMAR JACKSON</div><div class="scout-class wanderer">WANDERER · NFL</div></div><div class="scout-report">"You cannot map him. Every defensive coordinator has tried. The Wanderer doesn't follow the designed route — he finds the gap that wasn't drawn. He's gone before anyone adjusts."</div><div class="scout-stats"><div class="scout-stat">MOBILITY <span>10/10</span></div><div class="scout-stat">SIGNAL <span>UNBOUND</span></div></div></div>
 
-    <div class="scout-card" data-sport="nhl"><div class="scout-header"><div class="scout-name">CONNOR MCDAVID</div><div class="scout-class wanderer">WANDERER</div></div><div class="scout-report">"He operates at a frequency the ice wasn't meant to handle. The Wanderer blurs past the defense before they realize the puck is gone."</div><div class="scout-stats"><div class="scout-stat">SPEED <span>10/10</span></div><div class="scout-stat">SIGNAL <span>BLUR</span></div></div></div>
-    <div class="scout-card" data-sport="nhl"><div class="scout-header"><div class="scout-name">NATHAN MACKINNON</div><div class="scout-class breaker">BREAKER</div></div><div class="scout-report">"Explosive, north-south violence on skates. He cuts through the neutral zone like a pickaxe through brittle coal. He just won't stop."</div><div class="scout-stats"><div class="scout-stat">INTENSITY <span>10/10</span></div><div class="scout-stat">SIGNAL <span>SHARP</span></div></div></div>
+    <div class="scout-card" data-sport="nfl"><div class="scout-header"><div class="scout-name">TRAVIS KELCE</div><div class="scout-class seeker">SEEKER · NFL</div></div><div class="scout-report">"Every route is a question he already knows the answer to. By the time the defender realizes what's happening, Kelce has already filed it under data and moved to the next extraction."</div><div class="scout-stats"><div class="scout-stat">IQ <span>10/10</span></div><div class="scout-stat">SIGNAL <span>CALCULATED</span></div></div></div>
 
-    <div class="scout-card" data-sport="soccer"><div class="scout-header"><div class="scout-name">LIONEL MESSI</div><div class="scout-class oracle">ORACLE</div></div><div class="scout-report">"The Oracle doesn't chase the ball. The ball finds the Oracle. He sees the geometry of the pitch as a mine map — placed where the gold already is."</div><div class="scout-stats"><div class="scout-stat">VISION <span>∞/10</span></div><div class="scout-stat">SIGNAL <span>THE FREQUENCY</span></div></div></div>
-    <div class="scout-card" data-sport="soccer"><div class="scout-header"><div class="scout-name">CRISTIANO RONALDO</div><div class="scout-class builder">BUILDER</div></div><div class="scout-report">"A monument to pure discipline. He built himself into a machine capable of outlasting time and biology. The ultimate architectural triumph."</div><div class="scout-stats"><div class="scout-stat">WORK RATE <span>10/10</span></div><div class="scout-stat">SIGNAL <span>FORGED</span></div></div></div>
-    <div class="scout-card" data-sport="soccer"><div class="scout-header"><div class="scout-name">ERLING HAALAND</div><div class="scout-class breaker">BREAKER</div></div><div class="scout-report">"Pure extraction. He enters the box and removes the gold. No flourish, no ceremony. The most clinical Breaker in the current mine."</div><div class="scout-stats"><div class="scout-stat">FINISHING <span>10/10</span></div><div class="scout-stat">SIGNAL <span>CLINICAL</span></div></div></div>
-    <div class="scout-card" data-sport="soccer"><div class="scout-header"><div class="scout-name">VINICIUS JR.</div><div class="scout-class wanderer">WANDERER</div></div><div class="scout-report">"Electric and unbound. He dances on the touchline, turning rigid defensive structures into dust with a single feint. The mine rewards exploration."</div><div class="scout-stats"><div class="scout-stat">AGILITY <span>10/10</span></div><div class="scout-stat">SIGNAL <span>SPARK</span></div></div></div>
+    <div class="scout-card" data-sport="nba"><div class="scout-header"><div class="scout-name">NIKOLA JOKIĆ</div><div class="scout-class seeker">SEEKER · NBA</div></div><div class="scout-report">"Three passes ahead. Always calm. He reads the court the way a Seeker reads the mine — not for what's there, but for what's about to shift. The most dangerous quality: never looks like he's trying."</div><div class="scout-stats"><div class="scout-stat">VISION <span>10/10</span></div><div class="scout-stat">SIGNAL <span>LEGENDARY</span></div></div></div>
 
-    <div class="scout-card" data-sport="fight"><div class="scout-header"><div class="scout-name">JON JONES</div><div class="scout-class oracle">ORACLE</div></div><div class="scout-report">"The Oracle who knows the outcome before the first exchange. Dismantles opponents using techniques they haven't seen because he studied the mine's layout."</div><div class="scout-stats"><div class="scout-stat">IQ <span>10/10</span></div><div class="scout-stat">SIGNAL <span>CONTESTED LEGEND</span></div></div></div>
-    <div class="scout-card" data-sport="fight"><div class="scout-header"><div class="scout-name">CANELO ÁLVAREZ</div><div class="scout-class builder">BUILDER</div></div><div class="scout-report">"Methodical, impenetrable defense. He builds a wall, walks you down, and dismantles your foundation. He builds the architecture and the opponent walks into it."</div><div class="scout-stats"><div class="scout-stat">TECHNIQUE <span>10/10</span></div><div class="scout-stat">SIGNAL <span>MASTER CRAFTSMAN</span></div></div></div>
-    <div class="scout-card" data-sport="fight"><div class="scout-header"><div class="scout-name">ISLAM MAKHACHEV</div><div class="scout-class breaker">BREAKER</div></div><div class="scout-report">"Suffocating pressure. He grabs hold and slowly breaks the will and the breath of the man beneath him. The relentless weight of the earth."</div><div class="scout-stats"><div class="scout-stat">PRESSURE <span>10/10</span></div><div class="scout-stat">SIGNAL <span>GRAVITY</span></div></div></div>
+    <div class="scout-card" data-sport="nba"><div class="scout-header"><div class="scout-name">LEBRON JAMES</div><div class="scout-class oracle">ORACLE · NBA</div></div><div class="scout-report">"Has been everywhere, survived everything, still reads the floor like it's his first mine. Twenty years of studying the architecture of human competition. That's not talent. That's the Oracle path."</div><div class="scout-stats"><div class="scout-stat">LONGEVITY <span>10/10</span></div><div class="scout-stat">SIGNAL <span>ANCIENT</span></div></div></div>
 
-    <div class="scout-card" data-sport="f1"><div class="scout-header"><div class="scout-name">MAX VERSTAPPEN</div><div class="scout-class seeker">SEEKER</div></div><div class="scout-report">"He processes the track like a historical data grid. Finding the microscopic sliver of grip where none should exist. Navigates at 200mph using pure knowledge."</div><div class="scout-stats"><div class="scout-stat">PRECISION <span>10/10</span></div><div class="scout-stat">SIGNAL <span>RELENTLESS</span></div></div></div>
-    <div class="scout-card" data-sport="f1"><div class="scout-header"><div class="scout-name">LEWIS HAMILTON</div><div class="scout-class builder">BUILDER</div></div><div class="scout-report">"Seven titles built across decades by a person who understood that the mine changes shape every season. He didn't just win — he constructed the era around himself."</div><div class="scout-stats"><div class="scout-stat">LONGEVITY <span>10/10</span></div><div class="scout-stat">SIGNAL <span>ERA DEFINING</span></div></div></div>
+    <div class="scout-card" data-sport="nba"><div class="scout-header"><div class="scout-name">JOEL EMBIID</div><div class="scout-class breaker">BREAKER · NBA</div></div><div class="scout-report">"The Breaker doesn't ask the rock for permission. When healthy the shaft is open and nothing holds. The limitation is never ability — it's durability. The mine respects the Breaker who learns to pace the pickaxe."</div><div class="scout-stats"><div class="scout-stat">POWER <span>10/10</span></div><div class="scout-stat">SIGNAL <span>VOLATILE</span></div></div></div>
 
-    <div class="scout-card" data-sport="other"><div class="scout-header"><div class="scout-name">SIMONE BILES</div><div class="scout-class wanderer">WANDERER</div></div><div class="scout-report">"Walked away from the most watched stage on earth, found herself in the dark, came back doing things no one had seen before. The Wanderer finds the new tunnel."</div><div class="scout-stats"><div class="scout-stat">COURAGE <span>10/10</span></div><div class="scout-stat">SIGNAL <span>UNBOUND</span></div></div></div>
-    <div class="scout-card" data-sport="other"><div class="scout-header"><div class="scout-name">SERENA WILLIAMS</div><div class="scout-class breaker">BREAKER</div></div><div class="scout-report">"Walked into a sport that wasn't built for her and broke the architecture of it completely. The Breaker doesn't ask for permission. She already changed the shaft."</div><div class="scout-stats"><div class="scout-stat">DOMINANCE <span>10/10</span></div><div class="scout-stat">SIGNAL <span>PERMANENT</span></div></div></div>
-    <div class="scout-card" data-sport="other"><div class="scout-header"><div class="scout-name">CARLOS ALCARAZ</div><div class="scout-class alchemist">ALCHEMIST</div></div><div class="scout-report">"Has Federer's elegance, Nadal's grit, Djokovic's precision — three different mines running through one player. The Alchemist's ceiling is never fixed."</div><div class="scout-stats"><div class="scout-stat">CEILING <span>UNKNOWN</span></div><div class="scout-stat">SIGNAL <span>STILL FORMING</span></div></div></div>
-    <div class="scout-card" data-sport="other"><div class="scout-header"><div class="scout-name">USAIN BOLT</div><div class="scout-class wanderer">WANDERER</div></div><div class="scout-report">"He didn't run on the track; he hovered above it. The Wanderer doesn't need pressure to perform. He made the hundred meters look like a morning stroll through the mine."</div><div class="scout-stats"><div class="scout-stat">VELOCITY <span>REDEFINED</span></div><div class="scout-stat">SIGNAL <span>LEGENDARY</span></div></div></div>
+    <div class="scout-card" data-sport="nba"><div class="scout-header"><div class="scout-name">STEPHEN CURRY</div><div class="scout-class alchemist">ALCHEMIST · NBA</div></div><div class="scout-report">"Turned a shot coaches called too far into the most copied thing in basketball. He didn't find a new vein — he convinced everyone the ceiling was the floor. The Alchemist makes new gold from what others discard."</div><div class="scout-stats"><div class="scout-stat">RANGE <span>∞/10</span></div><div class="scout-stat">SIGNAL <span>TRANSMUTED</span></div></div></div>
 
-    <div class="scout-card" style="border-color:rgba(255,215,0,.3);background:rgba(255,215,0,.02);" data-sport="all">
-      <div class="scout-header">
-        <div class="scout-name">YOUR PICK?</div>
-        <div class="scout-class seeker" style="color:var(--gold);border-color:var(--gold);">PENDING</div>
-      </div>
-      <div class="scout-report">"The mine holds thousands of athletes. From the Octagon to the Olympics. Send your nomination. Lord Oro will read their frequency."</div>
-      <div style="margin-top:.8rem;">
-        <a href="#email-terminal" style="display:inline-block;padding:.5rem 1rem;background:rgba(255,215,0,.1);border:1px solid var(--gold);color:var(--gold);font-family:'Press Start 2P',cursive;font-size:.28rem;text-decoration:none;letter-spacing:.08em;">SUBMIT NOMINATION →</a>
-      </div>
-    </div>
+    <div class="scout-card" data-sport="nba"><div class="scout-header"><div class="scout-name">GIANNIS ANTETOKOUNMPO</div><div class="scout-class breaker">BREAKER · NBA</div></div><div class="scout-report">"Came from Lagos with nothing and broke the entire league's defensive architecture in under a decade. Pure Breaker origin story. The mine doesn't give you the gold — you rip it out with your hands."</div><div class="scout-stats"><div class="scout-stat">POWER <span>10/10</span></div><div class="scout-stat">SIGNAL <span>ORIGIN STORY</span></div></div></div>
+
+    <div class="scout-card" data-sport="mlb"><div class="scout-header"><div class="scout-name">SHOHEI OHTANI</div><div class="scout-class alchemist">ALCHEMIST · MLB</div></div><div class="scout-report">"The Alchemist doesn't choose one vein — they work all of them simultaneously. Pitching and hitting in the same game is the most alchemical thing in modern sports. He combines ingredients everyone else keeps separate."</div><div class="scout-stats"><div class="scout-stat">RANGE <span>10/10</span></div><div class="scout-stat">SIGNAL <span>DUAL FREQUENCY</span></div></div></div>
+
+    <div class="scout-card" data-sport="mlb"><div class="scout-header"><div class="scout-name">BRYCE HARPER</div><div class="scout-class breaker">BREAKER · MLB</div></div><div class="scout-report">"Philly's own Breaker. He came to this city when the mine looked empty and swung anyway. October 2022 — that NLCS home run wasn't just a hit. That was a Breaker telling the shaft exactly who runs this section."</div><div class="scout-stats"><div class="scout-stat">CLUTCH <span>10/10</span></div><div class="scout-stat">SIGNAL <span>PHILLY STRONG</span></div></div></div>
+
+    <div class="scout-card" data-sport="mlb"><div class="scout-header"><div class="scout-name">AARON JUDGE</div><div class="scout-class builder">BUILDER · MLB</div></div><div class="scout-report">"The Builder constructs an era, not just a season. Judge plays with the patience of someone who knows the gold doesn't disappear — it just requires the right swing at the right moment."</div><div class="scout-stats"><div class="scout-stat">POWER <span>10/10</span></div><div class="scout-stat">SIGNAL <span>FOUNDATIONAL</span></div></div></div>
+
+    <div class="scout-card" data-sport="nhl"><div class="scout-header"><div class="scout-name">CONNOR McDAVID</div><div class="scout-class wanderer">WANDERER · NHL</div></div><div class="scout-report">"Ice is obsidian in winter form. McDavid moves through a defense the way water moves through cracks — finding the gap that shouldn't exist. No one has ever fully mapped him."</div><div class="scout-stats"><div class="scout-stat">SPEED <span>10/10</span></div><div class="scout-stat">SIGNAL <span>UNMAPPABLE</span></div></div></div>
+
+    <div class="scout-card" data-sport="nhl"><div class="scout-header"><div class="scout-name">NATHAN MacKINNON</div><div class="scout-class breaker">BREAKER · NHL</div></div><div class="scout-report">"The Breaker wins the shift through raw refusal. MacKinnon takes the same brutal shift every night and hits harder than the previous one. There is no elegant explanation. He just won't stop."</div><div class="scout-stats"><div class="scout-stat">INTENSITY <span>10/10</span></div><div class="scout-stat">SIGNAL <span>RELENTLESS</span></div></div></div>
+
+    <div class="scout-card" data-sport="soccer"><div class="scout-header"><div class="scout-name">LIONEL MESSI</div><div class="scout-class oracle">ORACLE · SOCCER</div></div><div class="scout-report">"The Oracle doesn't chase the ball. The ball finds the Oracle. Messi sees the geometry of the pitch as a mine map — every touch placed where the gold already is. You don't study how he does it. The mine decided he could."</div><div class="scout-stats"><div class="scout-stat">VISION <span>∞/10</span></div><div class="scout-stat">SIGNAL <span>THE FREQUENCY ITSELF</span></div></div></div>
+
+    <div class="scout-card" data-sport="soccer"><div class="scout-header"><div class="scout-name">CRISTIANO RONALDO</div><div class="scout-class breaker">BREAKER · SOCCER</div></div><div class="scout-report">"Nobody works harder in the dark. That's pure Breaker discipline — not talent waiting to be discovered but gold manufactured through obsession. He built his body like an architect builds a mine. Every measurement intentional."</div><div class="scout-stats"><div class="scout-stat">WORK RATE <span>10/10</span></div><div class="scout-stat">SIGNAL <span>FORGED</span></div></div></div>
+
+    <div class="scout-card" data-sport="soccer"><div class="scout-header"><div class="scout-name">ERLING HAALAND</div><div class="scout-class breaker">BREAKER · SOCCER</div></div><div class="scout-report">"Pure extraction. He enters the box and removes the gold. No flourish, no ceremony. The Breaker doesn't need to be beautiful — the Breaker needs to be effective. The most clinical Breaker in the current mine."</div><div class="scout-stats"><div class="scout-stat">FINISHING <span>10/10</span></div><div class="scout-stat">SIGNAL <span>CLINICAL</span></div></div></div>
+
+    <div class="scout-card" data-sport="soccer"><div class="scout-header"><div class="scout-name">VINICIUS JR.</div><div class="scout-class wanderer">WANDERER · SOCCER</div></div><div class="scout-report">"The Wanderer plays with joy. That's the weapon nobody talks about. Defenders prepare for the move and he does something else because he isn't running a route. He's exploring. And the mine rewards exploration."</div><div class="scout-stats"><div class="scout-stat">CREATIVITY <span>10/10</span></div><div class="scout-stat">SIGNAL <span>PURE JOY</span></div></div></div>
+
+    <div class="scout-card" data-sport="mma"><div class="scout-header"><div class="scout-name">JON JONES</div><div class="scout-class oracle">ORACLE · MMA</div></div><div class="scout-report">"The Oracle who knows the outcome before the first exchange. Jones dismantles opponents using techniques they haven't seen because he studied the mine's layout in darkness before they opened the lights."</div><div class="scout-stats"><div class="scout-stat">IQ <span>10/10</span></div><div class="scout-stat">SIGNAL <span>CONTESTED LEGEND</span></div></div></div>
+
+    <div class="scout-card" data-sport="mma"><div class="scout-header"><div class="scout-name">CANELO ÁLVAREZ</div><div class="scout-class builder">BUILDER · BOXING</div></div><div class="scout-report">"The Builder constructs the fight before the fight. Every round laid like a foundation stone — nothing wasted, nothing emotional. Canelo doesn't get caught up in the drama of the shaft. He builds the architecture and the opponent walks into it."</div><div class="scout-stats"><div class="scout-stat">TECHNIQUE <span>10/10</span></div><div class="scout-stat">SIGNAL <span>MASTER CRAFTSMAN</span></div></div></div>
+
+    <div class="scout-card" data-sport="mma"><div class="scout-header"><div class="scout-name">ISLAM MAKHACHEV</div><div class="scout-class seeker">SEEKER · MMA</div></div><div class="scout-report">"Knows every opponent's tendencies, every habit, every tell. By the time the first exchange happens he's already read three chapters ahead. The Seeker. The fight is over before it starts."</div><div class="scout-stats"><div class="scout-stat">PRECISION <span>10/10</span></div><div class="scout-stat">SIGNAL <span>SURGICAL</span></div></div></div>
+
+    <div class="scout-card" data-sport="f1"><div class="scout-header"><div class="scout-name">MAX VERSTAPPEN</div><div class="scout-class seeker">SEEKER · F1</div></div><div class="scout-report">"He processes the track like a historical data grid. Finding the microscopic sliver of grip where none should exist. The Seeker navigates at 200mph using knowledge no one else has bothered to collect."</div><div class="scout-stats"><div class="scout-stat">PRECISION <span>10/10</span></div><div class="scout-stat">SIGNAL <span>RELENTLESS</span></div></div></div>
+
+    <div class="scout-card" data-sport="f1"><div class="scout-header"><div class="scout-name">LEWIS HAMILTON</div><div class="scout-class builder">BUILDER · F1</div></div><div class="scout-report">"Seven titles built across decades by a person who understood that the mine changes shape every season. The Builder adapts the architecture. Hamilton didn't just win championships — he constructed the era around himself."</div><div class="scout-stats"><div class="scout-stat">LONGEVITY <span>10/10</span></div><div class="scout-stat">SIGNAL <span>ERA DEFINING</span></div></div></div>
+
+    <div class="scout-card" data-sport="other"><div class="scout-header"><div class="scout-name">SIMONE BILES</div><div class="scout-class wanderer">WANDERER · GYMNASTICS</div></div><div class="scout-report">"Walked away from the most watched stage on earth, found herself in the dark, came back doing things no one had seen before. The Wanderer finds the tunnel everyone else marked as a dead end and makes it the main shaft."</div><div class="scout-stats"><div class="scout-stat">COURAGE <span>10/10</span></div><div class="scout-stat">SIGNAL <span>UNBOUND</span></div></div></div>
+
+    <div class="scout-card" data-sport="other"><div class="scout-header"><div class="scout-name">SERENA WILLIAMS</div><div class="scout-class breaker">BREAKER · TENNIS</div></div><div class="scout-report">"Walked into a sport that wasn't built for her and broke the architecture of it completely. Twenty-three majors later the mine still shows her signature. The Breaker doesn't ask for permission. She already changed the shaft."</div><div class="scout-stats"><div class="scout-stat">DOMINANCE <span>10/10</span></div><div class="scout-stat">SIGNAL <span>PERMANENT</span></div></div></div>
+
+    <div class="scout-card" data-sport="other"><div class="scout-header"><div class="scout-name">CARLOS ALCARAZ</div><div class="scout-class alchemist">ALCHEMIST · TENNIS</div></div><div class="scout-report">"Has Federer's elegance, Nadal's grit, Djokovic's precision — three different mines running through one player. The synthesis is still being discovered. The Alchemist's ceiling is never fixed."</div><div class="scout-stats"><div class="scout-stat">CEILING <span>UNKNOWN</span></div><div class="scout-stat">SIGNAL <span>STILL FORMING</span></div></div></div>
+
+    <div class="scout-card" data-sport="other"><div class="scout-header"><div class="scout-name">USAIN BOLT</div><div class="scout-class wanderer">WANDERER · TRACK</div></div><div class="scout-report">"Celebrated before the finish line in Beijing and still broke the world record. The Wanderer doesn't need pressure to perform — the descent itself is the point. He made the hundred meters look like a morning stroll through the mine."</div><div class="scout-stats"><div class="scout-stat">SPEED <span>REDEFINED</span></div><div class="scout-stat">SIGNAL <span>LEGENDARY</span></div></div></div>
+
+    <div class="scout-card" style="border-color:rgba(255,215,0,.25);" data-sport="all"><div class="scout-header"><div class="scout-name">YOUR NOMINATION</div><div class="scout-class seeker" style="color:var(--gold);border-color:var(--gold);">ANY SPORT</div></div><div class="scout-report">"The mine holds every athlete across every sport and era. Scan any name above. Want a full report published here permanently? Submit a nomination in the terminal below."</div><div style="margin-top:.8rem;"><a href="#email-terminal" style="display:inline-block;padding:.5rem 1rem;background:rgba(255,215,0,.08);border:1px solid var(--gold);color:var(--gold);font-family:'Press Start 2P',cursive;font-size:.28rem;text-decoration:none;">NOMINATE →</a></div></div>
   </div>
 
   <div class="bracket-section">
-    <div class="bracket-title">⬡ THE ORACLE'S BRACKET — WEEKLY WAGER</div>
+    <div class="bracket-title">⬡ THE ORACLE'S BRACKET — NBA PLAYOFFS 2026</div>
     <div class="bracket-sub">"Tora refuses to give clean answers. The bracket always breaks where everyone agrees it won't. Lock your pick below — enter your email to get the leaderboard."</div>
-    <div class="pick-grid" id="bracketPicks">
-      <button class="pick-btn" onclick="selectPick(this,'Team Alpha')">THE FAVORITE</button>
-      <button class="pick-btn" onclick="selectPick(this,'Team Beta')">THE UNDERDOG</button>
-      <button class="pick-btn" onclick="selectPick(this,'Fighter A')">THE CHAMPION</button>
-      <button class="pick-btn" onclick="selectPick(this,'Fighter B')">THE CHALLENGER</button>
+    <div class="pick-grid">
+      <button class="pick-btn" onclick="selectPick(this,'Celtics')">CELTICS</button>
+      <button class="pick-btn" onclick="selectPick(this,'Cavaliers')">CAVALIERS</button>
+      <button class="pick-btn" onclick="selectPick(this,'Knicks')">KNICKS</button>
+      <button class="pick-btn" onclick="selectPick(this,'Pacers')">PACERS</button>
     </div>
+    <p style="font-size:.3rem;color:var(--muted);letter-spacing:.1em;">ENTER EMAIL BELOW TO LOCK YOUR PICK AND JOIN THE LEADERBOARD ↓</p>
   </div>
 
   <div class="email-terminal" id="email-terminal">
@@ -249,13 +255,11 @@ main{max-width:1200px;margin:0 auto;padding:3rem 1.5rem; position: relative; z-i
       <button type="submit" class="submit-btn">⛏ ENTER THE SYNDICATE</button>
       <div class="email-fine">NO SPAM. ONE TRANSMISSION PER WEEK. UNSUBSCRIBE ANYTIME.</div>
     </form>
-    <div class="success-msg" id="successMsg">
-      ⚡ TRANSMISSION RECEIVED.<br>SIGNAL LOCKED.<br>FIRST REPORT DROPS FRIDAY.
-    </div>
+    <div class="success-msg" id="successMsg">⚡ TRANSMISSION RECEIVED.<br>SIGNAL LOCKED.<br>FIRST REPORT DROPS FRIDAY.</div>
   </div>
 
   <div class="bottom-nav">
-    <div class="section-tag" style="justify-content: center; border: none; margin-bottom: 2rem;">⬡ CONTINUE THE DESCENT ⬡</div>
+    <div class="section-tag" style="text-align:center;border:none;">⬡ CONTINUE THE DESCENT ⬡</div>
     <div class="bottom-links">
       <a href="tora.html" class="bottom-link">🔮 YOUR CODEX</a>
       <a href="codex.html" class="bottom-link">⚡ MINER CLASS</a>
@@ -269,179 +273,86 @@ main{max-width:1200px;margin:0 auto;padding:3rem 1.5rem; position: relative; z-i
 </main>
 
 <script>
-// ─── COSMIC STARFIELD GENERATOR ───
-function initStars() {
-    const starfield = document.getElementById('starfield');
-    const numStars = 120;
-    for (let i = 0; i < numStars; i++) {
-        let star = document.createElement('div');
-        star.className = 'star';
-        star.style.width = Math.random() * 3 + 'px';
-        star.style.height = star.style.width;
-        star.style.left = Math.random() * 100 + 'vw';
-        star.style.top = Math.random() * 100 + 'vh';
-        star.style.animationDuration = (Math.random() * 3 + 2) + 's';
-        star.style.animationDelay = (Math.random() * 5) + 's';
-        
-        let colorRoll = Math.random();
-        if(colorRoll > 0.9) star.style.background = '#FF4444'; 
-        else if(colorRoll > 0.8) star.style.background = '#AA55FF'; 
-        else if(colorRoll > 0.7) star.style.background = '#FFD700';
-        
-        starfield.appendChild(star);
-    }
-}
-initStars();
-
-// ─── COSMIC AUDIO ENGINE ───
-const CosmicAudio = {
-  ctx: null, running: false, masterGain: null, humSrc: null,
-  init() {
-    if (this.ctx) return;
-    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.setValueAtTime(0.4, this.ctx.currentTime);
-    this.masterGain.connect(this.ctx.destination);
-  },
-  playHum() {
-    const osc = this.ctx.createOscillator();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(55, this.ctx.currentTime); 
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = 'lowpass'; filter.frequency.value = 200;
-    const g = this.ctx.createGain();
-    g.gain.setValueAtTime(0.05, this.ctx.currentTime);
-    osc.connect(filter).connect(g).connect(this.masterGain);
-    osc.start();
-    this.humSrc = osc;
-    setInterval(() => this.playTwinkle(), 4000);
-  },
-  playTwinkle() {
-      if(Math.random() > 0.5) return;
-      const osc = this.ctx.createOscillator();
-      osc.type = 'sine';
-      const freqs = [880, 1108, 1318, 1760]; 
-      osc.frequency.setValueAtTime(freqs[Math.floor(Math.random() * freqs.length)], this.ctx.currentTime);
-      const g = this.ctx.createGain();
-      g.gain.setValueAtTime(0, this.ctx.currentTime);
-      g.gain.linearRampToValueAtTime(0.02, this.ctx.currentTime + 0.1);
-      g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 1.5);
-      osc.connect(g).connect(this.masterGain);
-      osc.start(); osc.stop(this.ctx.currentTime + 1.5);
-  },
-  startAll() {
-    if (this.running) return;
-    this.init(); this.running = true; this.playHum();
+// STARFIELD
+(function(){
+  const sf=document.getElementById('starfield');
+  for(let i=0;i<120;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const sz=Math.random()*3+'px';
+    s.style.cssText='width:'+sz+';height:'+sz+';left:'+Math.random()*100+'vw;top:'+Math.random()*100+'vh;animation-duration:'+(Math.random()*3+2)+'s;animation-delay:'+(Math.random()*5)+'s;';
+    const r=Math.random();
+    if(r>.9)s.style.background='#FF4444';
+    else if(r>.8)s.style.background='#AA55FF';
+    else if(r>.7)s.style.background='#FFD700';
+    sf.appendChild(s);
   }
+})();
+
+// AUDIO
+const CosmicAudio={ctx:null,running:false,
+  init(){if(this.ctx)return;this.ctx=new(window.AudioContext||window.webkitAudioContext)();this.mg=this.ctx.createGain();this.mg.gain.value=0.4;this.mg.connect(this.ctx.destination);},
+  playHum(){const o=this.ctx.createOscillator();o.type='sine';o.frequency.value=55;const f=this.ctx.createBiquadFilter();f.type='lowpass';f.frequency.value=200;const g=this.ctx.createGain();g.gain.value=0.05;o.connect(f).connect(g).connect(this.mg);o.start();setInterval(()=>this.twinkle(),4000);},
+  twinkle(){if(Math.random()>.5)return;const o=this.ctx.createOscillator();o.type='sine';o.frequency.value=[880,1108,1318,1760][Math.floor(Math.random()*4)];const g=this.ctx.createGain();g.gain.setValueAtTime(0,this.ctx.currentTime);g.gain.linearRampToValueAtTime(0.02,this.ctx.currentTime+.1);g.gain.exponentialRampToValueAtTime(0.001,this.ctx.currentTime+1.5);o.connect(g).connect(this.mg);o.start();o.stop(this.ctx.currentTime+1.5);},
+  start(){if(this.running)return;this.init();this.running=true;this.playHum();}
 };
 
-document.addEventListener('mousedown', () => { CosmicAudio.startAll(); });
+document.addEventListener('mousemove',e=>{const r=document.getElementById('pickaxe-glow');if(r){r.style.left=e.clientX+'px';r.style.top=e.clientY+'px';}});
+document.addEventListener('mousedown',()=>CosmicAudio.start());
 
-// ── ROSTER FILTER SYSTEM ──
-function filterRoster(sport, btnElement) {
-    const buttons = document.querySelectorAll('.filter-btn');
-    buttons.forEach(btn => btn.classList.remove('active'));
-    if(btnElement) btnElement.classList.add('active');
-
-    const cards = document.querySelectorAll('.scout-card');
-    cards.forEach(card => {
-        if (sport === 'all' || card.getAttribute('data-sport') === sport || card.getAttribute('data-sport') === 'all') {
-            card.style.display = 'block';
-        } else {
-            card.style.display = 'none';
-        }
-    });
-}
-
-// ── DETERMINISTIC ATHLETE HASH ENGINE ──
-const MINER_CLASSES = [
-  { title:"THE ORE BREAKER",    color:"#FF5555", book:"The Wanderer", url:"https://books2read.com/u/3LPyjw", price:"$2.99",
-    lore:"They don't ask permission from the defense. They decide and then they move. Their power is their refusal to be stopped. Kin: Nela the Lioness." },
-  { title:"THE MINE BUILDER",   color:"#00FF88", book:"Pyro & Helios", url:"https://books2read.com/u/meW9gA", price:"$9.99",
-    lore:"They see the floor before the play develops. They build the foundation everyone else scores on. Without them the system collapses. Kin: Pip the Bot." },
-  { title:"THE DEEP ORACLE",    color:"#AA55FF", book:"Juni the Immortal", url:"https://books2read.com/u/4EOxZ0", price:"$9.99",
-    lore:"They don't play the game. They play the frequency. They read movements before they happen with quiet prescience. Kin: Tora the Reader." },
-  { title:"THE LORE SEEKER",    color:"#FFD700", book:"Outbreak from the Stars", url:"https://books2read.com/u/31NrLw", price:"$9.99",
-    lore:"A tactical mind. They have studied history, tendencies, and the exact angle required. Knowledge before action. Kin: Felik — always holding more than they show." },
-  { title:"THE DEEP WANDERER",  color:"#55FFFF", book:"The Wanderer", url:"https://books2read.com/u/3LPyjw", price:"$2.99",
-    lore:"Impossible to predict, impossible to contain. They move through defenses like water through cracks in stone. Free, unburdened. Kin: Theo — never using his real name." },
-  { title:"THE ALCHEMIST",      color:"#FFB855", book:"All Tabbies", url:"https://books2read.com/u/brzavW", price:"$9.99",
-    lore:"Combines ingredients everyone else keeps separate. Creates gold from what others discard. Finds value where no one else looks. Kin: Ivy Martin." }
+// HASH ENGINE
+const MC=[
+  {title:"THE ORE BREAKER",color:"#FF5555",book:"The Wanderer",url:"https://books2read.com/u/3LPyjw",price:"$2.99",lore:"They don't ask permission from the defense. They decide and then they move. Their power is their refusal to be stopped. Kin: Nela the Lioness."},
+  {title:"THE MINE BUILDER",color:"#00FF88",book:"Pyro & Helios",url:"https://books2read.com/u/meW9gA",price:"$9.99",lore:"They see the field before the play develops. They build the foundation everyone else scores on. Without Builders the mine collapses. Kin: Pip the Bot."},
+  {title:"THE DEEP ORACLE",color:"#AA55FF",book:"Juni the Immortal",url:"https://books2read.com/u/4EOxZ0",price:"$9.99",lore:"They don't play the game — they play the frequency. Read movements before they happen. Quiet prescience. Kin: Tora the Reader."},
+  {title:"THE LORE SEEKER",color:"#FFD700",book:"Outbreak from the Stars",url:"https://books2read.com/u/31NrLw",price:"$9.99",lore:"Studied history, tendencies, the exact angle required. Knowledge before action. Kin: Felik — always holding more than they show."},
+  {title:"THE DEEP WANDERER",color:"#55FFFF",book:"The Wanderer",url:"https://books2read.com/u/3LPyjw",price:"$2.99",lore:"Impossible to predict, impossible to contain. Moves through defenses like water through cracks. Kin: Theo — never using his real name."},
+  {title:"THE ALCHEMIST",color:"#FFB855",book:"All Tabbies",url:"https://books2read.com/u/brzavW",price:"$9.99",lore:"Combines ingredients everyone else keeps separate. Creates gold from what others discard. Finds value where no one else looks. Kin: Ivy Martin."}
 ];
+function hash(s){let h=0;for(let i=0;i<s.length;i++)h=s.charCodeAt(i)+((h<<5)-h);return Math.abs(h);}
+function scanAthlete(){
+  CosmicAudio.start();
+  const v=document.getElementById('scanInput').value.trim().toUpperCase();
+  if(!v)return;
+  const c=MC[hash(v)%MC.length];
+  document.getElementById('resName').textContent=v;
+  const cl=document.getElementById('resClass');cl.textContent='[ '+c.title+' ]';cl.style.color=c.color;
+  document.getElementById('resLore').textContent='"'+c.lore+'"';
+  document.getElementById('resBook').innerHTML='<p style="font-family:\'Press Start 2P\',cursive;font-size:.3rem;color:#8B6914;margin-bottom:.6rem;">⬡ KIN FREQUENCY:</p><a href="'+c.url+'" target="_blank" style="display:inline-block;padding:.6rem 1.4rem;background:rgba(255,215,0,.08);border:1px solid '+c.color+';color:'+c.color+';font-family:\'Press Start 2P\',cursive;font-size:.32rem;text-decoration:none;">READ: '+c.book.toUpperCase()+' — '+c.price+' →</a>';
+  const b=document.getElementById('scanResult');b.style.display='block';
+  b.scrollIntoView({behavior:'smooth',block:'center'});
+  if(window.gtag)gtag('event','athlete_scan',{event_category:'syndicate',event_label:v});
+}
+document.getElementById('scanInput').addEventListener('keypress',e=>{if(e.key==='Enter')scanAthlete();});
 
-function hashString(str) {
-  let hash = 0;
-  for(let i=0;i<str.length;i++){ hash = str.charCodeAt(i)+((hash<<5)-hash); }
-  return Math.abs(hash);
+// SPORT FILTER
+function filterSport(s,btn){
+  document.querySelectorAll('.sport-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.scout-card[data-sport]').forEach(c=>{
+    c.style.display=(s==='all'||c.dataset.sport===s||c.dataset.sport==='all')?'':'none';
+  });
 }
 
-function scanAthlete() {
-  CosmicAudio.startAll();
-  const input = document.getElementById('athleteInput').value.trim().toUpperCase();
-  if(!input) return;
-  const idx = hashString(input) % MINER_CLASSES.length;
-  const c = MINER_CLASSES[idx];
-  document.getElementById('resName').textContent = input;
-  const cls = document.getElementById('resClass');
-  cls.textContent = '[ ' + c.title + ' ]';
-  cls.style.color = c.color;
-  document.getElementById('resLore').textContent = '"' + c.lore + '"';
-  document.getElementById('resBook').innerHTML =
-    '<p style="font-family:\'Press Start 2P\',cursive;font-size:.3rem;color:#8B6914;margin-bottom:.6rem;letter-spacing:.1em;">⬡ KIN FREQUENCY IN THE MINE:</p>' +
-    '<a href="'+c.url+'" target="_blank" style="display:inline-block;padding:.6rem 1.4rem;background:rgba(255,215,0,.08);border:1px solid '+c.color+';color:'+c.color+';font-family:\'Press Start 2P\',cursive;font-size:.35rem;letter-spacing:.08em;text-decoration:none;transition:all 0.3s;">READ: '+c.book.toUpperCase()+' — '+c.price+' →</a>';
-  const box = document.getElementById('scanResult');
-  box.style.display = 'block';
-  box.scrollIntoView({behavior:'smooth',block:'center'});
-}
+// BRACKET
+let pick=null;
+function selectPick(btn,t){document.querySelectorAll('.pick-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');pick=t;document.getElementById('email-terminal').scrollIntoView({behavior:'smooth'});}
 
-document.getElementById('athleteInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        scanAthlete();
-    }
-});
+// EMAIL 
+const GFA='https://docs.google.com/forms/d/e/1FAIpQLSchvRnGzpQK9QyMvVNf922VKpjHhZCtRc2f-7nKss1xUL6QkQ/formResponse';
+const EF='entry.1941782966';
+const AF='entry.1688261920';
 
-// ── BRACKET PICKS ──
-let selectedPick = null;
-function selectPick(btn, team) {
-  document.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  selectedPick = team;
-  document.getElementById('email-terminal').scrollIntoView({ behavior: 'smooth' });
-}
-
-// ── EMAIL SUBMIT (Google Forms backend) ──
-const GOOGLE_FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSchvRnGzpQK9QyMvVNf922VKpjHhZCtRc2f-7nKss1xUL6QkQ/formResponse';
-const EMAIL_FIELD = 'entry.1941782966';
-const ATHLETE_FIELD = 'entry.1688261920';
-
-function submitEmail(e) {
+function submitEmail(e){
   e.preventDefault();
-  const email = document.getElementById('emailInput').value;
-  const athlete = document.getElementById('nominateInput').value;
-  
-  try {
-    const existing = JSON.parse(localStorage.getItem('nmn_syndicate_email') || '[]');
-    existing.push({ email, athlete, pick: selectedPick, date: new Date().toISOString() });
-    localStorage.setItem('nmn_syndicate_email', JSON.stringify(existing));
-  } catch(err) {}
-
-  if (GOOGLE_FORM_ACTION.includes('REPLACE')) {
-    showSuccess();
-    return;
-  }
-
-  const body = new URLSearchParams();
-  body.append(EMAIL_FIELD, email);
-  if (athlete) body.append(ATHLETE_FIELD, athlete);
-
-  fetch(GOOGLE_FORM_ACTION, { method: 'POST', body, mode: 'no-cors' })
-    .finally(() => showSuccess());
+  const em=document.getElementById('emailInput').value;
+  const at=document.getElementById('nominateInput').value;
+  try{const ex=JSON.parse(localStorage.getItem('nmn_syndicate')||'[]');ex.push({em,at,pick,d:new Date().toISOString()});localStorage.setItem('nmn_syndicate',JSON.stringify(ex));}catch(err){}
+  if(GFA.includes('REPLACE')){showOK();return;}
+  const b=new URLSearchParams();b.append(EF,em);if(at)b.append(AF,at);
+  fetch(GFA,{method:'POST',body:b,mode:'no-cors'}).finally(showOK);
 }
-
-function showSuccess() {
-  document.querySelector('.email-form').style.display = 'none';
-  document.getElementById('successMsg').style.display = 'block';
-}
+function showOK(){document.querySelector('.email-form').style.display='none';document.getElementById('successMsg').style.display='block';}
 </script>
 </body>
 </html>
