@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════
-   nmn-scene.js — Shared Scene Manager
+   nmn-scene.js — V2 Shared Scene Manager
    Architect's Edition: Fixes memory leaks & 
    syncs game transitions with the Empire's core.
    ════════════════════════════════════════════ */
@@ -25,6 +25,7 @@ window.NMNScene = (function(){
         });
         _listeners = [];
         
+        // Aggressive Canvas clear for iOS Safari memory management
         document.querySelectorAll('canvas').forEach(cv => {
             try { 
                 const ctx = cv.getContext('2d');
@@ -52,7 +53,7 @@ window.NMNScene = (function(){
 
     // ── MANAGED RAF: Safe animation handling ──
     function raf(fn) {
-        if (_paused) return;
+        if (_paused) return null;
         _afId = requestAnimationFrame(fn);
         return _afId;
     }
@@ -78,8 +79,16 @@ window.NMNScene = (function(){
         _paused = true; 
         if(window.nmnToast) nmnToast("SYSTEM PAUSED");
     }
-    function resume() { _paused = false; }
-    function toggle() { _paused = !_paused; return _paused; }
+    
+    function resume() { 
+        _paused = false; 
+    }
+    
+    function toggle() { 
+        _paused = !_paused; 
+        if(_paused && window.nmnToast) nmnToast("SYSTEM PAUSED");
+        return _paused; 
+    }
 
     // ── THE EXTRACTION SCALE ──
     // Powers the "Infinite Depth" feel. Multiplier grows exponentially.
