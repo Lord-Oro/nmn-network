@@ -103,7 +103,7 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
 }
 .mine-card {
   padding: 0.8rem 0.5rem; text-align: center; border: 2px solid var(--gd);
-  background: #000; transition: all 0.2s;
+  background: #000; transition: all 0.2s; cursor: none;
   width: calc(33.333% - 0.5rem); min-width: 100px; flex-grow: 1;
   display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
 }
@@ -114,13 +114,6 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
 .mine-type { font-size: 0.35rem; }
 .mine-bonus { font-size: 0.3rem; color: var(--muted); line-height: 1.4; }
 
-.start-btn {
-  margin-top: 1.5rem; padding: 1.2rem 1rem; background: var(--gold); color: #000;
-  font-size: 0.55rem; border: none; transition: all 0.3s; width: 90%; max-width: 400px;
-}
-.start-btn:hover { background: #fff; box-shadow: 0 0 20px rgba(255,215,0,0.6); transform: scale(1.05); }
-.start-btn:disabled { opacity: 0.3; transform: none; box-shadow: none; }
-
 @media (max-width: 400px) {
   .mine-card { padding: 0.6rem 0.4rem; width: calc(50% - 0.5rem); min-width: 90px; }
   .mine-icon { font-size: 1.4rem; }
@@ -128,24 +121,27 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
   .select-title { font-size: 0.8rem; }
 }
 
-/* ─── HUD CONTROLS & FIRE BUTTON ─── */
-.controls-wrapper {
-  position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 15;
-}
+/* ─── HUD CONTROLS ERGONOMICS (LEFT THUMB FIRE, RIGHT THUMB AMMO) ─── */
 .fire-btn {
+  position: absolute; bottom: 20px; left: 20px; z-index: 15;
   background: #ff4444; color: #000; border: 3px solid #fff;
-  padding: 15px 40px; font-size: 0.8rem; font-family: var(--font-pixel);
+  font-size: 0.6rem; font-family: var(--font-pixel);
   cursor: none; text-shadow: 0 0 5px rgba(255,255,255,0.8);
   box-shadow: 0 0 20px rgba(255,68,68,0.6);
   animation: firePulse 1s infinite alternate; transition: 0.1s;
+  border-radius: 50%; width: 80px; height: 80px;
+  display: none; justify-content: center; align-items: center; text-align: center;
 }
 .fire-btn:active { transform: scale(0.95); background: #fff; color: #ff4444; border-color: #ff4444; }
 .fire-btn:disabled { background: #333; border-color: #555; color: #555; animation: none; box-shadow: none; }
 
 @keyframes firePulse { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
 
-.ammo-bar { display: flex; gap: 10px; background: rgba(5,3,8,0.9); padding: 10px; border: 2px solid var(--gd); }
+.ammo-bar {
+  position: absolute; bottom: 20px; right: 20px; z-index: 15;
+  display: none; flex-direction: column; gap: 10px;
+  background: rgba(5,3,8,0.9); padding: 10px; border: 2px solid var(--gd);
+}
 .ammo-btn {
   width: 45px; height: 45px; border: 2px solid var(--gd); background: #000;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -187,6 +183,8 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
 .btn-group { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
 .btn-outline { background: transparent; border: 2px solid var(--gold); color: var(--gold); padding: 0.8rem 1.5rem; font-size: 0.5rem; text-decoration: none; transition: background 0.2s;}
 .btn-outline:hover { background: rgba(255,215,0,0.1); }
+.btn-start-over { padding: 0.8rem 1.5rem; background: var(--gold); color: #000; font-size: 0.5rem; border: none; transition: all 0.3s; cursor: none;}
+.btn-start-over:hover { background: #fff; box-shadow: 0 0 20px rgba(255,215,0,0.6); }
 
 /* GLOBAL CTA BOTTOM */
 .nmn-global-cta {
@@ -237,27 +235,26 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
   </div>
   <div class="turn-indicator" id="turnIndicator" style="display:none">YOUR TURN</div>
 
-  <div class="controls-wrapper" id="controlsWrapper" style="display:none">
-    <button class="fire-btn" id="fireBtn">FIRE!</button>
-    <div class="ammo-bar" id="ammoBar">
-      <div class="ammo-btn active" data-ammo="0" onclick="selectAmmo(0)">
-        <span id="ammoIcon0">⬡</span><span class="ammo-count" id="ammoCount0">∞</span>
-      </div>
-      <div class="ammo-btn" data-ammo="1" onclick="selectAmmo(1)">
-        <span id="ammoIcon1">🔥</span><span class="ammo-count" id="ammoCount1">5</span>
-      </div>
-      <div class="ammo-btn" data-ammo="2" onclick="selectAmmo(2)">
-        <span id="ammoIcon2">💎</span><span class="ammo-count" id="ammoCount2">3</span>
-      </div>
-      <div class="ammo-btn" data-ammo="3" onclick="selectAmmo(3)">
-        <span id="ammoIcon3">💣</span><span class="ammo-count" id="ammoCount3">2</span>
-      </div>
+  <button class="fire-btn" id="fireBtn">FIRE</button>
+  
+  <div class="ammo-bar" id="ammoBar">
+    <div class="ammo-btn active" data-ammo="0" onclick="selectAmmo(0)">
+      <span id="ammoIcon0">⬡</span><span class="ammo-count" id="ammoCount0">∞</span>
+    </div>
+    <div class="ammo-btn" data-ammo="1" onclick="selectAmmo(1)">
+      <span id="ammoIcon1">🔥</span><span class="ammo-count" id="ammoCount1">5</span>
+    </div>
+    <div class="ammo-btn" data-ammo="2" onclick="selectAmmo(2)">
+      <span id="ammoIcon2">💎</span><span class="ammo-count" id="ammoCount2">3</span>
+    </div>
+    <div class="ammo-btn" data-ammo="3" onclick="selectAmmo(3)">
+      <span id="ammoIcon3">💣</span><span class="ammo-count" id="ammoCount3">2</span>
     </div>
   </div>
 
   <div class="mine-select" id="mineSelect">
     <div class="select-title">[ MINE SIEGE ]<br>SELECT PROTOCOL</div>
-    <p class="select-sub">Each mine type extracts different elemental power. Choose your fortress.</p>
+    <p class="select-sub" id="selectInstruct">Tap a fortress to select. Tap again to deploy.</p>
     <div class="mine-grid">
       <div class="mine-card" onclick="selectMine(0)">
         <span class="mine-icon">⬡</span>
@@ -290,14 +287,13 @@ canvas { display: block; width: 100%; height: 100%; flex-grow: 1;}
         <div class="mine-bonus">Explosive.</div>
       </div>
     </div>
-    <button class="start-btn" id="startBtn" onclick="startBattle()" disabled>AWAITING SELECTION</button>
   </div>
 
   <div class="overlay" id="gameOverOv">
     <div class="overlay-title" id="goTitle">VICTORY</div>
     <p class="overlay-sub" id="goSub"></p>
     <div class="btn-group">
-      <button class="start-btn" style="margin-top:0;" onclick="resetGame()">FIGHT AGAIN</button>
+      <button class="btn-start-over" onclick="resetGame()">FIGHT AGAIN</button>
       <a href="minewars.html" class="btn-outline">READ ARCHIVE</a>
     </div>
   </div>
@@ -462,7 +458,6 @@ setTimeout(resize, 100);
 function updateAim(e) {
   if(!gameRunning || turn !== 'player') return;
   const rect = canvas.getBoundingClientRect();
-  // Support both touch and mouse events seamlessly
   let clientX = e.clientX;
   let clientY = e.clientY;
   if(e.touches && e.touches.length > 0) {
@@ -476,20 +471,23 @@ canvas.addEventListener('mousemove', updateAim);
 canvas.addEventListener('touchmove', (e) => { e.preventDefault(); updateAim(e); }, {passive: false});
 canvas.addEventListener('touchstart', (e) => { updateAim(e); }, {passive: true});
 
+// DOUBLE-TAP SELECTION LOGIC
 function selectMine(idx) {
-  selectedMine = idx;
-  document.querySelectorAll('.mine-card').forEach((c, i) => c.classList.toggle('selected', i === idx));
-  const btn = document.getElementById('startBtn');
-  btn.disabled = false;
-  btn.textContent = `INITIALIZE ${MINES[idx].name.toUpperCase()}`;
+  if (selectedMine === idx) {
+    startBattle(); // Deploy on second tap
+  } else {
+    selectedMine = idx;
+    document.querySelectorAll('.mine-card').forEach((c, i) => c.classList.toggle('selected', i === idx));
+    document.getElementById('selectInstruct').innerHTML = `<span style="color:var(--neon-green)">TAP ONCE MORE TO DEPLOY</span>`;
+  }
 }
 
 function startBattle() {
-  if (selectedMine < 0) return;
   document.getElementById('mineSelect').style.display = 'none';
   document.getElementById('windBar').style.display = 'flex';
   document.getElementById('turnIndicator').style.display = 'block';
-  document.getElementById('controlsWrapper').style.display = 'flex';
+  document.getElementById('fireBtn').style.display = 'flex';
+  document.getElementById('ammoBar').style.display = 'flex';
   document.getElementById('arenaBar').style.display = 'block';
 
   let aiMine = selectedMine;
@@ -647,7 +645,8 @@ function checkGameOver() {
 
     document.getElementById('goTitle').textContent = won ? 'EXTRACTION COMPLETE' : 'SYSTEM FAILURE';
     document.getElementById('goTitle').style.color = won ? 'var(--gold)' : '#ff4444';
-    document.getElementById('controlsWrapper').style.display = 'none';
+    document.getElementById('fireBtn').style.display = 'none';
+    document.getElementById('ammoBar').style.display = 'none';
     setTimeout(() => document.getElementById('gameOverOv').style.display = 'flex', 1500);
   }
 }
@@ -840,8 +839,14 @@ function resetGame() {
   document.getElementById('mineSelect').style.display = 'flex';
   document.getElementById('windBar').style.display = 'none';
   document.getElementById('turnIndicator').style.display = 'none';
-  document.getElementById('controlsWrapper').style.display = 'none';
+  document.getElementById('fireBtn').style.display = 'none';
+  document.getElementById('ammoBar').style.display = 'none';
   document.getElementById('arenaBar').style.display = 'none';
+  
+  selectedMine = -1;
+  document.querySelectorAll('.mine-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('selectInstruct').innerHTML = 'Tap a fortress to select. Tap again to deploy.';
+  
   gameRunning = false;
   ctx.clearRect(0,0,W,H);
 }
