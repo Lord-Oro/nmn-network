@@ -32,7 +32,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; }
 
-/* CURSOR CONTROL: Invisible cursor so the flashlight beam and nmn-nav lantern do the work */
+/* CURSOR CONTROL */
 body, * { cursor: none !important; }
 
 body {
@@ -43,7 +43,48 @@ body {
   font-size: 1.2rem;
 }
 
-/* ─── FLASHLIGHT BEAM (MYSTIC PURPLE/GOLD TUNE) ─── */
+/* ─── THEATRICAL CURTAIN INTRO ─── */
+#curtain-wrapper {
+    position: fixed; inset: 0; z-index: 999999;
+    display: flex; justify-content: center; align-items: center;
+    pointer-events: all;
+}
+.curtain-half {
+    position: absolute; top: 0; width: 50vw; height: 100vh;
+    background: #1a053a; /* Deep mystic purple */
+    overflow: hidden; transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+    background-image: 
+      radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),
+      radial-gradient(2px 2px at 70px 90px, #AA55FF, rgba(0,0,0,0)),
+      radial-gradient(1px 1px at 150px 160px, #FFD700, rgba(0,0,0,0)),
+      radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0));
+    background-size: 200px 200px;
+}
+.curtain-left { left: 0; border-right: 2px solid var(--gold); }
+.curtain-right { right: 0; border-left: 2px solid var(--gold); }
+
+.curtain-left.open { transform: translateX(-100%); }
+.curtain-right.open { transform: translateX(100%); }
+
+.curtain-text {
+    position: relative; z-index: 1000000;
+    font-family: var(--font-pixel); color: var(--gold); font-size: 2.5rem; 
+    text-shadow: 0 0 20px rgba(170,85,255,0.8), 4px 4px 0 #000;
+    letter-spacing: 0.2em; animation: pulseWelcome 2s infinite; transition: opacity 0.5s;
+    text-align: center;
+}
+.curtain-text.fade { opacity: 0; }
+
+@keyframes pulseWelcome { 
+  0%, 100% { text-shadow: 0 0 20px rgba(170,85,255,0.8), 4px 4px 0 #000; } 
+  50% { text-shadow: 0 0 40px rgba(255,215,0,0.8), 4px 4px 0 #000; } 
+}
+
+/* FADE IN CONTENT */
+body.content-hidden main, body.content-hidden header, body.content-hidden .hud, body.content-hidden .nmn-global-cta { opacity: 0; }
+body.content-visible main, body.content-visible header, body.content-visible .hud, body.content-visible .nmn-global-cta { opacity: 1; transition: opacity 1.5s ease-in; }
+
+/* ─── FLASHLIGHT BEAM ─── */
 #pickaxe-glow {
     position: fixed; width: 160px; height: 160px; border-radius: 50%;
     background: radial-gradient(circle, rgba(170,85,255,0.3) 0%, rgba(255,215,0,0.15) 40%, transparent 70%);
@@ -130,17 +171,23 @@ main { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; flex: 1; position: 
 </style>
 <style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
 </head>
-<body>
+<body class="content-hidden">
 
-<script src="nmn-wallet.js"></script>
+<div id="curtain-wrapper">
+    <div class="curtain-half curtain-left" id="curtainLeft"></div>
+    <div class="curtain-half curtain-right" id="curtainRight"></div>
+    <div class="curtain-text" id="curtainText">WELCOME</div>
+</div>
+
+<div id="pickaxe-glow"></div>
+
 <script src="nmn-nav.js"></script>
+<script src="nmn-wallet.js"></script>
 
 <header>
   <a href="index.html" class="logo">NMN CODEX</a>
   <a href="index.html" class="back">← RETURN TO MINE</a>
 </header>
-
-<div id="pickaxe-glow"></div>
 
 <main>
   <div id="introSection" class="intro retro-box">
@@ -183,6 +230,22 @@ main { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; flex: 1; position: 
 </div>
 
 <script>
+// ─── THEATRICAL INTRO SEQUENCE ───
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        document.getElementById('curtainText').classList.add('fade');
+    }, 1500);
+    setTimeout(() => {
+        document.getElementById('curtainLeft').classList.add('open');
+        document.getElementById('curtainRight').classList.add('open');
+        document.body.classList.replace('content-hidden', 'content-visible');
+        CosmicAudio.startAll(); // Start the drone as the curtains part
+    }, 2000);
+    setTimeout(() => {
+        document.getElementById('curtain-wrapper').style.display = 'none';
+    }, 3500);
+});
+
 // ─── COSMIC AUDIO ENGINE (Mystic Codex Tune) ───
 const CosmicAudio = {
   ctx: null, running: false, masterGain: null,
@@ -218,11 +281,25 @@ window.addEventListener('pageshow', function(event) {
     }
 });
 
-// Glow Cursor Tracking
-document.addEventListener('mousemove', function(e){
-  const r = document.getElementById('pickaxe-glow');
-  if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
-});
+// ─── UNIFIED FLASHLIGHT TRACKING (MOUSE + TOUCH) ───
+function moveGlow(e) {
+    const r = document.getElementById('pickaxe-glow');
+    if(!r) return;
+    let x = e.clientX;
+    let y = e.clientY;
+    if(e.touches && e.touches.length > 0) {
+        x = e.touches[0].clientX;
+        y = e.touches[0].clientY;
+    }
+    if(x !== undefined && y !== undefined) {
+        r.style.left = x + 'px';
+        r.style.top = y + 'px';
+    }
+}
+document.addEventListener('mousemove', moveGlow);
+document.addEventListener('touchmove', moveGlow, {passive: true});
+document.addEventListener('touchstart', moveGlow, {passive: true});
+
 document.addEventListener('mousedown', function(){
   CosmicAudio.startAll();
   const r = document.getElementById('pickaxe-glow');
@@ -232,6 +309,10 @@ document.addEventListener('mouseup', function(){
   const r = document.getElementById('pickaxe-glow');
   if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(170,85,255,.3) 0%,rgba(255,215,0,0.15) 40%,transparent 70%)'; }
 });
+document.addEventListener('touchend', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(170,85,255,.3) 0%,rgba(255,215,0,0.15) 40%,transparent 70%)'; }
+}, {passive: true});
 
 // ── PROCEDURAL ICON GENERATOR ──
 function drawSprite(canvasId, seedStr, colorHex) {
@@ -264,7 +345,7 @@ window.addEventListener('DOMContentLoaded', () => {
   updateGlobalHUD();
 });
 
-// ── QUESTIONS (Expanded to 6 Choices) ──
+// ── QUESTIONS ──
 const questions = [
   {
     num: 1, speaker: 'LORD ORO', color: '#FFD700',
@@ -352,7 +433,7 @@ const questions = [
   }
 ];
 
-// ── TYPES (Expanded to 6) ──
+// ── TYPES ──
 const minerTypes = {
   Breaker: {
     color: '#FF5555', title: 'THE ORE BREAKER', sub: 'METAL TYPE — FORCE THROUGH',
@@ -418,7 +499,6 @@ function startCodex() {
   document.getElementById('progressHud').style.display = 'flex';
   document.getElementById('progressBarBg').style.display = 'block';
   renderQuestion(0);
-  CosmicAudio.startAll(); // Ensure audio continues through quiz
 }
 
 function renderQuestion(idx) {
@@ -512,7 +592,7 @@ function showResult() {
     });
     localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
     
-    // Grant gold on completion if wallet exists
+    // Grant gold on completion
     if(typeof NMNWallet !== 'undefined') {
         NMNWallet.addGold(150);
     }
@@ -533,8 +613,6 @@ function updateGlobalHUD() {
     document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]').length;
     if (typeof NMNWallet !== 'undefined') {
         document.getElementById('dgGold').textContent = NMNWallet.get().gold.toLocaleString();
-    } else {
-        document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold') || '0';
     }
   } catch(e) {}
 }
