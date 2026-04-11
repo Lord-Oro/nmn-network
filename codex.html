@@ -24,12 +24,16 @@
   --lg: #55FF55; 
   --red: #FF5555;
   --blue: #5555FF;
+  --pu: #AA55FF;
   --font-pixel: 'Press Start 2P', monospace;
   --font-text: 'VT323', monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; }
+
+/* CURSOR CONTROL: Invisible cursor so the flashlight beam and nmn-nav lantern do the work */
+body, * { cursor: none !important; }
 
 body {
   font-family: var(--font-text);
@@ -39,13 +43,10 @@ body {
   font-size: 1.2rem;
 }
 
-/* ─── CUSTOM CURSOR & GLOW ─── */
-body, a, button, .choice { 
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; 
-}
+/* ─── FLASHLIGHT BEAM (MYSTIC PURPLE/GOLD TUNE) ─── */
 #pickaxe-glow {
-    position: fixed; width: 140px; height: 140px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, transparent 70%);
+    position: fixed; width: 160px; height: 160px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(170,85,255,0.3) 0%, rgba(255,215,0,0.15) 40%, transparent 70%);
     pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
     mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
 }
@@ -61,10 +62,10 @@ body, a, button, .choice {
 header {
   padding: 1rem 2rem; border-bottom: 4px solid var(--lg);
   display: flex; justify-content: space-between; align-items: center;
-  background: #000; z-index: 999; position: sticky; top: 70px; /* FIXED OVERLAP */
+  background: #000; z-index: 999; position: sticky; top: 0px; 
 }
 .logo { font-family: var(--font-pixel); color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
-.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
+.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: 0.2s; }
 .back:hover { color: var(--gold); }
 
 main { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; flex: 1; position: relative; z-index: 10; }
@@ -78,7 +79,7 @@ main { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; flex: 1; position: 
 
 .intro-lore { font-size: 1.3rem; color: var(--gold); padding: 1.5rem; border: 4px solid var(--gd); background: #1a1500; margin-bottom: 2rem; text-align: left; font-style: italic;}
 
-.btn { display: inline-block; padding: 1rem 2rem; background: #000; border: 4px solid #FFF; color: var(--cream); font-family: var(--font-pixel); font-size: 0.7rem; text-transform: uppercase; cursor: pointer; transition: transform 0.1s; text-decoration: none; box-shadow: 4px 4px 0 #000;}
+.btn { display: inline-block; padding: 1rem 2rem; background: #000; border: 4px solid #FFF; color: var(--cream); font-family: var(--font-pixel); font-size: 0.7rem; text-transform: uppercase; transition: transform 0.1s; text-decoration: none; box-shadow: 4px 4px 0 #000;}
 .btn:hover { background: var(--gold); color: #000; transform: translateY(-4px); }
 .btn-gold { background: var(--gd); box-shadow: 4px 4px 0 #000; }
 .btn-action { background: #111; color: var(--lg); border-color: var(--lg); }
@@ -101,7 +102,7 @@ main { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; flex: 1; position: 
 .q-text { font-size: 1.5rem; color: var(--cream); line-height: 1.5; min-height: 80px;}
 
 .q-choices { display: flex; flex-direction: column; gap: 1rem; }
-.choice { background: #000; border: 4px solid #444; padding: 1.2rem; color: var(--muted); font-family: var(--font-text); font-size: 1.3rem; text-align: left; cursor: pointer; transition: all 0.1s; line-height: 1.4;}
+.choice { background: #000; border: 4px solid #444; padding: 1.2rem; color: var(--muted); font-family: var(--font-text); font-size: 1.3rem; text-align: left; transition: all 0.1s; line-height: 1.4;}
 .choice:hover { border-color: var(--cream); color: var(--cream); background: #111; transform: translateX(8px); box-shadow: 4px 4px 0 #000;}
 .choice::before { content: '▶ '; opacity: 0; color: var(--gold); font-family: var(--font-pixel); font-size: 0.8rem;}
 .choice:hover::before { opacity: 1; }
@@ -131,14 +132,15 @@ main { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; flex: 1; position: 
 </head>
 <body>
 
-<div id="pickaxe-glow"></div>
-
+<script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
 
 <header>
   <a href="index.html" class="logo">NMN CODEX</a>
   <a href="index.html" class="back">← RETURN TO MINE</a>
 </header>
+
+<div id="pickaxe-glow"></div>
 
 <main>
   <div id="introSection" class="intro retro-box">
@@ -181,18 +183,54 @@ main { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; flex: 1; position: 
 </div>
 
 <script>
+// ─── COSMIC AUDIO ENGINE (Mystic Codex Tune) ───
+const CosmicAudio = {
+  ctx: null, running: false, masterGain: null,
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  },
+  playHum() {
+    const osc = this.ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(50, this.ctx.currentTime); // Mystic, deep drone
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass'; filter.frequency.value = 150;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.05, this.ctx.currentTime);
+    osc.connect(filter).connect(g).connect(this.masterGain);
+    osc.start();
+  },
+  startAll() {
+    if (this.running) return;
+    this.init(); this.running = true; this.playHum();
+  }
+};
+
+// BFCache Fix
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        const overlay = document.getElementById('descent-overlay');
+        if(overlay) overlay.classList.remove('descent-active');
+    }
+});
+
 // Glow Cursor Tracking
 document.addEventListener('mousemove', function(e){
   const r = document.getElementById('pickaxe-glow');
   if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
 });
 document.addEventListener('mousedown', function(){
+  CosmicAudio.startAll();
   const r = document.getElementById('pickaxe-glow');
-  if(r) { r.style.width = '180px'; r.style.height = '180px'; r.style.background = 'radial-gradient(circle,rgba(232,184,75,.4) 0%,transparent 70%)'; }
+  if(r) { r.style.width = '190px'; r.style.height = '190px'; r.style.background = 'radial-gradient(circle,rgba(170,85,255,.5) 0%,transparent 70%)'; }
 });
 document.addEventListener('mouseup', function(){
   const r = document.getElementById('pickaxe-glow');
-  if(r) { r.style.width = '140px'; r.style.height = '140px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,.25) 0%,transparent 70%)'; }
+  if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(170,85,255,.3) 0%,rgba(255,215,0,0.15) 40%,transparent 70%)'; }
 });
 
 // ── PROCEDURAL ICON GENERATOR ──
@@ -380,6 +418,7 @@ function startCodex() {
   document.getElementById('progressHud').style.display = 'flex';
   document.getElementById('progressBarBg').style.display = 'block';
   renderQuestion(0);
+  CosmicAudio.startAll(); // Ensure audio continues through quiz
 }
 
 function renderQuestion(idx) {
@@ -472,6 +511,11 @@ function showResult() {
       date: new Date().toLocaleDateString() 
     });
     localStorage.setItem('nmn_lore_vault', JSON.stringify(vault));
+    
+    // Grant gold on completion if wallet exists
+    if(typeof NMNWallet !== 'undefined') {
+        NMNWallet.addGold(150);
+    }
     updateGlobalHUD();
   } catch(e) {}
 }
@@ -487,7 +531,11 @@ function resetCodex() {
 function updateGlobalHUD() {
   try {
     document.getElementById('dgLore').textContent = JSON.parse(localStorage.getItem('nmn_lore_vault') || '[]').length;
-    document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold') || '0';
+    if (typeof NMNWallet !== 'undefined') {
+        document.getElementById('dgGold').textContent = NMNWallet.get().gold.toLocaleString();
+    } else {
+        document.getElementById('dgGold').textContent = localStorage.getItem('nmn_total_gold') || '0';
+    }
   } catch(e) {}
 }
 </script>
