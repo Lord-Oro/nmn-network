@@ -23,6 +23,20 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { height: 100%; overflow: hidden; background: var(--coal); }
 
+/* ─── PURE CURSOR OVERRIDE (INVISIBLE) ─── */
+body, body *, a, button, canvas, .card, .class-card, .btn-end-turn { 
+  cursor: none !important; 
+}
+
+/* ─── FLASHLIGHT BEAM (ABYSSAL PURPLE & CRIMSON TUNE) ─── */
+#pickaxe-glow {
+    position: fixed; width: 160px; height: 160px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(170,85,255,0.3) 0%, rgba(255,68,68,0.15) 40%, transparent 70%);
+    pointer-events: none; z-index: 999999; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
+    will-change: left, top;
+}
+
 body {
   font-family: var(--font-pixel);
   color: var(--cream);
@@ -106,7 +120,7 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 }
 .card {
   width: 110px; height: 160px; background: #111; border: 2px solid var(--gd); border-radius: 6px;
-  display: flex; flex-direction: column; padding: 8px; cursor: pointer; transition: all 0.2s;
+  display: flex; flex-direction: column; padding: 8px; transition: all 0.2s;
   box-shadow: 0 5px 15px rgba(0,0,0,0.8); position: relative;
 }
 .card:hover { transform: translateY(-10px) scale(1.05); border-color: var(--gold); box-shadow: 0 10px 25px rgba(255,215,0,0.2); z-index: 10; }
@@ -118,7 +132,7 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 .card-desc { font-size: 0.35rem; color: var(--cream); text-align: center; line-height: 1.4; flex: 1; }
 
 .turn-controls { display: flex; justify-content: center; margin-top: 10px; }
-.btn-end-turn { background: #ff4444; color: #fff; font-size: 0.5rem; padding: 10px 20px; border: 2px solid #880000; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+.btn-end-turn { background: #ff4444; color: #fff; font-size: 0.5rem; padding: 10px 20px; border: 2px solid #880000; text-transform: uppercase; transition: 0.2s; }
 .btn-end-turn:hover { background: #ff6666; box-shadow: 0 0 15px rgba(255,68,68,0.5); }
 
 /* OVERLAYS */
@@ -129,14 +143,14 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 .overlay.hidden { display: none !important; }
 .ov-title { font-size: 1.5rem; color: var(--gold); text-shadow: 0 0 20px rgba(255,215,0,.5); text-align: center; line-height: 1.5; margin-bottom: 1rem; }
 .ov-sub { font-size: .45rem; color: var(--cream); text-align: center; line-height: 2; max-width: 400px; margin-bottom: 2rem; }
-.btn-gold { padding: 0.8rem 1.5rem; font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; background: var(--gold); color: var(--coal); border: none; cursor: pointer; transition: 0.3s; margin: 0.5rem;}
+.btn-gold { padding: 0.8rem 1.5rem; font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; background: var(--gold); color: var(--coal); border: none; transition: 0.3s; margin: 0.5rem;}
 .btn-gold:hover { background: #fff; box-shadow: 0 0 20px rgba(255,215,0,.6); transform: scale(1.05); }
 
 /* CLASS SELECT GRID (ELEPHANTS) */
 .class-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; max-width: 900px; margin-bottom: 2rem;}
 .class-card {
   padding: 1rem; text-align: center; border: 2px solid var(--gd);
-  background: #000; cursor: pointer; transition: all 0.2s;
+  background: #000; transition: all 0.2s;
   width: 140px; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
 }
 .class-card:hover { border-color: var(--gold); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.8), inset 0 0 15px rgba(255,215,0,0.2); }
@@ -169,8 +183,11 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
   .class-card { width: 120px; }
 }
 </style>
+<style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
 </head>
 <body>
+
+<div id="pickaxe-glow"></div>
 
 <script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
@@ -285,6 +302,46 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 </div>
 
 <script>
+// ─── UNIFIED FLASHLIGHT TRACKING ───
+function moveGlow(e) {
+    const r = document.getElementById('pickaxe-glow');
+    if(!r) return;
+    let x, y;
+    if(e.type.includes('touch')) {
+        if(e.touches && e.touches.length > 0) {
+            x = e.touches[0].clientX;
+            y = e.touches[0].clientY;
+        }
+    } else {
+        x = e.clientX;
+        y = e.clientY;
+    }
+    if(x !== undefined && y !== undefined) {
+        r.style.left = x + 'px';
+        r.style.top = y + 'px';
+    }
+}
+window.addEventListener('mousemove', moveGlow);
+window.addEventListener('touchmove', moveGlow, {passive: true});
+window.addEventListener('touchstart', moveGlow, {passive: true});
+
+window.addEventListener('mousedown', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '190px'; r.style.height = '190px'; r.style.background = 'radial-gradient(circle,rgba(170,85,255,.5) 0%,transparent 70%)'; }
+});
+window.addEventListener('mouseup', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(170,85,255,.3) 0%,rgba(255,68,68,.15) 40%,transparent 70%)'; }
+});
+
+// BFCache Fix
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        const overlay = document.getElementById('descent-overlay');
+        if(overlay) overlay.classList.remove('descent-active');
+    }
+});
+
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
 let W, H;
@@ -314,6 +371,7 @@ const NMN_Audio = {
   }
 };
 document.addEventListener('click', () => { if (!NMN_Audio.running) NMN_Audio.startAll(); }, { once: true });
+document.addEventListener('touchstart', () => { if (!NMN_Audio.running) NMN_Audio.startAll(); }, { once: true, passive: true });
 
 const SFX = {
   play(freq, type, dur, vol = 0.1) {
