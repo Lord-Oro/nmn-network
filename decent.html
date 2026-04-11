@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-<title>Deep Mine Extraction — NMN Retro</title>
+<title>The Descent — NMN Retro</title>
 
 <link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
 <link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
@@ -30,12 +30,16 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; overflow: hidden;}
 
+/* CURSOR CONTROL */
+body, a, button { cursor: none !important; }
+canvas { cursor: crosshair !important; }
+
 body {
   font-family: var(--font-text);
   color: var(--cream);
   background-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, #0a0a0a 2px, #0a0a0a 4px);
   font-size: 1.2rem;
-  padding-top: 80px; /* Clears the global nav */
+  padding-top: 80px; 
 }
 
 /* 16-BIT UI BORDER HELPER */
@@ -45,13 +49,10 @@ body {
   box-shadow: inset -4px -4px 0px 0px rgba(0,0,0,0.5), 4px 4px 0px 0px #000;
 }
 
-/* ─── CUSTOM CURSOR & GLOW ─── */
-body, a, button, canvas { 
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, crosshair !important; 
-}
+/* ─── FLASHLIGHT BEAM (DIM GOLD MINER TUNE) ─── */
 #pickaxe-glow {
     position: fixed; width: 140px; height: 140px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, rgba(232,184,75,0.1) 40%, transparent 70%);
     pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
     mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
 }
@@ -61,6 +62,7 @@ header {
   padding: 1rem 2rem; border-bottom: 4px solid var(--lg);
   display: flex; justify-content: space-between; align-items: center;
   background: #000; z-index: 1000; flex-shrink: 0;
+  position: absolute; top: 0; width: 100%;
 }
 .logo { font-family: var(--font-pixel); color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; }
 .back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; }
@@ -101,7 +103,7 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 
 .btn {
   padding: 1.2rem 2rem; font-family: var(--font-pixel); font-size: 0.7rem;
-  text-transform: uppercase; cursor: pointer; border: 4px solid #FFF; transition: transform 0.1s; display: inline-block; text-decoration: none; text-align: center;
+  text-transform: uppercase; cursor: none; border: 4px solid #FFF; transition: transform 0.1s; display: inline-block; text-decoration: none; text-align: center;
 }
 .btn-gold { background: var(--gd); color: var(--cream); box-shadow: 4px 4px 0 #000; }
 .btn-gold:hover { background: var(--gold); color: #000; transform: translateY(-4px); border-color: var(--cream); }
@@ -111,14 +113,14 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
   display: flex; justify-content: space-between; align-items: center;
   padding: 1rem; background: #000; border: 4px solid #444; margin-top: 1rem; flex-wrap: wrap; gap: 10px; box-shadow: 4px 4px 0 #000;
 }
-.ctrl-btn { background: #111; border: 4px solid var(--muted); color: var(--cream); font-family: var(--font-pixel); font-size: 0.6rem; padding: 0.8rem; cursor: pointer; transition: transform 0.1s;}
+.ctrl-btn { background: #111; border: 4px solid var(--muted); color: var(--cream); font-family: var(--font-pixel); font-size: 0.6rem; padding: 0.8rem; cursor: none; transition: transform 0.1s;}
 .ctrl-btn:hover { border-color: var(--gold); transform: translateY(-2px); background: #222;}
 .ctrl-hint { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--gd); text-transform: uppercase;}
 
 /* MOBILE D-PAD */
 .mobile-dpad { display: none; flex-direction: column; align-items: center; gap: 4px; padding: 0.5rem; user-select: none; margin-top: 0.5rem;}
 .dpad-row { display: flex; gap: 4px; }
-.dpad-btn { background: #111; border: 4px solid var(--muted); color: var(--cream); font-family: var(--font-pixel); display: flex; align-items: center; justify-content: center; font-size: 1rem; width: 50px; height: 50px; user-select: none; transition: transform 0.1s; }
+.dpad-btn { background: #111; border: 4px solid var(--muted); color: var(--cream); font-family: var(--font-pixel); display: flex; align-items: center; justify-content: center; font-size: 1rem; width: 50px; height: 50px; user-select: none; transition: transform 0.1s; cursor: none;}
 .dpad-btn:active { background: #222; border-color: var(--gold); transform: scale(0.95); }
 
 @media(max-width: 700px) {
@@ -128,7 +130,6 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
   .hud { padding: 0.5rem; }
 }
 </style>
-
 <style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
 </head>
 <body>
@@ -137,7 +138,7 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 
 <header>
   <a href="oracle.html" class="logo">PROJECT: DESCENT</a>
-  <a href="oracle.html" class="back">← RETURN TO ORACLE</a>
+  <a href="games.html" class="back">← RETURN TO FORGE</a>
 </header>
 
 <div id="pickaxe-glow"></div>
@@ -176,7 +177,7 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 
   <div class="controls-bar">
     <div style="display:flex; gap:10px;">
-      <button class="ctrl-btn" onclick="startGame()">▶ START</button>
+      <button class="ctrl-btn" onclick="startGame()">▶ RESTART</button>
     </div>
     <span class="ctrl-hint">WASD / ARROWS TO MOVE & CLICK TO MINE</span>
   </div>
@@ -192,10 +193,53 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 </div>
 
 <script>
+// ─── COSMIC AUDIO ENGINE (Deep Pressure Tune) ───
+const CosmicAudio = {
+  ctx: null, running: false, masterGain: null,
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0.4, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  },
+  playHum() {
+    const osc = this.ctx.createOscillator();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(40, this.ctx.currentTime); // Very low, ominous pressure drone
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass'; filter.frequency.value = 100;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.06, this.ctx.currentTime);
+    osc.connect(filter).connect(g).connect(this.masterGain);
+    osc.start();
+  },
+  startAll() {
+    if (this.running) return;
+    this.init(); this.running = true; this.playHum();
+  }
+};
+
 // Glow Cursor Tracking
 document.addEventListener('mousemove', function(e){
   const r = document.getElementById('pickaxe-glow');
   if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
+});
+document.addEventListener('mousedown', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '180px'; r.style.height = '180px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,0.4) 0%,transparent 70%)'; }
+});
+document.addEventListener('mouseup', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '140px'; r.style.height = '140px'; r.style.background = 'radial-gradient(circle,rgba(255,215,0,0.25) 0%,rgba(232,184,75,0.1) 40%,transparent 70%)'; }
+});
+
+// BFCache Fix
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        const overlay = document.getElementById('descent-overlay');
+        if(overlay) overlay.classList.remove('descent-active');
+    }
 });
 
 const cv = document.getElementById('cv');
@@ -237,17 +281,6 @@ const ORE_GLOW = {
 const ORE_VALUE = {
   [T.COPPER_ORE]:5, [T.SILVER_ORE]:15, [T.GOLD_ORE]:40, [T.LEGEND_ORE]:100,
 };
-
-const LORE_FRAGMENTS = [
-  '"The mine remembers every tool that ever struck it."',
-  '"Lord Oro was here. The wall still holds his warmth."',
-  '"Depth 18: The ore started whispering back."',
-  '"She left the lantern. I left the gold. Neither of us went back."',
-  '"The deepest vein is not gold. It is silence."',
-  '"Nela descended once. The walls parted for her."',
-  '"This is not treasure. This is what the mine chose to keep."',
-  '"Felik\'s second soul came from here."',
-];
 
 function generateWorld(){
   const w = Array(WORLD_H).fill(0).map(()=>Array(WORLD_W).fill(T.STONE));
@@ -300,13 +333,14 @@ function initState(){
   return {
     world: generateWorld(),
     player:{ x:24*TILE+TILE/2, y:1*TILE, vx:0, vy:0, onGround:false, facing:1, mining:false, mineTarget:null, mineProgress:0 },
-    cam:{ x:0, y:0 }, gold:0, oxygen:100, depth:0, legend:0, loreFound:new Set(), sessionGold:0, particles:[],
-    loreMsg:null, loreMsgTimer:0, lordOroFound:false, running:false,
+    cam:{ x:0, y:0 }, gold:0, oxygen:100, depth:0, legend:0, sessionGold:0, particles:[],
+    running:false,
   };
 }
 
 function startGame(){
   if(_locked)return; _locked=true;
+  CosmicAudio.startAll(); // Start the drone when they descend
   G=initState(); G.running=true;
   document.getElementById('ov-start').classList.add('hidden');
   document.getElementById('ov-over').classList.add('hidden');
@@ -333,6 +367,19 @@ cv.addEventListener('mousedown', e=>{
   }
 });
 cv.addEventListener('mouseup', e=>{ if(G) G.player.mining=false; });
+
+// Mobile D-Pad Logic
+const dpadMap = { 'dp-up': 'w', 'dp-left': 'a', 'dp-down': 's', 'dp-right': 'd' };
+Object.entries(dpadMap).forEach(([id, key]) => {
+  const btn = document.getElementById(id);
+  if(btn) {
+      btn.addEventListener('touchstart', e => { e.preventDefault(); keys[key] = true; });
+      btn.addEventListener('touchend', e => { e.preventDefault(); delete keys[key]; });
+      btn.addEventListener('mousedown', e => { e.preventDefault(); keys[key] = true; });
+      btn.addEventListener('mouseup', e => { e.preventDefault(); delete keys[key]; });
+      btn.addEventListener('mouseleave', e => { e.preventDefault(); delete keys[key]; });
+  }
+});
 
 function update(){
   if(!G||!G.running)return;
@@ -385,7 +432,7 @@ function update(){
       }
       
       if(tileType===T.WATER) G.oxygen=Math.max(0,G.oxygen-20);
-      if(tileType!==T.LORD_ORO||G.lordOroFound) G.world[mt.r][mt.c]=T.AIR;
+      if(tileType!==T.LORD_ORO) G.world[mt.r][mt.c]=T.AIR;
       p.mining=false; p.mineTarget=null; p.mineProgress=0;
     }
   }
@@ -475,6 +522,10 @@ function endGame(){
   document.getElementById('fs-gold').textContent=G.sessionGold;
   document.getElementById('fs-legend').textContent=G.legend;
   document.getElementById('ov-over').classList.remove('hidden');
+  
+  if(typeof NMNWallet !== 'undefined' && G.sessionGold > 0) {
+      NMNWallet.addGold(G.sessionGold);
+  }
 }
 
 ctx.fillStyle='#000';ctx.fillRect(0,0,cv.width,cv.height);
