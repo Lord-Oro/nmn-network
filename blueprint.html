@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Architect's Blueprint — NMN</title>
+
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="shortcut icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link rel="apple-touch-icon" href="lord_oro_emblem.jpg">
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root {
+  --gold: #FFD700;
+  --gd: #AA7700;
+  --bg-color: #050302;
+  --panel-bg: #0a0806;
+  --cream: #f0e6cc;
+  --muted: #4a3c28;
+  --lg: #00FF88; /* Terminal Green */
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-text: 'VT323', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; overflow-x: hidden; }
+
+/* ─── PURE CURSOR OVERRIDE (INVISIBLE) ─── */
+body, body *, a, button, .code-block, iframe, .log-btn { 
+  cursor: none !important; 
+}
+
+/* ─── FLASHLIGHT BEAM (TERMINAL GREEN TUNE) ─── */
+#pickaxe-glow {
+    position: fixed; width: 160px; height: 160px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,255,136,0.25) 0%, rgba(0,255,136,0.05) 40%, transparent 70%);
+    pointer-events: none; z-index: 999999; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
+    will-change: left, top;
+}
+
+body {
+  font-family: var(--font-text);
+  color: var(--lg);
+  background-image: repeating-linear-gradient(0deg, #050302 0px, #050302 2px, #080604 2px, #080604 4px);
+  padding-bottom: 80px;
+  font-size: 1.3rem;
+}
+
+/* CRT SCANLINES & VIGNETTE */
+body::after {
+  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
+  background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.1) 50%);
+  background-size:100% 4px; pointer-events:none; z-index:10000; opacity:0.3;
+}
+body::before {
+  content:""; position:fixed; top:0; left:0; width:100vw; height:100vh;
+  background:radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.8) 100%);
+  pointer-events:none; z-index:9999;
+}
+
+/* HEADER */
+header {
+  padding: 1rem 2rem; border-bottom: 2px solid var(--lg);
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(5,3,2,0.95); z-index: 1000; position: sticky; top: 0;
+}
+.logo { font-family: var(--font-pixel); color: var(--lg); font-size: 0.8rem; text-decoration: none; text-shadow: 2px 2px 0 #000; letter-spacing: 2px;}
+.back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+.back:hover { color: var(--lg); }
+
+main { max-width: 1200px; margin: 0 auto; padding: 3rem 1.5rem; flex: 1; width: 100%; position: relative; z-index: 10; }
+
+/* MANIFESTO HERO */
+.manifesto-box { border: 1px solid var(--lg); padding: 2rem; background: rgba(0,255,136,0.02); margin-bottom: 4rem; box-shadow: inset 0 0 20px rgba(0,255,136,0.05); position: relative;}
+.manifesto-box::before { content: 'SYS.LOG.01'; position: absolute; top: -10px; left: 15px; background: var(--bg-color); padding: 0 10px; font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); }
+.typewriter { display: inline; border-right: 8px solid var(--lg); padding-right: 5px; animation: blinkCursor 0.8s infinite; line-height: 1.6;}
+@keyframes blinkCursor { 0%, 100% { border-color: transparent; } 50% { border-color: var(--lg); } }
+
+.section-title { font-family: var(--font-pixel); font-size: 1.2rem; color: var(--cream); border-bottom: 2px dashed var(--muted); padding-bottom: 1rem; margin-bottom: 2rem; text-shadow: 2px 2px 0 #000; }
+.section-title span { color: var(--lg); }
+
+/* TERMINAL LAYOUT (SPLIT SCREEN) */
+.terminal-layout {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 2rem;
+  margin-bottom: 4rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .terminal-layout { grid-template-columns: 1fr; }
+}
+
+/* LEFT: DATABANK DIRECTORY */
+.databank {
+  border: 2px solid #333;
+  background: #0a0806;
+  height: 600px;
+  overflow-y: auto;
+  box-shadow: inset 0 0 20px #000;
+}
+.databank-header {
+  background: #111; padding: 1rem; font-family: var(--font-pixel); font-size: 0.6rem; color: var(--lg); border-bottom: 2px solid #333; position: sticky; top: 0; z-index: 5; text-transform: uppercase;
+}
+.log-category {
+  padding: 1rem 1rem 0.5rem 1rem; font-family: var(--font-pixel); font-size: 0.5rem; color: var(--cream); border-bottom: 1px dashed #333; background: #000;
+}
+.log-btn {
+  width: 100%; text-align: left; background: transparent; border: none; border-bottom: 1px solid #1a1a1a;
+  padding: 1rem; font-family: var(--font-text); font-size: 1.2rem; color: var(--muted); transition: all 0.2s;
+}
+.log-btn:hover { background: rgba(0,255,136,0.1); color: var(--lg); padding-left: 1.5rem; }
+.log-btn.active { background: var(--lg); color: #000; font-weight: bold; border-left: 4px solid #fff; }
+
+/* RIGHT: CRT MONITOR */
+.crt-monitor { border: 8px solid #222; border-radius: 12px; background: #000; padding: 15px; box-shadow: 0 15px 40px rgba(0,0,0,0.8), inset 0 0 10px #000; position: relative; }
+.crt-monitor::after { content:''; position: absolute; bottom: 5px; right: 15px; width: 8px; height: 8px; border-radius: 50%; background: var(--lg); box-shadow: 0 0 10px var(--lg); animation: pulseLight 2s infinite;}
+@keyframes pulseLight { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.crt-screen-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border: 2px solid var(--lg); border-radius: 4px; background: #050505;}
+.crt-screen-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+.readout-panel {
+  margin-top: 1.5rem; border: 1px dashed var(--muted); padding: 1rem; background: #050302;
+}
+.readout-title { font-family: var(--font-pixel); font-size: 0.8rem; color: var(--gold); margin-bottom: 0.5rem; text-transform: uppercase;}
+.readout-desc { font-size: 1.2rem; color: var(--cream); line-height: 1.5; }
+.readout-meta { font-family: var(--font-pixel); font-size: 0.4rem; color: var(--muted); margin-top: 1rem; }
+
+/* CUSTOM SCROLLBAR FOR DATABANK */
+.databank::-webkit-scrollbar { width: 8px; }
+.databank::-webkit-scrollbar-track { background: #050302; }
+.databank::-webkit-scrollbar-thumb { background: #333; border: 1px solid #111; }
+.databank::-webkit-scrollbar-thumb:hover { background: var(--lg); }
+
+/* CTA */
+.cta-box { text-align: center; padding: 3rem; border: 1px dashed var(--lg); background: rgba(0,255,136,0.05); }
+.cta-box h3 { font-family: var(--font-pixel); font-size: 1rem; color: var(--cream); margin-bottom: 1rem; }
+.btn-run { display: inline-block; margin-top: 1.5rem; padding: 1rem 2rem; background: transparent; border: 2px solid var(--lg); color: var(--lg); font-family: var(--font-pixel); font-size: 0.7rem; text-decoration: none; text-transform: uppercase; transition: all 0.3s; }
+.btn-run:hover { background: var(--lg); color: #000; box-shadow: 0 0 20px rgba(0,255,136,0.5); transform: translateY(-3px); }
+
+</style>
+<style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
+</head>
+<body>
+
+<div id="pickaxe-glow"></div>
+
+<script src="nmn-nav.js"></script>
+
+<header>
+  <a href="index.html" class="logo">NMN ARCHITECT</a>
+  <a href="index.html" class="back">← RETURN TO HUB</a>
+</header>
+
+<main>
+  
+  <div class="manifesto-box">
+    <div id="typewriter" class="typewriter"></div>
+  </div>
+
+  <div class="section-title"><span>[1]</span> THE TRANSMISSIONS: ORIGIN FREQUENCIES</div>
+  <p style="color:var(--cream); margin-bottom: 2rem;">The NMN universe wasn't built in a vacuum. It is the synthesis of deep curiosity, philosophical inquiry, and systems thinking. These are the broadcasts that built Lord Oro. Select a transmission from the databank.</p>
+
+  <div class="terminal-layout">
+    
+    <div class="databank">
+      <div class="databank-header">AWAITING INPUT...</div>
+      
+      <div class="log-category">VSAUCE // THE RELENTLESS WHY</div>
+      <button class="log-btn active" onclick="loadTransmission('L45Q1_psDqk', 'Illusions of Time', 'VSAUCE', this)">Log 01: Illusions of Time</button>
+      <button class="log-btn" onclick="loadTransmission('GDrBIKOR01c', 'The Banach-Tarski Paradox', 'VSAUCE', this)">Log 02: Banach-Tarski</button>
+      <button class="log-btn" onclick="loadTransmission('7uiv6tKtoKg', 'What Will We Miss?', 'VSAUCE', this)">Log 03: What Will We Miss?</button>
+      <button class="log-btn" onclick="loadTransmission('O2jkV4BsN6U', 'Did The Past Really Happen?', 'VSAUCE', this)">Log 04: The Past</button>
+      <button class="log-btn" onclick="loadTransmission('zHL9GP_B30E', 'Laws and Causes', 'VSAUCE', this)">Log 05: Laws and Causes</button>
+      <button class="log-btn" onclick="loadTransmission('PEikGKDVsCc', 'Supertasks', 'VSAUCE', this)">Log 06: Supertasks</button>
+      <button class="log-btn" onclick="loadTransmission('xHd4zsIbXJ0', 'How To Count Past Infinity', 'VSAUCE', this)">Log 07: Infinity</button>
+      <button class="log-btn" onclick="loadTransmission('SrU9YDoXE88', 'Math Magic', 'VSAUCE', this)">Log 08: Math Magic</button>
+
+      <div class="log-category">WISECRACK // CULTURAL SYNTHESIS</div>
+      <button class="log-btn" onclick="loadTransmission('HMeTZzqecwE', 'The Philosophy of...', 'WISECRACK', this)">Log 09: Media Philosophy</button>
+
+      <div class="log-category">KURZGESAGT // COSMIC SCALE</div>
+      <button class="log-btn" onclick="loadTransmission('MBRqu0YOH14', 'Optimistic Nihilism', 'KURZGESAGT', this)">Log 10: Optimistic Nihilism</button>
+      <button class="log-btn" onclick="loadTransmission('wwSzpaTHyS8', 'The Egg', 'KURZGESAGT', this)">Log 11: The Egg (Story)</button>
+      <button class="log-btn" onclick="loadTransmission('Pj-h6MEgE7I', 'String Theory', 'KURZGESAGT', this)">Log 12: String Theory</button>
+      <button class="log-btn" onclick="loadTransmission('Da-2h2B4faU', 'What is Consciousness?', 'KURZGESAGT', this)">Log 13: Consciousness</button>
+      <button class="log-btn" onclick="loadTransmission('LEENEFaVUzU', 'The Tail End', 'KURZGESAGT', this)">Log 14: Life and Death</button>
+
+    </div>
+
+    <div>
+      <div class="crt-monitor">
+        <div class="crt-screen-wrap">
+          <iframe id="mainScreen" src="https://www.youtube.com/embed/L45Q1_psDqk?rel=0" allowfullscreen></iframe>
+        </div>
+      </div>
+      <div class="readout-panel">
+        <div class="readout-title" id="readoutTitle">ILLUSIONS OF TIME</div>
+        <div class="readout-desc" id="readoutDesc">Decypting signal... The foundation of temporal perception.</div>
+        <div class="readout-meta" id="readoutMeta">SOURCE: VSAUCE // STATUS: CONNECTED</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="cta-box">
+    <h3>THE MINE IS OPEN.</h3>
+    <p style="color: var(--muted); font-family: var(--font-text);">The biggest hurdle isn't the code. The biggest hurdle is starting. Don't wait for permission. Build the prototype. Deploy the flyer.</p>
+    <a href="games.html" class="btn-run">RUN EXECUTABLE: NMN_PORTAL</a>
+  </div>
+
+</main>
+
+<script>
+// ─── BEAM TRACKING SCRIPT ───
+function moveGlow(e) {
+    const r = document.getElementById('pickaxe-glow');
+    if(!r) return;
+    let x, y;
+    if(e.type.includes('touch')) {
+        if(e.touches && e.touches.length > 0) {
+            x = e.touches[0].clientX;
+            y = e.touches[0].clientY;
+        }
+    } else {
+        x = e.clientX;
+        y = e.clientY;
+    }
+    if(x !== undefined && y !== undefined) {
+        r.style.left = x + 'px';
+        r.style.top = y + 'px';
+    }
+}
+document.addEventListener('mousemove', moveGlow);
+document.addEventListener('touchmove', moveGlow, {passive: true});
+document.addEventListener('touchstart', moveGlow, {passive: true});
+
+// ─── TERMINAL LOGIC ───
+function loadTransmission(videoId, title, source, btnElement) {
+  // Update iframe
+  document.getElementById('mainScreen').src = `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1`;
+  
+  // Update Readout
+  document.getElementById('readoutTitle').textContent = title.toUpperCase();
+  document.getElementById('readoutDesc').textContent = `Decrypting signal from ${source}... Analyzing historical databanks.`;
+  document.getElementById('readoutMeta').textContent = `SOURCE: ${source} // ID: ${videoId} // STATUS: STREAMING`;
+
+  // Update Button Styles
+  document.querySelectorAll('.log-btn').forEach(btn => btn.classList.remove('active'));
+  btnElement.classList.add('active');
+
+  // Small visual glitch effect on the text
+  const desc = document.getElementById('readoutDesc');
+  desc.style.opacity = '0.5';
+  setTimeout(() => { desc.style.opacity = '1'; }, 150);
+}
+
+// ─── TYPEWRITER EFFECT ───
+const textToType = "The gatekeepers are gone. The tools are free. The old industry relies on permission; the new architecture relies on execution. You don't need a studio. You don't need a publisher. You need a system, and the willingness to dig until your hands bleed. I am leaving this blueprint here for anyone brave enough to pick up the shovel.";
+const typeTarget = document.getElementById('typewriter');
+let typeIndex = 0;
+
+function typeWriter() {
+  if (typeIndex < textToType.length) {
+    typeTarget.innerHTML += textToType.charAt(typeIndex);
+    typeIndex++;
+    setTimeout(typeWriter, 25); // Typing speed
+  }
+}
+
+// Start typing on load
+setTimeout(typeWriter, 500);
+
+</script>
+
+<div style="text-align:center;padding:1rem;font-family:'Press Start 2P',monospace;font-size:.3rem;color:#4a3c28; margin-top: auto;">
+  <a href="privacy.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">PRIVACY</a> ·
+  <a href="terms.html" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">TERMS</a> ·
+  <a href="mailto:doradoyoro@gmail.com" style="color:#4a3c28;text-decoration:none;margin:0 .5rem">CONTACT</a>
+</div>
+
+<div class="nmn-global-cta" style="border-top:2px solid rgba(0,255,136,.2);background:rgba(5,3,8,.98);padding:2rem 1.5rem;text-align:center;margin-top:0;">
+  <p style="font-family:'Press Start 2P',cursive;font-size:.4rem;color:var(--lg);letter-spacing:.2em;margin-bottom:1.2rem;">⬡ MINE YOUR COPY ⬡</p>
+  <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:1.2rem;">
+    <a href="https://books2read.com/u/3LPyjw" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE WANDERER $2.99</a>
+    <a href="https://books2read.com/u/3ndXGR" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE SWIMMER $2.99</a>
+    <a href="https://books2read.com/u/4EOxZ0" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">JUNI $9.99</a>
+    <a href="https://books2read.com/u/31NrLw" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">OUTBREAK $9.99</a>
+  </div>
+</div>
+
+</body>
+</html>
