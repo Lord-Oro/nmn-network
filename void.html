@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Void Simulator — NMN</title>
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root {
+  --void: #000000; --gold: #FFD700; --cream: #E8E0D0; --muted: #8a7654; --glitch-red: #FF0040;
+  --pixel: 'Press Start 2P', monospace; --vt: 'VT323', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;cursor:none!important;}
+html,body{background:var(--void);color:var(--gold);font-family:var(--pixel);min-height:100vh;overflow:hidden;}
+body::after{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.95) 100%);pointer-events:none;z-index:9998;}
+
+header{position:fixed;top:0;width:100%;padding:.8rem 1.5rem;display:flex;justify-content:space-between;align-items:center;z-index:100;}
+.sector-label{font-size:.45rem;color:var(--muted);letter-spacing:.2em;}
+.back-btn{font-size:.35rem;color:var(--muted);text-decoration:none;letter-spacing:.1em;transition:color .2s;}
+.back-btn:hover{color:var(--glitch-red);}
+
+.void-container{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.breath-orb{width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,var(--gold),rgba(255,215,0,.1));animation:breathe 6s ease-in-out infinite;}
+@keyframes breathe{0%,100%{transform:scale(1);box-shadow:0 0 15px var(--gold);}50%{transform:scale(3.5);box-shadow:0 0 50px var(--gold),0 0 100px rgba(255,215,0,.2);}}
+
+.void-instruction{position:absolute;top:25%;font-size:.5rem;color:rgba(255,255,255,.3);letter-spacing:.2em;text-align:center;line-height:1.6;}
+.void-timer{position:absolute;bottom:20%;font-size:.8rem;color:rgba(255,215,0,.5);letter-spacing:.1em;}
+.void-status{position:absolute;bottom:15%;font-family:var(--vt);font-size:1.2rem;color:var(--glitch-red);opacity:0;transition:opacity .3s;}
+
+.void-reward{display:none;max-width:700px;text-align:center;z-index:10;}
+.reward-title{font-size:1.2rem;color:var(--gold);margin-bottom:2rem;text-shadow:0 0 20px var(--gold);}
+.reward-text{font-family:var(--vt);font-size:1.6rem;color:var(--cream);line-height:1.8;margin-bottom:2rem;text-shadow:2px 2px 0 #000;}
+.reward-sub{font-size:.45rem;color:var(--muted);line-height:2;}
+
+#cursor-dot{position:fixed;width:4px;height:4px;background:#fff;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
+</style>
+</head>
+<body>
+<div id="cursor-dot"></div>
+
+<header>
+  <span class="sector-label" id="sector-lbl">NODE 05 // MEDITATION PROTOCOL</span>
+  <a href="quarantine.html" class="back-btn" id="back-btn">← ABORT PROTOCOL</a>
+</header>
+
+<div class="void-container" id="sim-zone">
+  <div class="void-instruction" id="instruction">STARE INTO THE CENTER.<br>DO NOT MOVE THE MOUSE.</div>
+  <div class="breath-orb" id="orb"></div>
+  <div class="void-timer" id="timer">00:00</div>
+  <div class="void-status" id="status-msg">MOTION DETECTED. TIMER RESET.</div>
+</div>
+
+<div class="void-container void-reward" id="reward-zone">
+  <div class="reward-title">THE VOID ACKNOWLEDGES YOU</div>
+  <div class="reward-text">The Obsidian Crystal did not appear in Sector 4. It condensed. The difference is everything. Appearance implies arrival. Condensation implies that the gold was always there, distributed, waiting for the conditions that would make it visible.</div>
+  <div class="reward-sub">Lord Oro understood this before he understood anything else. You have earned this silence.</div>
+</div>
+
+<script>
+let voidSeconds = 0;
+let voidInterval = null;
+let isActive = true;
+const MAX_TIME = 180; // 3 minutes
+
+// Init Custom Cursor
+document.addEventListener('mousemove', e => {
+  const c = document.getElementById('cursor-dot');
+  if(c){ c.style.left = e.clientX+'px'; c.style.top = e.clientY+'px'; }
+  
+  // Motion detection logic
+  if(isActive && voidSeconds > 0) {
+      resetSimulation();
+  }
+});
+
+function updateDisplay() {
+  const m = String(Math.floor(voidSeconds/60)).padStart(2,'0');
+  const s = String(voidSeconds%60).padStart(2,'0');
+  document.getElementById('timer').textContent = `${m}:${s}`;
+}
+
+function startSimulation() {
+  if(!isActive) return;
+  voidInterval = setInterval(() => {
+    voidSeconds++;
+    updateDisplay();
+    
+    if(voidSeconds >= MAX_TIME) {
+      completeSimulation();
+    }
+  }, 1000);
+}
+
+function resetSimulation() {
+  clearInterval(voidInterval);
+  voidSeconds = 0;
+  updateDisplay();
+  
+  const msg = document.getElementById('status-msg');
+  msg.style.opacity = '1';
+  setTimeout(() => { msg.style.opacity = '0'; }, 2000);
+  
+  // Restart timer after a brief pause to let them settle
+  setTimeout(() => {
+      if(isActive) startSimulation();
+  }, 1500);
+}
+
+function completeSimulation() {
+  isActive = false;
+  clearInterval(voidInterval);
+  document.getElementById('sim-zone').style.display = 'none';
+  document.getElementById('instruction').style.display = 'none';
+  document.getElementById('sector-lbl').style.display = 'none';
+  document.getElementById('back-btn').textContent = '← RETURN TO QUARANTINE';
+  document.getElementById('back-btn').style.color = 'var(--gold)';
+  
+  const reward = document.getElementById('reward-zone');
+  reward.style.display = 'flex';
+  reward.animate([{opacity: 0}, {opacity: 1}], {duration: 2000, fill: 'forwards'});
+}
+
+// Start sequence
+setTimeout(startSimulation, 2000); // Give them 2 seconds to stop moving the mouse
+</script>
+</body>
+</html>
