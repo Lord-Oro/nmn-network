@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Paradox Terminal — NMN</title>
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root {
+  --void: #030104; --glitch-cyan: #00FFFF; --glitch-green: #00FF41; --glitch-red: #FF0040;
+  --gold: #FFD700; --cream: #E8E0D0; --muted: #8a7654;
+  --pixel: 'Press Start 2P', monospace; --vt: 'VT323', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;cursor:none!important;}
+html,body{background:var(--void);color:var(--glitch-cyan);font-family:var(--pixel);min-height:100vh;}
+body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;z-index:9999;}
+body::after{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.8) 100%);pointer-events:none;z-index:9998;}
+
+header{padding:.8rem 1.5rem;background:rgba(3,1,4,.95);border-bottom:2px solid var(--glitch-cyan);display:flex;justify-content:space-between;align-items:center;}
+.sector-label{font-size:.45rem;color:var(--glitch-cyan);letter-spacing:.2em;}
+.back-btn{font-size:.35rem;color:var(--muted);text-decoration:none;letter-spacing:.1em;transition:color .2s;}
+.back-btn:hover{color:var(--glitch-cyan);}
+
+main{max-width:800px;margin:4rem auto;padding:2rem;}
+.node-title{font-size:1.5rem;color:var(--glitch-cyan);margin-bottom:2rem;text-align:center;text-shadow:2px 2px 0 #000;}
+
+.paradox-container{background:#000;border:2px solid var(--glitch-cyan);padding:2rem;box-shadow:0 0 30px rgba(0,255,255,.05);}
+.paradox-box{font-family:var(--vt);font-size:1.4rem;color:var(--glitch-cyan);line-height:1.8;min-height:120px;margin-bottom:2rem;}
+.choice-row{display:flex;gap:1rem;flex-wrap:wrap;}
+.choice-btn{flex:1;min-width:200px;padding:1rem;background:rgba(0,255,255,.05);border:1px solid var(--glitch-cyan);color:var(--glitch-cyan);font-family:var(--pixel);font-size:.35rem;cursor:none;transition:all .2s;text-align:center;line-height:1.6;}
+.choice-btn:hover{background:var(--glitch-cyan);color:#000;box-shadow:0 0 15px var(--glitch-cyan);}
+
+.alignment-result{margin-top:2rem;padding:1.5rem;border:1px dashed var(--gold);background:rgba(255,215,0,.05);font-family:var(--vt);font-size:1.3rem;color:var(--gold);display:none;line-height:1.6;}
+.next-btn{display:none;margin-top:1.5rem;padding:.8rem 1.5rem;background:transparent;border:2px solid var(--glitch-green);color:var(--glitch-green);font-family:var(--pixel);font-size:.4rem;cursor:none;width:100%;text-align:center;transition:all .2s;}
+.next-btn:hover{background:var(--glitch-green);color:#000;}
+
+#cursor-glow{position:fixed;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(0,255,255,.1) 0%,transparent 70%);pointer-events:none;z-index:9996;transform:translate(-50%,-50%);mix-blend-mode:screen;}
+</style>
+</head>
+<body>
+<div id="cursor-glow"></div>
+
+<header>
+  <span class="sector-label">NODE 04 // MORAL ARCADE</span>
+  <a href="quarantine.html" class="back-btn">← ABORT SIMULATION</a>
+</header>
+
+<main>
+  <h1 class="node-title">THE PARADOX TERMINAL</h1>
+  
+  <div class="paradox-container">
+    <div class="paradox-box" id="paradox-text">Initializing scenario parameters...</div>
+    <div class="choice-row" id="choice-row"></div>
+    <div class="alignment-result" id="alignment-result"></div>
+    <button class="next-btn" id="next-btn" onclick="nextParadox()">LOAD NEXT SCENARIO →</button>
+  </div>
+</main>
+
+<script>
+document.addEventListener('mousemove', e => {
+  const g = document.getElementById('cursor-glow');
+  if(g){ g.style.left = e.clientX+'px'; g.style.top = e.clientY+'px'; }
+});
+
+const PARADOXES = [
+  {
+    q:"The trolley is hurtling toward five Miners. You can pull a lever to divert it — but it will strike Orid the Oathbreaker, who has already sacrificed everything once. Do you pull the lever?",
+    choices:["PULL THE LEVER","DO NOTHING","FIND A THIRD OPTION"],
+    result:["You are a utilitarian. The numbers matter more than the story. The mine respects this but the mine does not love it. → You align with THE ORE BREAKER. Read The Mine Wars.", "You believe in the inviolable self. One life chosen by the universe for a reason cannot be sacrificed by your hand. → You align with THE DEEP ORACLE. Read Tora's Codex.", "The Wanderer's answer. There is always a third option. You just have to find it before the trolley arrives. → You align with THE DEEP WANDERER. Read The Wanderer."]
+  },
+  {
+    q:"The Ship of Theseus returns from a voyage, but every plank has been replaced. Is it the same ship? Theo has been eleven different people. Is he the same person?",
+    choices:["YES — THE SHIP IS THE SAME","NO — IT IS A NEW SHIP","THE QUESTION IS WRONG"],
+    result:["Continuity is what defines identity. The purpose persists. The name persists. That is enough. → You align with THE MINE BUILDER.", "Identity is material. When the material changes, the identity changes. Theo was always becoming someone new. → You align with THE ALCHEMIST.", "The ship's identity is a tool, not a fact. The right question is: who benefits from the answer? → You align with THE LORE SEEKER."]
+  },
+  {
+    q:"Nozick's Experience Machine: You can plug in and live a perfect simulated life — every achievement, every love, every victory — indistinguishable from reality. You will never know the difference. Do you plug in?",
+    choices:["YES — PLUG IN","NO — REFUSE","DEPENDS ON THE SIMULATION"],
+    result:["You value experience over authenticity. The mine gives you what you came for, not what you need. This is not a criticism. → You align with THE STATIC LIONS.", "Reality has a weight that simulation cannot replicate. You want the gold that comes from the dark, not the gold that appears. → You align with THE GLITCH ELEPHANTS. Read Outbreak from the Stars.", "The Swimmer's answer. Context determines value. The same water that saved her would have drowned a different person. → You align with THE DUAL SOUL. Read The Swimmer."]
+  }
+];
+
+let paradoxIdx = 0;
+
+function renderParadox(){
+  const p = PARADOXES[paradoxIdx % PARADOXES.length];
+  document.getElementById('paradox-text').textContent = p.q;
+  const row = document.getElementById('choice-row');
+  row.innerHTML = '';
+  document.getElementById('alignment-result').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  
+  p.choices.forEach((c,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn'; 
+    btn.textContent = c;
+    btn.onclick = () => {
+      // Disable buttons after choice
+      document.querySelectorAll('.choice-btn').forEach(b => b.style.opacity = '0.3');
+      btn.style.opacity = '1';
+      btn.style.background = 'var(--glitch-cyan)';
+      btn.style.color = '#000';
+      
+      const res = document.getElementById('alignment-result');
+      res.style.display = 'block'; 
+      res.textContent = p.result[i];
+      document.getElementById('next-btn').style.display = 'block';
+    };
+    row.appendChild(btn);
+  });
+}
+
+function nextParadox(){ 
+  paradoxIdx++; 
+  renderParadox(); 
+}
+
+// Init
+renderParadox();
+</script>
+</body>
+</html>
