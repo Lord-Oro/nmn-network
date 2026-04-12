@@ -36,7 +36,7 @@ body, body *, a, button, .relic-card, .tab-btn {
 /* ─── FLASHLIGHT BEAM (AMBER MUSEUM TUNE) ─── */
 #pickaxe-glow {
     position: fixed; width: 180px; height: 180px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,191,0,0.15) 0%, rgba(255,215,0,0.05) 40%, transparent 70%);
+    background: radial-gradient(circle, rgba(255,191,0,0.2) 0%, rgba(255,215,0,0.05) 40%, transparent 70%);
     pointer-events: none; z-index: 999999; transform: translate(-50%, -50%);
     mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
     will-change: left, top;
@@ -60,28 +60,33 @@ header {
 .back { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
 .back:hover { color: var(--gold); }
 
-main { max-width: 1000px; margin: 0 auto; padding: 3rem 1.5rem; flex: 1; width: 100%; position: relative; z-index: 10; }
+main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; flex: 1; width: 100%; position: relative; z-index: 10; display: flex; flex-direction: column;}
 
-.page-header { text-align: center; margin-bottom: 3rem; }
+.page-header { text-align: center; margin-bottom: 2rem; }
 .page-title { font-family: var(--font-pixel); font-size: 1.8rem; color: var(--gold); margin-bottom: 1rem; text-shadow: 4px 4px 0 #332200; }
-.page-sub { font-size: 1.4rem; color: var(--muted); max-width: 700px; margin: 0 auto; line-height: 1.5; }
+.page-sub { font-size: 1.4rem; color: var(--muted); max-width: 800px; margin: 0 auto; line-height: 1.5; }
 
-/* RELIC GRID */
-.relic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
-.relic-card { 
-  background: #000; border: 2px solid #333; padding: 2rem 1.5rem; text-align: center; 
-  transition: all 0.3s; position: relative; overflow: hidden;
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5);
+/* RADAR MAP CANVAS */
+.radar-container {
+  width: 100%; max-width: 1000px; margin: 0 auto;
+  border: 4px solid var(--gd); background: #000;
+  position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 30px rgba(255,191,0,0.1);
+  border-radius: 8px; overflow: hidden;
+  /* TO DO: Drop a stylized 16-bit world map image in your directory and link it here */
+  background-image: url('world_map.jpg'); 
+  background-size: cover; background-position: center;
 }
-.relic-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--amber); transform: scaleX(0); transition: transform 0.3s; origin: left; }
-.relic-card:hover { border-color: var(--gd); transform: translateY(-5px); box-shadow: inset 0 0 20px rgba(255,191,0,0.05), 0 15px 30px rgba(0,0,0,0.8); }
-.relic-card:hover::before { transform: scaleX(1); }
+.radar-container::after {
+  content: 'GLOBAL DATABANK SCANNING...'; position: absolute; top: 10px; left: 15px;
+  font-family: var(--font-pixel); font-size: 0.5rem; color: var(--amber); animation: blink 2s infinite; pointer-events: none;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-.relic-icon { font-size: 4rem; margin-bottom: 1rem; text-shadow: 0 0 20px rgba(255,191,0,0.4); animation: float 4s ease-in-out infinite; display: inline-block;}
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+#radarMap { display: block; width: 100%; height: 500px; touch-action: none; background: rgba(5,3,2,0.6); }
 
-.relic-name { font-family: var(--font-pixel); font-size: 0.8rem; color: var(--cream); margin-bottom: 0.5rem; letter-spacing: 1px; }
-.relic-origin { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+@media (max-width: 768px) {
+  #radarMap { height: 350px; }
+}
 
 /* MODAL OVERLAY */
 .modal-overlay { 
@@ -96,7 +101,7 @@ main { max-width: 1000px; margin: 0 auto; padding: 3rem 1.5rem; flex: 1; width: 
   display: flex; flex-direction: column;
 }
 .modal-close { position: absolute; top: 1rem; right: 1.5rem; font-family: var(--font-pixel); font-size: 1.2rem; color: var(--muted); background: transparent; border: none; transition: color 0.2s; }
-.modal-close:hover { color: var(--red); }
+.modal-close:hover { color: #FF5555; }
 
 .modal-header { text-align: center; padding: 2rem; border-bottom: 1px solid #333; background: #050302; }
 .m-icon { font-size: 3rem; margin-bottom: 1rem; text-shadow: 0 0 20px rgba(255,191,0,0.5); }
@@ -104,8 +109,8 @@ main { max-width: 1000px; margin: 0 auto; padding: 3rem 1.5rem; flex: 1; width: 
 .m-origin { font-family: var(--font-pixel); font-size: 0.6rem; color: var(--muted); letter-spacing: 2px; }
 
 /* TABS */
-.tab-container { display: flex; border-bottom: 2px solid #222; background: #000; }
-.tab-btn { flex: 1; padding: 1rem; font-family: var(--font-pixel); font-size: 0.55rem; color: var(--muted); background: transparent; border: none; border-bottom: 2px solid transparent; transition: all 0.2s; letter-spacing: 1px; }
+.tab-container { display: flex; border-bottom: 2px solid #222; background: #000; flex-wrap: wrap;}
+.tab-btn { flex: 1; padding: 1rem; font-family: var(--font-pixel); font-size: 0.55rem; color: var(--muted); background: transparent; border: none; border-bottom: 2px solid transparent; transition: all 0.2s; letter-spacing: 1px; min-width: 120px;}
 .tab-btn:hover { color: var(--cream); background: rgba(255,191,0,0.05); }
 .tab-btn.active { color: var(--amber); border-bottom-color: var(--amber); background: rgba(255,191,0,0.1); }
 
@@ -148,33 +153,11 @@ main { max-width: 1000px; margin: 0 auto; padding: 3rem 1.5rem; flex: 1; width: 
 <main>
   <div class="page-header">
     <h1 class="page-title">The Rosetta Reliquary</h1>
-    <p class="page-sub">The NMN universe was not built in a vacuum. It was forged from the echoes of real human history, mythology, and culture. Click a relic to decipher its origin.</p>
+    <p class="page-sub">The NMN universe is built from the fragments of our world. Scan the global databank. Click an anomaly to decipher its origin.</p>
   </div>
 
-  <div class="relic-grid">
-    <div class="relic-card" onclick="openRelic('hahoe')">
-      <div class="relic-icon">🎭</div>
-      <div class="relic-name">HAHOE MASK</div>
-      <div class="relic-origin">SOUTH KOREA</div>
-    </div>
-
-    <div class="relic-card" onclick="openRelic('sunstone')">
-      <div class="relic-icon">🌞</div>
-      <div class="relic-name">SUN STONE</div>
-      <div class="relic-origin">MEXICO</div>
-    </div>
-
-    <div class="relic-card" onclick="openRelic('katana')">
-      <div class="relic-icon">⚔️</div>
-      <div class="relic-name">THE KATANA</div>
-      <div class="relic-origin">JAPAN</div>
-    </div>
-
-    <div class="relic-card" onclick="openRelic('astrolabe')">
-      <div class="relic-icon">🧭</div>
-      <div class="relic-name">ASTROLABE</div>
-      <div class="relic-origin">MOROCCO / GREECE</div>
-    </div>
+  <div class="radar-container">
+    <canvas id="radarMap"></canvas>
   </div>
 </main>
 
@@ -251,7 +234,7 @@ document.addEventListener('mousemove', moveGlow);
 document.addEventListener('touchmove', moveGlow, {passive: true});
 document.addEventListener('touchstart', moveGlow, {passive: true});
 
-// ─── AUDIO ENGINE (MUSEUM AMBIENCE) ───
+// ─── AUDIO ENGINE ───
 const CosmicAudio = {
   ctx: null, running: false, masterGain: null,
   init() {
@@ -263,8 +246,7 @@ const CosmicAudio = {
   },
   playHum() {
     const osc = this.ctx.createOscillator();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(40, this.ctx.currentTime); // Low resonant hum
+    osc.type = 'sine'; osc.frequency.setValueAtTime(40, this.ctx.currentTime); 
     const filter = this.ctx.createBiquadFilter();
     filter.type = 'lowpass'; filter.frequency.value = 100;
     const g = this.ctx.createGain();
@@ -274,10 +256,8 @@ const CosmicAudio = {
   },
   playBlip() {
     if (!this.ctx) return;
-    const osc = this.ctx.createOscillator();
-    const g = this.ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(1200, this.ctx.currentTime);
+    const osc = this.ctx.createOscillator(); const g = this.ctx.createGain();
+    osc.type = 'sine'; osc.frequency.setValueAtTime(1200, this.ctx.currentTime);
     g.gain.setValueAtTime(0.05, this.ctx.currentTime);
     g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.1);
     osc.connect(g).connect(this.masterGain);
@@ -290,52 +270,197 @@ const CosmicAudio = {
 };
 document.addEventListener('click', () => { CosmicAudio.startAll(); }, { once: true });
 
-// ─── RELIC DATA DB ───
+// ─── RELIC DATA DB (10 COUNTRIES TO START) ───
+// X and Y are percentages (0.0 to 1.0) mapping roughly to a standard world map.
 const RELIC_DB = {
-  hahoe: {
+  korea: {
+    x: 0.85, y: 0.38,
     icon: '🎭', name: 'HAHOE MASK', origin: 'SOUTH KOREA',
-    history: 'Hahoe masks are traditional wooden masks used in Korean talchum (mask dance dramas) dating back to the 12th century. They were created to appease local deities, and the satirical plays often mocked the ruling class (yangban) or corrupt monks. Characterized by exaggerated features, they represent archetypes like the Scholar, the Fool, and the Bride.',
-    places: 'Andong Hahoe Folk Village (Gyeongsangbuk-do) – A UNESCO World Heritage site where the original mask dances were performed. The National Folk Museum of Korea in Seoul.',
-    money: 'South Korean Won (KRW). Roughly, 1 USD is equivalent to 1,300 to 1,400 KRW. Cash is still used in traditional markets, but cards are accepted nearly everywhere.',
-    lore: 'The Hahoe masks heavily influenced the aesthetic and narrative role of the "Silent Observers" in the NMN universe. Much like the real-world talchum, the Observers wear masks to hide their true identities and motives, acting as satirical, often critical witnesses to the conflicts between the Glitch Elephants and the Static Lions. Their expressions are fixed, yet their actions are unpredictable.',
-    links: [
-      { lang: 'KOREAN (한국어)', book: 'The Wanderer (방랑자)', url: 'https://books2read.com/u/3LPyjw' },
-      { lang: 'KOREAN (한국어)', book: 'The Mine Wars (광산 전쟁)', url: '#' }
-    ]
+    history: 'Hahoe masks are traditional wooden masks used in Korean talchum (mask dance dramas) dating back to the 12th century. They were created to appease local deities, and the satirical plays often mocked the ruling class.',
+    places: 'Andong Hahoe Folk Village (Gyeongsangbuk-do) – A UNESCO World Heritage site where original mask dances are performed. The National Folk Museum of Korea in Seoul.',
+    money: 'South Korean Won (KRW). Roughly, 1 USD is equivalent to 1,300 to 1,400 KRW. Cash is used in traditional markets, but cards are accepted nearly everywhere.',
+    lore: 'The Hahoe masks heavily influenced the aesthetic and narrative role of the "Silent Observers" in the NMN universe. Much like the real-world talchum, they act as satirical, critical witnesses to the conflicts.',
+    links: [{ lang: 'KOREAN (한국어)', book: 'The Mine Wars (광산 전쟁)', url: '#' }]
   },
-  sunstone: {
+  mexico: {
+    x: 0.22, y: 0.50,
     icon: '🌞', name: 'SUN STONE', origin: 'MEXICO',
-    history: 'Often mistakenly called the Aztec Calendar, the Sun Stone is a massive basalt sculpture depicting the five eras (or suns) of Aztec cosmology. The central face is Tonatiuh, the sun god, holding a human heart. The stone represents the cyclical nature of time, creation, and destruction in Mesoamerican belief systems.',
-    places: 'The National Museum of Anthropology (Museo Nacional de Antropología) in Mexico City houses the original Sun Stone. The ancient ruins of Teotihuacán just outside the city.',
+    history: 'Often mistakenly called the Aztec Calendar, the Sun Stone is a massive basalt sculpture depicting the five eras (suns) of Aztec cosmology. The central face is Tonatiuh, the sun god.',
+    places: 'The National Museum of Anthropology (Museo Nacional de Antropología) in Mexico City houses the original Sun Stone. The ancient ruins of Teotihuacán.',
     money: 'Mexican Peso (MXN). Roughly, 1 USD is equivalent to 16 to 18 MXN. Street food and local vendors operate primarily in cash.',
-    lore: 'The cyclical cosmology of the Sun Stone directly inspired the mechanics of the "Chamber of Dual Souls." The concept of eras ending in cataclysm and being reborn mirrors the continuous, infinite loops within the NMN arcade games. The central figure of Tonatiuh influenced the character design of Helios, representing both life-giving energy and demanding sacrifice.',
-    links: [
-      { lang: 'SPANISH (ESPAÑOL)', book: 'The Swimmer (El Nadador)', url: 'https://books2read.com/u/3ndXGR' },
-      { lang: 'SPANISH (ESPAÑOL)', book: 'Juni (Juni)', url: 'https://books2read.com/u/4EOxZ0' }
-    ]
+    lore: 'The cyclical cosmology of the Sun Stone directly inspired the mechanics of the "Chamber of Dual Souls," representing eras ending in cataclysm and being reborn.',
+    links: [{ lang: 'SPANISH (ESPAÑOL)', book: 'The Swimmer (El Nadador)', url: 'https://books2read.com/u/3ndXGR' }]
   },
-  katana: {
+  japan: {
+    x: 0.88, y: 0.35,
     icon: '⚔️', name: 'THE KATANA', origin: 'JAPAN',
-    history: 'The katana is a traditionally made Japanese sword used by the samurai of feudal Japan. It is known for its distinctive curved, single-edged blade. The creation of a katana is a highly ritualized process, involving folding steel to create a blade that is both flexible and incredibly sharp. Historically, the katana was considered the "soul of the samurai."',
-    places: 'The Bizen Osafune Sword Museum (Okayama) where you can watch modern swordsmiths at work. The Tokyo National Museum holds some of the oldest preserved blades in the world.',
-    money: 'Japanese Yen (JPY). Roughly, 1 USD is equivalent to 140 to 150 JPY. Japan is famously cash-heavy, so carrying physical Yen is essential for small shops and shrines.',
-    lore: 'The ritualized forging of the katana and its deep connection to the wielder\'s soul inspired the "Obsidian Core Weapons" used by the Static Lions. These weapons are not just tools; they are extensions of the warrior\'s digital code. The concept of folding steel to create strength influenced the narrative arc of Nayla the Lioness, who is repeatedly broken and reforged by conflict.',
-    links: [
-      { lang: 'JAPANESE (日本語)', book: 'Nayla the Lioness (雌ライオンのネイラ)', url: '#' },
-      { lang: 'JAPANESE (日本語)', book: 'Outbreak (アウトブレイク)', url: 'https://books2read.com/u/31NrLw' }
-    ]
+    history: 'The katana is a traditionally made Japanese sword used by the samurai. The creation is a highly ritualized process, involving folding steel to create a blade that is considered the "soul of the samurai."',
+    places: 'The Bizen Osafune Sword Museum (Okayama) where you can watch modern swordsmiths at work.',
+    money: 'Japanese Yen (JPY). Roughly, 1 USD is equivalent to 140 to 150 JPY. Japan is famously cash-heavy.',
+    lore: 'The ritualized forging inspired the "Obsidian Core Weapons" used by the Static Lions. The concept of folding steel influenced the narrative arc of Nayla the Lioness.',
+    links: [{ lang: 'JAPANESE (日本語)', book: 'Nayla the Lioness (雌ライオンのネイラ)', url: '#' }]
   },
-  astrolabe: {
+  morocco: {
+    x: 0.48, y: 0.45,
     icon: '🧭', name: 'ASTROLABE', origin: 'MOROCCO / GREECE',
-    history: 'Invented by the Greeks and highly refined during the Islamic Golden Age, the astrolabe is an intricate astronomical instrument. It was used by navigators and astronomers to measure the altitude of celestial bodies, identify stars, and determine local latitude. It was effectively the smartphone of the ancient world.',
-    places: 'The Museum of Marrakesh (Morocco) houses incredible Islamic artifacts. The ancient observatory ruins of Al-Andalus in Cordoba and Toledo (Spain) show the reach of this technology.',
+    history: 'Invented by the Greeks and highly refined during the Islamic Golden Age, the astrolabe is an intricate astronomical instrument. It was effectively the smartphone of the ancient world.',
+    places: 'The Museum of Marrakesh (Morocco) houses incredible Islamic artifacts. The ancient observatory ruins of Al-Andalus in Cordoba.',
     money: 'Moroccan Dirham (MAD). Roughly, 1 USD is equivalent to 10 MAD. Haggling in the medinas requires physical Dirham.',
-    lore: 'The astrolabe is the conceptual foundation for the "Depth Gauge" and the navigation systems used by the Miners in Sector 1. In a digital realm where physical space is fluid and glitched, characters must rely on complex, ancient-looking instruments to map the shifting architecture of the mine and locate the Obsidian Crystal.',
-    links: [
-      { lang: 'ARABIC (العربية)', book: 'The Mine Wars (حروب المناجم)', url: '#' }
-    ]
+    lore: 'The astrolabe is the conceptual foundation for the "Depth Gauge" and the navigation systems used by the Miners in Sector 1.',
+    links: [{ lang: 'ARABIC (العربية)', book: 'The Mine Wars (حروب المناجم)', url: '#' }]
+  },
+  egypt: {
+    x: 0.55, y: 0.48,
+    icon: '🪨', name: 'THE ROSETTA STONE', origin: 'EGYPT',
+    history: 'Discovered in 1799, this granodiorite stele features a decree inscribed in three scripts: Ancient Egyptian hieroglyphs, Demotic script, and Ancient Greek. It was the key to deciphering ancient Egyptian history.',
+    places: 'The Grand Egyptian Museum in Cairo. (The original stone is currently held in the British Museum in London).',
+    money: 'Egyptian Pound (EGP). Roughly, 1 USD = 48 EGP. Cash is king for navigating local bazaars and tips (baksheesh).',
+    lore: 'The Rosetta Stone inspired the multi-linguistic puzzle "Deciphered Tablet" in the Arcade, and serves as the namesake for this very Atlas. The NMN universe requires decoding to understand the full picture.',
+    links: [{ lang: 'ARABIC (العربية)', book: 'The Wanderer (المتجول)', url: '#' }]
+  },
+  uk: {
+    x: 0.48, y: 0.28,
+    icon: '👑', name: 'ARTHURIAN LORE', origin: 'UNITED KINGDOM',
+    history: 'The legends of King Arthur, Excalibur, and Camelot represent the foundational mythos of Britain. Rooted in 5th-century folklore, it explores themes of divine right, betrayal, and the cyclical return of the "Once and Future King."',
+    places: 'Tintagel Castle in Cornwall (mythological birthplace of Arthur), and Glastonbury Tor.',
+    money: 'British Pound Sterling (GBP). 1 USD is roughly 0.80 GBP. Highly card-dependent society.',
+    lore: 'The concept of the "Once and Future King" directly mirrors the lore of Lord Oro—a figure who was, who is, and who will return to reclaim the goldmine.',
+    links: [{ lang: 'ENGLISH', book: 'The Wanderer', url: 'https://books2read.com/u/3LPyjw' }]
+  },
+  india: {
+    x: 0.70, y: 0.48,
+    icon: '🕉️', name: 'THE VEDAS', origin: 'INDIA',
+    history: 'The Vedas are a large body of religious texts originating in ancient India. Composed in Vedic Sanskrit, they constitute the oldest layer of Sanskrit literature, exploring creation, ritual, and the nature of reality.',
+    places: 'Varanasi, one of the oldest continuously inhabited cities in the world, situated on the banks of the Ganges.',
+    money: 'Indian Rupee (INR). 1 USD is roughly 83 INR. Digital payments (UPI) are everywhere, but cash is essential for street commerce.',
+    lore: 'The Vedic concept of a unified, underlying reality (Brahman) deeply influenced the coding of the "Static" within the NMN universe—the realization that the Glitch and the Code are one.',
+    links: [{ lang: 'HINDI (हिन्दी)', book: 'The Mine Wars (खदान युद्ध)', url: '#' }]
+  },
+  china: {
+    x: 0.78, y: 0.40,
+    icon: '🐉', name: 'TERRACOTTA ARMY', origin: 'CHINA',
+    history: 'Discovered in 1974, this massive collection of terracotta sculptures depicts the armies of Qin Shi Huang, the first Emperor of China. Built to protect the emperor in his afterlife.',
+    places: 'The Emperor Qinshihuang\'s Mausoleum Site Museum in Xi\'an, Shaanxi province.',
+    money: 'Chinese Yuan (CNY). 1 USD = ~7.2 CNY. China is an almost entirely cashless society (WeChat Pay / Alipay).',
+    lore: 'The silent, frozen army heavily influenced the "Collector" mechanics—capturing and freezing sprites in time to protect the central vault.',
+    links: [{ lang: 'MANDARIN (中文)', book: 'Outbreak (爆发)', url: '#' }]
+  },
+  brazil: {
+    x: 0.32, y: 0.70,
+    icon: '🌿', name: 'AMAZON GEOGLYPHS', origin: 'BRAZIL',
+    history: 'Massive geometric earthworks discovered in the Amazon rainforest after deforestation. They prove the existence of large, complex pre-Columbian societies that engineered the landscape.',
+    places: 'The state of Acre in western Brazil, where over 500 geoglyphs have been discovered.',
+    money: 'Brazilian Real (BRL). 1 USD = ~5 BRL. Pix (instant digital payment) is ubiquitous.',
+    lore: 'The hidden structures beneath the canopy inspired the "Classified Tunnels" in the NMN Mine. What seems like empty rock hides massive, engineered architecture if you dig deep enough.',
+    links: [{ lang: 'PORTUGUESE (PORTUGUÊS)', book: 'Juni (Juni)', url: '#' }]
+  },
+  greece: {
+    x: 0.55, y: 0.35,
+    icon: '⚙️', name: 'ANTIKYTHERA MECHANISM', origin: 'GREECE',
+    history: 'An ancient Greek hand-powered orrery, described as the oldest example of an analogue computer. Used to predict astronomical positions and eclipses decades in advance.',
+    places: 'The National Archaeological Museum in Athens.',
+    money: 'Euro (EUR). 1 USD = ~0.92 EUR.',
+    lore: 'The mechanism is the exact inspiration for the intricate, clockwork puzzles found in the "Loom" and the underlying logic of the V2 Engine.',
+    links: [{ lang: 'GREEK (Ελληνικά)', book: 'The Swimmer (Ο Κολυμβητής)', url: '#' }]
   }
 };
+
+// ─── RADAR CANVAS LOGIC ───
+const cv = document.getElementById('radarMap');
+const ctx = cv.getContext('2d');
+let W, H;
+let mouseX = -1, mouseY = -1;
+let hoveredRelic = null;
+let time = 0;
+
+function resize() {
+  W = cv.width = cv.clientWidth;
+  H = cv.height = cv.clientHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// Track mouse on canvas
+cv.addEventListener('mousemove', (e) => {
+  const rect = cv.getBoundingClientRect();
+  mouseX = e.clientX - rect.left;
+  mouseY = e.clientY - rect.top;
+});
+cv.addEventListener('mouseleave', () => { mouseX = -1; mouseY = -1; hoveredRelic = null; });
+
+cv.addEventListener('click', () => {
+  if (hoveredRelic) {
+    openRelic(hoveredRelic);
+  }
+});
+
+function drawRadar() {
+  ctx.clearRect(0, 0, W, H);
+  time += 0.02;
+
+  // Draw Grid
+  ctx.strokeStyle = 'rgba(255, 191, 0, 0.15)';
+  ctx.lineWidth = 1;
+  const gridSize = 40;
+  for(let x=0; x<W; x+=gridSize) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for(let y=0; y<H; y+=gridSize) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  // Draw Sweeping Line
+  const sweepX = (time * 100) % W;
+  ctx.fillStyle = 'rgba(255, 191, 0, 0.05)';
+  ctx.fillRect(0, 0, sweepX, H);
+  ctx.strokeStyle = 'rgba(255, 191, 0, 0.8)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(sweepX, 0); ctx.lineTo(sweepX, H); ctx.stroke();
+
+  hoveredRelic = null;
+
+  // Draw Nodes
+  Object.keys(RELIC_DB).forEach(key => {
+    const data = RELIC_DB[key];
+    const px = data.x * W;
+    const py = data.y * H;
+    
+    // Distance to mouse
+    const dist = Math.hypot(px - mouseX, py - mouseY);
+    const isHovered = dist < 20;
+
+    if (isHovered) {
+      hoveredRelic = key;
+      cv.style.cursor = 'none'; // Ensure custom cursor takes over
+      
+      // Draw Highlight Box
+      ctx.strokeStyle = '#FFD700';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(px - 15, py - 15, 30, 30);
+      
+      // Draw Tooltip
+      ctx.fillStyle = 'rgba(0,0,0,0.9)';
+      ctx.fillRect(px + 20, py - 20, 150, 40);
+      ctx.strokeStyle = '#AA7700';
+      ctx.strokeRect(px + 20, py - 20, 150, 40);
+      
+      ctx.fillStyle = '#FFD700';
+      ctx.font = '10px "Press Start 2P"';
+      ctx.fillText(data.origin, px + 30, py + 5);
+    }
+
+    // Pulse effect
+    const pulse = Math.abs(Math.sin(time + px)) * 5;
+    
+    // Core dot
+    ctx.fillStyle = isHovered ? '#FFFFFF' : '#FFD700';
+    ctx.beginPath(); ctx.arc(px, py, 4 + (isHovered ? 2 : 0), 0, Math.PI*2); ctx.fill();
+    
+    // Outer ring
+    ctx.strokeStyle = isHovered ? '#FFD700' : 'rgba(255, 191, 0, 0.5)';
+    ctx.beginPath(); ctx.arc(px, py, 8 + pulse, 0, Math.PI*2); ctx.stroke();
+  });
+
+  requestAnimationFrame(drawRadar);
+}
+
+drawRadar();
 
 // ─── MODAL LOGIC ───
 const modal = document.getElementById('relicModal');
@@ -374,9 +499,7 @@ function openRelic(id) {
     linkContainer.appendChild(a);
   });
 
-  // Reset to first tab
   document.querySelectorAll('.tab-btn')[0].click();
-  
   modal.classList.add('active');
 }
 
