@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Ephemeral Canvas — NMN</title>
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root {
+  --void: #030104; --glitch-purple: #AA00FF; --glitch-cyan: #00FFFF; --glitch-red: #FF0040;
+  --gold: #FFD700; --cream: #E8E0D0; --muted: #8a7654;
+  --pixel: 'Press Start 2P', monospace; --vt: 'VT323', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;cursor:none!important;}
+html,body{background:var(--void);color:var(--glitch-purple);font-family:var(--pixel);min-height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+
+/* CRT overlay */
+body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;z-index:9999;}
+body::after{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.8) 100%);pointer-events:none;z-index:9998;}
+
+header{padding:.8rem 1.5rem;background:rgba(3,1,4,.95);border-bottom:2px solid var(--glitch-purple);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.sector-label{font-size:.45rem;color:var(--glitch-purple);letter-spacing:.2em;}
+.back-btn{font-size:.35rem;color:var(--muted);text-decoration:none;letter-spacing:.1em;transition:color .2s;}
+.back-btn:hover{color:var(--glitch-red);}
+
+main{flex-grow:1;display:flex;flex-direction:column;align-items:center;padding:2rem;}
+.node-title{font-size:1.5rem;color:var(--glitch-purple);margin-bottom:1rem;text-align:center;text-shadow:2px 2px 0 #000;letter-spacing:2px;}
+.node-desc{font-family:var(--vt);font-size:1.2rem;color:var(--muted);text-align:center;margin-bottom:2rem;}
+
+.canvas-container{width:100%;max-width:1000px;flex-grow:1;border:2px solid rgba(170,0,255,.3);background:#000;position:relative;box-shadow:0 0 40px rgba(170,0,255,.05);margin-bottom:2rem;}
+#ephemeral-canvas{width:100%;height:100%;cursor:crosshair!important;display:block;}
+.canvas-info{position:absolute;bottom:-30px;left:0;right:0;text-align:center;font-size:.35rem;color:var(--muted);letter-spacing:.1em;}
+
+#cursor-glow{position:fixed;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(170,0,255,.1) 0%,transparent 70%);pointer-events:none;z-index:9996;transform:translate(-50%,-50%);mix-blend-mode:screen;}
+</style>
+</head>
+<body>
+<div id="cursor-glow"></div>
+
+<header>
+  <span class="sector-label">NODE 03 // IMPERMANENCE ENGINE</span>
+  <a href="quarantine.html" class="back-btn">← RETURN TO QUARANTINE</a>
+</header>
+
+<main>
+  <h1 class="node-title">THE EPHEMERAL CANVAS</h1>
+  <p class="node-desc">Draw your truth. Every pixel decays in 60 seconds. You cannot save it. You can only make it.</p>
+  
+  <div class="canvas-container">
+    <canvas id="ephemeral-canvas"></canvas>
+    <div class="canvas-info">CLICK AND DRAG TO CREATE. WATCH IT FADE.</div>
+  </div>
+</main>
+
+<script>
+document.addEventListener('mousemove', e => {
+  const g = document.getElementById('cursor-glow');
+  if(g){ g.style.left = e.clientX+'px'; g.style.top = e.clientY+'px'; }
+});
+
+const cv = document.getElementById('ephemeral-canvas');
+const ctx = cv.getContext('2d');
+let drawing = false;
+const pixels = []; // {x, y, t, color}
+const COLORS = ['#FF0040', '#00FFFF', '#00FF41', '#FFD700', '#AA00FF', '#ffffff'];
+
+function resizeCanvas() {
+    cv.width = cv.parentElement.clientWidth;
+    cv.height = cv.parentElement.clientHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+cv.addEventListener('mousedown', e => { drawing = true; draw(e); });
+cv.addEventListener('mousemove', e => { if(drawing) draw(e); });
+cv.addEventListener('mouseup', () => drawing = false);
+cv.addEventListener('mouseleave', () => drawing = false);
+cv.addEventListener('touchstart', e => { drawing = true; drawT(e); e.preventDefault(); }, {passive: false});
+cv.addEventListener('touchmove', e => { if(drawing) drawT(e); e.preventDefault(); }, {passive: false});
+cv.addEventListener('touchend', () => drawing = false);
+
+function draw(e) {
+  const r = cv.getBoundingClientRect();
+  const x = e.clientX - r.left;
+  const y = e.clientY - r.top;
+  const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+  pixels.push({x, y, t: Date.now(), color});
+  // Thicken the line slightly for better visibility
+  for(let i=0; i<3; i++){
+      pixels.push({x: x+(Math.random()*4-2), y: y+(Math.random()*4-2), t: Date.now(), color});
+  }
+}
+
+function drawT(e) {
+  const touch = e.touches[0];
+  const r = cv.getBoundingClientRect();
+  const x = touch.clientX - r.left;
+  const y = touch.clientY - r.top;
+  pixels.push({x, y, t: Date.now(), color: '#FFD700'});
+   for(let i=0; i<3; i++){
+      pixels.push({x: x+(Math.random()*4-2), y: y+(Math.random()*4-2), t: Date.now(), color: '#FFD700'});
+  }
+}
+
+function render() {
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  const now = Date.now();
+  const alive = pixels.filter(p => now - p.t < 60000); // 60 seconds
+  
+  pixels.length = 0; 
+  pixels.push(...alive);
+  
+  for(const p of pixels) {
+    const age = (now - p.t) / 60000;
+    ctx.globalAlpha = Math.max(0, 1 - age);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(p.x, p.y, 4, 4); // 4x4 pixel blocks
+  }
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(render);
+}
+
+render();
+</script>
+</body>
+</html>
