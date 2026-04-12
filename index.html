@@ -195,29 +195,29 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
 .store-link.available { border-color: var(--gold); color: var(--gold); }
 .store-link.available:hover { background: var(--gold); color: #000; border-color: #FFF;}
 
-/* ─── FULL INDEX DIRECTORY ─── */
-.dir-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+/* ─── FULL INDEX DIRECTORY (VERTICAL STACK) ─── */
+.dir-grid { display: flex; flex-direction: column; gap: 40px; }
 .dir-card { 
     background: #000; border: 4px solid var(--gd); box-shadow: 8px 8px 0 #000;
     position: relative; overflow: hidden; display: flex; flex-direction: column;
-    min-height: 450px; transition: transform 0.2s, border-color 0.2s;
+    min-height: 300px; transition: transform 0.2s, border-color 0.2s; width: 100%;
 }
 .dir-card:hover { transform: translateY(-5px); border-color: var(--gold); box-shadow: 8px 12px 0 var(--gold);}
 .dir-bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0.2; filter: grayscale(1); transition: 0.3s; image-rendering: pixelated;}
 .dir-card:hover .dir-bg { opacity: 0.4; filter: grayscale(0); }
 .dir-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.95) 60%); z-index: 1; }
 
-.dir-content { position: relative; z-index: 2; padding: 2rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end;}
-.dir-header { font-size: 16px; color: var(--gold); margin-bottom: 1.5rem; text-shadow: 2px 2px 0 #000; line-height: 1.4; text-align: center;}
-.dir-links { display: flex; flex-direction: column; gap: 12px; }
+.dir-content { position: relative; z-index: 2; padding: 2.5rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end;}
+.dir-header { font-size: 20px; color: var(--gold); margin-bottom: 1.5rem; text-shadow: 3px 3px 0 #000; line-height: 1.4; border-bottom: 2px dashed #333; padding-bottom: 15px;}
+.dir-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; width: 100%; }
 .dir-link { 
     display: block; font-size: 10px; color: var(--cream); text-decoration: none; 
-    background: rgba(0,0,0,0.8); border: 2px solid #333; padding: 12px; 
+    background: rgba(0,0,0,0.8); border: 2px solid #333; padding: 15px; 
     transition: 0.2s; text-align: center; text-transform: uppercase;
 }
 .dir-link:hover { background: var(--gold); color: #000; border-color: #FFF; transform: scale(1.02);}
 
-/* ─── CONTACT SECTION ─── */
+  /* ─── CONTACT SECTION ─── */
 .contact-section { margin: 4rem auto; max-width: 800px; background: #000; border: 4px solid #333; padding: 2rem; box-shadow: 6px 6px 0 #111; }
 .contact-link { display: flex; align-items: center; padding: 1.5rem; border-bottom: 2px solid #222; text-decoration: none; transition: 0.2s; background: #0a0806; margin-bottom: 10px; border: 2px solid transparent;}
 .contact-link:hover { border-color: var(--gd); transform: translateX(5px); background: #000; }
@@ -416,22 +416,22 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
           <div class="dir-bg" style="background-image: url('image_0.jpg');"></div>
           <div class="dir-overlay"></div>
           <div class="dir-content">
-              <h2 class="dir-header">SECTOR 1: FORGE</h2>
+              <h2 class="dir-header">SECTOR 1: THE ARCADE</h2>
               <div class="dir-links">
                   <a href="#" onclick="interceptDescent(event, 'RECREATION HALL', 'games.html')" class="dir-link">Recreation Hall Hub</a>
-                  <a href="#" onclick="interceptDescent(event, 'ORE BREAKER', 'orebreaker.html')" class="dir-link">Ore Breaker (Arcade)</a>
-                  <a href="#" onclick="interceptDescent(event, 'ORE RACER', 'oreracer.html')" class="dir-link">Ore Racer (Cup Protocol)</a>
+                  <a href="#" onclick="interceptDescent(event, 'ORE BREAKER', 'orebreaker.html')" class="dir-link">Ore Breaker</a>
+                  <a href="#" onclick="interceptDescent(event, 'ORE RACER', 'oreracer.html')" class="dir-link">Ore Racer</a>
                   <a href="#" onclick="interceptDescent(event, 'SILVER QUILL', 'silverquill.html')" class="dir-link">The Silver Quill</a>
                   <a href="#" onclick="interceptDescent(event, 'THE TABLET', 'tablet.html')" class="dir-link">Deciphered Tablet</a>
               </div>
           </div>
       </div>
 
-     <div class="dir-card">
+      <div class="dir-card">
           <div class="dir-bg" style="background-image: url('image_1.jpg');"></div>
           <div class="dir-overlay"></div>
           <div class="dir-content">
-              <h2 class="dir-header">SECTOR 2: ARCHIVES</h2>
+              <h2 class="dir-header">SECTOR 2: THE LIBRARY</h2>
               <div class="dir-links">
                   <a href="#" onclick="interceptDescent(event, 'THE ARCHIVES', 'archives.html')" class="dir-link">The Archives Hub</a>
                   <a href="#" onclick="interceptDescent(event, 'HALL OF ORIGINS', 'origins.html')" class="dir-link">Hall of Origins</a>
@@ -444,14 +444,14 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
           </div>
       </div>
 
-  <div class="dir-card">
+      <div class="dir-card">
           <div class="dir-bg" style="background-image: url('image_2.jpg');"></div>
           <div class="dir-overlay"></div>
           <div class="dir-content">
-              <h2 class="dir-header">SECTOR 3: ORACLE</h2>
+              <h2 class="dir-header">SECTOR 3: THE VAULT</h2>
               <div class="dir-links">
                   <a href="#" onclick="interceptDescent(event, 'THE ORACLE', 'oracle.html')" class="dir-link">Oracle's Chamber Hub</a>
-                  <a href="#" onclick="interceptDescent(event, 'THE SYNDICATE', 'syndicate.html')" class="dir-link" style="color:var(--gold); border-color:var(--gold); background: rgba(255,215,0,0.05);">🏆 The Syndicate (Sports)</a>
+                  <a href="#" onclick="interceptDescent(event, 'THE SYNDICATE', 'syndicate.html')" class="dir-link" style="color:var(--gold); border-color:var(--gold); background: rgba(255,215,0,0.05);">🏆 The Syndicate</a>
                   <a href="#" onclick="interceptDescent(event, 'TORA DOMAIN', 'toradomain.html')" class="dir-link">Tora's Domain</a>
                   <a href="#" onclick="interceptDescent(event, 'THE CODEX', 'tora.html')" class="dir-link">Tora's Codex Reading</a>
                   <a href="#" onclick="interceptDescent(event, 'ECHOING WELL', 'well.html')" class="dir-link">The Echoing Well</a>
@@ -463,15 +463,13 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
               </div>
           </div>
       </div>
-  <div class="dir-card">
+
+      <div class="dir-card">
           <div class="dir-bg" style="background-image: url('image_3.jpg');"></div>
           <div class="dir-overlay" style="background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.95) 60%);"></div>
           <div class="dir-content">
-              <h2 class="dir-header" style="color: #aaa;">SECTOR 4: ATLAS & NETWORK</h2>
+              <h2 class="dir-header" style="color: #aaa; border-bottom-color: #444;">SECTOR 4: THE NETWORK</h2>
               <div class="dir-links">
-                  <a href="atlas.html" class="dir-link" style="color:#aaa; border-color:#444;">The Rosetta Reliquary</a>
-                  <a href="blueprint.html" class="dir-link" style="color:#aaa; border-color:#444;">Architect's Blueprint</a>
-                  <a href="expansion.html" class="dir-link" style="color:#aaa; border-color:#444;">Expansion Blueprint</a>
                   <a href="lorevault.html" class="dir-link" style="color:#aaa; border-color:#444;">Your Lore Vault</a>
                   <a href="crew.html" class="dir-link" style="color:#aaa; border-color:#444;">Record of the Deep</a>
                   <a href="gemshop.html" class="dir-link" style="color:#aaa; border-color:#444;">The Gemshop</a>
@@ -480,9 +478,56 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
               </div>
           </div>
       </div>
-  </div>
-</section>
 
+      <div class="dir-card">
+          <div class="dir-bg" style="background-image: url('image_3.jpg');"></div>
+          <div class="dir-overlay" style="background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.95) 60%);"></div>
+          <div class="dir-content">
+              <h2 class="dir-header" style="color: var(--neon-green); border-bottom-color: #224422;">SECTOR 5: THE ACADEMY</h2>
+              <div class="dir-links">
+                  <a href="atlas.html" class="dir-link" style="color:var(--neon-green); border-color:#224422;">The Rosetta Reliquary</a>
+                  <a href="blueprint.html" class="dir-link" style="color:var(--neon-green); border-color:#224422;">Architect's Blueprint</a>
+                  <a href="expansion.html" class="dir-link" style="color:var(--neon-green); border-color:#224422;">Expansion Blueprint</a>
+              </div>
+          </div>
+      </div>
+
+      <div class="dir-card" style="border-color: rgba(255,0,64,.6); box-shadow: 8px 8px 0 rgba(255,0,64,.3);">
+          <div class="dir-bg" style="background-image: url('image_3.jpg'); filter: hue-rotate(90deg) saturate(2);"></div>
+          <div class="dir-overlay" style="background: linear-gradient(180deg, rgba(20,0,5,0.8) 0%, rgba(5,0,2,0.98) 60%);"></div>
+          <div class="dir-content">
+              <h2 class="dir-header" id="sector-x-label" style="color:#FF0040; border-bottom-color: rgba(255,0,64,.3); animation:sectorGlitch 2.5s infinite step-end;">SECTOR [ERROR]: QUARANTINE</h2>
+              <div class="dir-links">
+                  <a href="quarantine.html" class="dir-link" style="color:rgba(255,0,64,.9); border-color:rgba(255,0,64,.5); background:rgba(255,0,64,.1); animation:pulse-red 2s infinite;">⚠ ENTER QUARANTINE ZONE ⚠</a>
+              </div>
+          </div>
+      </div>
+
+  </div>
+
+<style>
+@keyframes sectorGlitch{
+  0%,20%{content:"SECTOR [ERROR]: QUARANTINE";}
+  21%,35%{color:#00FFFF;}
+  36%,50%{color:#AA00FF;letter-spacing:.3em;}
+  51%,65%{color:#FF0040;letter-spacing:.1em;}
+  66%,80%{color:#00FF41;}
+  81%,100%{color:#FF0040;}
+}
+#sector-x-label::before{
+  content:"SECTOR ";
+  animation:sectorPrefix 3s infinite step-end;
+}
+@keyframes sectorPrefix{
+  0%,30%{content:"SECTOR ";}
+  31%,45%{content:"[ERROR] ";}
+  46%,60%{content:"SECTOR ";}
+  61%,75%{content:"⁉ ";}
+  76%,100%{content:"SECTOR ";}
+}
+@keyframes pulse-red{0%,100%{box-shadow:0 0 5px var(--glitch-red);}50%{box-shadow:0 0 15px rgba(255,0,64,.6);}}
+</style>
+</section>
 <section class="manifesto-section fade-in">
     <h2 class="manifesto-title">BUILD THE EMPIRE</h2>
     <p class="manifesto-text">Every tunnel, game, and word is forged by hand. To expand the servers, build the high-fidelity Brawler engine, and keep the mine independent, we need Founding Architects. If you believe in the vision, fund the extraction.</p>
