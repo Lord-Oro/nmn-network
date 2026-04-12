@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Clock of Deep Time — NMN</title>
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root {
+  --void: #030104; --glitch-cyan: #00FFFF; --glitch-red: #FF0040;
+  --gold: #FFD700; --cream: #E8E0D0; --muted: #8a7654;
+  --pixel: 'Press Start 2P', monospace; --vt: 'VT323', monospace; --mono: 'Share Tech Mono', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;cursor:none!important;}
+html,body{background:var(--void);color:var(--glitch-cyan);font-family:var(--pixel);min-height:100vh;}
+
+/* CRT overlay */
+body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;z-index:9999;}
+body::after{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.8) 100%);pointer-events:none;z-index:9998;}
+
+header{padding:.8rem 1.5rem;background:rgba(3,1,4,.95);border-bottom:2px solid var(--glitch-cyan);display:flex;justify-content:space-between;align-items:center;}
+.sector-label{font-size:.45rem;color:var(--glitch-cyan);letter-spacing:.2em;}
+.back-btn{font-size:.35rem;color:var(--muted);text-decoration:none;letter-spacing:.1em;transition:color .2s;}
+.back-btn:hover{color:var(--glitch-red);}
+
+main{max-width:1000px;margin:4rem auto;padding:2rem;}
+.node-title{font-size:1.5rem;color:var(--glitch-cyan);margin-bottom:3rem;text-align:center;text-shadow:2px 2px 0 #000;}
+
+.clock-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(400px, 1fr));gap:2rem;}
+.clock-cell{background:#0a050f;border:1px solid rgba(0,255,255,.2);padding:2.5rem 1.5rem;text-align:center;box-shadow:0 0 20px rgba(0,255,255,.05);}
+.clock-label{font-size:.4rem;color:var(--muted);margin-bottom:1rem;letter-spacing:.15em;line-height:1.5;}
+.clock-num{font-family:var(--mono);font-size:2.5rem;color:var(--glitch-cyan);word-break:break-all;text-shadow:0 0 10px rgba(0,255,255,.4);}
+
+.clock-footer{margin-top:4rem;padding-top:2rem;border-top:1px dashed rgba(255,255,255,.1);text-align:center;}
+.clock-footer p{font-family:var(--vt);font-size:1.4rem;color:var(--muted);max-width:800px;margin:0 auto;line-height:1.8;}
+
+#cursor-glow{position:fixed;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(0,255,255,.1) 0%,transparent 70%);pointer-events:none;z-index:9996;transform:translate(-50%,-50%);mix-blend-mode:screen;}
+
+@media (max-width: 768px) {
+    .clock-grid{grid-template-columns: 1fr;}
+    .clock-num{font-size:1.8rem;}
+}
+</style>
+</head>
+<body>
+<div id="cursor-glow"></div>
+
+<header>
+  <span class="sector-label">NODE 06 // CHRONOMETER</span>
+  <a href="quarantine.html" class="back-btn">← ABORT OBSERVATION</a>
+</header>
+
+<main>
+  <h1 class="node-title">THE CLOCK OF DEEP TIME</h1>
+  
+  <div class="clock-grid">
+    <div class="clock-cell">
+        <div class="clock-label">YOUR HEARTBEATS SINCE BIRTH (est.)</div>
+        <div class="clock-num" id="clock-heart">—</div>
+    </div>
+    <div class="clock-cell">
+        <div class="clock-label">SECONDS SINCE FIRST HUMAN SPEECH (est.)</div>
+        <div class="clock-num" id="clock-speech">—</div>
+    </div>
+    <div class="clock-cell">
+        <div class="clock-label">SECONDS SINCE UNIVERSE BEGAN</div>
+        <div class="clock-num" id="clock-universe">—</div>
+    </div>
+    <div class="clock-cell" style="border-color:rgba(255,0,64,.3);">
+        <div class="clock-label" style="color:var(--glitch-red);">SECONDS UNTIL SUN EXPANDS (est.)</div>
+        <div class="clock-num" id="clock-sun" style="color:var(--glitch-red);text-shadow:0 0 10px rgba(255,0,64,.4);">—</div>
+    </div>
+  </div>
+  
+  <div class="clock-footer">
+    <p>You exist in a vanishingly small window between two infinities. What you build in that window is the only answer the universe requires from you.</p>
+  </div>
+</main>
+
+<script>
+document.addEventListener('mousemove', e => {
+  const g = document.getElementById('cursor-glow');
+  if(g){ g.style.left = e.clientX+'px'; g.style.top = e.clientY+'px'; }
+});
+
+function startClock(){
+  setInterval(()=>{
+    const now = Date.now()/1000;
+    // Approximations used for scale demonstration
+    document.getElementById('clock-heart').textContent = Math.floor(28*365.25*24*3600*72 + (now-1704067200)*72).toLocaleString();
+    document.getElementById('clock-speech').textContent = Math.floor(now + 315360000000).toLocaleString(); // ~10,000 years ago base
+    document.getElementById('clock-universe').textContent = Math.floor(now + 433555332480000).toLocaleString(); // 13.7 billion years
+    document.getElementById('clock-sun').textContent = Math.floor(5e9*365.25*24*3600 - now).toLocaleString(); // 5 billion years left
+  }, 100); // Fast tick rate for the heart/seconds effect
+}
+
+startClock();
+</script>
+</body>
+</html>
