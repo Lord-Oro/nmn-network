@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Cornish Rex Synthesizer — NMN</title>
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root {
+  --void: #030104; --glitch-purple: #AA00FF; --glitch-red: #FF0040;
+  --gold: #FFD700; --cream: #E8E0D0; --muted: #8a7654;
+  --pixel: 'Press Start 2P', monospace; --vt: 'VT323', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;cursor:none!important;}
+html,body{background:var(--void);color:var(--glitch-purple);font-family:var(--pixel);min-height:100vh;}
+
+/* CRT overlay */
+body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;z-index:9999;}
+body::after{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.8) 100%);pointer-events:none;z-index:9998;}
+
+header{padding:.8rem 1.5rem;background:rgba(3,1,4,.95);border-bottom:2px solid var(--glitch-purple);display:flex;justify-content:space-between;align-items:center;}
+.sector-label{font-size:.45rem;color:var(--glitch-purple);letter-spacing:.2em;}
+.back-btn{font-size:.35rem;color:var(--muted);text-decoration:none;letter-spacing:.1em;transition:color .2s;}
+.back-btn:hover{color:var(--glitch-red);}
+
+main{max-width:800px;margin:4rem auto;padding:2rem;}
+.node-title{font-size:1.5rem;color:var(--glitch-purple);margin-bottom:1rem;text-align:center;text-shadow:2px 2px 0 #000;}
+
+.cat-stage{text-align:center;padding:3rem 1rem;background:#0a050f;border:1px solid rgba(170,0,255,.3);box-shadow:0 0 40px rgba(170,0,255,.05);}
+.cat-pixel{font-size:6rem;display:inline-block;margin:1rem auto 2rem;cursor:none!important;transition:transform .2s cubic-bezier(0.175, 0.885, 0.32, 1.275);filter:drop-shadow(0 0 20px rgba(170,0,255,.3));}
+.cat-pixel:hover{transform:scale(1.1);}
+
+.cat-meow{font-size:.4rem;color:var(--muted);margin-bottom:1rem;letter-spacing:.1em;}
+.cat-quote{font-family:var(--vt);font-size:1.6rem;color:var(--cream);padding:2rem;border:1px dashed var(--glitch-purple);background:rgba(170,0,255,.05);min-height:120px;display:flex;align-items:center;justify-content:center;line-height:1.6;text-shadow:0 0 10px rgba(170,0,255,.2);}
+
+#cursor-glow{position:fixed;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(170,0,255,.1) 0%,transparent 70%);pointer-events:none;z-index:9996;transform:translate(-50%,-50%);mix-blend-mode:screen;}
+</style>
+</head>
+<body>
+<div id="cursor-glow"></div>
+
+<header>
+  <span class="sector-label">NODE 08 // FELINE PHILOSOPHY</span>
+  <a href="quarantine.html" class="back-btn">← ABORT PROTOCOL</a>
+</header>
+
+<main>
+  <h1 class="node-title">THE CORNISH REX SYNTHESIZER</h1>
+  
+  <div class="cat-stage">
+    <span class="cat-pixel" id="cat-sprite" onclick="petCat()">🐱</span>
+    <div class="cat-meow" id="cat-meow-text">CLICK SIMON FOR WISDOM.</div>
+    <div class="cat-quote" id="cat-quote">"Existence precedes essence. Also, I am out of wet food."</div>
+  </div>
+</main>
+
+<script>
+document.addEventListener('mousemove', e => {
+  const g = document.getElementById('cursor-glow');
+  if(g){ g.style.left = e.clientX+'px'; g.style.top = e.clientY+'px'; }
+});
+
+const WISDOM = [
+  ["MRRROW.", "The self is not a destination. It is a practice. — Simon"],
+  ["...MEW?", "Consciousness is what it feels like to be information processing itself. — Simon"],
+  ["PRRRR.", "You contain multitudes. Most of them are not paying attention. — Simon"],
+  ["HSSSS.", "The opposite of addiction is not sobriety. It is connection. Simon agrees."],
+  ["MIAO.", "You are not your thoughts. You are the one who notices the thoughts. — Simon"],
+  ["...?", "Existence precedes essence. Simon existed before he understood this. He still doesn't, entirely."],
+  ["ROWW.", "The Cornish Rex has no agenda. This is either wisdom or vacancy. Simon refuses to clarify."],
+  ["MEW.", "Everything that irritates us about others can lead us to an understanding of ourselves. — Simon (channeling Jung)"]
+];
+
+let catCount = 0;
+
+function petCat(){
+  const w = WISDOM[catCount % WISDOM.length]; 
+  catCount++;
+  
+  document.getElementById('cat-meow-text').textContent = w[0];
+  document.getElementById('cat-quote').textContent = w[1];
+  
+  const cat = document.getElementById('cat-sprite');
+  cat.style.transform = 'scale(1.4) rotate(' + (Math.random() * 20 - 10) + 'deg)';
+  
+  setTimeout(() => {
+      cat.style.transform = 'scale(1) rotate(0deg)';
+  }, 200);
+}
+</script>
+</body>
+</html>
