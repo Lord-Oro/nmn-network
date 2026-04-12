@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interviews with a Madman — NMN</title>
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root {
+  --void: #030104; --glitch-red: #FF0040; --glitch-cyan: #00FFFF;
+  --glitch-green: #00FF41; --gold: #FFD700; --cream: #E8E0D0; --muted: #8a7654;
+  --pixel: 'Press Start 2P', monospace; --vt: 'VT323', monospace; --mono: 'Share Tech Mono', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;cursor:none!important;}
+html,body{background:var(--void);color:var(--glitch-green);font-family:var(--pixel);min-height:100vh;}
+body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;z-index:9999;}
+body::after{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.8) 100%);pointer-events:none;z-index:9998;}
+
+header{padding:.8rem 1.5rem;background:rgba(3,1,4,.95);border-bottom:2px solid var(--glitch-red);display:flex;justify-content:space-between;align-items:center;}
+.sector-label{font-size:.45rem;color:var(--glitch-red);letter-spacing:.2em;}
+.back-btn{font-size:.35rem;color:var(--muted);text-decoration:none;letter-spacing:.1em;transition:color .2s;}
+.back-btn:hover{color:var(--glitch-green);}
+
+main{max-width:800px;margin:4rem auto;padding:2rem;}
+.node-title{font-size:1.5rem;color:var(--glitch-green);margin-bottom:2rem;text-align:center;text-shadow:2px 2px 0 #000;}
+
+.tape-deck{background:#0a050f;border:2px solid rgba(0,255,65,.3);padding:2rem;text-align:center;box-shadow:0 0 40px rgba(0,255,65,.05);}
+.tape-display{font-family:var(--mono);font-size:1rem;color:var(--glitch-green);background:#000;padding:1.5rem;margin-bottom:1.5rem;text-align:left;border:1px solid #222;min-height:100px;display:flex;align-items:center;}
+.tape-controls{display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap;}
+.tape-btn{background:#111;border:2px solid var(--glitch-green);color:var(--glitch-green);font-family:var(--pixel);font-size:.4rem;padding:.8rem 1.5rem;cursor:none;transition:all .2s;}
+.tape-btn:hover{background:var(--glitch-green);color:#000;box-shadow:0 0 15px var(--glitch-green);}
+.tape-transcript{font-family:var(--vt);font-size:1.2rem;color:rgba(0,255,65,.8);text-align:left;padding:1.5rem;background:rgba(0,0,0,.8);border:1px dashed rgba(0,255,65,.2);min-height:200px;line-height:1.8;margin-top:2rem;}
+
+#cursor-glow{position:fixed;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(0,255,65,.1) 0%,transparent 70%);pointer-events:none;z-index:9996;transform:translate(-50%,-50%);mix-blend-mode:screen;}
+</style>
+</head>
+<body>
+<div id="cursor-glow"></div>
+
+<header>
+  <span class="sector-label">NODE 02 // RECOVERED AUDIO</span>
+  <a href="quarantine.html" class="back-btn">← ABORT TRANSMISSION</a>
+</header>
+
+<main>
+  <h1 class="node-title">INTERVIEWS WITH A MADMAN</h1>
+  
+  <div class="tape-deck">
+    <div class="tape-display" id="tape-display">▶ READY — SELECT A RECOVERED SIGNAL</div>
+    <div class="tape-controls">
+      <button class="tape-btn" onclick="playTape(0)">TAPE 001</button>
+      <button class="tape-btn" onclick="playTape(1)">TAPE 002</button>
+      <button class="tape-btn" onclick="playTape(2)">TAPE 003</button>
+      <button class="tape-btn" style="border-color:var(--glitch-red);color:var(--glitch-red);" onclick="stopTape()">■ STOP</button>
+    </div>
+  </div>
+  
+  <div class="tape-transcript" id="tape-transcript">Awaiting input...</div>
+</main>
+
+<script>
+document.addEventListener('mousemove', e => {
+  const g = document.getElementById('cursor-glow');
+  if(g){ g.style.left = e.clientX+'px'; g.style.top = e.clientY+'px'; }
+});
+
+const TAPES = [
+  {
+    label:"TAPE 001 — THE ARCHITECT SPEAKS",
+    transcript:`[static] ... you have to understand that identity is not a fact. It's a habit. And habits... [static] ...the problem with the mine is that everyone thinks the gold is at the bottom. It isn't. The gold is in the act of descending. The value is the motion, not the destination. [static] ...I have been many people. None of them were wrong. All of them were me. The Wanderer understood this before I put it into words. He learned it the way things are actually learned — by living it until it became obvious. [static] ...the faceless thing was never a threat. It was a mirror. I left it there on purpose. [tape end]`
+  },
+  {
+    label:"TAPE 002 — ON THE NATURE OF GLITCH",
+    transcript:`[static] ...the Glitch Elephants are not the enemy. This is the mistake everyone makes. They are a force of nature — amoral, massive, indifferent. You cannot be angry at a flood. You adapt to it or you don't. [static] ...what they do to architecture is exactly what time does to certainty. They make visible what was always structural. The seams. The compromises. The places where the original builders said "close enough." [static] ...the mine was always there. The Glitch just cleared away the topsoil. That is what pressure does. It reveals. [static] ...Orid understood the mine better than the Static Lions because he arrived without the assumption that it was a problem to solve. He arrived as someone who had already paid a price. You cannot buy depth cheaply. [tape end]`
+  },
+  {
+    label:"TAPE 003 — THE SWIMMER'S QUESTION",
+    transcript:`[static] ...she asked me once — not directly, through the water, through the way she moved — she asked: what is the relationship between preparation and luck? [static] ...and the answer is that luck is what happens when the mine recognizes someone who has been working in the dark. It isn't random. It has a taste for the prepared. [static] ...nineteen seconds. I know what was in them. I'm not going to tell you here. Some things belong at depth. If you want to know, you have to descend. [static] ...the inscription on the rock wasn't a message. It was a door. Some people walk past doors their whole lives. She walked through it at the bottom of the Pacific Ocean, in the dark, alone, having already done the hardest part. That is the only kind of person the mine opens for. [tape end]`
+  }
+];
+let tapeInterval = null;
+
+function playTape(i){
+  const t = TAPES[i];
+  document.getElementById('tape-display').textContent = '▶ PLAYING: '+t.label;
+  clearInterval(tapeInterval);
+  let text = t.transcript; let idx = 0;
+  const el = document.getElementById('tape-transcript');
+  el.textContent = '';
+  
+  tapeInterval = setInterval(()=>{
+    if(idx < text.length){ 
+        el.textContent += text[idx++]; 
+    } else {
+        clearInterval(tapeInterval);
+    }
+  }, 35);
+}
+
+function stopTape(){
+  clearInterval(tapeInterval);
+  document.getElementById('tape-display').textContent = '■ SIGNAL TERMINATED';
+}
+</script>
+</body>
+</html>
