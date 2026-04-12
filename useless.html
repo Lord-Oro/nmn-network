@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Useless Machine — NMN</title>
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root {
+  --void: #030104; --glitch-red: #FF0040; --gold: #FFD700;
+  --cream: #E8E0D0; --muted: #8a7654;
+  --pixel: 'Press Start 2P', monospace; --vt: 'VT323', monospace; --mono: 'Share Tech Mono', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;cursor:none!important;}
+html,body{background:var(--void);color:var(--gold);font-family:var(--pixel);min-height:100vh;}
+
+/* CRT overlay */
+body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;z-index:9999;}
+body::after{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.8) 100%);pointer-events:none;z-index:9998;}
+
+header{padding:.8rem 1.5rem;background:rgba(3,1,4,.95);border-bottom:2px solid var(--gold);display:flex;justify-content:space-between;align-items:center;}
+.sector-label{font-size:.45rem;color:var(--gold);letter-spacing:.2em;}
+.back-btn{font-size:.35rem;color:var(--muted);text-decoration:none;letter-spacing:.1em;transition:color .2s;}
+.back-btn:hover{color:var(--glitch-red);}
+
+main{max-width:800px;margin:4rem auto;padding:2rem;}
+.node-title{font-size:1.5rem;color:var(--gold);margin-bottom:1rem;text-align:center;text-shadow:2px 2px 0 #000;}
+
+.machine-stage{text-align:center;padding:4rem 2rem;background:#0a050f;border:1px solid rgba(255,215,0,.3);box-shadow:0 0 40px rgba(255,215,0,.05);}
+.machine-desc{font-family:var(--vt);color:var(--muted);font-size:1.3rem;margin-bottom:3rem;line-height:1.6;}
+
+.lever-container{margin-bottom:3rem;}
+#lever-display{font-size:2rem;margin-bottom:1rem;transition:transform .2s;}
+.lever{display:inline-block;background:linear-gradient(180deg,#333,#111);border:2px solid #555;padding:1.5rem 2rem;font-family:var(--pixel);font-size:.6rem;color:var(--gold);cursor:none;transition:all .1s;letter-spacing:.1em;box-shadow:0 10px 20px rgba(0,0,0,.5), inset 0 2px 5px rgba(255,255,255,.1);}
+.lever.pulled{transform:translateY(10px);box-shadow:0 0px 5px rgba(0,0,0,.8), inset 0 5px 10px rgba(0,0,0,.8);}
+.lever:hover{border-color:var(--gold);}
+
+.machine-counter{font-family:var(--mono);font-size:2rem;color:var(--glitch-red);margin:2rem 0;text-shadow:0 0 10px rgba(255,0,64,.3);}
+.machine-msg{font-family:var(--vt);font-size:1.4rem;color:var(--cream);min-height:50px;}
+
+#cursor-glow{position:fixed;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(255,215,0,.1) 0%,transparent 70%);pointer-events:none;z-index:9996;transform:translate(-50%,-50%);mix-blend-mode:screen;}
+</style>
+</head>
+<body>
+<div id="cursor-glow"></div>
+
+<header>
+  <span class="sector-label">NODE 09 // MONUMENT TO FUTILITY</span>
+  <a href="quarantine.html" class="back-btn">← ABORT PROTOCOL</a>
+</header>
+
+<main>
+  <h1 class="node-title">THE USELESS MACHINE</h1>
+  
+  <div class="machine-stage">
+    <div class="machine-desc">A monument to capitalist futility. Pull the lever. It turns itself off. Your gold is not refunded.</div>
+    
+    <div class="lever-container">
+      <div id="lever-display">⬇️</div>
+      <button class="lever" id="lever-btn" onclick="pullLever()">PULL LEVER — DEPOSIT 1 GOLD</button>
+    </div>
+    
+    <div class="machine-counter">GLOBAL WASTE: <span id="waste-counter">0</span> GOLD</div>
+    <div class="machine-msg" id="machine-msg">Awaiting deposit.</div>
+  </div>
+</main>
+
+<script>
+document.addEventListener('mousemove', e => {
+  const g = document.getElementById('cursor-glow');
+  if(g){ g.style.left = e.clientX+'px'; g.style.top = e.clientY+'px'; }
+});
+
+let waste = parseInt(localStorage.getItem('nmn_waste') || '0');
+const msgs = [
+    "The machine thanks you for your contribution to futility.",
+    "Nothing happened. This is the point.",
+    "A mechanical arm has restored the lever. Your gold is gone.",
+    "The machine is unimpressed. The machine is always unimpressed.",
+    "Capitalism, but honest about it.",
+    "Lord Oro watches your transactions with mild disappointment."
+];
+
+document.getElementById('waste-counter').textContent = waste.toLocaleString();
+
+function pullLever(){
+  const btn = document.getElementById('lever-btn');
+  const arrow = document.getElementById('lever-display');
+  
+  // Animate pull
+  btn.classList.add('pulled');
+  arrow.style.transform = 'rotate(180deg)';
+  
+  // Mechanical reset
+  setTimeout(() => {
+      btn.classList.remove('pulled');
+      arrow.style.transform = 'rotate(0deg)';
+  }, 400);
+  
+  // Increment waste
+  waste++;
+  localStorage.setItem('nmn_waste', waste);
+  document.getElementById('waste-counter').textContent = waste.toLocaleString();
+  document.getElementById('machine-msg').textContent = msgs[Math.floor(Math.random() * msgs.length)];
+}
+</script>
+</body>
+</html>
