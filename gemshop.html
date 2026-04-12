@@ -33,6 +33,20 @@
 * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
 html, body { min-height: 100vh; background: var(--bg-color); display: flex; flex-direction: column; }
 
+/* ─── PURE CURSOR OVERRIDE (INVISIBLE) ─── */
+body, body *, a, button, canvas, .cell, .pu-btn, .ov-btn { 
+  cursor: none !important; 
+}
+
+/* ─── FLASHLIGHT BEAM (AMETHYST & GOLD TUNE) ─── */
+#pickaxe-glow {
+    position: fixed; width: 160px; height: 160px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(170,85,255,0.3) 0%, rgba(255,215,0,0.15) 40%, transparent 70%);
+    pointer-events: none; z-index: 999999; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
+    will-change: left, top;
+}
+
 body {
   font-family: var(--font-text);
   color: var(--cream);
@@ -86,9 +100,9 @@ header {
 
 /* POWER-UP TRAY */
 .powerup-tray { display: flex; justify-content: center; gap: 1rem; padding: 0.5rem 1rem; flex-wrap: wrap; max-width: 900px; margin: 0 auto 1rem;}
-.pu-btn { padding: 1rem 1.2rem; font-family: var(--font-pixel); font-size: 0.6rem; border: 4px solid; background: #000; cursor: pointer; transition: transform 0.1s; box-shadow: 4px 4px 0 #000;}
+.pu-btn { padding: 1rem 1.2rem; font-family: var(--font-pixel); font-size: 0.6rem; border: 4px solid; background: #000; transition: transform 0.1s; box-shadow: 4px 4px 0 #000;}
 .pu-btn:hover:not(:disabled) { transform: translateY(-4px); }
-.pu-btn:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(100%); box-shadow: none;}
+.pu-btn:disabled { opacity: 0.4; filter: grayscale(100%); box-shadow: none;}
 .pu-hammer { border-color: #cc6633; color: #ff8855; } .pu-hammer:hover:not(:disabled) { background: #331100; }
 .pu-lightning { border-color: #ddcc44; color: #ffee66; } .pu-lightning:hover:not(:disabled) { background: #333300; }
 .pu-bomb { border-color: #886699; color: #bb99cc; } .pu-bomb:hover:not(:disabled) { background: #221133; }
@@ -98,7 +112,7 @@ header {
 .board-wrap { display: flex; justify-content: center; padding: 1rem; position: relative; }
 #board { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; background: #0a0806; border: 6px solid #FFF; padding: 8px; max-width: 500px; width: 100%; box-shadow: inset 0 0 0 4px #000, inset 0 0 0 8px var(--gd), 10px 10px 0 #000;}
 
-.cell { aspect-ratio: 1; background: #111; border: 2px solid #222; display: flex; align-items: center; justify-content: center; font-family: var(--font-pixel); font-size: clamp(1.4rem, 5vw, 2rem); cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; position: relative; text-shadow: 2px 2px 0 #000; }
+.cell { aspect-ratio: 1; background: #111; border: 2px solid #222; display: flex; align-items: center; justify-content: center; font-family: var(--font-pixel); font-size: clamp(1.4rem, 5vw, 2rem); transition: transform 0.1s, box-shadow 0.1s; position: relative; text-shadow: 2px 2px 0 #000; }
 .cell:hover { transform: scale(1.1); background: #222; border-color: #444; z-index: 2;}
 .cell.selected { box-shadow: 0 0 0 4px var(--gold); transform: scale(1.1); z-index: 3; border-color: #FFF; background: #332200;}
 .cell.matched { animation: gemPop 0.3s steps(3) forwards; }
@@ -126,7 +140,7 @@ header {
 .ov-legend { font-size: 1.1rem; color: var(--gd); text-align: left; background: #111; padding: 1.5rem; border: 4px solid #333; margin-bottom: 2rem; line-height: 1.6;}
 .ov-stats { font-family: var(--font-pixel); font-size: 0.9rem; color: var(--gold); margin-bottom: 2.5rem; line-height: 2; text-align: left;}
 
-.ov-btn { padding: 1.2rem 2rem; font-family: var(--font-pixel); font-size: 0.8rem; border: 4px solid #FFF; background: #000; color: var(--cream); cursor: pointer; transition: transform 0.1s; margin: 0.5rem; box-shadow: 4px 4px 0 #000; text-decoration: none; display: inline-block;}
+.ov-btn { padding: 1.2rem 2rem; font-family: var(--font-pixel); font-size: 0.8rem; border: 4px solid #FFF; background: #000; color: var(--cream); transition: transform 0.1s; margin: 0.5rem; box-shadow: 4px 4px 0 #000; text-decoration: none; display: inline-block;}
 .ov-btn:hover { background: var(--gold); color: #000; transform: translateY(-4px); }
 .ov-btn.primary { background: var(--gd); }
 .ov-btn.primary:hover { background: var(--gold); }
@@ -153,11 +167,12 @@ header {
 .dg-sep { color: var(--faint); font-size: 0.6rem; }
 
 </style>
-
-<style id="nmn-cursor-global">body,*{cursor:none!important}</style>
 <style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
 </head>
 <body>
+
+<div id="pickaxe-glow"></div>
+
 <script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
 
@@ -257,6 +272,50 @@ header {
 </div>
 
 <script>
+// ─── UNIFIED FLASHLIGHT TRACKING ───
+function moveGlow(e) {
+    const r = document.getElementById('pickaxe-glow');
+    if(!r) return;
+    let x, y;
+    if(e.type.includes('touch')) {
+        if(e.touches && e.touches.length > 0) {
+            x = e.touches[0].clientX;
+            y = e.touches[0].clientY;
+        }
+    } else {
+        x = e.clientX;
+        y = e.clientY;
+    }
+    if(x !== undefined && y !== undefined) {
+        r.style.left = x + 'px';
+        r.style.top = y + 'px';
+    }
+}
+document.addEventListener('mousemove', moveGlow);
+document.addEventListener('touchmove', moveGlow, {passive: true});
+document.addEventListener('touchstart', moveGlow, {passive: true});
+
+document.addEventListener('mousedown', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '190px'; r.style.height = '190px'; r.style.background = 'radial-gradient(circle,rgba(170,85,255,.5) 0%,transparent 70%)'; }
+});
+document.addEventListener('mouseup', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(170,85,255,.3) 0%,rgba(255,215,0,0.15) 40%,transparent 70%)'; }
+});
+document.addEventListener('touchend', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.width = '160px'; r.style.height = '160px'; r.style.background = 'radial-gradient(circle,rgba(170,85,255,.3) 0%,rgba(255,215,0,0.15) 40%,transparent 70%)'; }
+}, {passive: true});
+
+// BFCache Fix
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        const overlay = document.getElementById('descent-overlay');
+        if(overlay) overlay.classList.remove('descent-active');
+    }
+});
+
 // 16-BIT UNICODE GEMS
 const GEMS = [
   { char:'♦', color:'#FFD700', id:'gold' },
@@ -359,16 +418,18 @@ function findMatches(){
   const matched=new Set();
   for(let r=0;r<BOARD_SIZE;r++){
     for(let c=0;c<BOARD_SIZE-2;c++){
-      if(board[r][c]&&board[r][c].id===board[r][c+1].id&&board[r][c].id===board[r][c+2].id){
-        let l=c; while(l<BOARD_SIZE&&board[r][l].id===board[r][c].id)l++;
+      if(board[r][c]&&board[r][c+1]&&board[r][c+2]&&
+         board[r][c].id===board[r][c+1].id&&board[r][c].id===board[r][c+2].id){
+        let l=c; while(l<BOARD_SIZE&&board[r][l]&&board[r][l].id===board[r][c].id)l++;
         for(let i=c;i<l;i++)matched.add(`${r},${i}`);
       }
     }
   }
   for(let c=0;c<BOARD_SIZE;c++){
     for(let r=0;r<BOARD_SIZE-2;r++){
-      if(board[r][c]&&board[r][c].id===board[r+1][c].id&&board[r][c].id===board[r+2][c].id){
-        let l=r; while(l<BOARD_SIZE&&board[l][c].id===board[r][c].id)l++;
+      if(board[r][c]&&board[r+1]&&board[r+1][c]&&board[r+2]&&board[r+2][c]&&
+         board[r][c].id===board[r+1][c].id&&board[r][c].id===board[r+2][c].id){
+        let l=r; while(l<BOARD_SIZE&&board[l]&&board[l][c]&&board[l][c].id===board[r][c].id)l++;
         for(let i=r;i<l;i++)matched.add(`${i},${c}`);
       }
     }
@@ -390,6 +451,7 @@ function processMatches(matched){
   let pts=0;
   matched.forEach(({r,c})=>{
     const gem=board[r][c];
+    if(!gem) return;
     const base=GEM_POINTS[gem.id]||50;
     pts+=base*combo;
     
@@ -404,7 +466,7 @@ function processMatches(matched){
   if(matchSize>=5){ pts*=2; checkSpecialMove(matchSize, matched[0] && board[matched[0].r] ? board[matched[0].r][matched[0].c] : null); }
   if(matchSize>=4) setMsg(`${matchSize}+ MATCH! BONUS!`);
   
-  if(matched.some(({r,c})=>board[r][c].id==='diamond')) pts*=3;
+  if(matched.some(({r,c})=>board[r][c]&&board[r][c].id==='diamond')) pts*=3;
   
   score+=pts; gold+=Math.floor(pts/10);
   
@@ -473,7 +535,7 @@ function applyPower(r,c){
   } else if(p==='magnet'){
     powers.magnet--; const target=board[r][c].id; const matched=[];
     for(let rr=0;rr<BOARD_SIZE;rr++)for(let cc=0;cc<BOARD_SIZE;cc++)
-      if(board[rr][cc].id===target)matched.push({r:rr,c:cc});
+      if(board[rr][cc]&&board[rr][cc].id===target)matched.push({r:rr,c:cc});
     setMsg(`🧲 MAGNET ACTIVATED!`); processMatches(matched);
   }
   updateHUD();
@@ -638,7 +700,6 @@ document.addEventListener('click', () => { if (!NMN_Audio.running) NMN_Audio.sta
 
 syncGauge();
 </script>
-
 
 <div class="nmn-global-cta" style="border-top:2px solid rgba(255,215,0,.2);background:rgba(5,3,8,.98);padding:2rem 1.5rem;text-align:center;margin-top:3rem;">
   <p style="font-family:'Press Start 2P',cursive;font-size:.4rem;color:#8B6914;letter-spacing:.2em;margin-bottom:1.2rem;">⬡ MINE YOUR COPY ⬡</p>
