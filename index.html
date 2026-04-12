@@ -731,15 +731,28 @@ const NMNAudioEngine = {
 
 function interceptDescent(event, locationName, targetUrl) {
     event.preventDefault(); 
-    NMNAudioEngine.playDescent();
+    
+    // TRY to play the audio, but don't crash the button if the browser blocks it
+    try {
+        NMNAudioEngine.playDescent();
+    } catch(e) {
+        console.log("Audio bypassed by browser.");
+    }
     
     const overlay = document.getElementById('descent-overlay');
     const text = document.getElementById('descent-target-text');
-    text.innerText = `DESCENDING TO: ${locationName}...`;
-    overlay.classList.add('descent-active');
+    
+    if(overlay && text) {
+        text.innerText = `DESCENDING TO: ${locationName}...`;
+        overlay.classList.add('descent-active');
+    }
 
-    setTimeout(() => { if(targetUrl) window.location.href = targetUrl; }, 1500);
+    // Force the redirect after 1.5 seconds no matter what
+    setTimeout(() => { 
+        if(targetUrl) window.location.href = targetUrl; 
+    }, 1500);
 }
+  
 </script>
 
 </body>
