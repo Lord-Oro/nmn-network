@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Echo Chamber — NMN</title>
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root {
+  --void: #030104; --glitch-purple: #AA00FF; --glitch-red: #FF0040;
+  --gold: #FFD700; --cream: #E8E0D0; --muted: #8a7654;
+  --pixel: 'Press Start 2P', monospace; --vt: 'VT323', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;cursor:none!important;}
+html,body{background:var(--void);color:var(--glitch-purple);font-family:var(--pixel);min-height:100vh;}
+
+/* CRT overlay */
+body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;z-index:9999;}
+body::after{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.8) 100%);pointer-events:none;z-index:9998;}
+
+header{padding:.8rem 1.5rem;background:rgba(3,1,4,.95);border-bottom:2px solid var(--glitch-purple);display:flex;justify-content:space-between;align-items:center;}
+.sector-label{font-size:.45rem;color:var(--glitch-purple);letter-spacing:.2em;}
+.back-btn{font-size:.35rem;color:var(--muted);text-decoration:none;letter-spacing:.1em;transition:color .2s;}
+.back-btn:hover{color:var(--glitch-red);}
+
+main{max-width:800px;margin:4rem auto;padding:2rem;}
+.node-title{font-size:1.5rem;color:var(--glitch-purple);margin-bottom:1rem;text-align:center;text-shadow:2px 2px 0 #000;}
+.node-desc{font-family:var(--vt);font-size:1.3rem;color:var(--muted);text-align:center;margin-bottom:3rem;}
+
+.echo-container{background:#0a050f;border:1px solid rgba(170,0,255,.3);padding:2rem;box-shadow:0 0 40px rgba(170,0,255,.05);}
+.echo-input{width:100%;background:#000;border:1px solid rgba(170,0,255,.5);color:var(--cream);font-family:var(--vt);font-size:1.4rem;padding:1.5rem;resize:vertical;min-height:150px;margin-bottom:1.5rem;line-height:1.6;}
+.echo-input:focus{outline:none;border-color:var(--glitch-purple);box-shadow:0 0 15px rgba(170,0,255,.2);}
+
+.throw-btn{width:100%;padding:1rem;background:transparent;border:2px solid var(--glitch-purple);color:var(--glitch-purple);font-family:var(--pixel);font-size:.45rem;cursor:none;transition:all .2s;text-align:center;letter-spacing:.1em;}
+.throw-btn:hover{background:var(--glitch-purple);color:#000;}
+
+.echo-incoming{background:rgba(0,0,20,.8);border:1px dashed var(--glitch-purple);padding:2rem;margin-top:2rem;display:none;animation:fadeIn 1s forwards;}
+.echo-source{font-size:.35rem;color:rgba(255,255,255,.3);margin-bottom:1rem;letter-spacing:.1em;}
+.echo-response{font-family:var(--vt);font-size:1.5rem;color:var(--glitch-purple);line-height:1.8;text-shadow:0 0 10px rgba(170,0,255,.2);}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+#cursor-glow{position:fixed;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(170,0,255,.1) 0%,transparent 70%);pointer-events:none;z-index:9996;transform:translate(-50%,-50%);mix-blend-mode:screen;}
+</style>
+</head>
+<body>
+<div id="cursor-glow"></div>
+
+<header>
+  <span class="sector-label">NODE 07 // ANONYMOUS TRANSMISSION</span>
+  <a href="quarantine.html" class="back-btn">← ABORT TRANSMISSION</a>
+</header>
+
+<main>
+  <h1 class="node-title">THE ECHO CHAMBER</h1>
+  <p class="node-desc">Type your heaviest burden into the void. Receive a stranger's in return. The mine holds everything.</p>
+  
+  <div class="echo-container">
+    <textarea class="echo-input" id="echo-input" placeholder="What is your heaviest burden?&#10;&#10;(no names. no identifiers. just the weight.)"></textarea>
+    <button class="throw-btn" onclick="throwEcho()">THROW INTO THE VOID</button>
+    
+    <div class="echo-incoming" id="echo-incoming">
+      <div class="echo-source">// SIGNAL FROM THE MINE — ANONYMOUS TRANSMISSION //</div>
+      <div class="echo-response" id="echo-response"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+document.addEventListener('mousemove', e => {
+  const g = document.getElementById('cursor-glow');
+  if(g){ g.style.left = e.clientX+'px'; g.style.top = e.clientY+'px'; }
+});
+
+const ECHOES = [
+  "I am afraid that the work I do in the dark will never be seen.",
+  "I love someone who does not know I exist.",
+  "I don't know who I am when no one is watching.",
+  "I have forgiven people I should not have. I have not forgiven people I should.",
+  "I chose safety over what I actually wanted, and I think about it every day.",
+  "I started over so many times that I don't know what 'starting' means anymore.",
+  "I am more afraid of being ordinary than of failing.",
+  "I built something beautiful once and then I let it collapse because I didn't think I deserved it.",
+  "I keep waiting for permission to begin.",
+  "I still think about the version of my life I didn't choose."
+];
+
+function throwEcho(){
+  const input = document.getElementById('echo-input').value.trim();
+  if(!input) return;
+  
+  const res = ECHOES[Math.floor(Math.random()*ECHOES.length)];
+  document.getElementById('echo-response').textContent = res;
+  
+  const incoming = document.getElementById('echo-incoming');
+  incoming.style.display = 'none'; // reset animation
+  void incoming.offsetWidth; // trigger reflow
+  incoming.style.display = 'block';
+  
+  document.getElementById('echo-input').value = '';
+}
+</script>
+</body>
+</html>
