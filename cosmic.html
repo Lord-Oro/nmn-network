@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Cosmic Descent — NMN</title>
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root {
+  --void: #030104; --glitch-cyan: #00FFFF; --glitch-red: #FF0040;
+  --gold: #FFD700; --cream: #E8E0D0; --muted: #8a7654;
+  --pixel: 'Press Start 2P', monospace; --vt: 'VT323', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;cursor:none!important;}
+html,body{background:var(--void);color:var(--glitch-cyan);font-family:var(--pixel);min-height:100vh;}
+
+/* CRT overlay */
+body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;z-index:9999;}
+body::after{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.8) 100%);pointer-events:none;z-index:9998;}
+
+header{position:fixed;top:0;width:100%;padding:.8rem 1.5rem;background:rgba(3,1,4,.95);border-bottom:2px solid var(--glitch-cyan);display:flex;justify-content:space-between;align-items:center;z-index:100;}
+.sector-label{font-size:.45rem;color:var(--glitch-cyan);letter-spacing:.2em;}
+.back-btn{font-size:.35rem;color:var(--muted);text-decoration:none;letter-spacing:.1em;transition:color .2s;}
+.back-btn:hover{color:var(--glitch-red);}
+
+main{padding-top:80px; text-align:center;}
+
+.cosmos-layer{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;border-bottom:2px dashed rgba(0,255,255,.1);position:relative;}
+.cosmos-icon{font-size:4rem;margin-bottom:2rem;filter:drop-shadow(0 0 20px rgba(0,255,255,.3));}
+.cosmos-scale{font-family:var(--pixel);font-size:.6rem;color:var(--glitch-cyan);margin-bottom:1.5rem;letter-spacing:.1em;text-transform:uppercase;}
+.cosmos-text{font-family:var(--vt);font-size:1.6rem;color:var(--muted);line-height:1.8;max-width:800px;}
+
+.truth-layer { background: rgba(255,215,0,.03); border-color: var(--gold); }
+.truth-layer .cosmos-icon { filter:drop-shadow(0 0 30px var(--gold)); }
+
+.scroll-indicator { position:absolute; bottom: 30px; font-size:10px; color:var(--muted); animation: bounce 2s infinite; letter-spacing: 2px;}
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); color: var(--glitch-cyan); } }
+
+#cursor-glow{position:fixed;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(0,255,255,.1) 0%,transparent 70%);pointer-events:none;z-index:9996;transform:translate(-50%,-50%);mix-blend-mode:screen;}
+</style>
+</head>
+<body>
+<div id="cursor-glow"></div>
+
+<header>
+  <span class="sector-label">NODE 01 // SCALE SIMULATOR</span>
+  <a href="quarantine.html" class="back-btn">← ABORT DESCENT</a>
+</header>
+
+<main>
+    <div class="cosmos-layer">
+        <div class="cosmos-icon">👤</div>
+        <div class="cosmos-scale">SCALE: THE SELF / ~1.8 METERS</div>
+        <div class="cosmos-text">You are here. This is the only scale where your name has meaning. The mine begins at the ego and descends from there. Most people never leave this layer.</div>
+        <div class="scroll-indicator">SCROLL TO DESCEND ↓</div>
+    </div>
+    
+    <div class="cosmos-layer">
+        <div class="cosmos-icon">🏙️</div>
+        <div class="cosmos-scale">SCALE: THE CITY / ~50 KILOMETERS</div>
+        <div class="cosmos-text">From this height, Philadelphia is a smudge of light. Your anxieties are indistinguishable from anyone else's. The city doesn't know your name. It doesn't need to.</div>
+        <div class="scroll-indicator">SCROLL TO DESCEND ↓</div>
+    </div>
+    
+    <div class="cosmos-layer">
+        <div class="cosmos-icon">🌎</div>
+        <div class="cosmos-scale">SCALE: THE PLANET / 12,742 KM DIAMETER</div>
+        <div class="cosmos-text">Every war ever fought. Every love story. Every empire. All of it contained in a sphere of rock hurtling through nothing at 30 kilometers per second. The mine is somewhere on the surface of this.</div>
+        <div class="scroll-indicator">SCROLL TO DESCEND ↓</div>
+    </div>
+    
+    <div class="cosmos-layer">
+        <div class="cosmos-icon">☀️</div>
+        <div class="cosmos-scale">SCALE: THE SOLAR SYSTEM / 12.4 BILLION KM</div>
+        <div class="cosmos-text">The sun contains 99.86% of all matter in this system. Everything else — including you, including the mine, including every word ever written — is the remaining 0.14%. This is not tragic. This is liberating.</div>
+        <div class="scroll-indicator">SCROLL TO DESCEND ↓</div>
+    </div>
+    
+    <div class="cosmos-layer">
+        <div class="cosmos-icon">🌌</div>
+        <div class="cosmos-scale">SCALE: THE GALAXY / 100,000 LIGHT YEARS</div>
+        <div class="cosmos-text">The Milky Way contains between 100 and 400 billion stars. We have named maybe a few thousand. The rest exist in total anonymity and appear to be doing fine. Consider this.</div>
+        <div class="scroll-indicator">SCROLL TO DESCEND ↓</div>
+    </div>
+    
+    <div class="cosmos-layer">
+        <div class="cosmos-icon">✨</div>
+        <div class="cosmos-scale">SCALE: THE OBSERVABLE UNIVERSE / 93 BILLION LIGHT YEARS</div>
+        <div class="cosmos-text">There are more stars in the observable universe than grains of sand on all of Earth's beaches. You are made of material that has existed since 13.8 billion years ago. You are not insignificant. You are ancient. You are the universe looking at itself.</div>
+        <div class="scroll-indicator">SCROLL TO DESCEND ↓</div>
+    </div>
+    
+    <div class="cosmos-layer truth-layer">
+        <div class="cosmos-icon">⛏️</div>
+        <div class="cosmos-scale" style="color:var(--gold);">CONCLUSION: THE MINE'S TRUTH</div>
+        <div class="cosmos-text" style="color:rgba(255,215,0,.8);">The smallness is not the point. The point is that at no scale, at no level of zoom, does the universe tell you who to be. That instruction was always yours. The mine gives back what you earn in the dark. — L.O.</div>
+    </div>
+</main>
+
+<script>
+document.addEventListener('mousemove', e => {
+  const g = document.getElementById('cursor-glow');
+  if(g){ g.style.left = e.clientX+'px'; g.style.top = e.clientY+'px'; }
+});
+</script>
+</body>
+</html>
