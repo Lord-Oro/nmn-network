@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fragments of Madmen — NMN Archive</title>
+<meta name="description" content="A cyberpunk tale. Volume 1: Fallen Valor.">
+<link rel="icon" href="lord_oro_emblem.jpg" type="image/jpeg">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nmn-theme.css">
+
+<style>
+:root {
+  --void: #030104; --glitch-cyan: #00FFFF; --glitch-red: #FF0040; 
+  --glitch-purple: #AA00FF; --gold: #FFD700; --cream: #E8E0D0; --muted: #8a7654;
+  --pixel: 'Press Start 2P', monospace; 
+  --vt: 'VT323', monospace;
+  --mono: 'Share Tech Mono', monospace;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;cursor:none!important;}
+html{scroll-behavior:smooth;}
+body{background:var(--void);color:var(--cream);font-family:var(--vt);min-height:100vh;overflow-x:hidden;font-size:1.3rem;line-height:1.7;}
+
+/* CRT & BACKGROUND EFFECTS */
+body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,255,.03) 2px,rgba(0,255,255,.03) 4px);pointer-events:none;z-index:9999;}
+body::after{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.8) 100%);pointer-events:none;z-index:9998;}
+.scanline{position:fixed;top:0;left:0;width:100%;height:10px;background:rgba(0,255,255,.05);animation:scan 8s linear infinite;pointer-events:none;z-index:9997;}
+@keyframes scan{0%{transform:translateY(-100px);}100%{transform:translateY(100vh);}}
+
+/* CUSTOM RADIANT CURSOR */
+body, a, button { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%2300FFFF' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%2300FFFF'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%2300FFFF'/%3E%3C/svg%3E") 6 26, auto !important; }
+#pickaxe-glow {
+    position: fixed; width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle, #00FFFF 10%, rgba(0, 255, 255, 0.4) 25%, rgba(0, 0, 0, 0.8) 60%, transparent 100%);
+    pointer-events: none; z-index: 99996; transform: translate(-50%, -50%);
+    mix-blend-mode: screen; transition: width 0.1s, height 0.1s;
+}
+
+/* TERMINAL HEADER */
+header{position:fixed;top:0;width:100%;padding:1rem 1.5rem;background:rgba(3,1,4,.98);border-bottom:2px solid var(--glitch-cyan);display:flex;justify-content:space-between;align-items:center;z-index:100;}
+.sys-status{font-family:var(--pixel);font-size:.45rem;color:var(--glitch-cyan);letter-spacing:.2em;}
+.back-btn{font-family:var(--pixel);font-size:.35rem;color:var(--muted);text-decoration:none;letter-spacing:.1em;transition:color .2s;}
+.back-btn:hover{color:var(--glitch-red);}
+
+/* DOSSIER CONTAINER */
+main { max-width: 800px; margin: 100px auto 4rem; padding: 2rem; background: rgba(0, 10, 20, 0.7); border: 1px solid rgba(0,255,255,0.2); box-shadow: 0 0 30px rgba(0,255,255,0.05); position: relative; z-index: 10;}
+
+/* TYPOGRAPHY & STORY ELEMENTS */
+.book-title { font-family: var(--pixel); font-size: 1.8rem; color: var(--glitch-cyan); text-align: center; margin-bottom: 0.5rem; text-shadow: 3px 3px 0 rgba(0,0,0,1); line-height: 1.4;}
+.book-subtitle { font-family: var(--mono); font-size: 1rem; color: var(--muted); text-align: center; margin-bottom: 2rem; letter-spacing: 2px; text-transform: uppercase;}
+.author-tag { text-align: center; color: var(--gold); font-family: var(--pixel); font-size: 0.6rem; margin-bottom: 3rem; letter-spacing: 2px;}
+.quote { text-align: center; font-style: italic; color: rgba(255,255,255,0.6); margin-bottom: 4rem; padding: 1rem; border-top: 1px dashed var(--muted); border-bottom: 1px dashed var(--muted);}
+
+.chapter-title { font-family: var(--pixel); font-size: 1.2rem; color: var(--glitch-red); margin: 4rem 0 1rem; border-bottom: 2px solid rgba(255,0,64,0.3); padding-bottom: 0.5rem;}
+.log-meta { font-family: var(--mono); font-size: 0.9rem; color: var(--gold); margin-bottom: 1.5rem; background: rgba(255,215,0,0.05); padding: 0.5rem; display: inline-block; border-left: 3px solid var(--gold);}
+.text-body p { margin-bottom: 1.5rem; color: var(--cream); text-align: justify;}
+
+.tape-log { background: rgba(170,0,255,0.05); border-left: 4px solid var(--glitch-purple); padding: 1.5rem; margin: 2rem 0; font-style: italic; color: #d8b4e2;}
+.tape-log p:last-child { margin-bottom: 0; }
+.tape-label { font-family: var(--pixel); font-size: 0.5rem; color: var(--glitch-purple); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px;}
+
+hr { border: none; border-top: 1px dotted var(--glitch-cyan); opacity: 0.3; margin: 3rem 0;}
+
+/* ENDING CTA */
+.end-dossier { margin-top: 5rem; padding: 2rem; border: 2px dashed var(--glitch-cyan); text-align: center; background: rgba(0,255,255,0.02);}
+.end-title { font-family: var(--pixel); font-size: 0.8rem; color: var(--glitch-cyan); margin-bottom: 1rem; line-height: 1.6;}
+.end-links { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; align-items: center;}
+.btn-sys { font-family: var(--pixel); font-size: 0.6rem; color: var(--coal); background: var(--glitch-cyan); padding: 1rem 2rem; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s;}
+.btn-sys:hover { background: #fff; box-shadow: 0 0 15px var(--glitch-cyan); transform: translateY(-2px);}
+.btn-ghost { font-family: var(--pixel); font-size: 0.6rem; color: var(--gold); border: 2px solid var(--gold); padding: 1rem 2rem; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s;}
+.btn-ghost:hover { background: var(--gold); color: #000; box-shadow: 0 0 15px var(--gold); transform: translateY(-2px);}
+
+.fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+<div id="cursor-glow"></div>
+
+<header>
+  <span class="sys-status">FILE: FRAGMENTS_VOL_1.DEC</span>
+  <a href="index.html" class="back-btn">← CLOSE DOSSIER</a>
+</header>
+
+<main class="text-body">
+    <h1 class="book-title fade-in">FRAGMENTS OF MADMEN</h1>
+    <h2 class="book-subtitle fade-in">Avirous Recounts — Volume 1: Fallen Valor</h2>
+    <div class="author-tag fade-in">NONSENSE MEDIA NETWORK | LORD ORO</div>
+    
+    <div class="quote fade-in">"The dead don't leave trails. The murdered do."</div>
+
+    <h2 class="chapter-title fade-in">CHAPTER ONE: THE TAPE</h2>
+    <div class="log-meta fade-in">Recount 1/4 — From Fallen Valor<br>Avirous listening — 2043, Month 3, 23rd</div>
+    
+    <div class="fade-in">
+        <p>Yea. I'll never forget that day.</p>
+        <p>The crowd was wild — well, it was a Friday night death match between the Technician and Roy The Kid. They were fighting on the Osaka Floating Isles stadium on the center island. I still to this day have a distaste for glorifying these criminals. They don't deserve to be gladiators. But go figure.</p>
+        <p>The stadium outside was packed. We were squeezing in between a lot of bodies making it difficult to even get in. No more float taxis are allowed there anymore because they just kept dropping people off on different sides of the island to avoid detection and docking fees.</p>
+        <p>The assignment was for an elusive engineer who was attending. The bounty on his head was the only thing we really needed to know before taking the job. It would've been our last.</p>
+        <p>Now, we don't get a whole lot of details that don't help us move forward. We're not the brains. We're the firepower. What someone did to have us come after them — well, you might imagine they weren't great people who did great things. Just the opposite.</p>
+        <p>What I do know is we were chasing a team creating B.I.M. in manufacturing plants that they continuously tore down and reconstructed all over Japan. The places that were found included Tokyo, Osaka, Nagoya, Sendai, and Sapporo. Now, we didn't get sent to the stadium at first. While following a dead end in Hokkaido we had gotten word of a strange shipment that came in from Wakkanai shoreline and followed it to Osaka where we had our first bit of luck. We found an engineer working with the team we were sent to find.</p>
+        <p>We were ready to get him there but we didn't make it in time. We were tracking his terminal but it just felt too easy. It led us to the box seats near the top of the stands. We came through an unlocked door to an empty room. On a coffee table in front of a couch overlooking the arena was a terminal and a keycard.</p>
+        <p>"We didn't lose him. Where do you think this goes?" I asked Jack as I picked up the keycard.</p>
+        <p>"Looks like Hotel Granvia." Jack offered casually.</p>
+        <p>"You've been there?" I asked, genuinely curious.</p>
+        <p>"No. But that's what's on this terminal." Jack said as he raised the terminal displaying the hotel not too far from them.</p>
+        <p>"Well I'll be damned. Looks like we've been invited." I said, feeling like I was preparing for a shootout. Those become more frequent than not when you're hunting people that don't want to be found.</p>
+        <p>"Let's not waste the invitation. Think I should change?" Jack joked as he began checking the clips he had around his body.</p>
+        <p>"I'll drive." I declared.</p>
+    </div>
+
+    <div class="tape-log fade-in">
+        <div class="tape-label">▶ AUDIO LOG INTERRUPT</div>
+        <p>The tape needed to be flipped to the B-side. Avirous took the ancient device from the recorder and turned it over in his hands for a moment before flipping it. His father's voice had stopped mid-sentence. It always stopped somewhere mid-sentence.</p>
+    </div>
+
+    <h2 class="chapter-title fade-in">CHAPTER TWO: THE GROUND</h2>
+    <div class="log-meta fade-in">2043, Month 3, 20th Friday through 23rd Monday</div>
+    
+    <div class="fade-in">
+        <p>The funeral was far from a spectacle.</p>
+        <p>No one was there, making Avirous feel more alone as he lowered his father into the ground himself. At least I could bury him here at home, he thought. Usually cremation is the way to send off the dead but being buried was considered an honor. It was the only control over the situation Avirous was afforded.</p>
+        <p>Once the casket hit the ground, Avirous pulled off the straps and reeled them back into the lift. After a moment of thought looking down into the hole, he grabbed a shovel nearby and started to fill it. He couldn't produce tears. The thought of a premature death had been consuming him since Saturday. The kill was too clean — almost as if a professional had done it, according to the autopsy.</p>
+        <p>After burying his father, Avirous sat on the edge of a small hidden cliff off Mt. Whittlesey in Wisconsin. The view offered a calming effect. Overlooking the valley below, he looked back a few feet at the burial site. He couldn't help but think there had to be something he could do. After three or four hours of lying around not really knowing what he wanted, the answer finally came to him. He got up and descended to his vehicle.</p>
+        <p>Upon entering his earliest childhood home in Montreal, Wisconsin, Avirous felt a nostalgic rush that didn't slow him down — it added to his ambition. He made his way to the basement and walked over to a seemingly normal cement wall with a part in the center where the blocks didn't interlock. He ran his right hand along the right side until he found an indent, then mirrored the same with his left on the other side. Once he found it, he pushed them both down simultaneously.</p>
+        <p>The wall made a strange sound of gears turning. Avirous stepped back as the wall began to part, trying not to get caught in the dust cloud. A small hallway with a stale stench led to a room with only a desk, a chair, and a small cabinet.</p>
+        <p>The cabinet had to come first.</p>
+        <p>Avirous opened the door to the cabinet revealing a weapons locker along with a couple of gadgets. He left to the hallway for a moment and came back with a box. He dropped the empty box in front of the cabinet and put the contents in. Turning his head slightly to the desk, he spotted an actual paper envelope. He picked it up and opened it. Inside was a small paper that said <em>burn me</em>. He flipped it over to check the back. There was a date, a time, and a location — two days from that day.</p>
+        <p>But under that is what gave him a slight shiver, despite it only being a few words.</p>
+        <p style="color: var(--glitch-red);"><em>Avirous, it's time we meet.</em></p>
+    </div>
+
+    <h2 class="chapter-title fade-in">CHAPTER THREE: THE STATION</h2>
+    <div class="log-meta fade-in">2043, Month 3, 25th Wednesday</div>
+
+    <div class="fade-in">
+        <p><em>Please keep clear of solid red lines surrounding boarding areas until the vessel has entered the station.</em></p>
+        <p>An overhead played a female robotic voice announcement as holographic warning lines began to rise from the ground to about waist level. <em>The next train is about to board.</em></p>
+        <p>Avirous, leaning on a pillar, waited for the district NW sky train to dock. A woman wearing all white seemed to be walking toward him. She had a very small envelope in her hand, also white. Her shades had white lenses. Avirous tried his best to pretend he wasn't staring, but his eyes kept coming back to her. She was almost angelic in the white dress, but it was her stiletto boots wrapping up her legs to the knees that caught the most attention.</p>
+        <p>She was a few feet away and didn't slow down. Avirous was about to say something but as soon as she was right in front of him she stuck her hand out with the envelope and dropped it by his boots. He grabbed it — but not before he shifted out of his stance. He practically had to dive for it. He was about to ask what was in it but when he looked up she was already walking away as if nothing had happened.</p>
+        <p>Glancing down at the sealed envelope and seeing his father's name — Racanelli, Jack — at the center triggered paranoia and an urge to keep it safe. Avirous hid it in his jacket.</p>
+        <p>The ship was massive. One of the biggest that passes through multiple states. Standing on the glass tiles looking down at the rest of the high-rises and various crafts hovering about their business, Avirous tried to shake the uneasiness. He felt like he was being watched.</p>
+        <p>He found an open seat in a corner on the lower level. It wasn't until after the train took off that he finally calmed down. He took out the envelope. It had a thin finger scanner on the opening. He placed his finger on the scanner, forcing it to open, revealing a small piece of paper. Four names. Two with addresses. One with a date.</p>
+        <p>Frost, Niyla — Paisley, Oregon — in two days.<br>DaVante, Cruella — St. Augustine, Florida.</p>
+        <p>Oregon. As if it had been planned all along.</p>
+    </div>
+
+    <h2 class="chapter-title fade-in">CHAPTER FOUR: NIYLA</h2>
+    <div class="log-meta fade-in">2043, Month 3, 27th Friday</div>
+
+    <div class="fade-in">
+        <p>"Thank you for meeting me, Mrs. Frost." Avirous said while eating a cherry danish with a coffee Mrs. Frost had prepared.</p>
+        <p>"Please call me Niyla. I'm so glad you're here. You look so much like your father." Her voice was soft but stern — the tone of someone who had been in the field long enough that the two qualities had decided to coexist.</p>
+        <p>"I thought that was you at the station. The woman you sent was pretty stoic. She dropped the letter and kept walking without saying anything."</p>
+        <p>The very same woman entered the light blue living room.</p>
+        <p>"I'm sure you meant pretty and stoic," she said, same outfit from the station. "We have to keep a low profile. You haven't a clue what you're getting yourself into. But you're persistent. Before you end up hurt or in the wrong hands, we had to make a move."</p>
+        <p>"Who are you? And do you ever change your clothes?" Avirous asked, immediately regretting it.</p>
+        <p>"Who I am doesn't matter. I'm on Niyla's team. Call me Ariel. And I do change, but my closet has been compromised. You're here because your movements are obvious. Either your father's safehouse outside Little Rock or the shack in Montreal — either way you would've ended up here." She sat on the arm of Niyla's couch and flashed a slight smile. Matter settled.</p>
+        <p>"I just want to lend you a hand," Niyla said. "Jack was my friend and you his son. I couldn't let you lose yourself. Your father had built up evidence on a case and wanted me to give it to you."</p>
+        <p>Ariel pulled a box from behind the couch and placed it on the coffee table. "This is it."</p>
+        <p>Not much inside. A tape recorder, a small metal key, a keycard, and a framed photo. His father and Niyla with two others — a man and a woman.</p>
+        <p>"Our team when we started out, seven years ago. The man is Scott Wile. The woman is Cruella DeVante. We should be three of the names in the letter Ariel dropped. That envelope would've burned the document if tampered with. It was on my door this past Saturday."</p>
+        <p>Something bothered Avirous. "Did my father have other partners?"</p>
+        <p>"Two internationally — one in Osaka and one in Seoul. Why?"</p>
+        <p>"He never mentioned his work to me."</p>
+        <p>Niyla's voice carried a note of conclusion. "Your father had one last message: Mr. Dayton is in bad waters, collect 200 sir esquire. Whatever that means — it's all yours."</p>
+        <p>Avirous got up, said his goodbyes, and left.</p>
+        <p>"Follow him," Niyla told Ariel quietly.</p>
+        <p>Without a word, Ariel went to the garage.</p>
+    </div>
+
+    <h2 class="chapter-title fade-in">CHAPTER FIVE: BAD WATERS</h2>
+    <div class="log-meta fade-in">2043, Month 3, 28th Saturday</div>
+
+    <div class="fade-in">
+        <p>It only took a few hours to decode the message. Mr. Dayton meant Harris Dayton, a memorial site in Badwater Basin, California. Sir esquire meant Southeast. Collect 200 was paces.</p>
+        <p>Avirous made it there at about eleven in the morning, bumping into hikers on the way up. He walked the two hundred paces and ended at a small body of water.</p>
+        <p>He got in. Nothing stood out. He got out in frustration.</p>
+        <p>Walking back, he pulled leaves from the small bushes lining the path. On one bush, a leaf didn't snap off like the others. He looked closer.</p>
+        <p>Artificial.</p>
+        <p>Avirous laughed out loud. His father had to have believed he would pull leaves off this specific bush. He looked around, then started applying pressure until the bush came free, revealing a sealed case. He paused — apologized quietly to the site just in case — and opened it.</p>
+        <p>A tape and a hand terminal.</p>
+        <p>Back at his vehicle, one other car sat in the far corner of the lot. He set his windows to privacy and clicked the terminal to life. Unlocked.</p>
+        <p>One photo. A map of a city in another language. The only word he could make out: the characters for Osaka.</p>
+        <p>His own terminal rang. His commanding officer.</p>
+        <p>"Cut the crap, Racanelli. When are you back?"</p>
+        <p>"I'm headed out of the country. My father's former comrades."</p>
+        <p>"You got a month. And there's a psych eval tomorrow in California. Someone volunteered. They're expecting you."</p>
+        <p>"Sir, yes sir."</p>
+        <p>"Racanelli. Take care of yourself."</p>
+        <p>The phone chimed. Call over.</p>
+    </div>
+
+    <h2 class="chapter-title fade-in">CHAPTER SIX: GARCIA</h2>
+    <div class="log-meta fade-in">2043, Month 3, 29th Sunday</div>
+
+    <div class="fade-in">
+        <p>Door three buzzed as Avirous approached. He opened it to find someone smoking a cigarette. An actual cigarette.</p>
+        <p>"Close the door behind you." The smoker didn't look up.</p>
+        <p>The smell was immediate and overwhelming. Avirous moved to open the window.</p>
+        <p>"Hey! Leave that closed!" A coughing fit followed.</p>
+        <p>"I can't breathe. By the looks of it, neither can you."</p>
+        <p>"I'm fine. What are you here for?"</p>
+        <p>"My chief says I can't leave the country without an evaluation."</p>
+        <p>"Where are you going?"</p>
+        <p>"Japan. Osaka. And yes — I'm grieving."</p>
+        <p>The smoker pulled his cigarette and examined the cherry as a consistent line of smoke rose and dissolved. He released it through his nostrils as if he were testing Avirous's patience on purpose.</p>
+        <p>"I'm Special Agent Douglas Garcia. I'm who they call when we need to make sure we're not sending a mishap out of the country."</p>
+        <p>"So am I fit?"</p>
+        <p>"Hell if I know. But I knew your father. A phenomenal soldier. I'd be damned if I didn't look out for his son." The more he spoke the more a faint Midwest accent came through. "I hope I don't regret it."</p>
+        <p>They finished the exchange — terminals pressed together, a soft ping, clearance transferred. Garcia's expression shifted for a moment. Something private passing through it.</p>
+        <p>"I hope you find what you're looking for. Come back with a clear head. Your father grew to be my friend. Don't let this come back to bite me."</p>
+        <p>"I won't." Avirous extended his hand. "Thank you, Doug."</p>
+        <p>"Bring me some of those Japanese cigarettes."</p>
+        <p>"You got it."</p>
+        <p>Avirous left. A dark colored vehicle followed at a distance but arrived at the sky port as well.</p>
+    </div>
+
+    <h2 class="chapter-title fade-in">CHAPTER SEVEN: NEO JAPAN</h2>
+    <div class="log-meta fade-in">2043, Month 4, 1st Tuesday</div>
+
+    <div class="fade-in">
+        <p>The descent into Osaka was not like descending into any other city.</p>
+        <p>Most cities from above looked like grids — orderly, predictable, the geometry of human organization made visible. Osaka from above looked like a nervous system that had decided to become a city instead. The elevated rail lines wove between towers that shouldn't have been able to coexist at those angles. Neon ran in colors that didn't have names in English. And the floating platforms — the Isles — hung above the bay like illuminated lily pads, connected by bridges that swayed slightly in the offshore wind.</p>
+        <p>Avirous pressed his face briefly against the terminal window. Then made himself stop. Looking like a tourist was not the move.</p>
+        <p>The sky port processed him in twelve minutes. Japanese customs ran on biometric exchange — terminal to scanner, iris to scanner, the quiet handshake of databases agreeing you were who you claimed to be.</p>
+        <p>He flagged a ground taxi rather than a float. Lower profile. Harder to track.</p>
+        <p>The city moved past the window in layers. Street level was dense and warm, the smell of grilled things and exhaust and something electrical he couldn't place. Above the first story, buildings threw out signage in Japanese, Korean, a little English. Above that was the elevated rail and the float lanes. Above that the Isles, lit even in the afternoon.</p>
+        <p>He thought about his father on this same street.</p>
+        <p>He left the tape recorder in his pocket.</p>
+        <p>The Hotel Granvia rose at the end of a block of older low-rise buildings — conspicuously modern, the kind of building that understood it was being watched and had decided to look authoritative about it. He walked in.</p>
+        <p>The keycard had a room number on the back. It wasn't an access code. It was a reservation. A standing reservation. His father had booked this room — or someone had in his name — and whatever was in it had been waiting.</p>
+        <p>"I have a reservation," Avirous said.</p>
+        <p>The desk attendant confirmed in about four seconds. Racanelli. Long-term hold. Sixth floor.</p>
+        <p>Room 614. The keycard against the reader.</p>
+        <p>The light went green.</p>
+    </div>
+
+    <h2 class="chapter-title fade-in">CHAPTER EIGHT: THE GRANVIA</h2>
+    <div class="log-meta fade-in">2043, Month 4, 2nd Wednesday</div>
+
+    <div class="fade-in">
+        <p>The room had been used recently.</p>
+        <p>Not by anyone who had stayed the night — the bed was untouched, the linens perfect. But the desk chair was angled slightly away from the desk, and there was a coffee ring on the surface that the cleaning staff had missed or been told to leave. Someone had sat here and worked.</p>
+        <p>On the desk: a sealed envelope with Avirous's first name on it. Below it: a manila folder with a red stripe across the top.</p>
+        <p>He opened the envelope first.</p>
+        <p>The handwriting was his father's.</p>
+        <p><em>Avirous — if you're reading this, you followed the trail correctly. I'm sorry I couldn't explain this to you in person. I hope one day you'll understand why I kept this work separate from our life together. There is a contact in Osaka. His name is Dominic Yahari. He will not be easy to find through official channels. Find the Floating Isles night market — Wednesday evenings. He runs a food operation there. He knows more about the B.I.M. network's current structure than anyone in our system does. He is not an ally in any official sense. But he is honest about what he knows, and he has his own reasons to want the network dismantled. Tell him Jack's son came to collect. He will understand. I love you, son. Finish this.</em></p>
+        <p>Avirous put the letter down.</p>
+        <p>He opened the manila folder.</p>
+        <p>A network map — hand-drawn, no digital copies. Eight nodes spread across Japan with connection lines showing supply relationships. Three had X marks through them. Five remained. One had a circle around it, thicker than the others, with two words next to it in his father's handwriting.</p>
+        <p><em>Still active.</em></p>
+        <p>The location: Kobe — warehouse district, bay-facing.</p>
+        <p>Below the map, a photograph. Four people outside an Osaka transit station, not looking at the camera, caught mid-conversation. His father was one of them. On the back: <em>The engineer. Still in Osaka. As of three months ago.</em></p>
+        <p>Avirous sat in the angled chair and let himself be still.</p>
+        <p>His father had been building this case for a long time. Long enough to set up a dead drop halfway around the world. Long enough to plan for his own death as a contingency.</p>
+        <p>He took out the tape recorder. B-side. Pressed play.</p>
+    </div>
+
+    <div class="tape-log fade-in">
+        <div class="tape-label">▶ AUDIO LOG: B-SIDE PLAYING</div>
+        <p>"There's a thing they don't tell you about doing this kind of work for a long time. You start to see the shape of it. Not the details — the shape. And the shape of this one is bigger than anything I've been part of before. The plants were never the point. They're the surface operation. What they're actually building is a delivery system. Not a weapon in the conventional sense. Something that can be passed through biological contact. B.I.M. indistinguishable from organic tissue until activation. I found proof in Seoul. A copy is in the hotel room in Osaka. If you're hearing this, you found it. The folder is the proof. Don't let them bury it."</p>
+    </div>
+
+    <div class="fade-in">
+        <p>Static.</p>
+        <p>Avirous pressed stop.</p>
+        <p>He picked up the folder.</p>
+        <p>He was not going to let them bury it.</p>
+    </div>
+
+    <h2 class="chapter-title fade-in">CHAPTER NINE: THE FOOD CART</h2>
+    <div class="log-meta fade-in">2043, Month 4, 3rd Thursday</div>
+
+    <div class="fade-in">
+        <p>Dominic Yahari was not difficult to find once you knew what you were looking for.</p>
+        <p>The Wednesday night market on the Floating Isles ran across three interconnected platforms connected by walkways that swayed pleasantly in the bay wind, strung with lights that hit the water below and bounced back twice as bright. In the middle of the food cart cluster was the one doing the most business — not because the food was necessarily the best, though it may have been, but because of the man running it.</p>
+        <p>He was large in the way that suggested his body had decided early on to occupy as much space as possible. The tattoos started at his collar and disappeared under his jacket and emerged again at his wrists — the specific kind Avirous recognized as organizational rather than decorative. Each one a document. A record of allegiance and rank and history. He was not smiling but he was clearly performing contentment, running the cart with the efficiency of someone who understood this was not his primary occupation.</p>
+        <p>Avirous joined the end of the line.</p>
+        <p>By the time he reached the front, he had rehearsed three opening lines and rejected all of them. He went direct.</p>
+        <p>"Jack's son came to collect," he said in English, just loud enough.</p>
+        <p>Yahari didn't react visibly. He handed food to the person in front of Avirous and then looked at him with the specific quality of attention that people use when they are deciding something quickly.</p>
+        <p>"End of the platform," Yahari said. "Ten minutes."</p>
+        <p>Avirous found a position at the railing at the platform's edge, looking out at the bay. The water below was dark and lit from above and moved with the slow certainty of something that had been here before the city and would be here after.</p>
+        <p>Behind him, about six meters away, a man in a jacket had been sitting at a cart stool for fifteen minutes without finishing his meal. Avirous clocked him peripherally — not a threat posture. More like someone who was also waiting for something and had found himself adjacent to Avirous's situation without intending to.</p>
+        <p>Yahari arrived at eight minutes. He leaned on the railing and looked out at the water the same way Avirous was looking at it — like two people consulting the same reference material.</p>
+        <p>"Jack Racanelli's son," Yahari said. Not a question.</p>
+        <p>"Avirous."</p>
+        <p>"He told me you might come. He said if you did, it meant things had gone badly."</p>
+        <p>"They did."</p>
+        <p>Yahari was quiet. "I'm sorry for your loss. Your father was a man who did what he said he would. Those are rare."</p>
+        <p>"He left me a network map and a photograph of an engineer he was tracking. He said you'd know the current status."</p>
+        <p>"The engineer is still here. Different name, different face — surgery, the expensive kind. But the work pattern is the same. I've been watching him four months." Yahari paused. "What I want to know is what you plan to do with what I tell you."</p>
+        <p>"Finish what he started."</p>
+        <p>"Officially?"</p>
+        <p>"One month of leave. Clearance that extends to this jurisdiction."</p>
+        <p>"And unofficially?"</p>
+        <p>"Unofficially, someone killed my father and I want to know who gave the order."</p>
+        <p>The man at the nearby stool had stopped pretending to eat. He was listening — not covertly anymore, just listening, the posture of someone who had heard something that made continued pretense feel pointless.</p>
+        <p>Avirous turned slightly. "You've been six meters away for fifteen minutes."</p>
+        <p>The man looked up. Korean, mid-forties, the particular worn quality of someone traveling without enough sleep. Not embarrassed at being caught. Recalculating.</p>
+        <p>"Tamarian Byum," he said. "Detective. Seoul Metropolitan Police." A pause. "Technically out of my jurisdiction."</p>
+        <p>Yahari looked at him, then at Avirous, then back at the water. "Your father's reach was longer than he let on," he said quietly.</p>
+        <p>"How much did you hear?" Avirous asked Byum.</p>
+        <p>"Enough that I think we are looking at the same thing from different angles." He held up his terminal. On the screen: a map — different from the one in the hotel folder, but with two of the same nodes marked.</p>
+        <p>Avirous looked at Yahari. Yahari looked at Byum.</p>
+        <p>The bay moved below them, unhurried, indifferent, ancient.</p>
+        <p>"We should get off this platform," Yahari said.</p>
+    </div>
+
+    <h2 class="chapter-title fade-in">CHAPTER TEN: THE THREE OF THEM</h2>
+    <div class="log-meta fade-in">2043, Month 4, 4th Friday — Early</div>
+
+    <div class="fade-in">
+        <p>Yahari's space above the market was not what Avirous had expected.</p>
+        <p>Quiet. Books — actual paper books — lined one wall in a language Avirous couldn't read. A single lamp. A table large enough for three people to spread materials without their documents overlapping. Yahari made tea without asking if anyone wanted it and set it in front of them like punctuation. We are starting now.</p>
+        <p>Byum had a case file he had been building since the string of plant discoveries the previous year. He had been in Osaka on vacation when he overheard details about the Nagoya plant through a contact who had no idea what they were carrying. He had not gone home since.</p>
+        <p>"Seven months," Byum said. "Without official sanction."</p>
+        <p>"Why not report it?" Avirous asked.</p>
+        <p>Byum looked at him with the patience of someone explaining something to a person who was smart but new. "The first time I reported something tangential to this network, the person I reported to was reassigned within forty-eight hours. The second time, the case was archived with a classification requiring my director's director to access. I stopped reporting."</p>
+        <p>Avirous put the manila folder on the table. Byum and Yahari looked at it. He opened it.</p>
+        <p>The network map. The photograph. His father's notes.</p>
+        <p>Byum leaned forward. He pointed to one of the unnamed nodes — one of the question marks. "I know this location. Kobe, bay-facing, warehouse district. I've had eyes on it three weeks. I couldn't identify the operation."</p>
+        <p>"My father identified it," Avirous said. "It's the active production site. Still running."</p>
+        <p>Yahari had been studying the photograph. "The engineer — I can get you close to him. But close is not the same as having enough to act."</p>
+        <p>"My father said you had your own reasons for wanting the network down," Avirous said.</p>
+        <p>Yahari set the photograph down. The quiet of a decision being made.</p>
+        <p>"There are people in my city being used to move product without knowing what they're carrying," he said finally. "When things go wrong — and things have gone wrong — they are the ones who answer for it. I am not interested in watching more of them answer for something they didn't understand."</p>
+        <p>No one said anything for a moment.</p>
+        <p>Outside, the market was winding down. The lights on the platform below were going out in sequence, the floating islands settling into night.</p>
+        <p>Byum studied the network map. "If this is accurate — the operation is coordinated from somewhere that isn't any of these nodes. These are execution points. There's a coordination layer we haven't located."</p>
+        <p>"My father's international partner in Seoul," Avirous said. "Mentioned to Niyla. That might be the connection."</p>
+        <p>Byum looked up. "What is that partner's name?"</p>
+        <p>"I don't know. Just Seoul."</p>
+        <p>Byum set his terminal down carefully. "I think," he said, "that I may know who it is."</p>
+        <p>The lamp cast a warm circle around the three of them. Outside, the city hummed. The bay moved.</p>
+        <p>Avirous looked at the table — his father's handwriting, Byum's seven months of unsanctioned work, Yahari's knowledge of streets and networks that no official report would ever fully capture. Three different angles of the same problem, arrived at by three different routes, converging at a Wednesday night food cart on a floating platform in a city none of them were from.</p>
+        <p>His father had said once, back when Avirous was still in training: Most cases don't break because someone finds a clue. They break because three people who should never have met end up in the same room.</p>
+        <p>"Alright," Avirous said. "Tell us what you know."</p>
+    </div>
+
+    <div class="end-dossier fade-in">
+        <h3 class="end-title">FRAGMENTS OF MADMEN<br>VOLUME 1: COMPLETE</h3>
+        <p style="color:var(--muted); font-size:0.9rem; margin:1rem 0;">Volume 2: The Osaka Vein — coming soon.<br><br>What Byum knows about Seoul changes everything. The engineer is moving. And someone in the network has figured out that Jack Racanelli's son is in the city.</p>
+        
+        <div class="end-links">
+            <a href="https://books2read.com/u/4Xye16" target="_blank" class="btn-sys">DOWNLOAD D2D EBOOK</a>
+            <a href="index.html" class="btn-ghost">RETURN TO LIBRARY</a>
+        </div>
+    </div>
+
+</main>
+
+<script>
+// Cursor Tracking
+document.addEventListener('mousemove', function(e){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
+});
+
+// Scroll Fade In Observer
+const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { 
+        if(e.isIntersecting) e.target.classList.add('visible'); 
+    });
+}, {threshold: 0.1});
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+</script>
+
+</body>
+</html>
