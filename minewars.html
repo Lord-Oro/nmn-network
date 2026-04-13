@@ -17,245 +17,293 @@
             --gold: #FFD700;
             --green: #00FF88;
             --coal: #050308;
+            --muted: #8a7654;
             --font-pixel: 'Press Start 2P', cursive;
             --font-terminal: 'VT323', monospace;
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+        html { scroll-behavior: smooth; }
         body {
             background-color: var(--coal);
             color: #E8E0D0;
             font-family: var(--font-terminal);
             line-height: 1.6;
-            padding: 0;
-            margin: 0;
             overflow-x: hidden;
+            font-size: 1.3rem;
             background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
             background-size: 100% 4px, 3px 100%;
         }
 
+        /* CRT EFFECTS */
+        body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,68,68,.03) 2px,rgba(255,68,68,.03) 4px);pointer-events:none;z-index:9999;}
+        body::after{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.9) 100%);pointer-events:none;z-index:9998;}
+        .scanline{position:fixed;top:0;left:0;width:100%;height:10px;background:rgba(255,68,68,.05);animation:scan 8s linear infinite;pointer-events:none;z-index:9997;}
+        @keyframes scan{0%{transform:translateY(-100px);}100%{transform:translateY(100vh);}}
+
+        /* OVERHAULED GOLD & BLACK RADIANT CURSOR */
+        body, a, button { 
+            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23FFD700' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%23FFD700'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23FFD700'/%3E%3C/svg%3E") 6 26, auto !important; 
+        }
+        #pickaxe-glow {
+            position: fixed; width: 140px; height: 140px; border-radius: 50%;
+            background: radial-gradient(circle, #FFD700 10%, rgba(255, 215, 0, 0.4) 25%, rgba(0, 0, 0, 0.8) 60%, transparent 100%);
+            pointer-events: none; z-index: 99996; transform: translate(-50%, -50%);
+            mix-blend-mode: screen; transition: width 0.1s, height 0.1s;
+        }
+
+        /* TERMINAL HEADER */
+        header {
+            position: fixed; top: 0; width: 100%; padding: 1rem 1.5rem;
+            background: rgba(3,1,4,.98); border-bottom: 2px solid var(--red);
+            display: flex; justify-content: space-between; align-items: center; z-index: 100;
+        }
+        .sys-status { font-family: var(--font-pixel); font-size: .45rem; color: var(--red); letter-spacing: .2em; }
+        .back-btn { font-family: var(--font-pixel); font-size: .35rem; color: var(--muted); text-decoration: none; letter-spacing: .1em; transition: color .2s; }
+        .back-btn:hover { color: var(--red); }
+
+        /* DOSSIER CONTAINER */
         .terminal-container {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 40px;
-            background: rgba(10, 8, 12, 0.9);
-            border: 1px solid #333;
-            box-shadow: 0 0 50px rgba(0,0,0,1);
-            position: relative;
+            max-width: 900px; margin: 100px auto 40px; padding: 40px;
+            background: rgba(10, 8, 12, 0.9); border: 1px solid rgba(255,68,68,0.3);
+            box-shadow: 0 0 50px rgba(0,0,0,1); position: relative; z-index: 10;
         }
 
         .terminal-header { 
-            border-bottom: 4px solid #8B0000; 
-            padding-bottom: 20px; 
-            margin-bottom: 40px; 
-            color: var(--red); 
-            font-family: var(--font-pixel);
+            border-bottom: 4px solid #8B0000; padding-bottom: 20px; 
+            margin-bottom: 40px; color: var(--red); font-family: var(--font-pixel); text-align: center;
         }
+        .terminal-header h1 { font-size: 1.2rem; margin: 0; letter-spacing: 2px; text-shadow: 2px 2px 0 #000; line-height: 1.5;}
+        .terminal-header p { font-size: 0.6rem; margin: 10px 0 0; color: var(--muted); }
 
-        .terminal-header h1 { font-size: 1.2rem; margin: 0; letter-spacing: 2px; }
-        .terminal-header p { font-size: 0.6rem; margin: 10px 0 0; }
+        .log-meta { font-family: var(--font-terminal); font-size: 1rem; color: var(--gold); margin-bottom: 2rem; background: rgba(255,215,0,0.05); padding: 1rem; border-left: 3px solid var(--gold); text-transform: uppercase; letter-spacing: 1px;}
+        .quote { text-align: center; font-style: italic; color: rgba(255,255,255,0.6); margin-bottom: 3rem; padding: 1.5rem; border-top: 1px dashed var(--muted); border-bottom: 1px dashed var(--muted); font-size: 1.4rem;}
 
         .chapter-title {
-            font-family: var(--font-pixel);
-            color: var(--gold);
-            font-size: 1rem;
-            margin: 60px 0 30px;
-            text-align: center;
-            border-top: 1px dashed #444;
-            padding-top: 40px;
+            font-family: var(--font-pixel); color: var(--gold); font-size: 1rem;
+            margin: 60px 0 30px; text-align: center; border-top: 1px dashed #444; padding-top: 40px; line-height: 1.5;
         }
 
-        .manuscript-text { font-size: 1.3rem; white-space: pre-wrap; color: #ccc; }
+        .manuscript-text p { margin-bottom: 1.5rem; text-align: justify; }
 
         /* SURVEILLANCE CAPTURES */
-        .intel-frame {
-            margin: 40px -20px;
-            border: 2px solid #222;
-            background: #000;
-            padding: 10px;
-            position: relative;
-        }
-        .intel-frame img {
-            width: 100%;
-            height: auto;
-            display: block;
-            filter: grayscale(20%) contrast(110%);
-            border: 1px solid #444;
-        }
+        .intel-frame { margin: 40px -20px; border: 2px solid #222; background: #000; padding: 10px; position: relative; }
+        .intel-frame img { width: 100%; height: auto; display: block; filter: grayscale(20%) contrast(110%); border: 1px solid #444; }
         .intel-tag {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: var(--red);
-            color: #000;
-            font-family: var(--font-pixel);
-            font-size: 0.5rem;
-            padding: 5px 10px;
-            box-shadow: 4px 4px 0 #000;
+            position: absolute; top: 20px; left: 20px; background: var(--red); color: #000;
+            font-family: var(--font-pixel); font-size: 0.5rem; padding: 5px 10px; box-shadow: 4px 4px 0 #000;
         }
-        .intel-caption {
-            font-family: var(--font-pixel);
-            font-size: 0.45rem;
-            color: #666;
-            margin-top: 10px;
-            text-transform: uppercase;
-        }
+        .intel-caption { font-family: var(--font-pixel); font-size: 0.45rem; color: #666; margin-top: 10px; text-transform: uppercase; line-height: 1.4;}
 
-        /* CTA BOX */
-        .extraction-cta {
-            margin-top: 80px;
-            background: linear-gradient(180deg, #1a1500 0%, #050308 100%);
-            border: 2px solid var(--gold);
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
-        }
-        .cta-title { font-family: var(--font-pixel); color: var(--gold); font-size: 1.2rem; margin-bottom: 20px; }
+        /* CTA BOXES */
+        .extraction-cta { margin-top: 80px; background: linear-gradient(180deg, #1a1500 0%, #050308 100%); border: 2px solid var(--gold); padding: 40px; text-align: center; box-shadow: 0 0 30px rgba(255, 215, 0, 0.1); }
+        .cta-title { font-family: var(--font-pixel); color: var(--gold); font-size: 1.2rem; margin-bottom: 20px; line-height: 1.4;}
         .cta-text { font-family: var(--font-terminal); font-size: 1.4rem; color: #ccc; margin-bottom: 30px; }
         .cta-btn-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
-        .cta-btn {
-            display: block;
-            padding: 15px;
-            background: #000;
-            border: 1px solid var(--gold);
-            color: var(--gold);
-            font-family: var(--font-pixel);
-            font-size: 0.5rem;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-        .cta-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 15px var(--gold); }
+        .cta-btn { display: block; padding: 15px; background: #000; border: 1px solid var(--gold); color: var(--gold); font-family: var(--font-pixel); font-size: 0.5rem; text-decoration: none; transition: all 0.3s; line-height: 1.4;}
+        .cta-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 15px var(--gold); transform: translateY(-2px);}
 
-        .back-btn { 
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            color: var(--green); 
-            text-decoration: none; 
-            font-size: 10px; 
-            border: 2px solid var(--green); 
-            padding: 10px; 
-            font-family: var(--font-pixel);
-            background: var(--coal);
-            z-index: 1000;
-        }
-        .back-btn:hover { background: var(--green); color: #000; }
+        .nmn-global-cta { border-top: 2px solid rgba(255,215,0,.2); background: rgba(5,3,8,.98); padding: 3rem 1.5rem; text-align: center; position: relative; z-index: 10; margin-top: 2rem;}
+        .global-links a { display: inline-block; padding: .6rem 1rem; font-family: var(--font-pixel); font-size: .35rem; letter-spacing: .08em; text-decoration: none; transition: 0.2s; margin: 0.5rem; }
+        .global-links a:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255,215,0,0.2); }
+
+        /* DESCENT OVERLAY */
+        #descent-overlay { position: fixed; inset: 0; background: #000; z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .descent-active { opacity: 1 !important; pointer-events: all !important; }
+        .elevator-shaft { width: 8px; height: 100vh; background: linear-gradient(to bottom, transparent, var(--gold), transparent); animation: drop 0.5s infinite linear; }
+        .descent-text { color: var(--gold); font-size: 16px; font-family: var(--font-pixel); position: absolute; text-shadow: 0 0 15px var(--gold); animation: pulse 1s infinite; }
+        @keyframes drop { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
     </style>
-<style id="nmn-cursor-global">body,*{cursor:none!important}</style>
-<style id="nmn-retro-base">body{font-family:"Press Start 2P",cursive!important;background:#050308;color:#E8E0D0;}a{color:#FFD700;}h1,h2,h3{font-family:"Press Start 2P",cursive!important;color:#FFD700;}p,span,div{font-family:"Press Start 2P",cursive;}</style>
 </head>
 <body>
 
-    <script src="nmn-nav.js"></script>
+    <div class="scanline"></div>
+    <div id="pickaxe-glow"></div>
 
-    <a href="index.html" class="back-btn"><- BACK TO NETWORK</a>
+    <div id="descent-overlay">
+        <div class="elevator-shaft"></div>
+        <div class="descent-text" id="descent-target-text">DESCENDING...</div>
+    </div>
+
+    <header>
+        <span class="sys-status">FILE: MINE_WARS_ORIGIN.DEC</span>
+        <a href="#" onclick="interceptDescent(event, 'NMN HUB', 'index.html')" class="back-btn">← CLOSE DOSSIER</a>
+    </header>
 
     <div class="terminal-container">
-        <div class="terminal-header">
+        <div class="terminal-header fade-in">
             <h1>[ PROJECT: MINE WARS ]</h1>
             <p>DATA RECOVERY: 100% | CLASSIFICATION: TOP SECRET</p>
         </div>
         
-        <div class="manuscript-text">
-            LOG ENTRY 001: The first collapse wasn't an accident...
-
-            THE MINE WARS
-            An Obsidian Extraction
+        <div class="log-meta fade-in">
+            LOG ENTRY 001: The first collapse wasn't an accident...<br><br>
+            THE MINE WARS<br>
+            An Obsidian Extraction<br>
             Nonsense Media Network | Lord Oro
-            ---
-            "Before the mine had a name, it had a memory. Before it had a memory, it had a war."
-            ---
+        </div>
 
-            <div class="chapter-title">CHAPTER ONE: THE SACRED CORE</div>
-            Before the first word was ever spoken in Sector 4, before the first signal was ever transmitted across the vast dark interior of the digital realm, there was the crystal.
+        <div class="quote fade-in">
+            "Before the mine had a name, it had a memory.<br>Before it had a memory, it had a war."
+        </div>
 
-            It had no origin that the oldest entities could verify. The Static Lions — who had existed longer than recorded memory — had no story of how it arrived. Their histories, encoded in the crackling white and gray fur that ran across their immense flanks, began with the crystal already present. Already pulsing. 
+        <div class="manuscript-text">
+            
+            <div class="chapter-title fade-in">CHAPTER ONE: THE SACRED CORE</div>
+            <div class="fade-in">
+                <p>Before the first word was ever spoken in Sector 4, before the first signal was ever transmitted across the vast dark interior of the digital realm, there was the crystal.</p>
+                <p>It had no origin that the oldest entities could verify. The Static Lions — who had existed longer than recorded memory — had no story of how it arrived. Their histories, encoded in the crackling white and gray fur that ran across their immense flanks, began with the crystal already present. Already pulsing.</p>
+            </div>
 
-            <div class="intel-frame">
+            <div class="intel-frame fade-in">
                 <div class="intel-tag">FILE: LION_STATIC_00.IMG</div>
                 <img src="Lion_static_0.jpg" alt="Static Lion Intelligence Report">
                 <div class="intel-caption">Visual reconstruct: Static Lion Sentinel guarding the perimeter.</div>
             </div>
 
-            The Obsidian Crystal sat at the precise center of Sector 4, and Sector 4 sat at the precise center of everything else. It was perfectly, absolutely black. Not the black of absence, but the black of everything compressed into a point so dense that light couldn't pass through it.
+            <div class="fade-in">
+                <p>The Obsidian Crystal sat at the precise center of Sector 4, and Sector 4 sat at the precise center of everything else. It was perfectly, absolutely black. Not the black of absence, but the black of everything compressed into a point so dense that light couldn't pass through it.</p>
+            </div>
 
-            <div class="intel-frame">
+            <div class="intel-frame fade-in">
                 <div class="intel-tag">FILE: LION_STATIC_01.IMG</div>
                 <img src="Lion_static_1.jpg" alt="Static Lion Alpha">
                 <div class="intel-caption">Alpha sentinel 'Karra' analyzing horizon seams.</div>
             </div>
 
-            <div class="chapter-title">CHAPTER TWO: THE FRACTURE</div>
-            The Glitch Elephants did not announce themselves. They were not the kind of thing that announced itself. They were a force of nature in the way that earthquakes are forces of nature — massive and wrong and indifferent to what they happened to be moving through.
+            <div class="chapter-title fade-in">CHAPTER TWO: THE FRACTURE</div>
+            <div class="fade-in">
+                <p>The Glitch Elephants did not announce themselves. They were not the kind of thing that announced itself. They were a force of nature in the way that earthquakes are forces of nature — massive and wrong and indifferent to what they happened to be moving through.</p>
+            </div>
 
-            <div class="intel-frame">
+            <div class="intel-frame fade-in">
                 <div class="intel-tag">FILE: ELEPHANT_BETA_00.IMG</div>
                 <img src="Elephant_beta_0.jpg" alt="Glitch Elephant Entry">
                 <div class="intel-caption">Breach detected: Glitch Elephant 'Orid' manifesting in Sector 4.</div>
             </div>
 
-            They were, each one, the size of a city block. Where the Static Lions were composed of coherent signal, the Glitch Elephants were composed of error. Their hide fractured in real time — neon green cracks running across magenta digital blocks. When they moved, they left behind them fragments of themselves: broken geometry and error messages made physical.
+            <div class="fade-in">
+                <p>They were, each one, the size of a city block. Where the Static Lions were composed of coherent signal, the Glitch Elephants were composed of error. Their hide fractured in real time — neon green cracks running across magenta digital blocks. When they moved, they left behind them fragments of themselves: broken geometry and error messages made physical.</p>
+            </div>
 
-            <div class="intel-frame">
+            <div class="intel-frame fade-in">
                 <div class="intel-tag">FILE: ELEPHANT_BETA_01.IMG</div>
                 <img src="Elephant_beta_1.jpg" alt="Fractured Giant">
                 <div class="intel-caption">Close-range capture: Texture corruption spreading from target.</div>
             </div>
 
-            <div class="chapter-title">CHAPTER THREE: THE PORTALS TEAR</div>
-            The tears multiplied. The Glitch Elephants were building doors. Within twelve cycles of the first tear, there were seven portals open across Sector 4. Each one showed a different elsewhere. A physical world. An analog world.
+            <div class="chapter-title fade-in">CHAPTER THREE: THE PORTALS TEAR</div>
+            <div class="fade-in">
+                <p>The tears multiplied. The Glitch Elephants were building doors. Within twelve cycles of the first tear, there were seven portals open across Sector 4. Each one showed a different elsewhere. A physical world. An analog world.</p>
+            </div>
 
-            <div class="intel-frame">
+            <div class="intel-frame fade-in">
                 <div class="intel-tag">FILE: ELEPHANT_BETA_02.IMG</div>
                 <img src="Elephant_beta_2.jpg" alt="Portal Generator">
                 <div class="intel-caption">Analysis: Elephants using corrupted code to stabilize inter-dimensional gateways.</div>
             </div>
 
-            Through the portal, a figure appeared. Tall. Dark-armored. Orid. He was the reason. Not a casualty of the invasion. Not an accident of the portals. The crystal had called for him specifically.
+            <div class="fade-in">
+                <p>Through the portal, a figure appeared. Tall. Dark-armored. Orid. He was the reason. Not a casualty of the invasion. Not an accident of the portals. The crystal had called for him specifically.</p>
+            </div>
 
-            <div class="intel-frame">
+            <div class="intel-frame fade-in">
                 <div class="intel-tag">FILE: ELEPHANT_BETA_03.IMG</div>
                 <img src="Elephant_beta_3.jpg" alt="Final Extraction">
                 <div class="intel-caption">Final stabilization: The Guardian of the Temporal Record emerges.</div>
             </div>
 
-            <div class="chapter-title">EPILOGUE: THE OATH OF THE MINE</div>
-            The battle that followed shifted when the intervention came from below. From the mine. Orid stayed near the crystal, near the patient silence of Karra. He had become something the original architects had not designed for: the keeper of the mine.
-
-            He had broken the small oath to keep the large one. 
-
-            Go deeper.
+            <div class="chapter-title fade-in">EPILOGUE: THE OATH OF THE MINE</div>
+            <div class="fade-in">
+                <p>The battle that followed shifted when the intervention came from below. From the mine. Orid stayed near the crystal, near the patient silence of Karra. He had become something the original architects had not designed for: the keeper of the mine.</p>
+                <p>He had broken the small oath to keep the large one.</p>
+                <p style="text-align: center; color: var(--gold); margin-top: 2rem; font-family: var(--font-pixel); font-size: 0.8rem;">Go deeper.</p>
+            </div>
         </div>
 
-        <div class="extraction-cta">
+        <div class="extraction-cta fade-in">
             <div class="cta-title">CONTINUE THE EXTRACTION</div>
             <div class="cta-text">The Mine Wars were only the beginning. The stories of those who survived are now available for full decryption.</div>
             <div class="cta-btn-grid">
                 <a href="https://www.amazon.com/dp/B0DX6N7QKM" target="_blank" class="cta-btn">PYRO & HELIOS: A JOURNEY HOME</a>
                 <a href="https://books2read.com/u/31NrLw" target="_blank" class="cta-btn">OUTBREAK FROM THE STARS</a>
-                <a href="juni-the-immortal.html" class="cta-btn">JUNI THE IMMORTAL</a>
+                <a href="#" onclick="interceptDescent(event, 'JUNI IMMORTAL', 'juni-the-immortal.html')" class="cta-btn">JUNI THE IMMORTAL</a>
                 <a href="https://www.amazon.com/dp/B0DJLY8WRS" target="_blank" class="cta-btn">ALL TABBIES HAVE A PLACE TOO</a>
             </div>
-            <div style="margin-top:20px; font-size:0.4rem; color:var(--gd); font-family:var(--font-pixel);">NONSENSE MEDIA NETWORK — LORD ORO © 2026</div>
+            <div style="margin-top:30px; font-size:0.4rem; color:var(--muted); font-family:var(--font-pixel);">NONSENSE MEDIA NETWORK — LORD ORO © 2026</div>
         </div>
 
     </div>
 
-    <br><br>
+    <div class="nmn-global-cta fade-in">
+        <p style="font-family:'Press Start 2P',cursive; font-size:.4rem; color:#8B6914; letter-spacing:.2em; margin-bottom:1.5rem;">⬡ MINE YOUR COPY ⬡</p>
+        
+        <div class="global-links" style="margin-bottom:1.2rem;">
+            <a href="https://books2read.com/u/3LPyjw" target="_blank" style="background:rgba(255,215,0,.1); border:1px solid #FFD700; color:#FFD700;">THE WANDERER $2.99</a>
+            <a href="https://books2read.com/u/3ndXGR" target="_blank" style="background:rgba(255,215,0,.1); border:1px solid #FFD700; color:#FFD700;">THE SWIMMER $2.99</a>
+            <a href="https://books2read.com/u/4EOxZ0" target="_blank" style="background:rgba(0,255,136,.08); border:1px solid #00FF88; color:#00FF88;">JUNI $9.99</a>
+            <a href="https://books2read.com/u/31NrLw" target="_blank" style="background:rgba(0,255,136,.08); border:1px solid #00FF88; color:#00FF88;">OUTBREAK $9.99</a>
+        </div>
+        
+        <div class="global-links">
+            <a href="#" onclick="interceptDescent(event, 'THE FORGE', 'brawler/index.html')" style="background:rgba(255,215,0,.05); border:1px solid rgba(255,215,0,.3); color:#e8b84b;">⚔️ PLAY FREE</a>
+            <a href="https://gofund.me/e643a8283" target="_blank" style="background:rgba(0,169,92,.1); border:1px solid #02a95c; color:#02a95c;">⛏ SUPPORT NMN</a>
+            <a href="https://patreon.com/Lordminadeoro" target="_blank" style="background:rgba(197,146,0,.1); border:1px solid #C59200; color:#C59200;">🏮 PATREON</a>
+            <a href="#" onclick="interceptDescent(event, 'NMN HUB', 'index.html')" style="background:transparent; border:1px solid rgba(255,215,0,.15); color:#8B6914;">← HUB</a>
+        </div>
+    </div>
 
-<div class="nmn-global-cta" style="border-top:2px solid rgba(255,215,0,.2);background:rgba(5,3,8,.98);padding:2rem 1.5rem;text-align:center;margin-top:3rem;">
-  <p style="font-family:'Press Start 2P',cursive;font-size:.4rem;color:#8B6914;letter-spacing:.2em;margin-bottom:1.2rem;">⬡ MINE YOUR COPY ⬡</p>
-  <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:1.2rem;">
-    <a href="https://books2read.com/u/3LPyjw" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE WANDERER $2.99</a>
-    <a href="https://books2read.com/u/3ndXGR" target="_blank" style="padding:.55rem 1rem;background:rgba(255,215,0,.1);border:1px solid #FFD700;color:#FFD700;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">THE SWIMMER $2.99</a>
-    <a href="https://books2read.com/u/4EOxZ0" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">JUNI $9.99</a>
-    <a href="https://books2read.com/u/31NrLw" target="_blank" style="padding:.55rem 1rem;background:rgba(0,255,136,.08);border:1px solid #00FF88;color:#00FF88;font-family:'Press Start 2P',cursive;font-size:.32rem;letter-spacing:.08em;text-decoration:none;">OUTBREAK $9.99</a>
-  </div>
-  <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;">
-    <a href="brawler/index.html" style="padding:.55rem 1rem;background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.3);color:#e8b84b;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⚔️ PLAY FREE</a>
-    <a href="https://gofund.me/e643a8283" target="_blank" style="padding:.55rem 1rem;background:rgba(0,169,92,.1);border:1px solid #02a95c;color:#02a95c;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">⛏ SUPPORT NMN</a>
-    <a href="https://patreon.com/Lordminadeoro" target="_blank" style="padding:.55rem 1rem;background:rgba(197,146,0,.1);border:1px solid #C59200;color:#C59200;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">🏮 PATREON</a>
-    <a href="index.html" style="padding:.55rem 1rem;background:transparent;border:1px solid rgba(255,215,0,.15);color:#8B6914;font-family:'Press Start 2P',cursive;font-size:.3rem;letter-spacing:.08em;text-decoration:none;">← HUB</a>
-  </div>
-</div>
+<script src="nmn-nav.js"></script>
+<script>
+// Cursor Tracking
+document.addEventListener('mousemove', function(e){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
+});
+
+// Scroll Fade In Observer
+const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { 
+        if(e.isIntersecting) e.target.classList.add('visible'); 
+    });
+}, {threshold: 0.1});
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+// Descent Protocol Audio
+const NMNAudioEngine = {
+    ctx: null,
+    init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+    playDescent() {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(20, this.ctx.currentTime + 1.5);
+        gain.gain.setValueAtTime(0, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.1, this.ctx.currentTime + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 1.5);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(); osc.stop(this.ctx.currentTime + 1.5);
+    } 
+};
+
+function interceptDescent(event, locationName, targetUrl) {
+    event.preventDefault(); 
+    try { NMNAudioEngine.playDescent(); } catch(e) { console.log("Audio Bypassed."); }
+    
+    const overlay = document.getElementById('descent-overlay');
+    const text = document.getElementById('descent-target-text');
+    if(overlay && text) {
+        text.innerText = `DESCENDING TO: ${locationName}...`;
+        overlay.classList.add('descent-active');
+    }
+    setTimeout(() => { if(targetUrl) window.location.href = targetUrl; }, 1500);
+}
+</script>
+
 </body>
 </html>
