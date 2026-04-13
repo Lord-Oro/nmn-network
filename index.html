@@ -18,7 +18,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <link rel="stylesheet" href="nmn-theme.css">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
 <style>
 :root {
@@ -31,6 +31,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; background: var(--coal); }
 
+/* THE MINE, GOLD, OBSIDIAN & COSMIC BACKGROUND */
 body {
   font-family: var(--font-pixel);
   background-color: var(--coal);
@@ -39,11 +40,16 @@ body {
   padding-top: 80px; 
   padding-bottom: 100px; 
   background-image: 
+    /* Gold Speckles */
     radial-gradient(2px 2px at 40px 60px, #FFD700 50%, transparent 100%),
     radial-gradient(3px 3px at 150px 200px, #e8b84b 50%, transparent 100%),
+    /* Obsidian Speckles */
     radial-gradient(2px 2px at 90px 120px, #AA55FF 50%, transparent 100%),
     radial-gradient(3px 3px at 250px 300px, #440066 50%, transparent 100%),
+    /* Cosmic Stars */
     radial-gradient(1px 1px at 180px 40px, #FFF 50%, transparent 100%),
+    radial-gradient(1px 1px at 300px 180px, #FFF 50%, transparent 100%),
+    /* Mine Shaft Scanlines */
     linear-gradient(rgba(10, 8, 12, 0.8) 2px, transparent 2px),
     linear-gradient(90deg, rgba(10, 8, 12, 0.8) 2px, transparent 2px);
   background-size: 200px 200px, 250px 250px, 150px 150px, 300px 300px, 120px 120px, 220px 220px, 32px 32px, 32px 32px;
@@ -53,13 +59,14 @@ body {
 h1, h2, h3, h4, p, a, div, span, button { font-family: var(--font-pixel) !important; }
 a { text-decoration: none; color: inherit; }
 
-/* ─── RESTORED GOLDEN PICKAXE CURSOR ─── */
-body, a, button, .vessel-anchor-wrap, .work-card, .dir-link, .contact-link { 
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23e8b84b' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%23e8b84b'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23c9962a'/%3E%3C/svg%3E") 6 26, auto !important; 
+/* ─── RESTORED GOLDEN PICKAXE CURSOR & RADIANT GLOW ─── */
+body, a, button, .vessel-anchor-wrap, .work-card, .map-sector, .dir-link, .contact-link { 
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='6' y1='26' x2='20' y2='12' stroke='%23FFD700' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M18 4 L28 4 L20 12 Z' fill='%23FFD700'/%3E%3Ccircle cx='8' cy='24' r='2' fill='%23FFD700'/%3E%3C/svg%3E") 6 26, auto !important; 
 }
 #pickaxe-glow {
     position: fixed; width: 140px; height: 140px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, rgba(232,184,75,0.1) 30%, transparent 70%);
+    /* Bright gold core with black radiant outer layer */
+    background: radial-gradient(circle, #FFD700 10%, rgba(255, 215, 0, 0.5) 25%, rgba(0, 0, 0, 0.8) 60%, transparent 100%);
     pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
     mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
 }
@@ -140,18 +147,26 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
 .section-tag { font-size: 16px; color: var(--gold); margin-bottom: 3rem; text-shadow: 3px 3px 0 #553300; text-align: center; border-bottom: 4px solid #333; padding-bottom: 1.5rem; }
 .glitch-text { font-size: 18px; color: var(--cream); line-height: 1.6; margin-bottom: 2rem; text-align: center; min-height: 40px; text-shadow: 2px 2px 0 #000;}
 
-/* ─── GUARDIAN CARDS ─── */
-.guardian-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-bottom: 4rem;}
-.guardian-card {
-    background: #000; border: 4px solid var(--gd); padding: 1.5rem; text-align: center;
-    transition: transform 0.2s; box-shadow: 4px 4px 0 #000; position: relative; overflow: hidden;
-}
-.guardian-card:hover { transform: translateY(-5px); border-color: var(--gold); box-shadow: 6px 6px 0 var(--gold); }
-.guardian-img-wrap { width: 100px; height: 100px; margin: 0 auto 1rem; border: 2px solid var(--gold); border-radius: 50%; overflow: hidden; background: #111; }
-.guardian-img-wrap img { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.3); image-rendering: pixelated;}
-.guardian-name { font-size: 11px; color: var(--cream); margin-bottom: 0.5rem; text-shadow: 2px 2px 0 #000;}
-.guardian-title { font-size: 9px; color: var(--pu); margin-bottom: 1rem; letter-spacing: 1px;}
-.guardian-desc { font-size: 10px; color: var(--muted); line-height: 1.6; }
+/* ─── DYNAMIC SIGNAL LOG ─── */
+.signal-log { border: 4px solid var(--gd); background: #000; padding: 2rem; box-shadow: 8px 8px 0 #000; display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; position: relative; overflow: hidden;}
+.signal-img-wrap { flex: 1; min-width: 250px; position: relative; }
+.signal-img { width: 100%; border: 4px solid var(--gold); image-rendering: pixelated; display: block; transition: filter 0.2s;}
+
+.signal-stable .signal-img { filter: sepia(0.2) contrast(1.2); }
+.signal-stable::after { content:''; position:absolute; inset:0; background: rgba(255,215,0,0.05); pointer-events: none; animation: staticFlicker 0.1s infinite; }
+.signal-obsidian .signal-img { filter: hue-rotate(90deg) saturate(2) contrast(1.5) invert(0.2); border-color: var(--pu); }
+.signal-obsidian::after { content:''; position:absolute; inset:0; background: rgba(170,85,255,0.1); pointer-events: none; animation: heavyGlitch 0.2s infinite; }
+
+@keyframes staticFlicker { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.9; } }
+@keyframes heavyGlitch { 0% { transform: translate(4px, 4px); opacity: 0.8; } 25% { transform: translate(-4px, -4px); opacity: 1; } 50% { transform: translate(0px, 6px); filter: invert(1); } 100% { transform: translate(-4px, 0); opacity: 0.9; } }
+
+.signal-text-box { flex: 2; min-width: 280px; }
+.signal-title { color: var(--gold); font-size: 14px; margin-bottom: 1.5rem; text-shadow: 2px 2px 0 #553300; transition: color 0.3s;}
+.signal-obsidian .signal-title { color: var(--pu); text-shadow: 2px 2px 0 #000; }
+
+.signal-body { font-size: 11px; color: var(--neon-green); line-height: 2.2; max-height: 180px; overflow-y: auto; padding-right: 10px; transition: color 0.3s;}
+.signal-obsidian .signal-body { color: #ff4444; }
+.signal-live { margin-top: 1.5rem; color: var(--gold); font-size: 12px; animation: pulse 1s infinite; }
 
 /* ─── DUAL VESSEL LIBRARY ─── */
 .collection-gateway { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-bottom: 4rem; }
@@ -181,7 +196,7 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
 .store-link.available { border-color: var(--gold); color: var(--gold); }
 .store-link.available:hover { background: var(--gold); color: #000; border-color: #FFF;}
 
-/* ─── FULL INDEX DIRECTORY (VERTICAL STACK) ─── */
+/* ─── FULL INDEX DIRECTORY & LAYERING FIXES ─── */
 .dir-grid { display: flex; flex-direction: column; gap: 40px; position: relative; z-index: 5; }
 .dir-card { 
     background: #000; border: 4px solid var(--gd); box-shadow: 8px 8px 0 #000;
@@ -251,6 +266,10 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
   51%,65%{color:#FF0040;letter-spacing:.1em;}
   66%,80%{color:#00FF41;}
   81%,100%{color:#FF0040;}
+}
+#sector-x-label::before{
+  content:"SECTOR ";
+  animation:sectorPrefix 3s infinite step-end;
 }
 @keyframes sectorPrefix{
   0%,30%{content:"SECTOR ";}
@@ -341,27 +360,23 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
   <button class="convert-btn" onclick="if(typeof NMNWallet!=='undefined'){ NMNWallet.convertGems(); }">⚗ CONVERT GEMS</button>
 </div>
 
-<section id="guardians">
-  <div class="section-tag">GUARDIANS OF THE MINE</div>
-  <div class="guardian-grid">
-      <div class="guardian-card">
-          <div class="guardian-img-wrap"><img src="nayla_avatar.jpg"></div>
-          <div class="guardian-name">NAYLA</div>
-          <div class="guardian-title">THE LIONESS</div>
-          <div class="guardian-desc">She didn't ask if the world was safe. She asked if it was real.</div>
-      </div>
-      <div class="guardian-card">
-          <div class="guardian-img-wrap"><img src="juni_avatar.jpg"></div>
-          <div class="guardian-name">JUNI</div>
-          <div class="guardian-title">THE IMMORTAL</div>
-          <div class="guardian-desc">You choose which griefs to keep open, and which to keep sealed.</div>
-      </div>
-      <div class="guardian-card">
-          <div class="guardian-img-wrap"><img src="felik_avatar.jpg"></div>
-          <div class="guardian-name">FELIK</div>
-          <div class="guardian-title">TWO SOULS</div>
-          <div class="guardian-desc">The blade doesn't choose the hand. Duality is a choice.</div>
-      </div>
+<section>
+  <div class="section-tag">NMN BROADCAST LOG</div>
+  <div class="signal-log signal-stable fade-in" id="signalContainer">
+    <div class="signal-img-wrap">
+      <img src="goldmine_stable.jpg" id="signalImg" class="signal-img">
+    </div>
+    <div class="signal-text-box">
+        <h3 class="signal-title" id="signalTitle">[ STATUS: SIGNAL ACQUIRED ]</h3>
+        <p class="signal-body" id="signalText">
+            [04.07.2026] > THE ARCHITECT HAS TAPPED THE OBSIDIAN VEIN.<br>
+            [04.07.2026] > THE OBSIDIAN VEIN IS EXPANDING INTO 7 LANGUAGES.<br>
+            [04.05.2026] > NEW 16-BIT RENDERS ARE BEING ARCHIVED.<br>
+            [04.02.2026] > TRANSMISSIONS ARE PREPARING FOR EXTRACTION.<br>
+            [03.28.2026] > THE ARCHITECT HAS DECLASSIFIED THE MINE WARS.
+        </p>
+        <div class="signal-live">● LIVE UPDATES ACTIVE</div>
+    </div>
   </div>
 </section>
 
@@ -371,7 +386,7 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
 
   <div class="collection-gateway fade-in">
     <div class="vessel-anchor-wrap active" id="vessel-gold" onclick="filterVessel('gold')">
-      <img src="goldmine_anchor.jpeg">
+      <img src="goldmine_anchor.jpeg" alt="The Goldmine Collection">
       <div class="vessel-label">
         <div>
           <div class="vessel-label-title">GOLDMINE COLLECTION</div>
@@ -381,7 +396,7 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
       </div>
     </div>
     <div class="vessel-anchor-wrap" id="vessel-obsidian" onclick="filterVessel('obsidian')">
-      <img src="obsidian_anchor.jpeg">
+      <img src="obsidian_anchor.jpeg" alt="The Obsidian Extractions" onerror="this.src='minewars_cover.jpg'">
       <div class="vessel-label">
         <div>
           <div class="vessel-label-title">OBSIDIAN EXTRACTIONS</div>
@@ -395,15 +410,22 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
   <div id="panel-gold" class="filter-panel" style="display:block;">
     <div class="works-grid">
       <div class="work-card"><img src="pyro_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="work-title">PYRO & HELIOS</h3><a href="https://amzn.to/4uOpLpA" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/meW9gA" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
-      <div class="work-card"><img src="outbreak_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="work-title">OUTBREAK (EN)</h3><a href="https://amzn.to/3NIeQ08" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/31NrLw" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="outbreak_ja.jpg" class="work-img"><div class="work-overlay"><h3 class="work-title">パイロとヘリオス (JA)</h3><a href="https://books2read.com/u/bMLwXB" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="juni_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="work-title">JUNI IMMORTAL</h3><a href="https://amzn.to/4tfhJoc" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/4EOxZ0" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="Outbreak_from_the_stars_cover_art_final_1.jpeg" class="work-img" onerror="this.src='outbreak_en.jpeg'"><div class="work-overlay"><h3 class="work-title">OUTBREAK (EN)</h3><a href="https://amzn.to/3NIeQ08" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/31NrLw" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
       <div class="work-card"><img src="tabbies_en.jpeg" class="work-img"><div class="work-overlay"><h3 class="work-title">ALL TABBIES</h3><a href="https://amzn.to/4bNAQ1y" target="_blank" class="store-link available">AMAZON</a><a href="https://books2read.com/u/brzavW" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="tabbies_es.jpg" class="work-img"><div class="work-overlay"><h3 class="work-title">TODOS LOS GATOS</h3><a href="https://amzn.to/47qbOUT" target="_blank" class="store-link available">AMAZON</a></div></div>
+      <div class="work-card"><img src="tabbies_ja.jpg" class="work-img"><div class="work-overlay"><h3 class="work-title">猫にも居場所がある</h3><a href="https://amzn.to/3PPrJG9" target="_blank" class="store-link available">AMAZON</a></div></div>
+      <div class="work-card"><img src="tabbies_ko.jpeg" class="work-img"><div class="work-overlay"><h3 class="work-title">모든 고양이는...</h3><div class="store-link available">GOOGLE PLAY</div></div></div>
     </div>
   </div>
 
   <div id="panel-obsidian" class="filter-panel">
     <div class="works-grid">
       <div class="work-card" style="border-color:#FF4444;"><img src="minewars_cover.jpg" class="work-img"><div class="work-overlay" style="background:rgba(30,0,0,0.9);"><h3 class="work-title" style="color:#FF4444;">MINE WARS</h3><a href="#" onclick="interceptDescent(event, 'MINE WARS', 'minewars.html')" class="store-link available" style="border-color:#FF4444; color:#FF4444;">DECRYPT ARCHIVE</a></div></div>
-      <div class="work-card" style="border-color:var(--glitch-cyan);"><img src="Fragments_of_a_madman.jpg" class="work-img"><div class="work-overlay" style="background:rgba(0,10,20,0.9);"><h3 class="work-title" style="color:var(--glitch-cyan);">FRAGMENTS OF MADMEN</h3><a href="fragments.html" class="store-link available" style="border-color:var(--glitch-cyan); color:var(--glitch-cyan);">READ LOGS (FREE)</a></div></div>
+      <div class="work-card"><img src="swimmer_en.jpg" class="work-img"><div class="work-overlay"><h3 class="work-title" style="color:var(--neon-green);">THE SWIMMER</h3><a href="https://books2read.com/u/3ndXGR" target="_blank" class="store-link available">UNIVERSAL</a></div></div>
+      <div class="work-card"><img src="wanderer_cover.jpg" class="work-img"><div class="work-overlay"><h3 class="work-title" style="color:var(--neon-green);">WANDERER (EN)</h3><div class="store-link">PENDING</div></div></div>
+      <div class="work-card" style="border-color:var(--glitch-cyan);"><img src="Fragments_of_madmen.png" class="work-img" onerror="this.src='Fragments_of_a_madman.jpg'"><div class="work-overlay" style="background:rgba(0,10,20,0.9);"><h3 class="work-title" style="color:var(--glitch-cyan);">FRAGMENTS OF MADMEN</h3><a href="fragments.html" class="store-link available" style="border-color:var(--glitch-cyan); color:var(--glitch-cyan);">READ LOGS (FREE)</a><a href="https://books2read.com/u/xxxxxx" target="_blank" class="store-link available">D2D EBOOK</a></div></div>
     </div>
   </div>
 </section>
@@ -413,6 +435,7 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
   <h2 class="glitch-text" data-text="Navigate the entire network.">Navigate the entire network.</h2>
 
   <div class="dir-grid fade-in">
+      
       <div class="dir-card">
           <div class="dir-bg" style="background-image: url('image_0.jpg');"></div>
           <div class="dir-overlay"></div>
@@ -422,9 +445,12 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
                   <a href="#" onclick="interceptDescent(event, 'RECREATION HALL', 'games.html')" class="dir-link">Recreation Hall Hub</a>
                   <a href="#" onclick="interceptDescent(event, 'ORE BREAKER', 'orebreaker.html')" class="dir-link">Ore Breaker</a>
                   <a href="#" onclick="interceptDescent(event, 'ORE RACER', 'oreracer.html')" class="dir-link">Ore Racer</a>
+                  <a href="#" onclick="interceptDescent(event, 'SILVER QUILL', 'silverquill.html')" class="dir-link">The Silver Quill</a>
+                  <a href="#" onclick="interceptDescent(event, 'THE TABLET', 'tablet.html')" class="dir-link">Deciphered Tablet</a>
               </div>
           </div>
       </div>
+
       <div class="dir-card">
           <div class="dir-bg" style="background-image: url('image_1.jpg');"></div>
           <div class="dir-overlay"></div>
@@ -433,9 +459,15 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
               <div class="dir-links">
                   <a href="#" onclick="interceptDescent(event, 'THE ARCHIVES', 'archives.html')" class="dir-link">The Archives Hub</a>
                   <a href="#" onclick="interceptDescent(event, 'HALL OF ORIGINS', 'origins.html')" class="dir-link">Hall of Origins</a>
+                  <a href="#" onclick="interceptDescent(event, 'SCRAP HEAP', 'scrapheap.html')" class="dir-link">The Scrap Heap</a>
+                  <a href="#" onclick="interceptDescent(event, 'SOUND SHAFT', 'soundshaft.html')" class="dir-link">The Sound Shaft</a>
+                  <a href="#" onclick="interceptDescent(event, 'TRANSMISSION', 'transmission.html')" class="dir-link">The Transmission</a>
+                  <a href="#" onclick="interceptDescent(event, 'PROJECTION ROOM', 'shorts.html')" class="dir-link">The Projection Room</a>
+                  <a href="#" onclick="interceptDescent(event, 'THE CARTOGRAPHER', 'cartographer.html')" class="dir-link">The Cartographer</a>
               </div>
           </div>
       </div>
+
       <div class="dir-card">
           <div class="dir-bg" style="background-image: url('image_2.jpg');"></div>
           <div class="dir-overlay"></div>
@@ -443,67 +475,115 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
               <h2 class="dir-header">SECTOR 3: THE VAULT</h2>
               <div class="dir-links">
                   <a href="#" onclick="interceptDescent(event, 'THE ORACLE', 'oracle.html')" class="dir-link">Oracle's Chamber Hub</a>
-                  <a href="#" onclick="interceptDescent(event, 'THE SYNDICATE', 'syndicate.html')" class="dir-link" style="color:var(--gold);">🏆 The Syndicate</a>
+                  <a href="#" onclick="interceptDescent(event, 'THE SYNDICATE', 'syndicate.html')" class="dir-link" style="color:var(--gold); border-color:var(--gold); background: rgba(255,215,0,0.05);">🏆 The Syndicate</a>
+                  <a href="#" onclick="interceptDescent(event, 'TORA DOMAIN', 'toradomain.html')" class="dir-link">Tora's Domain</a>
+                  <a href="#" onclick="interceptDescent(event, 'THE CODEX', 'tora.html')" class="dir-link">Tora's Codex Reading</a>
+                  <a href="#" onclick="interceptDescent(event, 'ECHOING WELL', 'well.html')" class="dir-link">The Echoing Well</a>
+                  <a href="#" onclick="interceptDescent(event, 'STAR MAP', 'starmap.html')" class="dir-link">The Star Map</a>
+                  <a href="#" onclick="interceptDescent(event, 'RELIQUARY', 'reliquary.html')" class="dir-link">The Reliquary</a>
+                  <a href="#" onclick="interceptDescent(event, 'THE ALCHEMIST', 'alchemist.html')" class="dir-link">The Alchemist</a>
+                  <a href="#" onclick="interceptDescent(event, 'THE APOTHECARY', 'apothecary.html')" class="dir-link">The Apothecary</a>
+                  <a href="#" onclick="interceptDescent(event, 'THE CANARY', 'canary.html')" class="dir-link">The Canary</a>
               </div>
           </div>
       </div>
+
       <div class="dir-card">
           <div class="dir-bg" style="background-image: url('image_3.jpg');"></div>
           <div class="dir-overlay" style="background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.95) 60%);"></div>
           <div class="dir-content">
-              <h2 class="dir-header" style="color: #aaa;">SECTOR 4: THE NETWORK</h2>
+              <h2 class="dir-header" style="color: #aaa; border-bottom-color: #444;">SECTOR 4: THE NETWORK</h2>
               <div class="dir-links">
-                  <a href="lorevault.html" class="dir-link" style="color:#aaa;">Your Lore Vault</a>
-                  <a href="gemshop.html" class="dir-link" style="color:#aaa;">The Gemshop</a>
-                  <a href="terms.html" class="dir-link" style="color:#aaa;">Terms of Service</a>
+                  <a href="lorevault.html" class="dir-link" style="color:#aaa; border-color:#444;">Your Lore Vault</a>
+                  <a href="crew.html" class="dir-link" style="color:#aaa; border-color:#444;">Record of the Deep</a>
+                  <a href="gemshop.html" class="dir-link" style="color:#aaa; border-color:#444;">The Gemshop</a>
+                  <a href="privacy.html" class="dir-link" style="color:#aaa; border-color:#444;">Privacy Protocol</a>
+                  <a href="terms.html" class="dir-link" style="color:#aaa; border-color:#444;">Terms of Service</a>
               </div>
           </div>
       </div>
+
       <div class="dir-card">
           <div class="dir-bg" style="background-image: url('image_3.jpg');"></div>
           <div class="dir-overlay" style="background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.95) 60%);"></div>
           <div class="dir-content">
-              <h2 class="dir-header" style="color: var(--neon-green);">SECTOR 5: THE ACADEMY</h2>
+              <h2 class="dir-header" style="color: var(--neon-green); border-bottom-color: #224422;">SECTOR 5: THE ACADEMY</h2>
               <div class="dir-links">
-                  <a href="atlas.html" class="dir-link" style="color:var(--neon-green);">The Rosetta Reliquary</a>
-                  <a href="blueprint.html" class="dir-link" style="color:var(--neon-green);">Architect's Blueprint</a>
+                  <a href="atlas.html" class="dir-link" style="color:var(--neon-green); border-color:#224422;">The Rosetta Reliquary</a>
+                  <a href="blueprint.html" class="dir-link" style="color:var(--neon-green); border-color:#224422;">Architect's Blueprint</a>
+                  <a href="expansion.html" class="dir-link" style="color:var(--neon-green); border-color:#224422;">Expansion Blueprint</a>
               </div>
           </div>
       </div>
+
       <div class="dir-card" style="border-color: rgba(255,0,64,.6); box-shadow: 8px 8px 0 rgba(255,0,64,.3);">
           <div class="dir-bg" style="background-image: url('image_3.jpg'); filter: hue-rotate(90deg) saturate(2);"></div>
           <div class="dir-overlay" style="background: linear-gradient(180deg, rgba(20,0,5,0.8) 0%, rgba(5,0,2,0.98) 60%);"></div>
           <div class="dir-content">
-              <h2 class="dir-header" id="sector-x-label" style="color:#FF0040; animation:sectorGlitch 2.5s infinite step-end;">SECTOR [ERROR]: QUARANTINE</h2>
+              <h2 class="dir-header" id="sector-x-label" style="color:#FF0040; border-bottom-color: rgba(255,0,64,.3); animation:sectorGlitch 2.5s infinite step-end;">SECTOR [ERROR]: QUARANTINE</h2>
               <div class="dir-links">
                   <a href="quarantine.html" class="dir-link" style="color:rgba(255,0,64,.9); border-color:rgba(255,0,64,.5); background:rgba(255,0,64,.1); animation:pulse-red 2s infinite;">⚠ ENTER QUARANTINE ZONE ⚠</a>
               </div>
           </div>
       </div>
+
   </div>
 </section>
 
 <section class="manifesto-section fade-in">
     <h2 class="manifesto-title">BUILD THE EMPIRE</h2>
-    <p class="manifesto-text">Every word is forged by hand. To keep the mine independent, we need Founding Architects.</p>
+    <p class="manifesto-text">Every tunnel, game, and word is forged by hand. To expand the servers, build the high-fidelity Brawler engine, and keep the mine independent, we need Founding Architects. If you believe in the vision, fund the extraction.</p>
+    
     <div class="manifesto-actions">
         <a href="https://patreon.com/lordoro" target="_blank" class="btn-retro btn-m-primary">JOIN PATREON</a>
         <a href="https://gofund.me/e643a8283" target="_blank" class="btn-retro btn-m-ghost">GOFUNDME FUND</a>
     </div>
+
+    <div class="forge-status">
+        <div class="forge-label"><span>BRAWLER ENGINE V2.0</span> <span>65%</span></div>
+        <div class="forge-bar"><div class="forge-fill"></div></div>
+    </div>
 </section>
 
 <section id="contact" class="contact-section">
-  <div class="section-tag">CONTACT DIRECTORY</div>
+  <div class="section-tag" style="justify-content: center; border:none;">CONTACT DIRECTORY</div>
   <div class="contact-wrap fade-in">
-    <a href="mailto:doradoyoro@gmail.com" class="contact-link"><span class="c-lbl">EMAIL</span><span class="c-val">doradoyoro@gmail.com</span></a>
-    <a href="https://twitter.com/LordOroNMN" target="_blank" class="contact-link"><span class="c-lbl">TWITTER</span><span class="c-val">@LordOroNMN</span></a>
+    <a href="mailto:doradoyoro@gmail.com" class="contact-link">
+        <span class="c-lbl">EMAIL</span>
+        <span class="c-val">doradoyoro@gmail.com</span>
+    </a>
+    <a href="https://nonsensemedianetwork.com" target="_blank" class="contact-link">
+        <span class="c-lbl">WEB</span>
+        <span class="c-val">nonsensemedianetwork.com</span>
+    </a>
+    <a href="https://twitter.com/LordOroNMN" target="_blank" class="contact-link">
+        <span class="c-lbl">TWITTER</span>
+        <span class="c-val">@LordOroNMN</span>
+    </a>
+    <a href="https://www.tiktok.com/@orominade" target="_blank" class="contact-link">
+        <span class="c-lbl">TIKTOK</span>
+        <span class="c-val">@orominade</span>
+    </a>
+    <a href="https://www.youtube.com/@LordOroNMN" target="_blank" class="contact-link">
+        <span class="c-lbl">YOUTUBE</span>
+        <span class="c-val">Lord Oro / NMN</span>
+    </a>
   </div>
 </section>
 
 <div class="mobile-hub-nav">
-    <a href="#" onclick="interceptDescent(event, 'THE FORGE', 'games.html')" class="hub-tab"><span class="hub-icon">⚔️</span> FORGE</a>
-    <a href="oracle.html" class="hub-tab"><span class="hub-icon">🔮</span> ORACLE</a>
-    <a href="syndicate.html" class="hub-tab active" style="color: var(--gold);"><span class="hub-icon">🏆</span> SYNDICATE</a>
+    <a href="#" onclick="interceptDescent(event, 'THE FORGE', 'games.html')" class="hub-tab">
+        <span class="hub-icon">⚔️</span> FORGE
+    </a>
+    <a href="oracle.html" class="hub-tab">
+        <span class="hub-icon">🔮</span> ORACLE
+    </a>
+    <a href="syndicate.html" class="hub-tab active" style="color: var(--gold);">
+        <span class="hub-icon">🏆</span> SYNDICATE
+    </a>
+    <a href="#works" class="hub-tab">
+        <span class="hub-icon">📖</span> LORE
+    </a>
 </div>
 
 <script>
@@ -514,6 +594,7 @@ for(let i=0; i<30; i++){
     p.className = 'particle';
     p.style.left = Math.random() * 100 + 'vw';
     p.style.animationDuration = (Math.random() * 5 + 5) + 's';
+    p.style.animationDelay = (Math.random() * 5) + 's';
     particles.appendChild(p);
 }
 
@@ -522,12 +603,14 @@ function syncGauges() {
     if(typeof NMNWallet !== 'undefined') {
         const w = NMNWallet.get();
         const gold = w.gold || 0;
+        
         const hG = document.getElementById('gold-disp');
         if(hG) hG.textContent = gold.toLocaleString();
         const lD = document.getElementById('lvl-disp');
         if(lD) lD.textContent = w.level || 1;
         const xD = document.getElementById('xp-disp');
         if(xD) xD.textContent = w.xp || 0;
+        
         const gemCount = w.gems || 0;
         for(let i=0; i<5; i++){
           const p = document.getElementById('gp'+i);
@@ -538,11 +621,83 @@ function syncGauges() {
 window.addEventListener('nmn_wallet_update', syncGauges);
 window.onload = syncGauges;
 
-// Glow Cursor
+// Glow Cursor Tracking (Gold Core + Radiant Black Edge)
 document.addEventListener('mousemove', function(e){
   const r = document.getElementById('pickaxe-glow');
   if(r) { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
 });
+document.addEventListener('mousedown', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { 
+      r.style.width = '180px'; 
+      r.style.height = '180px'; 
+      r.style.background = 'radial-gradient(circle, #FFD700 10%, rgba(255, 215, 0, 0.8) 30%, rgba(0, 0, 0, 0.9) 70%, transparent 100%)'; 
+  }
+});
+document.addEventListener('mouseup', function(){
+  const r = document.getElementById('pickaxe-glow');
+  if(r) { 
+      r.style.width = '140px'; 
+      r.style.height = '140px'; 
+      r.style.background = 'radial-gradient(circle, #FFD700 10%, rgba(255, 215, 0, 0.5) 25%, rgba(0, 0, 0, 0.8) 60%, transparent 100%)'; 
+  }
+});
+
+// Glitching Signal Log Engine
+let isObsidian = false;
+setInterval(() => {
+    isObsidian = !isObsidian;
+    const container = document.getElementById('signalContainer');
+    const img = document.getElementById('signalImg');
+    const title = document.getElementById('signalTitle');
+    const text = document.getElementById('signalText');
+
+    if(isObsidian) {
+        container.classList.remove('signal-stable');
+        container.classList.add('signal-obsidian');
+        img.src = 'obsidian_glitched.jpg'; 
+        img.onerror = () => { img.src = 'goldmine_stable.jpg'; }; 
+        title.textContent = "[ WARNING: OBSIDIAN INTERFERENCE ]";
+        text.innerHTML = "ERR // CONNECTION UNSTABLE<br>ERR // THE VEIN IS BLEEDING<br>ERR // TRACE SIGNAL LOST";
+    } else {
+        container.classList.add('signal-stable');
+        container.classList.remove('signal-obsidian');
+        img.src = 'goldmine_stable.jpg';
+        title.textContent = "[ STATUS: SIGNAL ACQUIRED ]";
+        text.innerHTML = "[04.07.2026] > THE ARCHITECT HAS TAPPED THE OBSIDIAN VEIN.<br>[04.07.2026] > THE OBSIDIAN VEIN IS EXPANDING INTO 7 LANGUAGES.<br>[04.05.2026] > NEW 16-BIT RENDERS ARE BEING ARCHIVED.<br>[04.02.2026] > TRANSMISSIONS ARE PREPARING FOR EXTRACTION.<br>[03.28.2026] > THE ARCHITECT HAS DECLASSIFIED THE MINE WARS.";
+    }
+}, 8000);
+
+// Text Scrambler
+const glyphs=['로','드','오','금','광','g','u','l','v','o','r','金','鉱','夢','光','魂','炎'];
+function shuffleText(el){
+  if(el.dataset.shuffled)return;
+  el.dataset.shuffled='1';
+  const orig = el.dataset.text || el.innerText;
+  el.dataset.text = orig;
+  let iter=0;
+  const iv=setInterval(()=>{
+    el.innerText=orig.split('').map((c,i)=>{
+      if(c===' ')return c;
+      if(iter>i*1.2)return orig[i];
+      return glyphs[Math.floor(Math.random()*glyphs.length)];
+    }).join('');
+    iter++;
+    if(iter>=20){clearInterval(iv);el.innerText=orig;}
+  },50);
+}
+
+// Fade In & Scramble Observer
+const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        if(e.isIntersecting) {
+            e.target.classList.add('visible');
+            const h = e.target.querySelector('.glitch-text');
+            if(h) setTimeout(() => shuffleText(h), 100);
+        }
+    });
+}, {threshold: 0.1});
+document.querySelectorAll('.fade-in, .section-tag').forEach(el => obs.observe(el));
 
 // Vessel Filter
 window.filterVessel = function(vessel) {
@@ -550,17 +705,23 @@ window.filterVessel = function(vessel) {
   const obsidianWrap = document.getElementById('vessel-obsidian');
   const goldPanel = document.getElementById('panel-gold');
   const obsidianPanel = document.getElementById('panel-obsidian');
+
   if (!goldWrap || !obsidianWrap || !goldPanel || !obsidianPanel) return;
+
   if (vessel === 'gold') {
-    goldWrap.classList.add('active'); obsidianWrap.classList.remove('active');
-    goldPanel.style.display = 'block'; obsidianPanel.style.display = 'none';
+    goldWrap.classList.add('active'); 
+    obsidianWrap.classList.remove('active');
+    goldPanel.style.display = 'block'; 
+    obsidianPanel.style.display = 'none';
   } else {
-    obsidianWrap.classList.add('active'); goldWrap.classList.remove('active');
-    obsidianPanel.style.display = 'block'; goldPanel.style.display = 'none';
+    obsidianWrap.classList.add('active'); 
+    goldWrap.classList.remove('active');
+    obsidianPanel.style.display = 'block'; 
+    goldPanel.style.display = 'none';
   }
 };
 
-// Descent Protocol
+// Descent Protocol Audio
 const NMNAudioEngine = {
     ctx: null,
     init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
@@ -580,21 +741,28 @@ const NMNAudioEngine = {
 
 function interceptDescent(event, locationName, targetUrl) {
     event.preventDefault(); 
-    try { NMNAudioEngine.playDescent(); } catch(e) { console.log("Audio bypass."); }
+    
+    // TRY to play the audio, but don't crash the button if the browser blocks it
+    try {
+        NMNAudioEngine.playDescent();
+    } catch(e) {
+        console.log("Audio bypassed by browser.");
+    }
+    
     const overlay = document.getElementById('descent-overlay');
     const text = document.getElementById('descent-target-text');
+    
     if(overlay && text) {
         text.innerText = `DESCENDING TO: ${locationName}...`;
         overlay.classList.add('descent-active');
     }
-    setTimeout(() => { if(targetUrl) window.location.href = targetUrl; }, 1500);
-}
 
-// Fade In Observer
-const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-}, {threshold: 0.1});
-document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+    // Force the redirect after 1.5 seconds no matter what
+    setTimeout(() => { 
+        if(targetUrl) window.location.href = targetUrl; 
+    }, 1500);
+}
+  
 </script>
 
 </body>
