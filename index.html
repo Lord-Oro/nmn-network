@@ -322,6 +322,18 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
       <a href="gemshop.html" class="nav-link">GEMSHOP</a>
       <a href="syndicate.html" class="nav-link" style="color: var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.5);">🏆 SYNDICATE</a>
       <a href="https://patreon.com/lordoro" target="_blank" class="nav-link">PATREON</a>
+      
+      <div id="google_translate_element" class="nmn-translator"></div>
+      <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+          pageLanguage: 'en',
+          layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+        }, 'google_translate_element');
+      }
+      </script>
+      <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
     </div>
   </div>
 </nav>
@@ -369,10 +381,10 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
     <div class="signal-text-box">
         <h3 class="signal-title" id="signalTitle">[ STATUS: SIGNAL ACQUIRED ]</h3>
         <p class="signal-body" id="signalText">
-            [04.07.2026] > THE ARCHITECT HAS TAPPED THE OBSIDIAN VEIN.<br>
+            [04.14.2026] > GLOBAL TRANSLATION PROTOCOL INITIATED. ALL CULTURES WELCOME.<br>
+            [04.13.2026] > FRAGMENTS OF MADMEN VOL. 1 DECLASSIFIED.<br>
             [04.07.2026] > THE OBSIDIAN VEIN IS EXPANDING INTO 7 LANGUAGES.<br>
             [04.05.2026] > NEW 16-BIT RENDERS ARE BEING ARCHIVED.<br>
-            [04.02.2026] > TRANSMISSIONS ARE PREPARING FOR EXTRACTION.<br>
             [03.28.2026] > THE ARCHITECT HAS DECLASSIFIED THE MINE WARS.
         </p>
         <div class="signal-live">● LIVE UPDATES ACTIVE</div>
@@ -419,7 +431,8 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
       <div class="work-card"><img src="tabbies_ko.jpeg" class="work-img"><div class="work-overlay"><h3 class="work-title">모든 고양이는...</h3><div class="store-link available">GOOGLE PLAY</div></div></div>
     </div>
   </div>
-<div id="panel-obsidian" class="filter-panel">
+
+  <div id="panel-obsidian" class="filter-panel">
     <div class="works-grid">
       <div class="work-card" style="border-color:#FF4444;"><img src="minewars_cover.jpg" class="work-img"><div class="work-overlay" style="background:rgba(30,0,0,0.9);"><h3 class="work-title" style="color:#FF4444;">MINE WARS</h3><a href="#" onclick="interceptDescent(event, 'MINE WARS', 'minewars.html')" class="store-link available" style="border-color:#FF4444; color:#FF4444;">DECRYPT ARCHIVE</a></div></div>
       
@@ -437,6 +450,7 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
       </div>
     </div>
   </div>
+</section>
 
 <section id="sections">
   <div class="section-tag">MASTER DIRECTORY</div>
@@ -672,7 +686,7 @@ setInterval(() => {
         container.classList.remove('signal-obsidian');
         img.src = 'goldmine_stable.jpg';
         title.textContent = "[ STATUS: SIGNAL ACQUIRED ]";
-        text.innerHTML = "[04.07.2026] > THE ARCHITECT HAS TAPPED THE OBSIDIAN VEIN.<br>[04.07.2026] > THE OBSIDIAN VEIN IS EXPANDING INTO 7 LANGUAGES.<br>[04.05.2026] > NEW 16-BIT RENDERS ARE BEING ARCHIVED.<br>[04.02.2026] > TRANSMISSIONS ARE PREPARING FOR EXTRACTION.<br>[03.28.2026] > THE ARCHITECT HAS DECLASSIFIED THE MINE WARS.";
+        text.innerHTML = "[04.14.2026] > GLOBAL TRANSLATION PROTOCOL INITIATED. ALL CULTURES WELCOME.<br>[04.13.2026] > FRAGMENTS OF MADMEN VOL. 1 DECLASSIFIED.<br>[04.07.2026] > THE OBSIDIAN VEIN IS EXPANDING INTO 7 LANGUAGES.<br>[04.05.2026] > NEW 16-BIT RENDERS ARE BEING ARCHIVED.<br>[03.28.2026] > THE ARCHITECT HAS DECLASSIFIED THE MINE WARS.";
     }
 }, 8000);
 
