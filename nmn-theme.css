@@ -128,3 +128,47 @@ body {
   from { text-shadow: 0 0 5px var(--gold); }
   to { text-shadow: 0 0 20px var(--gold), 0 0 30px var(--gb); }
 }
+
+/* ─── NMN TRANSLATOR OVERRIDE ─── */
+.nmn-translator {
+    display: inline-block;
+    margin-left: 15px;
+}
+
+#google_translate_element select {
+    background: #000 !important;
+    color: var(--gold) !important;
+    border: 2px solid var(--gd) !important;
+    font-family: var(--font-pixel) !important;
+    font-size: 8px !important;
+    padding: 5px !important;
+    cursor: none !important; /* Retains the NMN cursor protocol */
+    text-transform: uppercase;
+}
+
+#google_translate_element select:hover,
+#google_translate_element select:focus {
+    outline: none !important;
+    border-color: #FFF !important;
+    box-shadow: 0 0 10px rgba(255,215,0,0.3);
+}
+
+/* Eradicate Google Surface Branding */
+.goog-te-gadget-icon, 
+.goog-logo-link, 
+.goog-te-gadget span, 
+.goog-te-gadget img { 
+    display: none !important; 
+}
+.goog-te-gadget { 
+    color: transparent !important; 
+    font-size: 0 !important; 
+}
+
+/* Eradicate the injection banner */
+.goog-te-banner-frame.skiptranslate { 
+    display: none !important; 
+}
+body { 
+    top: 0px !important; 
+}
