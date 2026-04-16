@@ -37,19 +37,15 @@ body {
   background-color: var(--coal);
   color: var(--cream);
   overflow-x: hidden;
-  padding-top: 80px; 
+  padding-top: 110px; /* Increased padding to account for the new top bar */
   padding-bottom: 100px; 
   background-image: 
-    /* Gold Speckles */
     radial-gradient(2px 2px at 40px 60px, #FFD700 50%, transparent 100%),
     radial-gradient(3px 3px at 150px 200px, #e8b84b 50%, transparent 100%),
-    /* Obsidian Speckles */
     radial-gradient(2px 2px at 90px 120px, #AA55FF 50%, transparent 100%),
     radial-gradient(3px 3px at 250px 300px, #440066 50%, transparent 100%),
-    /* Cosmic Stars */
     radial-gradient(1px 1px at 180px 40px, #FFF 50%, transparent 100%),
     radial-gradient(1px 1px at 300px 180px, #FFF 50%, transparent 100%),
-    /* Mine Shaft Scanlines */
     linear-gradient(rgba(10, 8, 12, 0.8) 2px, transparent 2px),
     linear-gradient(90deg, rgba(10, 8, 12, 0.8) 2px, transparent 2px);
   background-size: 200px 200px, 250px 250px, 150px 150px, 300px 300px, 120px 120px, 220px 220px, 32px 32px, 32px 32px;
@@ -65,7 +61,6 @@ body, a, button, .vessel-anchor-wrap, .work-card, .map-sector, .dir-link, .conta
 }
 #pickaxe-glow {
     position: fixed; width: 140px; height: 140px; border-radius: 50%;
-    /* Bright gold core with black radiant outer layer */
     background: radial-gradient(circle, #FFD700 10%, rgba(255, 215, 0, 0.5) 25%, rgba(0, 0, 0, 0.8) 60%, transparent 100%);
     pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
     mix-blend-mode: screen; transition: width 0.1s, height 0.1s, background 0.1s;
@@ -83,9 +78,30 @@ body::before{
   pointer-events:none; z-index:9999;
 }
 
+/* ─── TRANSLATOR TOP BAR (NEW) ─── */
+.global-translator-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10002;
+  background: #000; border-bottom: 2px solid var(--gd);
+  padding: 5px 10px; display: flex; justify-content: flex-end; align-items: center;
+}
+.nmn-translator { display: inline-block; }
+#google_translate_element select {
+    background: #111 !important; color: var(--gold) !important;
+    border: 1px solid var(--gd) !important; font-family: var(--font-pixel) !important;
+    font-size: 8px !important; padding: 4px !important; cursor: pointer !important;
+    text-transform: uppercase; outline: none !important;
+}
+#google_translate_element select:hover, #google_translate_element select:focus {
+    border-color: #FFF !important; box-shadow: 0 0 10px rgba(255,215,0,0.5);
+}
+.goog-te-gadget-icon, .goog-logo-link, .goog-te-gadget span, .goog-te-gadget img { display: none !important; }
+.goog-te-gadget { color: transparent !important; font-size: 0 !important; }
+.goog-te-banner-frame.skiptranslate { display: none !important; }
+body { top: 0px !important; }
+
 /* ─── FAST NAV BANNER ─── */
 nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 10001;
+  position: fixed; top: 25px; left: 0; right: 0; z-index: 10001; /* Moved down to accommodate translator */
   background: rgba(5,3,2,.98); border-bottom: 4px solid var(--gd);
   box-shadow: 0 4px 15px rgba(0,0,0,0.8);
 }
@@ -100,7 +116,12 @@ nav {
 .nav-link { color: var(--cream); font-size: 10px; letter-spacing: 2px; transition: 0.2s; padding: 5px;}
 .nav-link:hover { color: var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.5); }
 
+/* MOBILE RESPONSIVE FIXES */
 @media(max-width:768px){ 
+  body { padding-top: 130px; } /* More padding for mobile stacking */
+  .global-translator-bar { padding: 8px; justify-content: center; }
+  #google_translate_element select { width: 100% !important; font-size: 10px !important; padding: 8px !important; }
+  nav { top: 35px; }
   .nav-container { flex-direction: column; padding: 10px; gap: 10px;}
   .nav-logo { font-size: 14px; margin-right: 0;} 
   .nav-links { justify-content: center; gap: 15px; }
@@ -196,7 +217,7 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
 .store-link.available { border-color: var(--gold); color: var(--gold); }
 .store-link.available:hover { background: var(--gold); color: #000; border-color: #FFF;}
 
-/* ─── FULL INDEX DIRECTORY & LAYERING FIXES ─── */
+/* ─── FULL INDEX DIRECTORY & IMAGE FIXES ─── */
 .dir-grid { display: flex; flex-direction: column; gap: 40px; position: relative; z-index: 5; }
 .dir-card { 
     background: #000; border: 4px solid var(--gd); box-shadow: 8px 8px 0 #000;
@@ -204,8 +225,9 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
     min-height: 300px; transition: transform 0.2s, border-color 0.2s; width: 100%;
 }
 .dir-card:hover { transform: translateY(-5px); border-color: var(--gold); box-shadow: 8px 12px 0 var(--gold);}
-.dir-bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0.2; filter: grayscale(1); transition: 0.3s; image-rendering: pixelated;}
-.dir-card:hover .dir-bg { opacity: 0.4; filter: grayscale(0); }
+/* Fix to ensure images (Lions/Elephants) show through the dark gradient */
+.dir-bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0.4; filter: grayscale(0.5); transition: 0.3s; image-rendering: pixelated;}
+.dir-card:hover .dir-bg { opacity: 0.85; filter: grayscale(0); }
 .dir-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.95) 60%); z-index: 1; pointer-events: none !important;}
 
 .dir-content { position: relative; z-index: 10 !important; padding: 2.5rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end;}
@@ -313,6 +335,19 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
 <script src="nmn-wallet.js"></script>
 <script src="nmn-nav.js"></script>
 
+<div class="global-translator-bar">
+    <div id="google_translate_element" class="nmn-translator"></div>
+    <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</div>
+
 <nav>
   <div class="nav-container">
     <a href="index.html" class="nav-logo">⛏ NMN HUB</a>
@@ -320,20 +355,8 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
       <a href="games.html" class="nav-link">FORGE</a>
       <a href="oracle.html" class="nav-link">ORACLE</a>
       <a href="gemshop.html" class="nav-link">GEMSHOP</a>
-      <a href="syndicate.html" class="nav-link" style="color: var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.5);">🏆 SYNDICATE</a>
+      <a href="syndicate.html" class="nav-link" style="color: var(--cream);">🏆 SYNDICATE</a>
       <a href="https://patreon.com/lordoro" target="_blank" class="nav-link">PATREON</a>
-      
-      <div id="google_translate_element" class="nmn-translator"></div>
-      <script type="text/javascript">
-      function googleTranslateElementInit() {
-        new google.translate.TranslateElement({
-          pageLanguage: 'en',
-          layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-        }, 'google_translate_element');
-      }
-      </script>
-      <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
     </div>
   </div>
 </nav>
@@ -381,8 +404,8 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
     <div class="signal-text-box">
         <h3 class="signal-title" id="signalTitle">[ STATUS: SIGNAL ACQUIRED ]</h3>
         <p class="signal-body" id="signalText">
-            [04.14.2026] > GLOBAL TRANSLATION PROTOCOL INITIATED. ALL CULTURES WELCOME.<br>
-            [04.13.2026] > FRAGMENTS OF MADMEN VOL. 1 DECLASSIFIED.<br>
+            [04.16.2026] > GLOBAL TRANSLATION PROTOCOL INITIATED. ALL CULTURES WELCOME.<br>
+            [04.14.2026] > FRAGMENTS OF MADMEN VOL. 1 DECLASSIFIED.<br>
             [04.07.2026] > THE OBSIDIAN VEIN IS EXPANDING INTO 7 LANGUAGES.<br>
             [04.05.2026] > NEW 16-BIT RENDERS ARE BEING ARCHIVED.<br>
             [03.28.2026] > THE ARCHITECT HAS DECLASSIFIED THE MINE WARS.
@@ -464,7 +487,7 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
           <div class="dir-content">
               <h2 class="dir-header">SECTOR 1: THE ARCADE</h2>
               <div class="dir-links">
-                  <a href="#" onclick="interceptDescent(event, 'RECREATION HALL', 'games.html')" class="dir-link">Recreation Hall Hub</a>
+                  <a href="#" onclick="interceptDescent(event, 'RECREATION HALL', 'games.html')" class="dir-link" style="color:var(--neon-green); border-color:var(--neon-green); background: rgba(0,255,136,0.05);">Recreation Hall Hub</a>
                   <a href="#" onclick="interceptDescent(event, 'ORE BREAKER', 'orebreaker.html')" class="dir-link">Ore Breaker</a>
                   <a href="#" onclick="interceptDescent(event, 'ORE RACER', 'oreracer.html')" class="dir-link">Ore Racer</a>
                   <a href="#" onclick="interceptDescent(event, 'SILVER QUILL', 'silverquill.html')" class="dir-link">The Silver Quill</a>
@@ -497,9 +520,9 @@ section { padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; position: rel
               <h2 class="dir-header">SECTOR 3: THE VAULT</h2>
               <div class="dir-links">
                   <a href="#" onclick="interceptDescent(event, 'THE ORACLE', 'oracle.html')" class="dir-link">Oracle's Chamber Hub</a>
-                  <a href="#" onclick="interceptDescent(event, 'THE SYNDICATE', 'syndicate.html')" class="dir-link" style="color:var(--gold); border-color:var(--gold); background: rgba(255,215,0,0.05);">🏆 The Syndicate</a>
+                  <a href="#" onclick="interceptDescent(event, 'THE SYNDICATE', 'syndicate.html')" class="dir-link">🏆 The Syndicate</a>
                   <a href="#" onclick="interceptDescent(event, 'TORA DOMAIN', 'toradomain.html')" class="dir-link">Tora's Domain</a>
-                  <a href="#" onclick="interceptDescent(event, 'THE CODEX', 'tora.html')" class="dir-link">Tora's Codex Reading</a>
+                  <a href="#" onclick="interceptDescent(event, 'THE CODEX', 'tora.html')" class="dir-link" style="color:var(--pu); border-color:var(--pu); background: rgba(170,85,255,0.05);">Tora's Codex Reading</a>
                   <a href="#" onclick="interceptDescent(event, 'ECHOING WELL', 'well.html')" class="dir-link">The Echoing Well</a>
                   <a href="#" onclick="interceptDescent(event, 'STAR MAP', 'starmap.html')" class="dir-link">The Star Map</a>
                   <a href="#" onclick="interceptDescent(event, 'RELIQUARY', 'reliquary.html')" class="dir-link">The Reliquary</a>
@@ -686,7 +709,7 @@ setInterval(() => {
         container.classList.remove('signal-obsidian');
         img.src = 'goldmine_stable.jpg';
         title.textContent = "[ STATUS: SIGNAL ACQUIRED ]";
-        text.innerHTML = "[04.14.2026] > GLOBAL TRANSLATION PROTOCOL INITIATED. ALL CULTURES WELCOME.<br>[04.13.2026] > FRAGMENTS OF MADMEN VOL. 1 DECLASSIFIED.<br>[04.07.2026] > THE OBSIDIAN VEIN IS EXPANDING INTO 7 LANGUAGES.<br>[04.05.2026] > NEW 16-BIT RENDERS ARE BEING ARCHIVED.<br>[03.28.2026] > THE ARCHITECT HAS DECLASSIFIED THE MINE WARS.";
+        text.innerHTML = "[04.16.2026] > GLOBAL TRANSLATION PROTOCOL INITIATED. ALL CULTURES WELCOME.<br>[04.14.2026] > FRAGMENTS OF MADMEN VOL. 1 DECLASSIFIED.<br>[04.07.2026] > THE OBSIDIAN VEIN IS EXPANDING INTO 7 LANGUAGES.<br>[04.05.2026] > NEW 16-BIT RENDERS ARE BEING ARCHIVED.<br>[03.28.2026] > THE ARCHITECT HAS DECLASSIFIED THE MINE WARS.";
     }
 }, 8000);
 
